@@ -143,7 +143,7 @@
                           "items": {
                             "type": "object",
                             "properties": {
-                              "channel": {"enum": ["website", "app", "chatbot", "live_chat", "email", "social_media", "phone", "video_call", "in_person", "post", "kiosk", "sms", "other"], "description": "Specific channel type"},
+                              "channel": {"enum": ["website", "app", "chat", "email", "social_media", "phone", "video_call", "in_person", "post", "kiosk", "sms", "other"], "description": "Specific channel type"},
                               "medium": {"enum": ["digital", "non_digital"], "description": "Whether the channel is digital or non-digital"},
                               "serviceModel": {"enum": ["self_service", "managed", "both"], "description": "Whether interaction is self-service, managed by staff, or can be both"},
                               "name": {"type": "string", "maxLength": 100, "description": "Descriptive name for this channel instance"},

@@ -375,7 +375,7 @@ The standard defines 7 lane types, each capturing a different dimension of the j
 Channels use a multi-attribute model (see Section 6 for full details):
 - **Medium:** digital, non_digital
 - **Service Model:** self_service, managed, both
-- **13 Standard Types:** website, app, chatbot, live_chat, email, social_media, phone, video_call, in_person, post, kiosk, sms, other
+- **12 Standard Types:** website, app, chat, email, social_media, phone, video_call, in_person, post, kiosk, sms, other
 
 **Required Fields:**
 - `channel` - Channel type from standard list
@@ -490,8 +490,7 @@ The channel system uses a multi-attribute model describing how users interact wi
 **Standard Channel Types:**
 - **website** - Web browser-based (digital, self_service)
 - **app** - Mobile/tablet apps (digital, self_service)
-- **chatbot** - Automated chat (digital, self_service)
-- **live_chat** - Staff chat (digital, managed)
+- **chat** - Text-based messaging (digital, self_service|managed|both)
 - **email** - Email communication (digital, managed)
 - **social_media** - Social platforms (digital, both)
 - **phone** - Voice calls (non_digital, both)
@@ -833,7 +832,7 @@ Use for organization-specific needs (e.g., system touch points, policy reference
   - **Old:** `category` (digital/physical/direct) + `type` (7 types) + `custom_type`
   - **New:** `channel` (13 types) + `medium` (digital/non_digital) + `serviceModel` (self_service/managed/both) + `custom_channel`
   - Enables independent filtering by medium and service model
-  - Standard channel types: website, app, chatbot, live_chat, email, social_media, phone, video_call, in_person, post, kiosk, sms, other
+  - Standard channel types: website, app, chat, email, social_media, phone, video_call, in_person, post, kiosk, sms, other
 - **Migration:** See migration guide for upgrading from v1.0.2
 
 ### Version 1.0.2 (2025-11-25)

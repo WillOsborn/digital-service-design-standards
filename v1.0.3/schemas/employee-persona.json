@@ -170,7 +170,7 @@
             "type": "object",
             "properties": {
               "channel": {
-                "enum": ["website", "app", "chatbot", "live_chat", "email", "social_media", "phone", "video_call", "in_person", "post", "kiosk", "sms", "other"],
+                "enum": ["website", "app", "chat", "email", "social_media", "phone", "video_call", "in_person", "post", "kiosk", "sms", "other"],
                 "description": "Specific channel type"
               },
               "medium": {

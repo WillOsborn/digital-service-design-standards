@@ -46,7 +46,7 @@ The standard defines 9 shared attributes present in all persona types, providing
 2. **pain_points** - Frustrations and obstacles, with severity and frequency
 3. **motivations** - Why users act, categorized by type (intrinsic, extrinsic, social, achievement)
 4. **experience_level** - Skill level (beginner, intermediate, advanced, expert)
-5. **channels** - How users interact (13 standard types with medium and service model attributes)
+5. **channels** - How users interact (12 standard types with medium and service model attributes)
 6. **moments_that_matter** - Critical emotional touchpoints in the user journey
 7. **barriers** - Organizational friction using 9-type taxonomy
 8. **use_cases** - Common interaction scenarios
@@ -161,8 +161,7 @@ The standard defines 9 shared attributes present in all persona types, providing
 **Standard Channel Types:**
 - **website** - Web browser-based interactions (digital, self_service)
 - **app** - Native mobile/tablet applications (digital, self_service)
-- **chatbot** - Automated chat interfaces (digital, self_service)
-- **live_chat** - Staff-assisted chat (digital, managed)
+- **chat** - Text-based messaging (digital, self_service|managed|both)
 - **email** - Email communication (digital, managed)
 - **social_media** - Social networking platforms (digital, both)
 - **phone** - Voice calls (non_digital, both - can be IVR or agent)
@@ -479,7 +478,7 @@ Organizations can extend personas with custom fields using the `extensions` sect
   - **New:** `channel` (13 types) + `medium` (digital/non_digital) + `serviceModel` (self_service/managed/both) + `name` + `custom_channel`
   - Enables independent filtering by medium and service model
   - Addresses semantic issues (e.g., email now properly classified as digital)
-  - Standard channel types: website, app, chatbot, live_chat, email, social_media, phone, video_call, in_person, post, kiosk, sms, other
+  - Standard channel types: website, app, chat, email, social_media, phone, video_call, in_person, post, kiosk, sms, other
 - **Migration:** See migration guide for upgrading from v1.0.2
 
 ### Version 1.0.2 (2025-11-25)

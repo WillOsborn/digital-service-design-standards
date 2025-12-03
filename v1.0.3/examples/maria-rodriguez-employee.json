@@ -101,7 +101,7 @@
         "preference_level": "preferred"
       },
       {
-        "channel": "live_chat",
+        "channel": "chat",
         "medium": "digital",
         "serviceModel": "both",
         "name": "Internal chat and messaging",

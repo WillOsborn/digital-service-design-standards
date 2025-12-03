@@ -14,8 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Multi-Attribute Channel Model
 - **Replaced hierarchical 3-category/7-type system with multi-attribute model:**
   - **Removed fields:** `category` (digital/physical/direct), `type`, `custom_type`
-  - **New fields:** `channel` (13 types), `medium` (digital/non_digital), `serviceModel` (self_service/managed/both), `custom_channel`
-  - **New standard types:** website, app, chatbot, live_chat, email, social_media, phone, video_call, in_person, post, kiosk, sms, other
+  - **New fields:** `channel` (12 types), `medium` (digital/non_digital), `serviceModel` (self_service/managed/both), `custom_channel`
+  - **New standard types:** website, app, chat, email, social_media, phone, video_call, in_person, post, kiosk, sms, other
+  - **Consolidated chat channels:** Merged `chatbot` and `live_chat` into single `chat` type (use `serviceModel` to distinguish: self_service for bots, managed for live agents, both for hybrid)
 
 #### Key Benefits
 - **Orthogonal attributes:** Medium and service model can be filtered independently

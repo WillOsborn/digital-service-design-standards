@@ -1,0 +1,258 @@
+{
+  "schema_info": {
+    "version": "1.0.2",
+    "standard": "Service Design Persona Standard v1.0",
+    "persona_type": "business",
+    "created_date": "2024-02-28",
+    "last_updated": "2025-11-25",
+    "created_by": "Digital Service Design Team",
+    "organization": "Digital Service Design Working"
+  },
+  "identity": {
+    "name": "David Chen",
+    "id": "david-chen-it-director-healthcare",
+    "summary": "IT Director at healthcare technology company focused on modernizing infrastructure while maintaining HIPAA compliance and security. Champions digital transformation initiatives and vendor evaluation processes."
+  },
+  "core_attributes": {
+    "goals": [
+      {
+        "text": "Implement cloud-first infrastructure strategy",
+        "priority": "primary",
+        "timeframe": "long_term"
+      },
+      {
+        "text": "Improve system uptime and performance",
+        "priority": "primary",
+        "timeframe": "short_term"
+      },
+      {
+        "text": "Ensure HIPAA compliance across all systems",
+        "priority": "primary",
+        "timeframe": "immediate"
+      },
+      {
+        "text": "Reduce IT operational costs by 15%",
+        "priority": "secondary",
+        "timeframe": "long_term"
+      }
+    ],
+    "pain_points": [
+      {
+        "text": "Legacy systems that are expensive to maintain",
+        "severity": 4,
+        "frequency": "daily",
+        "context": "Particularly affecting daily operations and budget planning"
+      },
+      {
+        "text": "Difficulty finding vendors who understand healthcare compliance",
+        "severity": 3,
+        "frequency": "weekly",
+        "context": "During vendor evaluation processes"
+      },
+      {
+        "text": "Limited IT budget despite growing technology needs",
+        "severity": 4,
+        "frequency": "monthly",
+        "context": "Budget planning and resource allocation"
+      },
+      {
+        "text": "Pressure to deliver faster while maintaining security",
+        "severity": 3,
+        "frequency": "daily",
+        "context": "Balancing speed and security requirements"
+      }
+    ],
+    "motivations": [
+      {
+        "text": "Advancing his career through successful digital transformation",
+        "type": "achievement"
+      },
+      {
+        "text": "Ensuring patient data security and privacy",
+        "type": "intrinsic"
+      },
+      {
+        "text": "Demonstrating measurable business value from IT investments",
+        "type": "extrinsic"
+      }
+    ],
+    "experience_level": "advanced"
+  },
+  "extended_attributes": {
+    "channels": [
+      {
+        "channel": "in_person",
+        "medium": "non_digital",
+        "serviceModel": "managed",
+        "name": "Industry conferences and webinars",
+        "usage_context": "Learning about new technologies and best practices",
+        "preference_level": "preferred"
+      },
+      {
+        "channel": "social_media",
+        "medium": "digital",
+        "serviceModel": "both",
+        "name": "LinkedIn and professional networks",
+        "usage_context": "Peer discussions and industry insights",
+        "preference_level": "preferred"
+      },
+      {
+        "channel": "in_person",
+        "medium": "non_digital",
+        "serviceModel": "managed",
+        "name": "Direct sales meetings",
+        "usage_context": "Vendor evaluations and product demonstrations",
+        "preference_level": "acceptable"
+      },
+      {
+        "channel": "email",
+        "medium": "digital",
+        "serviceModel": "managed",
+        "name": "Email and product demos",
+        "usage_context": "Initial vendor outreach and technical evaluations",
+        "preference_level": "acceptable"
+      }
+    ],
+    "moments_that_matter": [
+      {
+        "moment": "Initial vendor evaluation and RFP process",
+        "emotional_intensity": -1,
+        "importance": "critical",
+        "current_experience": "High stress due to compliance requirements and stakeholder pressure"
+      },
+      {
+        "moment": "Technical proof-of-concept demonstrations",
+        "emotional_intensity": 0,
+        "importance": "high",
+        "current_experience": "Cautious optimism while evaluating technical fit"
+      },
+      {
+        "moment": "Contract negotiation and implementation planning",
+        "emotional_intensity": -1,
+        "importance": "high",
+        "current_experience": "Anxiety about integration complexity and timeline risks"
+      },
+      {
+        "moment": "Go-live support and post-implementation review",
+        "emotional_intensity": 1,
+        "importance": "critical",
+        "current_experience": "Relief and satisfaction when implementation succeeds"
+      }
+    ],
+    "barriers": [
+      {
+        "barrier": "Complex approval processes for new technology",
+        "type": "process",
+        "impact": "Delays decisions by 2-3 months on average",
+        "workarounds": "Build business cases with clear ROI and compliance benefits"
+      },
+      {
+        "barrier": "Integration challenges with existing systems",
+        "type": "technology",
+        "impact": "Requires extensive testing and may block adoption",
+        "workarounds": "Require detailed integration documentation and sandbox testing"
+      },
+      {
+        "barrier": "Vendor lock-in concerns",
+        "type": "policy",
+        "impact": "Hesitation to commit to long-term contracts",
+        "workarounds": "Negotiate exit clauses and data portability guarantees"
+      },
+      {
+        "barrier": "Staff training and change management requirements",
+        "type": "knowledge",
+        "impact": "Slows adoption and increases implementation costs",
+        "workarounds": "Request comprehensive training programs and documentation"
+      },
+      {
+        "barrier": "Unclear digital transformation strategy across departments",
+        "type": "vision",
+        "impact": "Misaligned priorities and duplicated efforts",
+        "workarounds": "Participate in strategic planning sessions and advocate for IT alignment"
+      },
+      {
+        "barrier": "Poor communication of technical requirements to non-technical stakeholders",
+        "type": "communications",
+        "impact": "Misunderstandings and unrealistic expectations",
+        "workarounds": "Create simplified documentation and regular stakeholder briefings"
+      }
+    ],
+    "use_cases": [
+      {
+        "scenario": "Evaluating cloud migration solutions"
+      },
+      {
+        "scenario": "Assessing cybersecurity tools and services"
+      },
+      {
+        "scenario": "Researching automation platforms for IT operations"
+      }
+    ],
+    "success_metrics": [
+      {
+        "metric": "System uptime percentage"
+      },
+      {
+        "metric": "Cost reduction achieved"
+      },
+      {
+        "metric": "Successful compliance audit results"
+      },
+      {
+        "metric": "User satisfaction scores"
+      }
+    ]
+  },
+  "business_context": {
+    "role_title": "IT Director",
+    "department": "Information Technology",
+    "industry": "Healthcare Technology",
+    "company_size": "201-1000",
+    "seniority_level": "director"
+  },
+  "decision_making": {
+    "decision_authority": "Has budget authority up to $50K. Needs C-level approval for larger purchases. Influences vendor selection and evaluates technical requirements. Key stakeholder in digital transformation initiatives.",
+    "budget_range": "10k_50k",
+    "approval_process": [
+      {
+        "step": "Technical evaluation",
+        "stakeholder": "IT Director (David)",
+        "criteria": "Technical fit, security compliance, and integration requirements"
+      },
+      {
+        "step": "Budget review",
+        "stakeholder": "C-level executives",
+        "criteria": "ROI analysis and budget availability"
+      }
+    ]
+  },
+  "validation": {
+    "research_sources": [
+      {
+        "source": "Stakeholder interviews (February 2024)",
+        "type": "interview",
+        "date": "2024-02-15",
+        "confidence": "high"
+      },
+      {
+        "source": "Industry survey data",
+        "type": "existing_research",
+        "confidence": "medium"
+      },
+      {
+        "source": "Sales team feedback",
+        "type": "observation",
+        "confidence": "medium"
+      }
+    ],
+    "confidence_level": "high"
+  },
+  "extensions": {
+    "custom": {},
+    "legacy": {
+      "professional_goals": "Modernize IT infrastructure while maintaining security and compliance. Reduce operational costs through automation. Build scalable systems to support company growth.",
+      "procurement_preferences": "Prefers vendors with strong security credentials and healthcare industry experience. Values proof-of-concept trials. Requires detailed ROI analysis and implementation timelines.",
+      "custom_fields": "Member of Healthcare IT Security Council. Frequently speaks at industry events. Influences other IT leaders in healthcare sector through professional network."
+    }
+  }
+}

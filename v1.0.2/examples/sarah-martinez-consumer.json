@@ -1,0 +1,225 @@
+{
+  "schema_info": {
+    "version": "1.0.2",
+    "standard": "Service Design Persona Standard v1.0",
+    "persona_type": "consumer",
+    "created_date": "2024-03-15",
+    "last_updated": "2025-11-25",
+    "created_by": "Digital Service Design Team",
+    "organization": "Digital Service Design Working"
+  },
+  "identity": {
+    "name": "Sarah Martinez",
+    "id": "sarah-martinez-working-mom-consumer",
+    "summary": "32-year-old working mom in Austin who values convenience, quality, and family wellbeing. Primary household decision maker seeking time-saving solutions while staying within budget and maintaining family values."
+  },
+  "core_attributes": {
+    "goals": [
+      {
+        "text": "Find products that save time in daily routines",
+        "priority": "primary",
+        "timeframe": "immediate"
+      },
+      {
+        "text": "Make healthy choices for her family",
+        "priority": "primary",
+        "timeframe": "long_term"
+      },
+      {
+        "text": "Stay within monthly budget while maintaining quality of life",
+        "priority": "primary",
+        "timeframe": "immediate"
+      }
+    ],
+    "pain_points": [
+      {
+        "text": "Limited time for research and comparison shopping",
+        "severity": 4,
+        "frequency": "daily",
+        "context": "Between work and family responsibilities, lacks time for thorough product research"
+      },
+      {
+        "text": "Overwhelmed by too many product options",
+        "severity": 3,
+        "frequency": "weekly",
+        "context": "Choice overload when shopping online or in stores"
+      },
+      {
+        "text": "Difficulty finding trustworthy product reviews",
+        "severity": 3,
+        "frequency": "weekly",
+        "context": "Uncertain about authenticity of online reviews and recommendations"
+      }
+    ],
+    "motivations": [
+      {
+        "text": "Family wellbeing and happiness",
+        "type": "intrinsic"
+      },
+      {
+        "text": "Efficiency and time-saving",
+        "type": "intrinsic"
+      },
+      {
+        "text": "Value for money",
+        "type": "extrinsic"
+      }
+    ],
+    "experience_level": "intermediate"
+  },
+  "extended_attributes": {
+    "channels": [
+      {
+        "channel": "app",
+        "medium": "digital",
+        "serviceModel": "self_service",
+        "name": "Mobile shopping app",
+        "usage_context": "Quick shopping and reordering while on-the-go",
+        "preference_level": "preferred"
+      },
+      {
+        "channel": "social_media",
+        "medium": "digital",
+        "serviceModel": "both",
+        "name": "Instagram",
+        "usage_context": "Product discovery and peer recommendations",
+        "preference_level": "preferred"
+      },
+      {
+        "channel": "email",
+        "medium": "digital",
+        "serviceModel": "managed",
+        "name": "Email newsletters",
+        "usage_context": "Deals, promotions, and new product announcements",
+        "preference_level": "acceptable"
+      },
+      {
+        "channel": "in_person",
+        "medium": "non_digital",
+        "serviceModel": "managed",
+        "name": "In-store shopping",
+        "usage_context": "Hands-on product evaluation and immediate needs",
+        "preference_level": "acceptable"
+      }
+    ],
+    "moments_that_matter": [
+      {
+        "moment": "First-time purchase decision",
+        "emotional_intensity": -1,
+        "importance": "critical",
+        "current_experience": "Anxiety about making the right choice for her family"
+      },
+      {
+        "moment": "Product delivery and unboxing experience",
+        "emotional_intensity": 1,
+        "importance": "high",
+        "current_experience": "Excitement and anticipation when products arrive as expected"
+      },
+      {
+        "moment": "Customer service interactions when issues arise",
+        "emotional_intensity": -2,
+        "importance": "critical",
+        "current_experience": "High stress when problems occur due to limited time to resolve"
+      },
+      {
+        "moment": "Renewal or repeat purchase decisions",
+        "emotional_intensity": 0,
+        "importance": "medium",
+        "current_experience": "Evaluating whether to continue with products that work"
+      }
+    ],
+    "barriers": [
+      {
+        "barrier": "Concerns about product quality when buying online",
+        "type": "knowledge",
+        "impact": "Hesitation to purchase unfamiliar products",
+        "workarounds": "Relies heavily on reviews and return policies"
+      },
+      {
+        "barrier": "Complicated return processes",
+        "type": "process",
+        "impact": "Avoids retailers with difficult returns",
+        "workarounds": "Chooses retailers with simple return policies"
+      },
+      {
+        "barrier": "Subscription services that are hard to cancel",
+        "type": "process",
+        "impact": "Avoids subscriptions or experiences anxiety about cancellation",
+        "workarounds": "Avoids subscriptions or sets calendar reminders to cancel"
+      },
+      {
+        "barrier": "Confusing product information and unclear return policies",
+        "type": "communications",
+        "impact": "Delays purchase decisions",
+        "workarounds": "Seeks clarification through customer service before purchasing"
+      },
+      {
+        "barrier": "Unclear escalation path when initial customer service fails",
+        "type": "governance",
+        "impact": "Frustration and brand switching",
+        "workarounds": "Uses social media complaints or seeks manager contacts"
+      }
+    ],
+    "use_cases": [
+      {
+        "scenario": "Quick reordering of household essentials"
+      },
+      {
+        "scenario": "Discovering new products recommended for families"
+      },
+      {
+        "scenario": "Comparing prices and reading reviews before major purchases"
+      }
+    ],
+    "success_metrics": [
+      {
+        "metric": "Time saved on shopping and household tasks"
+      },
+      {
+        "metric": "Family satisfaction with purchased products"
+      },
+      {
+        "metric": "Staying within monthly spending budget"
+      }
+    ]
+  },
+  "demographics": {
+    "age": 32,
+    "location": "Austin, Texas",
+    "education": "Bachelor's Degree in Marketing",
+    "income": "75k_100k",
+    "household_size": 3
+  },
+  "lifestyle": {
+    "lifestyle": "Busy working mom who values convenience and quality. Enjoys yoga, meal planning, and weekend family activities. Active on social media and reads parenting blogs.",
+    "shopping_behavior": "Researches products thoroughly before purchasing. Prefers brands with good reviews and ethical practices. Price-conscious but willing to pay more for quality and convenience.",
+    "technology_usage": "Smartphone-first user. Active on Instagram and Pinterest. Uses apps for shopping, banking, and family organization. Comfortable with online purchases but prefers secure payment methods."
+  },
+  "validation": {
+    "research_sources": [
+      {
+        "source": "Customer interviews (March 2024)",
+        "type": "interview",
+        "date": "2024-03-15",
+        "confidence": "high"
+      },
+      {
+        "source": "Online survey responses",
+        "type": "survey",
+        "confidence": "high"
+      },
+      {
+        "source": "Social media behavior analysis",
+        "type": "analytics",
+        "confidence": "medium"
+      }
+    ],
+    "confidence_level": "high"
+  },
+  "extensions": {
+    "custom": {},
+    "legacy": {
+      "custom_fields": "Primary decision maker for household purchases. Influences other parents in her social network. Prefers brands that align with family values."
+    }
+  }
+}

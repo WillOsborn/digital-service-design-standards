@@ -1,0 +1,12 @@
+persona_id,persona_name,persona_type,goal_text,priority,timeframe,goal_sequence
+david-chen-it-director-healthcare,David Chen,business,Implement cloud-first infrastructure strategy,primary,long_term,1
+david-chen-it-director-healthcare,David Chen,business,Improve system uptime and performance,primary,short_term,2
+david-chen-it-director-healthcare,David Chen,business,Ensure HIPAA compliance across all systems,primary,immediate,3
+david-chen-it-director-healthcare,David Chen,business,Reduce IT operational costs by 15%,secondary,long_term,4
+sarah-martinez-working-mom-consumer,Sarah Martinez,consumer,Find products that save time in daily routines,primary,immediate,1
+sarah-martinez-working-mom-consumer,Sarah Martinez,consumer,Make healthy choices for her family,primary,long_term,2
+sarah-martinez-working-mom-consumer,Sarah Martinez,consumer,Stay within monthly budget while maintaining quality of life,primary,immediate,3
+maria-rodriguez-senior-sales-rep,Maria Rodriguez,employee,Exceed annual sales quota by 110%,primary,short_term,1
+maria-rodriguez-senior-sales-rep,Maria Rodriguez,employee,Develop leadership skills for future management role,primary,long_term,2
+maria-rodriguez-senior-sales-rep,Maria Rodriguez,employee,Build stronger relationships with key enterprise accounts,secondary,long_term,3
+maria-rodriguez-senior-sales-rep,Maria Rodriguez,employee,Improve efficiency in proposal and contract processes,secondary,short_term,4

@@ -1,0 +1,45 @@
+# Operating System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor Files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.claude/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Build Outputs
+dist/
+build/
+*.log
+
+# Temporary Files
+tmp/
+temp/
+*.tmp
+
+# Excluded directories (not ready for GitHub)
+website/
+tools/
+
+# Working documents (internal process docs, not user-facing)
+**/Archive/

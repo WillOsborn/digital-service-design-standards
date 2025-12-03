@@ -1,0 +1,259 @@
+{
+  "schema_info": {
+    "version": "1.0.3",
+    "standard": "Service Design Persona Standard v1.0",
+    "persona_type": "employee",
+    "created_date": "2024-01-30",
+    "last_updated": "2025-11-25",
+    "created_by": "Digital Service Design Team",
+    "organization": "Digital Service Design Working"
+  },
+  "identity": {
+    "name": "Maria Rodriguez",
+    "id": "maria-rodriguez-senior-sales-rep",
+    "summary": "Senior Sales Representative with 8 years experience seeking advancement to management. High-performing, collaborative team player who values efficiency and customer relationships while navigating complex internal systems."
+  },
+  "core_attributes": {
+    "goals": [
+      {
+        "text": "Exceed annual sales quota by 110%",
+        "priority": "primary",
+        "timeframe": "short_term"
+      },
+      {
+        "text": "Develop leadership skills for future management role",
+        "priority": "primary",
+        "timeframe": "long_term"
+      },
+      {
+        "text": "Build stronger relationships with key enterprise accounts",
+        "priority": "secondary",
+        "timeframe": "long_term"
+      },
+      {
+        "text": "Improve efficiency in proposal and contract processes",
+        "priority": "secondary",
+        "timeframe": "short_term"
+      }
+    ],
+    "pain_points": [
+      {
+        "text": "Too much time spent on administrative tasks instead of selling",
+        "severity": 4,
+        "frequency": "daily",
+        "context": "Reduces time available for customer-facing activities"
+      },
+      {
+        "text": "Difficulty accessing customer information while on the road",
+        "severity": 4,
+        "frequency": "weekly",
+        "context": "Impacts meeting preparation and customer interactions"
+      },
+      {
+        "text": "Slow approval processes for custom pricing",
+        "severity": 3,
+        "frequency": "monthly",
+        "context": "Delays deal closure and frustrates customers"
+      },
+      {
+        "text": "Inconsistent training on new products and features",
+        "severity": 3,
+        "frequency": "occasional",
+        "context": "Affects confidence when presenting to customers"
+      }
+    ],
+    "motivations": [
+      {
+        "text": "Career advancement and professional growth",
+        "type": "achievement"
+      },
+      {
+        "text": "Recognition for high performance",
+        "type": "extrinsic"
+      },
+      {
+        "text": "Helping customers solve business problems",
+        "type": "intrinsic"
+      },
+      {
+        "text": "Financial incentives and commission earnings",
+        "type": "extrinsic"
+      }
+    ],
+    "experience_level": "advanced"
+  },
+  "extended_attributes": {
+    "channels": [
+      {
+        "channel": "app",
+        "medium": "digital",
+        "serviceModel": "self_service",
+        "name": "CRM system and mobile app",
+        "usage_context": "Daily customer data management and opportunity tracking",
+        "preference_level": "preferred"
+      },
+      {
+        "channel": "video_call",
+        "medium": "digital",
+        "serviceModel": "managed",
+        "name": "Team meetings and video calls",
+        "usage_context": "Collaboration, updates, and strategic discussions",
+        "preference_level": "preferred"
+      },
+      {
+        "channel": "live_chat",
+        "medium": "digital",
+        "serviceModel": "both",
+        "name": "Internal chat and messaging",
+        "usage_context": "Quick questions and informal coordination",
+        "preference_level": "acceptable"
+      },
+      {
+        "channel": "website",
+        "medium": "digital",
+        "serviceModel": "self_service",
+        "name": "Training portals and learning management system",
+        "usage_context": "Professional development and product knowledge",
+        "preference_level": "acceptable"
+      }
+    ],
+    "moments_that_matter": [
+      {
+        "moment": "Onboarding and initial training period",
+        "emotional_intensity": -1,
+        "importance": "critical",
+        "current_experience": "Anxiety about learning systems and establishing credibility"
+      },
+      {
+        "moment": "Quarterly performance reviews",
+        "emotional_intensity": 0,
+        "importance": "critical",
+        "current_experience": "Mix of anticipation and confidence based on performance"
+      },
+      {
+        "moment": "New product launch announcements",
+        "emotional_intensity": 1,
+        "importance": "high",
+        "current_experience": "Excitement about new sales opportunities"
+      },
+      {
+        "moment": "System updates and process changes",
+        "emotional_intensity": -1,
+        "importance": "medium",
+        "current_experience": "Frustration with disruptions to established workflow"
+      },
+      {
+        "moment": "Annual planning and goal setting",
+        "emotional_intensity": 1,
+        "importance": "high",
+        "current_experience": "Optimism about achieving ambitious targets"
+      }
+    ],
+    "barriers": [
+      {
+        "barrier": "Complex systems that require multiple logins",
+        "type": "technology",
+        "impact": "Wastes time and creates frustration",
+        "workarounds": "Uses password manager and bookmarks to streamline access"
+      },
+      {
+        "barrier": "Limited mobile functionality for key applications",
+        "type": "technology",
+        "impact": "Reduces productivity while traveling",
+        "workarounds": "Relies on phone calls and email when traveling"
+      },
+      {
+        "barrier": "Inadequate integration between sales and marketing tools",
+        "type": "technology",
+        "impact": "Manual data entry and coordination overhead",
+        "workarounds": "Manually coordinates between systems and teams"
+      },
+      {
+        "barrier": "Insufficient training time for new features",
+        "type": "resource",
+        "impact": "Slower adoption and potential errors",
+        "workarounds": "Learns on-the-job and relies on peer support"
+      },
+      {
+        "barrier": "Unclear company strategic direction affects sales messaging",
+        "type": "vision",
+        "impact": "Inconsistent customer messaging and lost opportunities",
+        "workarounds": "Develops own customer-focused messaging based on feedback"
+      },
+      {
+        "barrier": "Poor communication about product updates and competitive positioning",
+        "type": "communications",
+        "impact": "Surprised by customer questions or competitor moves",
+        "workarounds": "Maintains informal network with product management team"
+      },
+      {
+        "barrier": "Unclear approval authority for custom pricing and deal structures",
+        "type": "governance",
+        "impact": "Delays deals and creates customer frustration",
+        "workarounds": "Maintains relationships with multiple decision makers for faster approvals"
+      }
+    ],
+    "use_cases": [
+      {
+        "scenario": "Accessing customer data during client meetings"
+      },
+      {
+        "scenario": "Updating opportunity status and forecasting"
+      },
+      {
+        "scenario": "Collaborating with internal teams on proposals"
+      },
+      {
+        "scenario": "Tracking progress toward sales targets"
+      }
+    ],
+    "success_metrics": [
+      {
+        "metric": "Sales quota attainment percentage"
+      },
+      {
+        "metric": "Customer satisfaction ratings"
+      },
+      {
+        "metric": "Pipeline quality and conversion rates"
+      },
+      {
+        "metric": "Time to complete administrative tasks"
+      }
+    ]
+  },
+  "work_context": {
+    "role_department": "Senior Sales Representative, West Coast Region",
+    "career_stage": "Mid-career professional with 8 years experience. Looking to advance to sales management role within 2 years. High performer consistently exceeding quota.",
+    "work_style": "Collaborative team player who prefers face-to-face meetings for important deals. Uses mobile tools extensively while traveling. Values quick access to customer information and sales materials.",
+    "performance_context": "Measured on quarterly sales targets, customer satisfaction scores, and pipeline development. Performance reviews every 6 months. Participates in leadership development program.",
+    "change_readiness": "Generally positive about new tools that improve efficiency. Prefers hands-on training and peer learning. Can be resistant to changes that slow down her current workflow."
+  },
+  "validation": {
+    "research_sources": [
+      {
+        "source": "Employee satisfaction survey (January 2024)",
+        "type": "survey",
+        "date": "2024-01-30",
+        "confidence": "high"
+      },
+      {
+        "source": "Focus group sessions",
+        "type": "interview",
+        "confidence": "high"
+      },
+      {
+        "source": "Manager feedback interviews",
+        "type": "interview",
+        "confidence": "medium"
+      }
+    ],
+    "confidence_level": "medium"
+  },
+  "extensions": {
+    "custom": {},
+    "legacy": {
+      "custom_fields": "Mentors new sales hires. Active in company diversity and inclusion initiatives. Frequently provides feedback on sales tools and processes."
+    }
+  }
+}

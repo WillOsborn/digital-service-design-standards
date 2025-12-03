@@ -1,0 +1,424 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.digitalservice.design/persona/v1.0.3/employee",
+  "title": "Employee Persona Schema",
+  "description": "Complete schema for employee personas per Service Design Persona Standard v1.0",
+  "type": "object",
+  "properties": {
+    "schema_info": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^1\\.0\\.[0-9]+$",
+          "description": "Schema version number"
+        },
+        "standard": {
+          "type": "string",
+          "const": "Service Design Persona Standard v1.0",
+          "description": "Name of the standard this persona conforms to"
+        },
+        "persona_type": {
+          "type": "string",
+          "const": "employee",
+          "description": "Type of persona"
+        },
+        "created_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Date persona was created"
+        },
+        "last_updated": {
+          "type": "string",
+          "format": "date",
+          "description": "Date persona was last updated"
+        },
+        "created_by": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Person or team who created this persona"
+        },
+        "organization": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Organization that owns this persona"
+        }
+      },
+      "required": ["version", "persona_type", "last_updated"],
+      "additionalProperties": false
+    },
+    "identity": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Full name of the persona"
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9_-]+$",
+          "maxLength": 50,
+          "description": "Unique identifier for the persona (lowercase, alphanumeric, hyphens, underscores)"
+        },
+        "summary": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Brief summary describing the persona"
+        }
+      },
+      "required": ["name", "id"],
+      "additionalProperties": false
+    },
+    "core_attributes": {
+      "type": "object",
+      "properties": {
+        "goals": {
+          "type": "array",
+          "description": "What the persona wants to achieve",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "maxLength": 500,
+                "description": "Description of the goal"
+              },
+              "priority": {
+                "enum": ["primary", "secondary", "aspirational"],
+                "description": "Importance of the goal"
+              },
+              "timeframe": {
+                "enum": ["immediate", "short_term", "long_term"],
+                "description": "When the persona hopes to achieve this goal"
+              }
+            },
+            "required": ["text"],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "pain_points": {
+          "type": "array",
+          "description": "Frustrations and obstacles the persona experiences",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "maxLength": 500,
+                "description": "Description of the pain point"
+              },
+              "severity": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 5,
+                "description": "Severity rating from 1 (minor) to 5 (critical)"
+              },
+              "frequency": {
+                "enum": ["daily", "weekly", "monthly", "occasional", "rare"],
+                "description": "How often this pain point occurs"
+              },
+              "context": {
+                "type": "string",
+                "maxLength": 200,
+                "description": "When or where this pain point occurs"
+              }
+            },
+            "required": ["text"],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "motivations": {
+          "type": "array",
+          "description": "Why the persona takes action",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "maxLength": 500,
+                "description": "Description of the motivation"
+              },
+              "type": {
+                "enum": ["intrinsic", "extrinsic", "social", "achievement"],
+                "description": "Category of motivation"
+              }
+            },
+            "required": ["text"],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "experience_level": {
+          "enum": ["beginner", "intermediate", "advanced", "expert"],
+          "description": "The persona's skill and familiarity level"
+        }
+      },
+      "required": ["goals", "pain_points", "motivations"],
+      "additionalProperties": false
+    },
+    "extended_attributes": {
+      "type": "object",
+      "description": "Recommended fields for comprehensive personas",
+      "properties": {
+        "channels": {
+          "type": "array",
+          "description": "How the persona prefers to interact",
+          "items": {
+            "type": "object",
+            "properties": {
+              "channel": {
+                "enum": ["website", "app", "chatbot", "live_chat", "email", "social_media", "phone", "video_call", "in_person", "post", "kiosk", "sms", "other"],
+                "description": "Specific channel type"
+              },
+              "medium": {
+                "enum": ["digital", "non_digital"],
+                "description": "Whether the channel is digital or non-digital"
+              },
+              "serviceModel": {
+                "enum": ["self_service", "managed", "both"],
+                "description": "Whether interaction is self-service, managed by staff, or can be both"
+              },
+              "name": {
+                "type": "string",
+                "maxLength": 100,
+                "description": "Descriptive name for this channel instance"
+              },
+              "custom_channel": {
+                "type": "string",
+                "maxLength": 50,
+                "description": "Custom channel name (required when channel is 'other')"
+              },
+              "usage_context": {
+                "type": "string",
+                "maxLength": 300,
+                "description": "When and why this channel is used"
+              },
+              "preference_level": {
+                "enum": ["preferred", "acceptable", "avoided"],
+                "description": "How much the persona prefers this channel"
+              }
+            },
+            "required": ["channel", "medium", "serviceModel"],
+            "additionalProperties": false
+          }
+        },
+        "moments_that_matter": {
+          "type": "array",
+          "description": "Critical emotional touchpoints",
+          "items": {
+            "type": "object",
+            "properties": {
+              "moment": {
+                "type": "string",
+                "maxLength": 300,
+                "description": "Description of the moment"
+              },
+              "emotional_intensity": {
+                "type": "integer",
+                "minimum": -2,
+                "maximum": 2,
+                "description": "Emotional intensity from -2 (high stress) to +2 (excited)"
+              },
+              "importance": {
+                "enum": ["critical", "high", "medium", "low"],
+                "description": "How important this moment is"
+              },
+              "current_experience": {
+                "type": "string",
+                "maxLength": 300,
+                "description": "What the current experience is like"
+              }
+            },
+            "required": ["moment"],
+            "additionalProperties": false
+          }
+        },
+        "barriers": {
+          "type": "array",
+          "description": "Organizational friction using 9-type taxonomy",
+          "items": {
+            "type": "object",
+            "properties": {
+              "barrier": {
+                "type": "string",
+                "maxLength": 500,
+                "description": "Description of the barrier"
+              },
+              "type": {
+                "enum": ["process", "technology", "knowledge", "resource", "policy", "cultural", "vision", "communications", "governance"],
+                "description": "Category of barrier"
+              },
+              "impact": {
+                "type": "string",
+                "maxLength": 300,
+                "description": "How this barrier affects the persona"
+              },
+              "workarounds": {
+                "type": "string",
+                "maxLength": 300,
+                "description": "How the persona copes with this barrier"
+              }
+            },
+            "required": ["barrier", "type"],
+            "additionalProperties": false
+          }
+        },
+        "use_cases": {
+          "type": "array",
+          "description": "Common interaction scenarios",
+          "items": {
+            "type": "object",
+            "properties": {
+              "scenario": {
+                "type": "string",
+                "maxLength": 200,
+                "description": "Description of the use case"
+              },
+              "trigger": {
+                "type": "string",
+                "maxLength": 200,
+                "description": "What initiates this scenario"
+              },
+              "actions": {
+                "type": "string",
+                "maxLength": 300,
+                "description": "What the persona does"
+              },
+              "outcome": {
+                "type": "string",
+                "maxLength": 200,
+                "description": "Expected result"
+              }
+            },
+            "required": ["scenario"],
+            "additionalProperties": false
+          }
+        },
+        "success_metrics": {
+          "type": "array",
+          "description": "How the persona measures success",
+          "items": {
+            "type": "object",
+            "properties": {
+              "metric": {
+                "type": "string",
+                "maxLength": 200,
+                "description": "Name of the metric"
+              },
+              "target": {
+                "type": "string",
+                "maxLength": 100,
+                "description": "Target value or goal"
+              },
+              "current_state": {
+                "type": "string",
+                "maxLength": 100,
+                "description": "Current performance level"
+              }
+            },
+            "required": ["metric"],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "work_context": {
+      "type": "object",
+      "description": "Employee work context information",
+      "properties": {
+        "role_department": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Role and department"
+        },
+        "career_stage": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Career progression context"
+        },
+        "work_style": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Work preferences and habits"
+        },
+        "performance_context": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Performance metrics and review process"
+        },
+        "change_readiness": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Attitude toward organizational change"
+        }
+      },
+      "required": ["role_department"],
+      "additionalProperties": false
+    },
+    "validation": {
+      "type": "object",
+      "description": "Research sources and confidence level",
+      "properties": {
+        "research_sources": {
+          "type": "array",
+          "description": "Sources of research backing this persona",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "type": "string",
+                "maxLength": 200,
+                "description": "Description of the research source"
+              },
+              "type": {
+                "enum": ["interview", "survey", "analytics", "observation", "existing_research"],
+                "description": "Type of research"
+              },
+              "date": {
+                "type": "string",
+                "format": "date",
+                "description": "When the research was conducted"
+              },
+              "confidence": {
+                "enum": ["high", "medium", "low"],
+                "description": "Confidence in this source"
+              }
+            },
+            "required": ["source", "type"],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "confidence_level": {
+          "enum": ["high", "medium", "low"],
+          "description": "Overall confidence in this persona"
+        }
+      },
+      "required": ["research_sources", "confidence_level"],
+      "additionalProperties": false
+    },
+    "extensions": {
+      "type": "object",
+      "description": "Custom and legacy fields",
+      "properties": {
+        "custom": {
+          "type": "object",
+          "description": "Organization-specific fields (namespace: orgname_fieldname)",
+          "additionalProperties": true
+        },
+        "legacy": {
+          "type": "object",
+          "description": "Fields migrated from previous formats",
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "required": ["schema_info", "identity", "core_attributes", "validation"],
+  "additionalProperties": false
+}

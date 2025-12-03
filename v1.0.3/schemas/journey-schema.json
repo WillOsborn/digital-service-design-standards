@@ -1,0 +1,201 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.digitalservice.design/journey/v1.0.3",
+  "title": "Customer Journey Schema",
+  "description": "Schema for customer journeys in service design, integrating with comprehensive persona data",
+  "type": "object",
+  "properties": {
+    "schema_info": {
+      "type": "object",
+      "properties": {
+        "version": {"type": "string", "pattern": "^1\\.0\\.[0-9]+$"},
+        "standard": {
+          "type": "string",
+          "const": "Service Design Journey Standard v1.0"
+        },
+        "namespace": {"type": "string", "pattern": "^[a-z0-9.-]+$"},
+        "created_date": {"type": "string", "format": "date-time"},
+        "last_updated": {"type": "string", "format": "date-time"},
+        "created_by": {"type": "string"},
+        "organization": {"type": "string"}
+      },
+      "required": ["version", "standard", "last_updated"],
+      "additionalProperties": false
+    },
+    "lanes": {
+      "type": "object",
+      "properties": {
+        "standard": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": "string", "pattern": "^[a-z][a-z0-9_-]*$"},
+              "label": {"type": "string", "maxLength": 100},
+              "type": {"enum": ["text", "list", "metric", "emotion", "reference", "barrier", "channel"]},
+              "description": {"type": "string", "maxLength": 500},
+              "cardinality": {"enum": ["one-per-step", "many-per-step"]},
+              "visible": {"type": "boolean", "default": true}
+            },
+            "required": ["id", "label", "type"],
+            "additionalProperties": false
+          }
+        },
+        "custom": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": "string", "pattern": "^[a-z][a-z0-9_-]*$"},
+              "label": {"type": "string", "maxLength": 100},
+              "type": {"enum": ["text", "list", "metric", "emotion", "reference", "barrier", "channel"]},
+              "description": {"type": "string", "maxLength": 500}
+            },
+            "required": ["id", "label", "type"],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": ["standard"],
+      "additionalProperties": false
+    },
+    "journey": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-zA-Z0-9_-]+$"},
+        "title": {"type": "string", "maxLength": 200},
+        "purpose": {"type": "string", "maxLength": 1000},
+        "summary": {"type": "string", "maxLength": 1000},
+        "context": {
+          "type": "object",
+          "properties": {
+            "persona_id": {"type": "string"},
+            "persona_context": {"type": "string", "maxLength": 1000},
+            "use_case": {"type": "string", "maxLength": 500},
+            "scope": {"type": "string", "maxLength": 500},
+            "as_is": {"type": "boolean", "default": true},
+            "timeframe": {"type": "string", "maxLength": 200},
+            "success_criteria": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "metric": {"type": "string", "maxLength": 200},
+                  "target": {"type": "string", "maxLength": 100}
+                },
+                "required": ["metric"],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": ["persona_context"],
+          "additionalProperties": false
+        },
+        "phases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": "string", "pattern": "^[a-zA-Z0-9_-]+$"},
+              "name": {"type": "string", "maxLength": 100},
+              "goal": {"type": "string", "maxLength": 500},
+              "moments_that_matter": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "step_id": {"type": "string"},
+                    "moment": {"type": "string", "maxLength": 500},
+                    "importance": {"enum": ["critical", "high", "medium", "low"]},
+                    "emotional_intensity": {"type": "integer", "minimum": -2, "maximum": 2}
+                  },
+                  "required": ["step_id", "moment"],
+                  "additionalProperties": false
+                }
+              },
+              "steps": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {"type": "string", "pattern": "^[a-zA-Z0-9_-]+$"},
+                    "name": {"type": "string", "maxLength": 100},
+                    "duration_ms": {"type": "integer", "minimum": 0},
+                    "lane_content": {
+                      "type": "object",
+                      "properties": {
+                        "barriers": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "type": {"enum": ["process", "technology", "knowledge", "resource", "policy", "cultural", "vision", "communications", "governance"]},
+                              "description": {"type": "string", "maxLength": 500},
+                              "severity": {"type": "integer", "minimum": 1, "maximum": 5},
+                              "workarounds": {"type": "string", "maxLength": 500}
+                            },
+                            "required": ["type", "description"],
+                            "additionalProperties": false
+                          }
+                        },
+                        "channels": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "channel": {"enum": ["website", "app", "chatbot", "live_chat", "email", "social_media", "phone", "video_call", "in_person", "post", "kiosk", "sms", "other"], "description": "Specific channel type"},
+                              "medium": {"enum": ["digital", "non_digital"], "description": "Whether the channel is digital or non-digital"},
+                              "serviceModel": {"enum": ["self_service", "managed", "both"], "description": "Whether interaction is self-service, managed by staff, or can be both"},
+                              "name": {"type": "string", "maxLength": 100, "description": "Descriptive name for this channel instance"},
+                              "custom_channel": {"type": "string", "maxLength": 50, "description": "Custom channel name (required when channel is 'other')"},
+                              "usage_context": {"type": "string", "maxLength": 200, "description": "When and why this channel is used at this step"}
+                            },
+                            "required": ["channel", "medium", "serviceModel"],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "additionalProperties": true
+                    }
+                  },
+                  "required": ["id", "name"],
+                  "additionalProperties": false
+                },
+                "minItems": 1
+              }
+            },
+            "required": ["id", "name", "steps"],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "validation": {
+          "type": "object",
+          "properties": {
+            "research_sources": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "source": {"type": "string", "maxLength": 200},
+                  "type": {"enum": ["interview", "survey", "analytics", "observation", "existing_research"]},
+                  "date": {"type": "string", "format": "date"},
+                  "confidence": {"enum": ["high", "medium", "low"]}
+                },
+                "required": ["source", "type"],
+                "additionalProperties": false
+              }
+            },
+            "confidence_level": {"enum": ["high", "medium", "low"]}
+          },
+          "required": ["research_sources", "confidence_level"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["id", "title", "purpose", "summary", "context", "phases", "validation"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["schema_info", "lanes", "journey"],
+  "additionalProperties": false
+}

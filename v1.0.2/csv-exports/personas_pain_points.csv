@@ -1,0 +1,12 @@
+persona_id,persona_name,persona_type,pain_point_text,severity,frequency,context,pain_point_sequence
+david-chen-it-director-healthcare,David Chen,business,Legacy systems that are expensive to maintain,4,daily,Particularly affecting daily operations and budget planning,1
+david-chen-it-director-healthcare,David Chen,business,Difficulty finding vendors who understand healthcare compliance,3,weekly,During vendor evaluation processes,2
+david-chen-it-director-healthcare,David Chen,business,Limited IT budget despite growing technology needs,4,monthly,Budget planning and resource allocation,3
+david-chen-it-director-healthcare,David Chen,business,Pressure to deliver faster while maintaining security,3,daily,Balancing speed and security requirements,4
+sarah-martinez-working-mom-consumer,Sarah Martinez,consumer,Limited time for research and comparison shopping,4,daily,"Between work and family responsibilities, lacks time for thorough product research",1
+sarah-martinez-working-mom-consumer,Sarah Martinez,consumer,Overwhelmed by too many product options,3,weekly,Choice overload when shopping online or in stores,2
+sarah-martinez-working-mom-consumer,Sarah Martinez,consumer,Difficulty finding trustworthy product reviews,3,weekly,Uncertain about authenticity of online reviews and recommendations,3
+maria-rodriguez-senior-sales-rep,Maria Rodriguez,employee,Too much time spent on administrative tasks instead of selling,4,daily,Reduces time available for customer-facing activities,1
+maria-rodriguez-senior-sales-rep,Maria Rodriguez,employee,Difficulty accessing customer information while on the road,4,weekly,Impacts meeting preparation and customer interactions,2
+maria-rodriguez-senior-sales-rep,Maria Rodriguez,employee,Slow approval processes for custom pricing,3,monthly,Delays deal closure and frustrates customers,3
+maria-rodriguez-senior-sales-rep,Maria Rodriguez,employee,Inconsistent training on new products and features,3,occasional,Affects confidence when presenting to customers,4

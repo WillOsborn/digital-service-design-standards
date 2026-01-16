@@ -1,0 +1,18 @@
+{
+  "name": "dsd-schema-validators",
+  "version": "1.0.2",
+  "description": "Validators for Digital Service Design schemas (v1.0.2)",
+  "scripts": {
+    "validate:persona": "node validate-persona.js",
+    "validate:journey": "node validate-journey.js",
+    "test": "node run-all-tests.js",
+    "test:persona": "node test-persona-validator.js"
+  },
+  "dependencies": {
+    "ajv": "^8.12.0",
+    "ajv-formats": "^2.1.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

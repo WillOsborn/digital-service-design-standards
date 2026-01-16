@@ -1,0 +1,1228 @@
+{
+  "schema_info": {
+    "version": "1.1.0",
+    "standard": "Service Design Journey Standard v1.1",
+    "schema_type": "journey",
+    "namespace": "digitalservice.design.examples",
+    "created_date": "2025-11-28T10:00:00Z",
+    "last_updated": "2026-01-06T10:00:00Z",
+    "created_by": "Digital Service Design Team",
+    "organization": "Digital Service Design Working"
+  },
+  "lanes": {
+    "standard": [
+      {
+        "id": "actions",
+        "label": "Actions",
+        "type": "list",
+        "description": "What the customer is doing at each step",
+        "cardinality": "many-per-step",
+        "visible": true
+      },
+      {
+        "id": "thoughts",
+        "label": "Thoughts",
+        "type": "text",
+        "description": "What the customer is thinking",
+        "cardinality": "one-per-step",
+        "visible": true
+      },
+      {
+        "id": "emotions",
+        "label": "Emotions",
+        "type": "emotion",
+        "description": "Emotional state from -2 (very negative) to +2 (very positive)",
+        "cardinality": "one-per-step",
+        "visible": true
+      },
+      {
+        "id": "channels",
+        "label": "Channels",
+        "type": "channel",
+        "description": "Touchpoints and channels used",
+        "cardinality": "many-per-step",
+        "visible": true
+      },
+      {
+        "id": "barriers",
+        "label": "Barriers",
+        "type": "barrier",
+        "description": "Friction points and obstacles encountered",
+        "cardinality": "many-per-step",
+        "visible": true
+      },
+      {
+        "id": "opportunities",
+        "label": "Opportunities",
+        "type": "list",
+        "description": "Potential improvements identified",
+        "cardinality": "many-per-step",
+        "visible": true
+      }
+    ],
+    "custom": [
+      {
+        "id": "device",
+        "label": "Device",
+        "type": "text",
+        "description": "Primary device being used"
+      },
+      {
+        "id": "time_of_day",
+        "label": "Time of Day",
+        "type": "text",
+        "description": "When this step typically occurs"
+      }
+    ]
+  },
+  "journey": {
+    "id": "sarah-martinez-clothes-shopping-journey",
+    "title": "Online Clothes Shopping Journey - Personal Treat Purchase",
+    "purpose": "To understand the end-to-end experience of a busy working mom discovering, purchasing, receiving, and returning clothing bought online through a promotional offer",
+    "summary": "Sarah receives a promotional notification from her regular shopping app about a flash sale, browses for a personal treat she wouldn't normally buy at full price, completes a purchase, receives delivery, tries on the item, and ultimately returns it due to fit issues. The journey captures the emotional highs and lows of convenient mobile shopping balanced against the uncertainty of online clothing purchases.",
+    "context": {
+      "personaRef": "persona-sarah-martinez",
+      "roleRefs": ["role-working-mom-consumer"],
+      "pairingRef": "pairing-sarah-working-mom",
+      "persona_context": "Sarah is a 32-year-old working mom in Austin who values convenience and quality. She's a smartphone-first user who prefers mobile shopping apps for quick purchases. She's price-conscious but will treat herself when good deals arise. Her limited time means she relies heavily on apps and has concerns about online clothing quality and fit. This journey explores how her behavioural tendencies (thorough research, time sensitivity, trust concerns) interact with the demands of the Working Mom Consumer role (limited time, budget consciousness, family-first priorities).",
+      "use_case": "Promotional-triggered impulse purchase of personal clothing item",
+      "scope": "From initial notification through to completed return",
+      "as_is": true,
+      "timeframe": "Approximately 7-10 days from notification to return completion",
+      "success_criteria": [
+        {
+          "metric": "Time to complete purchase",
+          "target": "Under 5 minutes from opening app"
+        },
+        {
+          "metric": "Return process completion time",
+          "target": "Under 10 minutes to initiate"
+        },
+        {
+          "metric": "Refund processing time",
+          "target": "Within 5 business days"
+        }
+      ]
+    },
+    "phases": [
+      {
+        "id": "discovery",
+        "name": "Discovery",
+        "goal": "Become aware of a compelling offer and decide to explore further",
+        "moments_that_matter": [
+          {
+            "step_id": "receive-notification",
+            "moment": "The notification arrives at a moment when Sarah can actually engage with it",
+            "importance": "high",
+            "emotional_intensity": 1
+          }
+        ],
+        "steps": [
+          {
+            "id": "receive-notification",
+            "name": "Receive promotional notification",
+            "duration_ms": 5000,
+            "lane_content": {
+              "actions": [
+                "Phone buzzes with notification",
+                "Glances at lock screen",
+                "Reads notification preview"
+              ],
+              "thoughts": "Oh, StyleMart has a flash sale... 40% off? That's actually good. Maybe I could get that cardigan I've been eyeing.",
+              "emotions": {
+                "state": "intrigued",
+                "intensity": 1
+              },
+              "channels": [
+                {
+                  "type": "app",
+                  "serviceModel": "self_service",
+                  "category": "digital",
+                  "name": "StyleMart App",
+                  "usage_context": "Push notification on mobile device"
+                }
+              ],
+              "barriers": [],
+              "opportunities": [
+                "Personalize notification based on browsing history",
+                "Include specific product recommendations in notification"
+              ],
+              "device": "iPhone",
+              "time_of_day": "Lunch break, around 12:30pm"
+            }
+          },
+          {
+            "id": "open-app",
+            "name": "Open app to explore sale",
+            "duration_ms": 15000,
+            "lane_content": {
+              "actions": [
+                "Taps notification to open app",
+                "Waits for app to load",
+                "Views sale landing page"
+              ],
+              "thoughts": "Let me just have a quick look while I have a few minutes. The sale ends tonight so I need to decide soon.",
+              "emotions": {
+                "state": "curious",
+                "intensity": 1
+              },
+              "channels": [
+                {
+                  "type": "app",
+                  "serviceModel": "self_service",
+                  "category": "digital",
+                  "name": "StyleMart App",
+                  "usage_context": "Browsing sale landing page"
+                }
+              ],
+              "barriers": [
+                {
+                  "type": "technology",
+                  "description": "App takes 8 seconds to fully load sale page",
+                  "severity": 2,
+                  "workarounds": "Waits patiently as it's within acceptable range"
+                }
+              ],
+              "opportunities": [
+                "Pre-cache sale content before notification send",
+                "Show countdown timer to create appropriate urgency"
+              ],
+              "device": "iPhone",
+              "time_of_day": "Lunch break, around 12:30pm"
+            }
+          }
+        ]
+      },
+      {
+        "id": "browsing",
+        "name": "Browsing & Selection",
+        "goal": "Find a desirable item that feels like a worthwhile treat within budget",
+        "moments_that_matter": [
+          {
+            "step_id": "find-item",
+            "moment": "Finding an item that feels special enough to be a treat but practical enough to justify",
+            "importance": "critical",
+            "emotional_intensity": 2
+          },
+          {
+            "step_id": "check-reviews",
+            "moment": "Reading reviews that either build or undermine confidence in the purchase",
+            "importance": "high",
+            "emotional_intensity": 0
+          }
+        ],
+        "steps": [
+          {
+            "id": "browse-categories",
+            "name": "Browse sale categories",
+            "duration_ms": 120000,
+            "lane_content": {
+              "actions": [
+                "Scrolls through sale categories",
+                "Taps into 'Women's Clothing'",
+                "Filters by size and price range",
+                "Scrolls through product grid"
+              ],
+              "thoughts": "There's so much here. Let me filter this down. I don't need another basic t-shirt... I want something a bit special that I wouldn't normally buy.",
+              "emotions": {
+                "state": "slightly overwhelmed but engaged",
+                "intensity": 0
+              },
+              "channels": [
+                {
+                  "type": "app",
+                  "serviceModel": "self_service",
+                  "category": "digital",
+                  "name": "StyleMart App",
+                  "usage_context": "Category browsing and filtering"
+                }
+              ],
+              "barriers": [
+                {
+                  "type": "knowledge",
+                  "description": "Difficult to assess fabric quality from photos alone",
+                  "severity": 3,
+                  "workarounds": "Relies on zooming in on product images",
+                  "emergesFrom": "Sarah's quality-conscious nature meets the limitations of digital shopping"
+                },
+                {
+                  "type": "process",
+                  "description": "Filter options reset when navigating back from product detail",
+                  "severity": 2,
+                  "workarounds": "Tries to remember filter settings"
+                }
+              ],
+              "opportunities": [
+                "Persist filter selections throughout session",
+                "Add 'treat yourself' or 'special occasion' filter category",
+                "Show fabric detail close-ups automatically"
+              ],
+              "device": "iPhone",
+              "time_of_day": "Lunch break, 12:32pm"
+            }
+          },
+          {
+            "id": "find-item",
+            "name": "Find appealing item",
+            "duration_ms": 60000,
+            "lane_content": {
+              "actions": [
+                "Spots a wrap dress in a color she loves",
+                "Taps to view product details",
+                "Swipes through all product images",
+                "Checks original price vs sale price"
+              ],
+              "thoughts": "Oh this is lovely! That emerald green would be perfect for date nights. £85 down to £51... that's actually reasonable for a treat. I'd never pay full price but this feels justified.",
+              "emotions": {
+                "state": "excited",
+                "intensity": 2
+              },
+              "channels": [
+                {
+                  "type": "app",
+                  "serviceModel": "self_service",
+                  "category": "digital",
+                  "name": "StyleMart App",
+                  "usage_context": "Product detail page"
+                }
+              ],
+              "barriers": [],
+              "opportunities": [
+                "Show 'you saved £X' prominently to reinforce value",
+                "Suggest styling options or accessories"
+              ],
+              "device": "iPhone",
+              "time_of_day": "Lunch break, 12:35pm"
+            }
+          },
+          {
+            "id": "check-sizing",
+            "name": "Check sizing information",
+            "duration_ms": 90000,
+            "lane_content": {
+              "actions": [
+                "Scrolls to size guide",
+                "Tries to interpret measurements",
+                "Compares to clothes she owns",
+                "Debates between two sizes"
+              ],
+              "thoughts": "I'm usually a 10 but this brand might run small. The size guide says 10 is 28-inch waist... I think that's me? Maybe I should go for 12 to be safe. But then it might be too loose on top.",
+              "emotions": {
+                "state": "uncertain",
+                "intensity": -1
+              },
+              "channels": [
+                {
+                  "type": "app",
+                  "serviceModel": "self_service",
+                  "category": "digital",
+                  "name": "StyleMart App",
+                  "usage_context": "Size guide modal"
+                }
+              ],
+              "barriers": [
+                {
+                  "type": "knowledge",
+                  "description": "Size guide shows measurements but no guidance on fit style (relaxed vs fitted)",
+                  "severity": 4,
+                  "workarounds": "Tries to gauge from model photos",
+                  "emergesFrom": "Sarah's anxiety about wrong decisions meets inadequate product information"
+                },
+                {
+                  "type": "communications",
+                  "description": "No information about model's size for reference",
+                  "severity": 3,
+                  "workarounds": "Guesses based on how item looks on model"
+                }
+              ],
+              "opportunities": [
+                "Add 'model is wearing size X and is Y height' information",
+                "Include fit predictor based on previous purchases",
+                "Show customer photos with size information"
+              ],
+              "device": "iPhone",
+              "time_of_day": "Lunch break, 12:37pm"
+            }
+          },
+          {
+            "id": "check-reviews",
+            "name": "Read customer reviews",
+            "duration_ms": 180000,
+            "lane_content": {
+              "actions": [
+                "Scrolls to reviews section",
+                "Filters to show reviews with photos",
+                "Reads several detailed reviews",
+                "Specifically looks for sizing comments"
+              ],
+              "thoughts": "4.2 stars from 89 reviews, that's decent. Let me see what people say about the fit... 'runs slightly large', 'true to size', 'I sized down'... well that's not helpful, everyone says something different.",
+              "emotions": {
+                "state": "conflicted",
+                "intensity": 0
+              },
+              "channels": [
+                {
+                  "type": "app",
+                  "serviceModel": "self_service",
+                  "category": "digital",
+                  "name": "StyleMart App",
+                  "usage_context": "Customer reviews section"
+                }
+              ],
+              "barriers": [
+                {
+                  "type": "knowledge",
+                  "description": "Contradictory sizing feedback in reviews",
+                  "severity": 3,
+                  "workarounds": "Tries to find reviewers with similar body type",
+                  "emergesFrom": "Sarah's analytical research style meets inconsistent user-generated content"
+                },
+                {
+                  "type": "knowledge",
+                  "description": "Cannot verify if reviews are genuine",
+                  "severity": 2,
+                  "workarounds": "Focuses on detailed reviews with photos"
+                }
+              ],
+              "opportunities": [
+                "Aggregate sizing feedback into a simple 'runs small/true/large' indicator",
+                "Allow filtering reviews by reviewer body type or size",
+                "Highlight verified purchase reviews"
+              ],
+              "device": "iPhone",
+              "time_of_day": "Lunch break, 12:40pm"
+            }
+          },
+          {
+            "id": "check-returns",
+            "name": "Check return policy",
+            "duration_ms": 45000,
+            "lane_content": {
+              "actions": [
+                "Looks for return policy information",
+                "Finds and taps 'Returns' link",
+                "Reads return conditions",
+                "Notes the return window"
+              ],
+              "thoughts": "Free returns within 30 days, that's reassuring. As long as I keep the tags on I can send it back if it doesn't fit. That makes this less risky.",
+              "emotions": {
+                "state": "reassured",
+                "intensity": 1
+              },
+              "channels": [
+                {
+                  "type": "app",
+                  "serviceModel": "self_service",
+                  "category": "digital",
+                  "name": "StyleMart App",
+                  "usage_context": "Return policy page"
+                }
+              ],
+              "barriers": [
+                {
+                  "type": "communications",
+                  "description": "Return policy requires navigating away from product page",
+                  "severity": 2,
+                  "workarounds": "Uses back button to return to product"
+                }
+              ],
+              "opportunities": [
+                "Show return policy summary directly on product page",
+                "Badge products with 'Free Returns' prominently"
+              ],
+              "device": "iPhone",
+              "time_of_day": "Lunch break, 12:43pm"
+            }
+          }
+        ]
+      },
+      {
+        "id": "purchase",
+        "name": "Purchase",
+        "goal": "Complete the transaction quickly and confidently",
+        "moments_that_matter": [
+          {
+            "step_id": "confirm-order",
+            "moment": "The moment of commitment when tapping 'Place Order'",
+            "importance": "critical",
+            "emotional_intensity": 1
+          }
+        ],
+        "steps": [
+          {
+            "id": "add-to-cart",
+            "name": "Add item to cart",
+            "duration_ms": 10000,
+            "lane_content": {
+              "actions": [
+                "Selects size 10 (her usual size)",
+                "Taps 'Add to Bag' button",
+                "Sees confirmation animation",
+                "Taps cart icon"
+              ],
+              "thoughts": "I'll go with my usual size. If it doesn't fit, I can always return it. Let me check out before the sale ends.",
+              "emotions": {
+                "state": "decided",
+                "intensity": 1
+              },
+              "channels": [
+                {
+                  "type": "app",
+                  "serviceModel": "self_service",
+                  "category": "digital",
+                  "name": "StyleMart App",
+                  "usage_context": "Add to cart interaction"
+                }
+              ],
+              "barriers": [],
+              "opportunities": [
+                "Suggest complementary items that are also on sale"
+              ],
+              "device": "iPhone",
+              "time_of_day": "Lunch break, 12:44pm"
+            }
+          },
+          {
+            "id": "review-cart",
+            "name": "Review cart and apply discount",
+            "duration_ms": 30000,
+            "lane_content": {
+              "actions": [
+                "Reviews item in cart",
+                "Checks that sale price is applied",
+                "Sees free delivery threshold message",
+                "Decides not to add more items"
+              ],
+              "thoughts": "£51 total, free delivery over £50 - perfect, just made it. I don't need anything else, let's not get carried away.",
+              "emotions": {
+                "state": "pleased",
+                "intensity": 1
+              },
+              "channels": [
+                {
+                  "type": "app",
+                  "serviceModel": "self_service",
+                  "category": "digital",
+                  "name": "StyleMart App",
+                  "usage_context": "Shopping cart"
+                }
+              ],
+              "barriers": [
+                {
+                  "type": "process",
+                  "description": "Promotional upsell suggestions add friction to checkout flow",
+                  "severity": 1,
+                  "workarounds": "Scrolls past recommendations"
+                }
+              ],
+              "opportunities": [
+                "Make upsells less intrusive",
+                "Show savings summary to reinforce good decision"
+              ],
+              "device": "iPhone",
+              "time_of_day": "Lunch break, 12:45pm"
+            }
+          },
+          {
+            "id": "checkout",
+            "name": "Complete checkout",
+            "duration_ms": 45000,
+            "lane_content": {
+              "actions": [
+                "Confirms saved delivery address",
+                "Selects standard delivery (free)",
+                "Reviews delivery estimate (2-4 days)",
+                "Proceeds to payment"
+              ],
+              "thoughts": "Good, my address is saved. Standard delivery is fine, I'm not in a rush. Should arrive by Friday.",
+              "emotions": {
+                "state": "efficient",
+                "intensity": 1
+              },
+              "channels": [
+                {
+                  "type": "app",
+                  "serviceModel": "self_service",
+                  "category": "digital",
+                  "name": "StyleMart App",
+                  "usage_context": "Checkout flow - delivery"
+                }
+              ],
+              "barriers": [],
+              "opportunities": [
+                "Show specific delivery date rather than range where possible"
+              ],
+              "device": "iPhone",
+              "time_of_day": "Lunch break, 12:46pm"
+            }
+          },
+          {
+            "id": "payment",
+            "name": "Complete payment",
+            "duration_ms": 20000,
+            "lane_content": {
+              "actions": [
+                "Selects saved payment method (Apple Pay)",
+                "Authenticates with Face ID",
+                "Payment processes successfully"
+              ],
+              "thoughts": "Love that I can just use Face ID. So much easier than typing card details.",
+              "emotions": {
+                "state": "satisfied",
+                "intensity": 1
+              },
+              "channels": [
+                {
+                  "type": "app",
+                  "serviceModel": "self_service",
+                  "category": "digital",
+                  "name": "StyleMart App",
+                  "usage_context": "Payment processing"
+                },
+                {
+                  "type": "app",
+                  "serviceModel": "self_service",
+                  "category": "digital",
+                  "name": "Apple Pay",
+                  "usage_context": "Biometric payment authentication"
+                }
+              ],
+              "barriers": [],
+              "opportunities": [],
+              "device": "iPhone",
+              "time_of_day": "Lunch break, 12:47pm"
+            }
+          },
+          {
+            "id": "confirm-order",
+            "name": "Receive order confirmation",
+            "duration_ms": 15000,
+            "lane_content": {
+              "actions": [
+                "Sees order confirmation screen",
+                "Notes order number",
+                "Receives confirmation email",
+                "Closes app and returns to lunch"
+              ],
+              "thoughts": "Done! That was quick. Excited for it to arrive. I deserve a little treat.",
+              "emotions": {
+                "state": "happy and accomplished",
+                "intensity": 2
+              },
+              "channels": [
+                {
+                  "type": "app",
+                  "serviceModel": "self_service",
+                  "category": "digital",
+                  "name": "StyleMart App",
+                  "usage_context": "Order confirmation page"
+                },
+                {
+                  "type": "email",
+                  "serviceModel": "managed",
+                  "category": "digital",
+                  "name": "Order confirmation email",
+                  "usage_context": "Confirmation and receipt"
+                }
+              ],
+              "barriers": [],
+              "opportunities": [
+                "Include styling tips or 'complete the look' in confirmation",
+                "Offer calendar reminder for trying on when delivered"
+              ],
+              "device": "iPhone",
+              "time_of_day": "Lunch break, 12:48pm"
+            }
+          }
+        ]
+      },
+      {
+        "id": "waiting",
+        "name": "Waiting & Tracking",
+        "goal": "Stay informed about delivery progress without anxiety",
+        "moments_that_matter": [
+          {
+            "step_id": "dispatch-notification",
+            "moment": "Receiving dispatch notification confirms the order is real and on its way",
+            "importance": "medium",
+            "emotional_intensity": 1
+          }
+        ],
+        "steps": [
+          {
+            "id": "dispatch-notification",
+            "name": "Receive dispatch notification",
+            "duration_ms": 10000,
+            "lane_content": {
+              "actions": [
+                "Receives push notification that order has shipped",
+                "Taps to view tracking information",
+                "Notes estimated delivery date"
+              ],
+              "thoughts": "Great, it's on its way. Should be here Thursday. Looking forward to trying it on.",
+              "emotions": {
+                "state": "anticipating",
+                "intensity": 1
+              },
+              "channels": [
+                {
+                  "type": "app",
+                  "serviceModel": "self_service",
+                  "category": "digital",
+                  "name": "StyleMart App",
+                  "usage_context": "Shipping notification"
+                }
+              ],
+              "barriers": [],
+              "opportunities": [],
+              "device": "iPhone",
+              "time_of_day": "Next day, evening"
+            }
+          },
+          {
+            "id": "track-delivery",
+            "name": "Check tracking periodically",
+            "duration_ms": 30000,
+            "lane_content": {
+              "actions": [
+                "Opens app to check tracking status",
+                "Views package location updates",
+                "Confirms still on track for Thursday"
+              ],
+              "thoughts": "Just checking it's still coming tomorrow. Good, it's at the local depot.",
+              "emotions": {
+                "state": "mild anticipation",
+                "intensity": 0
+              },
+              "channels": [
+                {
+                  "type": "app",
+                  "serviceModel": "self_service",
+                  "category": "digital",
+                  "name": "StyleMart App",
+                  "usage_context": "Order tracking"
+                }
+              ],
+              "barriers": [
+                {
+                  "type": "communications",
+                  "description": "Tracking updates are generic and don't give specific delivery time",
+                  "severity": 2,
+                  "workarounds": "Accepts will arrive sometime during the day"
+                }
+              ],
+              "opportunities": [
+                "Provide delivery time window on day of delivery",
+                "Allow scheduling specific delivery time"
+              ],
+              "device": "iPhone",
+              "time_of_day": "Wednesday evening"
+            }
+          }
+        ]
+      },
+      {
+        "id": "delivery",
+        "name": "Delivery & Unboxing",
+        "goal": "Receive the item and experience the excitement of a new purchase",
+        "moments_that_matter": [
+          {
+            "step_id": "unbox-item",
+            "moment": "The unboxing experience - first physical interaction with the product",
+            "importance": "high",
+            "emotional_intensity": 1
+          }
+        ],
+        "steps": [
+          {
+            "id": "delivery-notification",
+            "name": "Receive delivery notification",
+            "duration_ms": 5000,
+            "lane_content": {
+              "actions": [
+                "Receives notification that delivery is out for delivery",
+                "Later receives 'delivered' notification with photo",
+                "Checks photo to see where package was left"
+              ],
+              "thoughts": "It's here! Left by the front door. I'll grab it when I get home from work.",
+              "emotions": {
+                "state": "excited",
+                "intensity": 1
+              },
+              "channels": [
+                {
+                  "type": "app",
+                  "serviceModel": "self_service",
+                  "category": "digital",
+                  "name": "StyleMart App",
+                  "usage_context": "Delivery notifications"
+                },
+                {
+                  "type": "app",
+                  "serviceModel": "self_service",
+                  "category": "digital",
+                  "name": "Carrier tracking app",
+                  "usage_context": "Proof of delivery photo"
+                }
+              ],
+              "barriers": [],
+              "opportunities": [],
+              "device": "iPhone",
+              "time_of_day": "Thursday, 2pm"
+            }
+          },
+          {
+            "id": "retrieve-package",
+            "name": "Retrieve package",
+            "duration_ms": 60000,
+            "lane_content": {
+              "actions": [
+                "Arrives home from work",
+                "Finds package at door",
+                "Brings inside"
+              ],
+              "thoughts": "There it is! Can't wait to try it on after I sort dinner for the kids.",
+              "emotions": {
+                "state": "eager",
+                "intensity": 1
+              },
+              "channels": [
+                {
+                  "type": "in_person",
+                  "serviceModel": "managed",
+                  "category": "physical",
+                  "name": "Package delivery",
+                  "usage_context": "Physical receipt of item"
+                }
+              ],
+              "barriers": [],
+              "opportunities": [],
+              "device": "N/A",
+              "time_of_day": "Thursday, 6pm"
+            }
+          },
+          {
+            "id": "unbox-item",
+            "name": "Unbox and inspect item",
+            "duration_ms": 180000,
+            "lane_content": {
+              "actions": [
+                "Opens packaging",
+                "Removes dress from bag",
+                "Inspects fabric and construction",
+                "Checks color matches expectations",
+                "Leaves tags on"
+              ],
+              "thoughts": "The packaging is nice. Oh, the color is gorgeous, just like the photos. Fabric feels decent quality. Let me keep the tags on until I've tried it properly.",
+              "emotions": {
+                "state": "pleased",
+                "intensity": 1
+              },
+              "channels": [
+                {
+                  "type": "in_person",
+                  "serviceModel": "managed",
+                  "category": "physical",
+                  "name": "Product packaging",
+                  "usage_context": "Unboxing experience"
+                }
+              ],
+              "barriers": [],
+              "opportunities": [
+                "Include styling card or lookbook",
+                "Add QR code linking to styling videos"
+              ],
+              "device": "N/A",
+              "time_of_day": "Thursday, 8pm"
+            }
+          }
+        ]
+      },
+      {
+        "id": "try-on",
+        "name": "Try On & Evaluation",
+        "goal": "Determine if the item fits well and is worth keeping",
+        "moments_that_matter": [
+          {
+            "step_id": "try-on-item",
+            "moment": "The critical moment of trying on and seeing yourself in the mirror",
+            "importance": "critical",
+            "emotional_intensity": -1
+          }
+        ],
+        "steps": [
+          {
+            "id": "try-on-item",
+            "name": "Try on the dress",
+            "duration_ms": 300000,
+            "lane_content": {
+              "actions": [
+                "Puts on the dress",
+                "Looks in mirror",
+                "Adjusts and tries different positions",
+                "Tries with different accessories",
+                "Takes photos to evaluate"
+              ],
+              "thoughts": "Hmm. The color is beautiful but... it's tight across the hips and the waist isn't sitting right. The wrap isn't falling properly. Maybe if I... no, it's just not the right fit for my body shape.",
+              "emotions": {
+                "state": "disappointed",
+                "intensity": -1
+              },
+              "channels": [
+                {
+                  "type": "in_person",
+                  "serviceModel": "managed",
+                  "category": "physical",
+                  "name": "Trying on at home",
+                  "usage_context": "Fit evaluation"
+                }
+              ],
+              "barriers": [
+                {
+                  "type": "knowledge",
+                  "description": "Sizing information didn't adequately predict fit for her body type",
+                  "severity": 4,
+                  "workarounds": "None available at this point",
+                  "emergesFrom": "Sarah's thorough research couldn't overcome the inherent limitations of online clothing shopping"
+                }
+              ],
+              "opportunities": [
+                "Offer virtual try-on technology",
+                "Provide body-shape specific recommendations",
+                "Better sizing prediction based on purchase and return history"
+              ],
+              "device": "N/A",
+              "time_of_day": "Thursday, 8:30pm"
+            }
+          },
+          {
+            "id": "decide-to-return",
+            "name": "Decide to return",
+            "duration_ms": 120000,
+            "lane_content": {
+              "actions": [
+                "Considers whether to keep it anyway",
+                "Checks if different size is available",
+                "Sees size 12 is sold out",
+                "Decides to return"
+              ],
+              "thoughts": "Such a shame, I really love the color. Size 12 might have worked but it's sold out now. I can't keep something that doesn't fit properly - it'll just hang in my wardrobe. Better to return it and get my money back.",
+              "emotions": {
+                "state": "resigned but practical",
+                "intensity": -1
+              },
+              "channels": [
+                {
+                  "type": "app",
+                  "serviceModel": "self_service",
+                  "category": "digital",
+                  "name": "StyleMart App",
+                  "usage_context": "Checking alternative size availability"
+                }
+              ],
+              "barriers": [
+                {
+                  "type": "resource",
+                  "description": "Preferred size is out of stock",
+                  "severity": 4,
+                  "workarounds": "Must return rather than exchange"
+                }
+              ],
+              "opportunities": [
+                "Offer waitlist for size to become available",
+                "Suggest similar styles that might fit better",
+                "Provide exchange incentive to maintain the sale"
+              ],
+              "device": "iPhone",
+              "time_of_day": "Thursday, 8:45pm"
+            }
+          }
+        ]
+      },
+      {
+        "id": "return",
+        "name": "Return Process",
+        "goal": "Return the item with minimal effort and receive a timely refund",
+        "moments_that_matter": [
+          {
+            "step_id": "initiate-return",
+            "moment": "Ease of starting the return process sets expectations for the rest of the experience",
+            "importance": "high",
+            "emotional_intensity": 0
+          },
+          {
+            "step_id": "receive-refund",
+            "moment": "Receiving the refund closes the loop and determines future purchase confidence",
+            "importance": "high",
+            "emotional_intensity": 1
+          }
+        ],
+        "steps": [
+          {
+            "id": "initiate-return",
+            "name": "Initiate return in app",
+            "duration_ms": 180000,
+            "lane_content": {
+              "actions": [
+                "Opens app and goes to Orders",
+                "Finds the order and taps 'Return items'",
+                "Selects the dress",
+                "Selects return reason: 'Didn't fit'",
+                "Adds detail: 'Too small around hips'"
+              ],
+              "thoughts": "Okay, let's get this return started. At least the app has a clear return option... 'Why are you returning?' - fair enough, I'll say it didn't fit.",
+              "emotions": {
+                "state": "neutral",
+                "intensity": 0
+              },
+              "channels": [
+                {
+                  "type": "app",
+                  "serviceModel": "self_service",
+                  "category": "digital",
+                  "name": "StyleMart App",
+                  "usage_context": "Return initiation flow"
+                }
+              ],
+              "barriers": [
+                {
+                  "type": "process",
+                  "description": "Required to provide detailed reason for return",
+                  "severity": 1,
+                  "workarounds": "Provides brief explanation"
+                }
+              ],
+              "opportunities": [
+                "Use return reason to improve sizing recommendations",
+                "Offer style consultation for future purchases"
+              ],
+              "device": "iPhone",
+              "time_of_day": "Thursday, 9pm"
+            }
+          },
+          {
+            "id": "select-return-method",
+            "name": "Select return method",
+            "duration_ms": 120000,
+            "lane_content": {
+              "actions": [
+                "Views return options",
+                "Sees options: Post Office drop-off, Locker drop-off, Home collection",
+                "Selects Locker drop-off (most convenient)",
+                "Chooses locker location near her office",
+                "Receives QR code for drop-off"
+              ],
+              "thoughts": "Good, I can drop it at the locker near work. That's easy - I'll do it tomorrow on my lunch break. Just need to scan the QR code apparently.",
+              "emotions": {
+                "state": "relieved",
+                "intensity": 1
+              },
+              "channels": [
+                {
+                  "type": "app",
+                  "serviceModel": "self_service",
+                  "category": "digital",
+                  "name": "StyleMart App",
+                  "usage_context": "Return method selection"
+                }
+              ],
+              "barriers": [],
+              "opportunities": [
+                "Pre-select nearest return location based on user location",
+                "Show wait time estimates for different return methods"
+              ],
+              "device": "iPhone",
+              "time_of_day": "Thursday, 9:05pm"
+            }
+          },
+          {
+            "id": "package-return",
+            "name": "Package item for return",
+            "duration_ms": 300000,
+            "lane_content": {
+              "actions": [
+                "Finds original packaging",
+                "Refolds dress carefully",
+                "Places back in original bag",
+                "Puts in mailing bag",
+                "Doesn't need to print label - will use QR code"
+              ],
+              "thoughts": "Glad I kept the packaging. This is much easier than the old days of having to print labels. I just need to take this bag to the locker tomorrow.",
+              "emotions": {
+                "state": "satisfied with process",
+                "intensity": 0
+              },
+              "channels": [
+                {
+                  "type": "in_person",
+                  "serviceModel": "managed",
+                  "category": "physical",
+                  "name": "Return packaging",
+                  "usage_context": "Preparing item for return"
+                }
+              ],
+              "barriers": [],
+              "opportunities": [
+                "Provide reusable return packaging with original shipment",
+                "Include clear repackaging instructions"
+              ],
+              "device": "N/A",
+              "time_of_day": "Thursday, 9:15pm"
+            }
+          },
+          {
+            "id": "drop-off-return",
+            "name": "Drop off at locker",
+            "duration_ms": 180000,
+            "lane_content": {
+              "actions": [
+                "Goes to locker location during lunch",
+                "Opens app to display QR code",
+                "Scans QR code at locker",
+                "Locker door opens",
+                "Places package in locker",
+                "Receives confirmation notification"
+              ],
+              "thoughts": "That was painless. Scanned, deposited, done. Should get my refund in a few days.",
+              "emotions": {
+                "state": "satisfied",
+                "intensity": 1
+              },
+              "channels": [
+                {
+                  "type": "in_person",
+                  "serviceModel": "managed",
+                  "category": "physical",
+                  "name": "Parcel locker",
+                  "usage_context": "Return drop-off"
+                },
+                {
+                  "type": "app",
+                  "serviceModel": "self_service",
+                  "category": "digital",
+                  "name": "StyleMart App",
+                  "usage_context": "QR code for locker access"
+                }
+              ],
+              "barriers": [],
+              "opportunities": [
+                "Provide estimated refund date at drop-off",
+                "Offer instant refund option for trusted customers"
+              ],
+              "device": "iPhone",
+              "time_of_day": "Friday, 12:30pm"
+            }
+          },
+          {
+            "id": "return-received",
+            "name": "Return received notification",
+            "duration_ms": 10000,
+            "lane_content": {
+              "actions": [
+                "Receives notification that return is being processed",
+                "Opens app to check status",
+                "Sees 'Return received - refund processing'"
+              ],
+              "thoughts": "Good, they've got it. Now I just need to wait for the refund.",
+              "emotions": {
+                "state": "reassured",
+                "intensity": 0
+              },
+              "channels": [
+                {
+                  "type": "app",
+                  "serviceModel": "self_service",
+                  "category": "digital",
+                  "name": "StyleMart App",
+                  "usage_context": "Return status notification"
+                }
+              ],
+              "barriers": [
+                {
+                  "type": "communications",
+                  "description": "No specific timeframe given for refund processing",
+                  "severity": 2,
+                  "workarounds": "Refers to original return policy for expected timing"
+                }
+              ],
+              "opportunities": [
+                "Provide specific refund date estimate",
+                "Show refund progress tracker"
+              ],
+              "device": "iPhone",
+              "time_of_day": "Monday"
+            }
+          },
+          {
+            "id": "receive-refund",
+            "name": "Receive refund",
+            "duration_ms": 30000,
+            "lane_content": {
+              "actions": [
+                "Receives email notification of refund",
+                "Checks bank account to confirm",
+                "Sees £51 refund has been processed"
+              ],
+              "thoughts": "Refund's come through. That was fairly painless overall. Shame the dress didn't fit but at least returning it wasn't a hassle. I'd still shop with them again.",
+              "emotions": {
+                "state": "satisfied",
+                "intensity": 1
+              },
+              "channels": [
+                {
+                  "type": "email",
+                  "serviceModel": "managed",
+                  "category": "digital",
+                  "name": "Refund confirmation email",
+                  "usage_context": "Refund notification"
+                },
+                {
+                  "type": "app",
+                  "serviceModel": "self_service",
+                  "category": "digital",
+                  "name": "Banking app",
+                  "usage_context": "Refund verification"
+                }
+              ],
+              "barriers": [],
+              "opportunities": [
+                "Include personalized recommendations in refund confirmation",
+                "Offer incentive for next purchase"
+              ],
+              "device": "iPhone",
+              "time_of_day": "Wednesday (5 days after drop-off)"
+            }
+          }
+        ]
+      }
+    ],
+    "validation": {
+      "research_sources": [
+        {
+          "source": "Customer journey mapping workshop (November 2024)",
+          "type": "observation",
+          "date": "2024-11-15",
+          "confidence": "high"
+        },
+        {
+          "source": "Sarah Martinez persona interviews",
+          "type": "interview",
+          "date": "2024-03-15",
+          "confidence": "high"
+        },
+        {
+          "source": "Mobile shopping behavior analytics",
+          "type": "analytics",
+          "confidence": "medium"
+        },
+        {
+          "source": "Return process user testing",
+          "type": "observation",
+          "date": "2024-09-20",
+          "confidence": "high"
+        }
+      ],
+      "confidence_level": "medium"
+    }
+  }
+}

@@ -1,0 +1,377 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.digitalservice.design/persona/v1.1/core-persona",
+  "title": "Core Persona Schema",
+  "description": "Universal persona schema representing behavioural attributes - who someone is regardless of context. Per Service Design Persona Standard v1.1",
+  "type": "object",
+  "properties": {
+    "schema_info": {
+      "type": "object",
+      "description": "Metadata about this persona document",
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^1\\.1\\.[0-9]+$",
+          "description": "Schema version number"
+        },
+        "standard": {
+          "type": "string",
+          "const": "Service Design Persona Standard v1.1",
+          "description": "Name of the standard this persona conforms to"
+        },
+        "schema_type": {
+          "type": "string",
+          "const": "core-persona",
+          "description": "Type of schema artifact"
+        },
+        "created_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Date persona was created"
+        },
+        "last_updated": {
+          "type": "string",
+          "format": "date",
+          "description": "Date persona was last updated"
+        },
+        "created_by": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Person or team who created this persona"
+        },
+        "organization": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Organization that owns this persona"
+        }
+      },
+      "required": ["version", "schema_type", "last_updated"],
+      "additionalProperties": false
+    },
+    "identity": {
+      "type": "object",
+      "description": "Core identity information for the persona",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^persona-[a-z0-9_-]+$",
+          "maxLength": 60,
+          "description": "Unique identifier with persona- prefix (e.g., persona-sarah-martinez)"
+        },
+        "name": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Full name of the persona"
+        },
+        "summary": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Brief summary describing the persona's behavioural characteristics"
+        }
+      },
+      "required": ["id", "name"],
+      "additionalProperties": false
+    },
+    "demographics": {
+      "type": "object",
+      "description": "Universal demographic information",
+      "properties": {
+        "age": {
+          "type": "integer",
+          "minimum": 16,
+          "maximum": 99,
+          "description": "Age in years"
+        },
+        "location": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "City, state, region, or country"
+        },
+        "education": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Educational background"
+        },
+        "background": {
+          "type": "string",
+          "maxLength": 300,
+          "description": "Relevant background information (e.g., professional history, life stage)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "behavioural_attributes": {
+      "type": "object",
+      "description": "The enduring human - behavioural patterns that persist regardless of role or context",
+      "properties": {
+        "personalNeeds": {
+          "type": "array",
+          "description": "Fundamental human needs - recognition, autonomy, security, belonging, growth, mastery",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "maxLength": 500,
+                "description": "Description of the personal need"
+              },
+              "type": {
+                "enum": ["recognition", "autonomy", "security", "belonging", "growth", "mastery", "other"],
+                "description": "Category of fundamental need"
+              }
+            },
+            "required": ["text"],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "personalFrustrations": {
+          "type": "array",
+          "description": "Behavioural tendencies that create friction - impatience, perfectionism, risk aversion, etc.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "maxLength": 500,
+                "description": "Description of the personal frustration or tendency"
+              },
+              "severity": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 5,
+                "description": "Severity rating from 1 (minor) to 5 (significant)"
+              },
+              "context": {
+                "type": "string",
+                "maxLength": 200,
+                "description": "Situations where this tendency manifests"
+              }
+            },
+            "required": ["text"],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "motivations": {
+          "type": "array",
+          "description": "What drives them as a person",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "maxLength": 500,
+                "description": "Description of the motivation"
+              },
+              "type": {
+                "enum": ["intrinsic", "extrinsic", "social", "achievement"],
+                "description": "Category of motivation"
+              }
+            },
+            "required": ["text"],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "attitudes": {
+          "type": "array",
+          "description": "Key attitudes and beliefs that shape behaviour",
+          "items": {
+            "type": "object",
+            "properties": {
+              "domain": {
+                "type": "string",
+                "maxLength": 50,
+                "description": "Domain this attitude applies to (e.g., work, technology, risk)"
+              },
+              "attitude": {
+                "type": "string",
+                "maxLength": 300,
+                "description": "Description of the attitude or belief"
+              }
+            },
+            "required": ["attitude"],
+            "additionalProperties": false
+          }
+        },
+        "technologyComfort": {
+          "type": "object",
+          "description": "Relationship with technology and digital confidence",
+          "properties": {
+            "level": {
+              "enum": ["beginner", "intermediate", "advanced", "expert"],
+              "description": "Overall technology comfort level"
+            },
+            "description": {
+              "type": "string",
+              "maxLength": 500,
+              "description": "Detailed description of technology relationship"
+            },
+            "preferredDevices": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 50
+              },
+              "description": "Preferred devices (e.g., smartphone, laptop, tablet)"
+            }
+          },
+          "additionalProperties": false
+        },
+        "communicationPreferences": {
+          "type": "object",
+          "description": "How they prefer to receive and share information",
+          "properties": {
+            "preferred": {
+              "type": "array",
+              "items": {
+                "enum": ["email", "phone", "video_call", "in_person", "chat", "sms", "app", "social_media"]
+              },
+              "description": "Preferred communication methods"
+            },
+            "acceptable": {
+              "type": "array",
+              "items": {
+                "enum": ["email", "phone", "video_call", "in_person", "chat", "sms", "app", "social_media"]
+              },
+              "description": "Acceptable but not preferred methods"
+            },
+            "avoided": {
+              "type": "array",
+              "items": {
+                "enum": ["email", "phone", "video_call", "in_person", "chat", "sms", "app", "social_media"]
+              },
+              "description": "Methods typically avoided"
+            },
+            "style": {
+              "type": "string",
+              "maxLength": 300,
+              "description": "Description of communication style (e.g., concise, detailed, visual)"
+            }
+          },
+          "additionalProperties": false
+        },
+        "influences": {
+          "type": "array",
+          "description": "Who shapes their thinking and behaviour",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "type": "string",
+                "maxLength": 100,
+                "description": "Source of influence (e.g., family, peers, experts, media)"
+              },
+              "description": {
+                "type": "string",
+                "maxLength": 300,
+                "description": "How this influence shapes their behaviour"
+              }
+            },
+            "required": ["source"],
+            "additionalProperties": false
+          }
+        },
+        "behaviouralPatterns": {
+          "type": "array",
+          "description": "Characteristic ways they approach situations",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "maxLength": 300,
+                "description": "Description of the behavioural pattern"
+              },
+              "context": {
+                "type": "string",
+                "maxLength": 200,
+                "description": "When this pattern typically manifests"
+              }
+            },
+            "required": ["pattern"],
+            "additionalProperties": false
+          }
+        },
+        "learningStyle": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "How they prefer to acquire new knowledge"
+        },
+        "riskTolerance": {
+          "enum": ["risk_averse", "cautious", "moderate", "risk_tolerant", "risk_seeking"],
+          "description": "Appetite for uncertainty and change"
+        },
+        "decisionMakingStyle": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "How they typically make decisions (e.g., analytical, intuitive, consultative)"
+        }
+      },
+      "required": ["personalNeeds", "personalFrustrations", "motivations"],
+      "additionalProperties": false
+    },
+    "validation": {
+      "type": "object",
+      "description": "Research sources and confidence level",
+      "properties": {
+        "research_sources": {
+          "type": "array",
+          "description": "Sources of research backing this persona",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "type": "string",
+                "maxLength": 200,
+                "description": "Description of the research source"
+              },
+              "type": {
+                "enum": ["interview", "survey", "analytics", "observation", "existing_research"],
+                "description": "Type of research"
+              },
+              "date": {
+                "type": "string",
+                "format": "date",
+                "description": "When the research was conducted"
+              },
+              "confidence": {
+                "enum": ["high", "medium", "low"],
+                "description": "Confidence in this source"
+              }
+            },
+            "required": ["source", "type"],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "confidence_level": {
+          "enum": ["high", "medium", "low"],
+          "description": "Overall confidence in this persona"
+        }
+      },
+      "required": ["research_sources", "confidence_level"],
+      "additionalProperties": false
+    },
+    "extensions": {
+      "type": "object",
+      "description": "Custom and organization-specific fields",
+      "properties": {
+        "custom": {
+          "type": "object",
+          "description": "Organization-specific fields (namespace: orgname_fieldname)",
+          "additionalProperties": true
+        },
+        "legacy": {
+          "type": "object",
+          "description": "Fields migrated from previous formats",
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "required": ["schema_info", "identity", "behavioural_attributes", "validation"],
+  "additionalProperties": false
+}

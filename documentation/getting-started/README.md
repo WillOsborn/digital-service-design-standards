@@ -2,51 +2,129 @@
 *A Comprehensive Professional Standard for Service Designers*
 
 **File Location:** `documentation/getting-started/README.md`
+**Version:** 1.1
 
-## 🎯 Why This Matters for Your Work
+## Why This Matters for Your Work
 
 As a service designer, you've likely faced these challenges:
 
 - **Inconsistent personas** across projects and teams
-- **Lost insights** when team members leave or projects end  
+- **Lost insights** when team members leave or projects end
 - **Tool compatibility** issues when sharing designs
 - **Shallow personas** that don't drive meaningful design decisions
 - **Disconnect between personas and journey maps**
 - **Difficulty measuring** the impact of persona-driven design
 
-**Until now, no industry standard existed for structured persona schemas.** Teams created personas in countless formats, making collaboration difficult and insights hard to preserve.
+**Until now, no industry standard existed for structured service design schemas.** Teams created personas in countless formats, making collaboration difficult and insights hard to preserve.
 
 **Digital Service Design Schemas solve these problems** by establishing a comprehensive, professional standard for capturing and sharing user insights.
 
 ---
 
-## 🔍 What Are Schemas? (Don't Worry - It's Simple)
+## What Are Schemas? (Don't Worry - It's Simple)
 
 Think of a schema like a **professional template** for organizing information:
 
 ### Without a Standard Schema:
 ```
-❌ Everyone creates personas differently
-❌ Important details get forgotten or inconsistent
-❌ Hard to compare personas across projects
-❌ Tools can't understand the data
-❌ Insights get lost when people leave
+- Everyone creates personas differently
+- Important details get forgotten or inconsistent
+- Hard to compare personas across projects
+- Tools can't understand the data
+- Insights get lost when people leave
 ```
 
 ### With Our Professional Schema Standard:
 ```
-✅ Everyone follows the same comprehensive structure
-✅ All important details are captured systematically
-✅ Personas can be compared and combined across projects  
-✅ Tools can automatically analyze and visualize the data
-✅ Insights are preserved in a standard format
++ Everyone follows the same comprehensive structure
++ All important details are captured systematically
++ Personas can be compared and combined across projects
++ Tools can automatically analyze and visualize the data
++ Insights are preserved in a standard format
 ```
 
-**A schema is like having a world-class persona template** that ensures you capture everything important, in a format that tools can understand and process.
+**A schema is like having a world-class template** that ensures you capture everything important, in a format that tools can understand and process.
 
 ---
 
-## 🚀 The Business Value You'll Get
+## The v1.1 Compositional Model
+
+Version 1.1 introduces a powerful approach that separates **who someone is** from **what they're trying to achieve**. This creates reusable building blocks that can be combined in different ways.
+
+### The Four Foundations
+
+```
++-----------------+     +-----------------+
+|  Core Persona   |     |   Role Card     |
+|  (who someone   |  +  |  (what they're  |
+|      is)        |     |    achieving)   |
++--------+--------+     +--------+--------+
+         |                       |
+         +-----------+-----------+
+                     |
+                     v
+             +---------------+
+             |    Pairing    |
+             |  (synthesis)  |
+             +-------+-------+
+                     |
+                     v
+             +---------------+
+             |    Journey    |
+             | (experience   |
+             |  over time)   |
+             +---------------+
+```
+
+#### 1. Core Persona - Who someone is
+
+The **enduring human** - behavioral attributes that persist regardless of context:
+- Technology comfort and communication preferences
+- Personal needs, frustrations, and motivations
+- Decision-making style and risk tolerance
+- How they learn and what influences them
+
+**Example:** Sarah Martinez is research-oriented, prefers mobile apps, has intermediate tech comfort, and values efficiency.
+
+#### 2. Role Card - What they're trying to achieve
+
+The **contextual hat** - goals and constraints specific to a situation:
+- What they need to accomplish in this role
+- Frustrations inherent to this context
+- Success metrics and constraints
+- Domain-specific requirements
+
+**Example:** As a "Working Mom Consumer," Sarah needs to make household purchase decisions efficiently, within budget constraints, while juggling time pressures.
+
+#### 3. Pairing - What emerges when combined
+
+The **synthesis** - what happens when this persona operates in this role:
+- Goals as actually experienced (not just listed)
+- Emergent barriers that arise from the combination
+- Pain points from persona-role collision
+- Opportunities to leverage persona strengths
+
+**Example:** When Sarah (research-oriented) operates as Working Mom Consumer (time-constrained), the barrier "insufficient time for research" *emerges* - she wants to research but the role doesn't allow it.
+
+#### 4. Journey - The experience over time
+
+The **story** - steps and phases of an interaction:
+- Phases with steps, touchpoints, and emotions
+- References to persona + role for context
+- Barriers mapped to specific friction points
+- Channels used at each touchpoint
+
+### Why This Matters
+
+The compositional model enables powerful combinations:
+- **Same persona, different roles**: How does Sarah behave as a consumer vs. an employee?
+- **Same role, different personas**: How do different people experience "Working Mom Consumer"?
+- **Reusable insights**: Research about Sarah applies wherever she appears
+- **Evidence-based design**: Understand *why* barriers emerge, not just *what* they are
+
+---
+
+## The Business Value You'll Get
 
 ### Immediate Benefits (Week 1-4)
 - **Faster persona creation** with guided templates
@@ -54,9 +132,9 @@ Think of a schema like a **professional template** for organizing information:
 - **Better team alignment** with standardized format
 - **Reduced rework** from missing critical information
 
-### Medium-Term Value (Month 1-6)  
+### Medium-Term Value (Month 1-6)
 - **Cross-project learning** from comparable persona data
-- **Tool integration** with automated analysis capabilities
+- **Reusable building blocks** - Core Personas apply across roles
 - **Enhanced collaboration** with consistent documentation
 - **Measurable design impact** through structured success metrics
 
@@ -68,86 +146,70 @@ Think of a schema like a **professional template** for organizing information:
 
 ---
 
-## 🌟 What Makes Our Schema Comprehensive
+## Real-World Impact: Before and After
 
-Most persona templates capture 3-4 basic fields. **Our professional standard captures 9 sophisticated attributes** that drive better design decisions:
-
-### Traditional Persona Approach:
-```
-• Name and basic demographics
-• Goals (simple list)
-• Pain points (simple descriptions)  
-• Maybe some motivations
-```
-
-### Our Comprehensive Professional Standard:
-```
-✅ goals → with priorities, timeframes, and success criteria
-✅ pain_points → with severity, frequency, and business impact
-✅ motivations → categorized by behavioral type
-✅ experience_level → skill progression context
-✅ channels → 10 types with usage context and preferences
-✅ moments_that_matter → critical emotional touchpoints
-✅ barriers → 9-type organizational friction taxonomy
-✅ use_cases → common interaction scenarios
-✅ success_metrics → quantified performance indicators
-```
-
-**This depth enables sophisticated analysis** that goes far beyond basic demographic targeting.
-
----
-
-## 🎨 Real-World Impact: Before and After
-
-### Before: Typical Persona
+### Before: Traditional Persona
 > "Sarah is a busy working mom in Austin. She wants to save time and finds current processes frustrating. She uses her phone a lot."
 
 **Design Insight:** Generic time-saving features for mobile users.
 
-### After: Comprehensive Schema Persona
-> **Sarah Martinez** faces **resource barriers** (only 15-20 minutes for important decisions during lunch breaks) and **communications barriers** (information overload from 8+ different family coordination apps). Her **critical moment** is "school pickup time conflict notification" (emotion: -2, importance: critical) when last-minute work meetings create immediate childcare crises. She prefers **mobile apps during commute** (25-minute train ride, primary preference, daily frequency) and **mom Facebook groups** for trusted local recommendations (social_recommendations channel, weekly frequency).
+### After: v1.1 Compositional Model
 
-**Design Insight:** 
+**Core Persona (Sarah Martinez):**
+> Sarah has **intermediate technology comfort** (confident with consumer apps, reluctant with setup), prefers **mobile apps during commute** (25-minute train ride, daily), and is **research-oriented** in her decision-making style. She values efficiency and relies on **mom Facebook groups** for trusted local recommendations.
+
+**Role Card (Working Mom Consumer):**
+> This role involves making **household purchase decisions** under **time constraints** (only 15-20 minutes for important decisions during lunch breaks). Key frustrations include **information overload** from multiple apps and **decision fatigue** from constant choices.
+
+**Pairing (Sarah as Working Mom Consumer):**
+> When Sarah operates in this role, **emergent barriers** arise: her research-oriented nature collides with time constraints, creating "insufficient time for research." Her reliance on community recommendations becomes **critical** because she can't research independently. The **opportunity** is that her research skills, when properly supported, lead to high-confidence decisions.
+
+**Design Insight:**
 - Quick-decision mobile interfaces optimized for 15-minute research sessions
 - Community recommendation integration with trust verification
-- Crisis-prevention features with backup coordination automation
-- Solutions for information consolidation across multiple family management systems
+- Curated, pre-researched options that satisfy her need for evidence
+- Mobile-first design for commute-time decision making
 
-**See the difference?** The comprehensive persona drives **specific, actionable design decisions** rather than generic improvements.
+**See the difference?** The compositional model reveals *why* barriers exist and *how* to address them specifically for this persona-role combination.
 
 ---
 
-## 🗺️ Personas + Journeys = Powerful Insights
+## Personas + Journeys = Powerful Insights
 
 ### Traditional Approach:
 - Personas created separately from journey maps
 - Weak connections between user needs and experience steps
 - Generic journey maps that don't reflect real user contexts
 
-### Our Comprehensive Schema Approach:
-- **Personas linked to journeys** with rich contextual information
-- **Barriers mapped to friction** at specific journey steps  
+### Our Compositional Approach:
+- **Personas linked to journeys** with `personaRef` and `roleRefs`
+- **Barriers mapped to friction** at specific journey steps
+- **Emergence explained** - barriers include `emergesFrom` explaining the persona-role collision
 - **Channel preferences** drive touchpoint selection
-- **Moments that matter** trigger emotional journey changes
 
-#### Example: Sarah's Childcare Search Journey
+#### Example: Sarah's Shopping Journey
 ```
-Journey Step: "Research childcare options"
-↓
-Persona Barriers: "resource: Limited time - only lunch breaks available"
-↓
-Journey Friction: "Provider websites not mobile-optimized for quick scanning"
-↓
-Emotion Change: 0 → -1 (frustration from time pressure)
-↓
-Design Opportunity: Mobile-first provider comparison tool
+Journey Step: "Research product options"
+    |
+    v
+Pairing Barrier: "Insufficient time for research"
+    |
+    v
+emergesFrom: "Sarah's research-oriented style collides with
+             Working Mom Consumer's 15-minute decision windows"
+    |
+    v
+Journey Friction: "Product comparison sites require 30+ minutes to use effectively"
+    |
+    v
+Design Opportunity: Quick comparison tool with community-verified top picks
 ```
 
 **This integration reveals exactly where and why users struggle**, enabling targeted solutions rather than generic improvements.
 
 ---
 
-## 🔧 JSON: Your New Design Tool (Easier Than You Think)
+## JSON: Your New Design Tool (Easier Than You Think)
 
 **JSON (JavaScript Object Notation) is just a way to organize information** that both humans and computers can read. Think of it as a **structured filing system**.
 
@@ -155,23 +217,28 @@ Design Opportunity: Mobile-first provider comparison tool
 
 ```json
 {
-  "person": {
+  "corePersona": {
+    "id": "persona-sarah-martinez",
     "name": "Sarah Martinez",
-    "role": "Working Mom",
-    "location": "Austin, TX"
-  },
-  "goals": [
-    {
-      "text": "Find reliable childcare within 10 minutes of home",
-      "priority": "primary",
-      "timeframe": "immediate"
+    "technologyComfort": {
+      "level": "intermediate",
+      "confidenceAreas": ["consumer mobile apps", "social media"],
+      "avoidanceAreas": ["complex setup", "technical configuration"]
     }
-  ]
+  },
+  "roleCard": {
+    "id": "role-working-mom-consumer",
+    "name": "Working Mom Consumer",
+    "roleBasedNeeds": [
+      "Make good decisions quickly",
+      "Find trustworthy options"
+    ]
+  }
 }
 ```
 
 **Translation:**
-- `{}` = A container (like a folder)  
+- `{}` = A container (like a folder)
 - `[]` = A list (like bullet points)
 - `"name": "value"` = A label with information (like a form field)
 
@@ -179,158 +246,178 @@ Design Opportunity: Mobile-first provider comparison tool
 
 ---
 
-## 🛠️ How You'll Actually Use This
+## How You'll Actually Use This
 
-### Step 1: Choose Your Persona Type
-Pick the template that matches your context:
-- **Business Persona** (B2B contexts, workplace decisions)
-- **Consumer Persona** (B2C contexts, personal decisions)  
-- **Employee Persona** (Internal experiences, workplace tools)
+### Step 1: Create a Core Persona
+Capture the enduring human - behavioral attributes that persist:
+- Technology comfort (level, confidence areas, avoidance areas)
+- Communication preferences (preferred channels, frequency)
+- Personal needs and frustrations
+- Decision-making style and influences
 
-### Step 2: Fill Out the Comprehensive Template
-Use our guided templates to capture:
-- Strategic goals with priorities and success criteria
-- Pain points with severity and business impact
-- The 9 types of barriers they face (process, technology, knowledge, etc.)
-- Channel preferences with usage context (10 channel types)
-- Critical emotional moments that matter most
+### Step 2: Create Role Cards
+Define the contextual hats your persona might wear:
+- Role type and context (consumer, employee, business)
+- Role-based needs specific to this situation
+- Role-based frustrations inherent to the context
+- Success metrics for this role
 
-### Step 3: Validate and Integrate
-- Run our validation tools to ensure completeness
-- Link personas to journey maps for integrated analysis
+### Step 3: Create Pairings
+Capture what emerges when a persona operates in a role:
+- Goals as actually experienced
+- Barriers with `emergesFrom` explaining the collision
+- Pain points from the specific combination
+- Opportunities to leverage persona strengths
+
+### Step 4: Build Journeys
+Map the experience over time:
+- Reference persona and role with `personaRef` and `roleRefs`
+- Map barriers to specific friction points
+- Track emotional changes through the journey
+- Identify design opportunities
+
+### Step 5: Validate and Iterate
+- Run validation tools to ensure schema compliance
 - Share with team using standard format
-
-### Step 4: Analyze and Iterate
-- Use comprehensive data for sophisticated design decisions
-- Track performance against persona success metrics
+- Track performance against success metrics
 - Refine based on real-world feedback
 
 **The process is designed to be intuitive for service designers** - you think about users, we handle the technical structure.
 
 ---
 
-## 👥 Real Examples You Can Follow
+## Real Examples You Can Follow
 
-We've created three complete comprehensive personas you can learn from:
+We've created a complete example set demonstrating the v1.1 compositional model:
 
-### 🏥 David Chen - IT Director, Healthcare Technology
-**Context:** Needs to modernize healthcare IT while maintaining security compliance  
-**Key Barriers:** Legacy technology integration, governance approval cycles, board vision alignment  
-**Critical Moment:** Security audit results (-2 emotion, critical importance)  
-**Design Impact:** Solutions must address compliance-first decision making with 6-month approval cycles
+### Sarah Martinez - Core Persona
+**Who she is:** Research-oriented, intermediate technology comfort, values efficiency
+**Communication:** Prefers mobile apps, uses social media for recommendations
+**Decision style:** Needs evidence but can be swayed by trusted community input
 
-### 👩‍👧‍👦 Sarah Martinez - Working Mom, Austin TX  
-**Context:** Managing family coordination while working full-time  
-**Key Barriers:** Time constraints (15-minute decision windows), information overload, complex processes  
-**Critical Moment:** School pickup conflict notification (-2 emotion, critical importance)  
-**Design Impact:** Mobile-first crisis prevention with community-verified recommendations
+### Working Mom Consumer - Role Card
+**Context:** Making household purchase decisions while working full-time
+**Key Needs:** Quick decisions, trustworthy options, budget awareness
+**Frustrations:** Time constraints, information overload, decision fatigue
 
-### 🎯 Maria Rodriguez - Senior Sales Rep, Enterprise Software
-**Context:** Achieving sales quotas while managing administrative overhead  
-**Key Barriers:** Duplicate data entry, scattered customer information, activity vs outcome metrics  
-**Critical Moment:** Monthly sales results meeting (+1 emotion, critical importance)  
-**Design Impact:** Integrated tools reducing admin time by 40% to focus on revenue activities
+### Sarah as Working Mom Consumer - Pairing
+**Emergent Barriers:** Research-oriented nature collides with time constraints
+**Goals as Experienced:** "Find good-enough options quickly" (not "find the perfect option")
+**Opportunity:** Pre-curated, community-verified options satisfy both research needs and time constraints
 
-**Each persona includes complete barrier analysis, channel preferences, emotional touchpoints, and journey integration examples.**
+### Clothes Shopping Journey
+**Shows:** How Sarah's behavioral tendencies interact with role demands across discovery, evaluation, purchase, and post-purchase phases.
+
+**Find these examples in:**
+- `v1.1/examples/personas/persona-sarah-martinez.json`
+- `v1.1/examples/roles/role-working-mom-consumer.json`
+- `v1.1/examples/pairings/pairing-sarah-working-mom.json`
+- `v1.1/examples/journeys/sarah-martinez-clothes-shopping-journey.json`
 
 ---
 
-## 🎓 Learning Path for Service Designers
+## Learning Path for Service Designers
 
 ### Week 1: Understanding the System
-- [ ] Read through the comprehensive persona examples (David, Sarah, Maria)
+- [ ] Read the root `GETTING_STARTED.md` for quick orientation
+- [ ] Read `v1.1/README.md` for the compositional model overview
+- [ ] Review the Sarah Martinez example set (persona, role, pairing)
 - [ ] Compare with your current persona creation process
-- [ ] Identify which barriers and moments resonate with your users
 
 ### Week 2: Getting Hands-On
-- [ ] Choose one existing persona to convert to comprehensive format
-- [ ] Use our migration guide to add all 9 core attributes
+- [ ] Create your first Core Persona using the examples as templates
+- [ ] Create a Role Card for a context your persona operates in
+- [ ] Create a Pairing capturing what emerges when combined
 - [ ] Run the validation tools to check your work
 
 ### Week 3: Integration Practice
-- [ ] Link your comprehensive persona to an existing journey map
-- [ ] Map persona barriers to journey friction points
-- [ ] Identify opportunities for design improvements
+- [ ] Build a journey referencing your persona and role
+- [ ] Map pairing barriers to journey friction points
+- [ ] Track emotional changes through the journey
+- [ ] Identify design opportunities
 
-### Week 4: Team Adoption  
-- [ ] Share your comprehensive persona with teammates
+### Week 4: Team Adoption
+- [ ] Share your compositional persona set with teammates
 - [ ] Gather feedback on insights and actionability
-- [ ] Plan rollout of comprehensive schema system
+- [ ] Plan rollout of v1.1 schema system
 
 **By Week 4, you'll be creating personas that drive significantly better design decisions.**
 
 ---
 
-## 📚 Key Resources
+## Key Resources
+
+### Getting Started
+- **[Root GETTING_STARTED.md](../../GETTING_STARTED.md)** - Quick orientation to the foundations
+- **[v1.1 README](../../v1.1/README.md)** - Compositional model overview
+- **[Your First Persona](your-first-persona.md)** - Step-by-step creation guide
 
 ### Official Taxonomy References
 - **[Barrier Taxonomy](../BARRIER_TAXONOMY.md)** - Complete guide to the 9 barrier types
-- **[Channel Taxonomy](../CHANNEL_TAXONOMY.md)** - Complete guide to the 10 channel types
+- **[Channel Taxonomy](../CHANNEL_TAXONOMY.md)** - Complete guide to channel classification
 
 ### Implementation Guides
-- **[Your First Persona](your-first-persona.md)** - Step-by-step creation guide
 - **[Quick Reference](quick-reference.md)** - Templates and field-by-field guidance
 - **[Migration Guide](../implementation/migration-guide.md)** - Converting existing personas
+- **[Quality Checklist](../implementation/quality-checklist.md)** - Production readiness standards
 
 ### Advanced Resources
-- **[Examples and Patterns](../implementation/examples-and-patterns.md)** - Real-world usage patterns
-- **[Quality Checklist](../implementation/quality-checklist.md)** - Production readiness standards
+- **[Patterns (Advanced)](../../patterns/README.md)** - Reusable journey components that adapt to persona+role
+- **[Pattern System Summary](../../patterns/SERVICE_PATTERNS_SUMMARY.md)** - Complete pattern guide
 
 ---
 
-## 🤝 Community and Support
+## Community and Support
 
 ### You're Not Alone in This
 - **GitHub Community**: Share questions, examples, and improvements
-- **Migration Support**: Step-by-step guides from basic to comprehensive format
-- **Validation Tools**: Automated quality checking with enhancement scoring
-- **Real Examples**: Learn from David, Sarah, and Maria - complete comprehensive personas
+- **Migration Support**: Step-by-step guides for adopting v1.1
+- **Validation Tools**: Automated quality checking
+- **Real Examples**: Learn from the Sarah Martinez example set
 - **Best Practices**: Patterns and approaches from successful implementations
 
 ### How to Get Started
-1. **Explore the examples** - See how comprehensive personas work in practice
-2. **Try the migration guide** - Convert one existing persona using our templates
+1. **Explore the examples** - See how the compositional model works in practice
+2. **Try creating a set** - Core Persona + Role Card + Pairing
 3. **Join the community** - Share your experience and learn from others
 4. **Contribute insights** - Help improve the schemas based on your domain expertise
 
 ---
 
-## 🎯 The Bottom Line for Service Designers
+## The Bottom Line for Service Designers
 
 **Digital Service Design Schemas establish the professional standard for evidence-based service design practice.**
 
 ### What You Get:
-✅ **Deeper user understanding** through comprehensive behavioral analysis  
-✅ **Better design decisions** driven by specific, actionable insights  
-✅ **Team alignment** through standardized, shareable persona formats  
-✅ **Measurable impact** through structured success criteria and performance tracking  
-✅ **Future-proof assets** that grow in value over time  
-✅ **Professional advancement** through sophisticated design practice
+- **Deeper user understanding** through the compositional model
+- **Better design decisions** driven by understanding *why* barriers emerge
+- **Reusable building blocks** - personas that apply across roles
+- **Team alignment** through standardized, shareable formats
+- **Measurable impact** through structured success criteria
+- **Professional advancement** through sophisticated design practice
 
 ### What You Don't Need:
-❌ Programming skills (we provide templates and tools)  
-❌ Technical background (focus on insights, not code)  
-❌ Complex software (works with your existing design tools)  
-❌ Big budget (open source and community-supported)
+- Programming skills (we provide templates and tools)
+- Technical background (focus on insights, not code)
+- Complex software (works with your existing design tools)
+- Big budget (open source and community-supported)
 
 **This is about elevating your service design practice** to create more impactful, evidence-based user experiences. The technical format is just the vehicle - **your expertise and insights are the engine.**
 
 ---
 
-## 🚀 Ready to Get Started?
+## Ready to Get Started?
 
 ### Next Steps:
-1. **📖 Read the Comprehensive Examples** - See David, Sarah, and Maria in action
-2. **🛠️ Try the Migration Guide** - Convert your first persona to comprehensive format  
-3. **✅ Use the Validation Tools** - Ensure your persona meets professional standards
-4. **🗺️ Integrate with Journeys** - See how comprehensive personas transform experience mapping
-5. **🤝 Join the Community** - Share your successes and learn from others
+1. **Read the root GETTING_STARTED.md** - Quick orientation to the four foundations
+2. **Read v1.1/README.md** - Understand the compositional model
+3. **Review the example set** - See Sarah Martinez as persona, role, and pairing
+4. **Create your first set** - Core Persona + Role Card + Pairing
+5. **Build a journey** - See how everything connects
 
 **The future of service design is systematic, evidence-based, and measurably impactful.**
 
 **Digital Service Design Schemas make that future accessible to every service designer, regardless of technical background.**
-
-**Adopt the professional standard and transform your service design practice today.**
 
 ---
 

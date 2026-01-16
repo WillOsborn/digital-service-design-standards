@@ -1,0 +1,112 @@
+{
+  "schema_info": {
+    "version": "1.1.0",
+    "standard": "Service Design Role Card Standard v1.1",
+    "schema_type": "role-card",
+    "created_date": "2026-01-06",
+    "last_updated": "2026-01-15",
+    "created_by": "Digital Service Design Team",
+    "organization": "Digital Service Design Working"
+  },
+  "identity": {
+    "id": "role-senior-sales-rep",
+    "title": "Senior Sales Representative",
+    "description": "High-performing individual contributor in enterprise sales, responsible for quota attainment, customer relationships, and pipeline development. Navigates complex internal systems while maximising customer-facing time."
+  },
+  "roleType": "Professional",
+  "roleContext": {
+    "professionalContext": {
+      "organisational_relationship": "internal",
+      "role_title": "Senior Sales Representative",
+      "department": "Sales - West Coast Region",
+      "career_stage": "Mid-career professional with advancement aspirations to sales management",
+      "seniority_level": "individual_contributor",
+      "responsibilities": [
+        "Exceed quarterly and annual sales quotas",
+        "Develop and maintain key enterprise accounts",
+        "Collaborate with internal teams on proposals and deals",
+        "Accurately forecast pipeline and opportunities",
+        "Mentor new sales hires"
+      ],
+      "tools_and_systems": [
+        "CRM system (Salesforce)",
+        "Mobile sales app",
+        "Collaboration tools (Teams, Slack)",
+        "Learning management system",
+        "Proposal and contract tools"
+      ],
+      "success_metrics": [
+        "Sales quota attainment percentage",
+        "Customer satisfaction ratings",
+        "Pipeline quality and conversion rates",
+        "Time to close deals"
+      ],
+      "workflows": [
+        "Daily customer data management and opportunity tracking",
+        "Weekly forecast reviews and pipeline updates",
+        "Monthly performance reviews",
+        "Quarterly planning and goal setting"
+      ]
+    }
+  },
+  "roleBasedNeeds": [
+    {
+      "text": "Exceed annual sales quota by 110%",
+      "priority": "primary",
+      "timeframe": "short_term"
+    },
+    {
+      "text": "Develop leadership skills for future management role",
+      "priority": "primary",
+      "timeframe": "long_term"
+    },
+    {
+      "text": "Build stronger relationships with key enterprise accounts",
+      "priority": "secondary",
+      "timeframe": "long_term"
+    },
+    {
+      "text": "Improve efficiency in proposal and contract processes",
+      "priority": "secondary",
+      "timeframe": "short_term"
+    },
+    {
+      "text": "Access customer information quickly while on the road",
+      "priority": "secondary",
+      "timeframe": "immediate"
+    }
+  ],
+  "roleBasedFrustrations": [
+    {
+      "text": "Too much time spent on administrative tasks instead of selling",
+      "severity": 4,
+      "frequency": "daily",
+      "context": "Reduces time available for customer-facing activities"
+    },
+    {
+      "text": "Difficulty accessing customer information while on the road",
+      "severity": 4,
+      "frequency": "weekly",
+      "context": "Impacts meeting preparation and customer interactions"
+    },
+    {
+      "text": "Slow approval processes for custom pricing",
+      "severity": 3,
+      "frequency": "monthly",
+      "context": "Delays deal closure and frustrates customers"
+    },
+    {
+      "text": "Inconsistent training on new products and features",
+      "severity": 3,
+      "frequency": "occasional",
+      "context": "Affects confidence when presenting to customers"
+    }
+  ],
+  "extensions": {
+    "custom": {
+      "travel_requirements": "Frequent travel to customer sites (40-50% of time)",
+      "performance_review_frequency": "Quarterly with formal reviews every 6 months",
+      "career_development": "Participates in leadership development program"
+    }
+  }
+}

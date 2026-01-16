@@ -1,0 +1,259 @@
+{
+  "schema_info": {
+    "version": "1.1.0",
+    "standard": "Service Design Pairing Standard v1.1",
+    "schema_type": "pairing",
+    "created_date": "2026-01-06",
+    "last_updated": "2026-01-06",
+    "created_by": "Digital Service Design Team",
+    "organization": "Digital Service Design Working"
+  },
+  "identity": {
+    "id": "pairing-maria-sales-rep",
+    "title": "Maria Rodriguez as Senior Sales Representative",
+    "description": "Maria's achievement orientation and collaborative nature combined with the demands of a high-performance sales role requiring efficiency, mobility, and cross-functional coordination."
+  },
+  "references": {
+    "personaRef": "persona-maria-rodriguez",
+    "roleRefs": ["role-senior-sales-rep"]
+  },
+  "synthesis": {
+    "quote": "Every minute I spend fighting with our systems is a minute I'm not spending with customers. I've figured out workarounds, but I shouldn't have to.",
+    "goalsAsExperienced": [
+      {
+        "text": "Hit aggressive sales targets while maintaining genuine customer relationships",
+        "source": "persona+role",
+        "priority": "primary"
+      },
+      {
+        "text": "Minimise administrative overhead to maximise selling time",
+        "source": "persona+role",
+        "priority": "primary"
+      },
+      {
+        "text": "Build reputation that supports advancement to management",
+        "source": "persona",
+        "priority": "primary"
+      },
+      {
+        "text": "Stay informed on products and competitive landscape without lengthy training",
+        "source": "role",
+        "priority": "secondary"
+      }
+    ],
+    "painPoints": [
+      {
+        "text": "Achievement drive frustrated by inefficient internal systems",
+        "severity": 4,
+        "emergesFrom": "Maria's impatience with inefficiency collides with role's administrative requirements"
+      },
+      {
+        "text": "Mobile limitations impact her ability to perform while travelling",
+        "severity": 4,
+        "emergesFrom": "Maria's autonomy needs meet role's heavy travel requirements"
+      },
+      {
+        "text": "Change resistance conflicts with system updates that disrupt her workflow",
+        "severity": 3,
+        "emergesFrom": "Maria's protection of successful workflows meets role's evolving tool landscape"
+      },
+      {
+        "text": "Information gaps undermine her customer relationships",
+        "severity": 3,
+        "emergesFrom": "Maria's relationship focus meets role's poor internal communication"
+      }
+    ],
+    "barriers": [
+      {
+        "barrier": "Complex systems that require multiple logins",
+        "type": "technology",
+        "impact": "Wastes time and creates frustration during customer interactions",
+        "workarounds": "Uses password manager and bookmarks to streamline access",
+        "emergesFrom": "Maria's efficiency drive meets fragmented technology stack"
+      },
+      {
+        "barrier": "Limited mobile functionality for key applications",
+        "type": "technology",
+        "impact": "Reduces productivity while traveling to customer sites",
+        "workarounds": "Relies on phone calls and email when traveling"
+      },
+      {
+        "barrier": "Inadequate integration between sales and marketing tools",
+        "type": "technology",
+        "impact": "Manual data entry and coordination overhead",
+        "workarounds": "Manually coordinates between systems and teams"
+      },
+      {
+        "barrier": "Insufficient training time for new features",
+        "type": "resource",
+        "impact": "Slower adoption and potential errors in customer conversations",
+        "workarounds": "Learns on-the-job and relies on peer support",
+        "emergesFrom": "Maria's hands-on learning preference helps but formal support is lacking"
+      },
+      {
+        "barrier": "Unclear company strategic direction affects sales messaging",
+        "type": "vision",
+        "impact": "Inconsistent customer messaging and lost opportunities",
+        "workarounds": "Develops own customer-focused messaging based on feedback"
+      },
+      {
+        "barrier": "Poor communication about product updates and competitive positioning",
+        "type": "communications",
+        "impact": "Surprised by customer questions or competitor moves",
+        "workarounds": "Maintains informal network with product management team",
+        "emergesFrom": "Maria's network-building strength compensates for organisational gaps"
+      },
+      {
+        "barrier": "Unclear approval authority for custom pricing and deal structures",
+        "type": "governance",
+        "impact": "Delays deals and creates customer frustration",
+        "workarounds": "Maintains relationships with multiple decision makers for faster approvals"
+      }
+    ],
+    "opportunities": [
+      "Mobile-first tools that work seamlessly on the road",
+      "Integrated systems that reduce context-switching and duplicate entry",
+      "Quick-reference product updates optimised for sales conversations",
+      "Streamlined approval workflows with clear authority and fast turnaround",
+      "Peer learning platforms that match her hands-on learning style",
+      "Recognition systems that highlight high performers to leadership"
+    ],
+    "emotionalContext": "Generally positive and energetic, but frequently frustrated by internal friction. Feels pride in customer successes and team contributions. Anxiety during performance reviews despite strong track record."
+  },
+  "extendedContext": {
+    "channels": [
+      {
+        "channel": "app",
+        "medium": "digital",
+        "serviceModel": "self_service",
+        "name": "CRM mobile app",
+        "usage_context": "Daily customer data management and opportunity tracking while on the road",
+        "preference_level": "preferred"
+      },
+      {
+        "channel": "video_call",
+        "medium": "digital",
+        "serviceModel": "managed",
+        "name": "Team meetings and video calls",
+        "usage_context": "Collaboration, updates, and strategic discussions",
+        "preference_level": "preferred"
+      },
+      {
+        "channel": "chat",
+        "medium": "digital",
+        "serviceModel": "both",
+        "name": "Internal chat and messaging",
+        "usage_context": "Quick questions and informal coordination",
+        "preference_level": "acceptable"
+      },
+      {
+        "channel": "website",
+        "medium": "digital",
+        "serviceModel": "self_service",
+        "name": "Training portals and LMS",
+        "usage_context": "Professional development and product knowledge when time permits",
+        "preference_level": "acceptable"
+      }
+    ],
+    "moments_that_matter": [
+      {
+        "moment": "Quarterly performance reviews",
+        "emotional_intensity": 0,
+        "importance": "critical",
+        "current_experience": "Mix of anticipation and confidence based on performance"
+      },
+      {
+        "moment": "New product launch announcements",
+        "emotional_intensity": 1,
+        "importance": "high",
+        "current_experience": "Excitement about new sales opportunities tempered by need to quickly learn positioning"
+      },
+      {
+        "moment": "System updates and process changes",
+        "emotional_intensity": -1,
+        "importance": "medium",
+        "current_experience": "Frustration with disruptions to established workflow"
+      },
+      {
+        "moment": "Annual planning and goal setting",
+        "emotional_intensity": 1,
+        "importance": "high",
+        "current_experience": "Optimism about achieving ambitious targets"
+      },
+      {
+        "moment": "Closing a major deal",
+        "emotional_intensity": 2,
+        "importance": "critical",
+        "current_experience": "Elation and sense of accomplishment"
+      }
+    ],
+    "use_cases": [
+      {
+        "scenario": "Accessing customer data during client meetings",
+        "trigger": "Customer meeting preparation or live discussion",
+        "outcome": "Quick access to relevant customer history and context"
+      },
+      {
+        "scenario": "Updating opportunity status and forecasting",
+        "trigger": "Deal progress or weekly forecast review",
+        "outcome": "Accurate pipeline data with minimal effort"
+      },
+      {
+        "scenario": "Collaborating with internal teams on proposals",
+        "trigger": "Complex deal requiring cross-functional support",
+        "outcome": "Fast, coordinated proposal delivery"
+      },
+      {
+        "scenario": "Tracking progress toward sales targets",
+        "trigger": "Daily performance monitoring",
+        "outcome": "Real-time visibility into quota attainment"
+      }
+    ],
+    "success_metrics": [
+      {
+        "metric": "Sales quota attainment percentage",
+        "target": "110%+"
+      },
+      {
+        "metric": "Customer satisfaction ratings",
+        "target": ">90%"
+      },
+      {
+        "metric": "Pipeline quality and conversion rates"
+      },
+      {
+        "metric": "Time to complete administrative tasks",
+        "target": "Minimise"
+      }
+    ]
+  },
+  "reviewMetadata": {
+    "personaLastUpdated": "2026-01-06",
+    "roleLastUpdated": "2026-01-06",
+    "pairingLastReviewed": "2026-01-06"
+  },
+  "validation": {
+    "research_sources": [
+      {
+        "source": "Employee satisfaction survey (January 2024)",
+        "type": "survey",
+        "date": "2024-01-30",
+        "confidence": "high"
+      },
+      {
+        "source": "Focus group sessions",
+        "type": "interview",
+        "confidence": "high"
+      },
+      {
+        "source": "Manager feedback interviews",
+        "type": "interview",
+        "confidence": "medium"
+      }
+    ],
+    "confidence_level": "medium"
+  },
+  "extensions": {
+    "migrated_from": "maria-rodriguez-senior-sales-rep (v1.0.3)"
+  }
+}

@@ -1,0 +1,169 @@
+{
+  "schema_info": {
+    "version": "1.1.0",
+    "standard": "Service Design Persona Standard v1.1",
+    "schema_type": "core-persona",
+    "created_date": "2024-01-30",
+    "last_updated": "2026-01-06",
+    "created_by": "Digital Service Design Team",
+    "organization": "Digital Service Design Working"
+  },
+  "identity": {
+    "id": "persona-maria-rodriguez",
+    "name": "Maria Rodriguez",
+    "summary": "High-achieving professional driven by career advancement and recognition. Collaborative team player who values efficiency, customer relationships, and peer support. Embraces tools that improve productivity but resists changes that disrupt established workflows."
+  },
+  "demographics": {
+    "age": 35,
+    "location": "Los Angeles, California",
+    "education": "Bachelor's Degree in Business Administration",
+    "background": "8 years of sales experience with consistent high performance. Active mentor to new hires and advocate for diversity and inclusion initiatives."
+  },
+  "behavioural_attributes": {
+    "personalNeeds": [
+      {
+        "text": "Achieve recognition for high performance and contributions",
+        "type": "recognition"
+      },
+      {
+        "text": "Grow professionally and advance to leadership roles",
+        "type": "growth"
+      },
+      {
+        "text": "Build meaningful relationships and help others succeed",
+        "type": "belonging"
+      },
+      {
+        "text": "Have autonomy in how she approaches her work",
+        "type": "autonomy"
+      }
+    ],
+    "personalFrustrations": [
+      {
+        "text": "Impatience with inefficient processes that waste time",
+        "severity": 4,
+        "context": "Any administrative task that takes away from customer-facing activities"
+      },
+      {
+        "text": "Frustration when lack of information affects her ability to perform",
+        "severity": 3,
+        "context": "Product updates, competitive positioning, or customer history"
+      },
+      {
+        "text": "Resistance to changes that disrupt established, successful workflows",
+        "severity": 3,
+        "context": "System updates or process changes mid-quarter"
+      }
+    ],
+    "motivations": [
+      {
+        "text": "Career advancement and professional growth",
+        "type": "achievement"
+      },
+      {
+        "text": "Recognition for high performance",
+        "type": "extrinsic"
+      },
+      {
+        "text": "Helping customers solve business problems",
+        "type": "intrinsic"
+      },
+      {
+        "text": "Financial incentives and commission earnings",
+        "type": "extrinsic"
+      }
+    ],
+    "attitudes": [
+      {
+        "domain": "technology",
+        "attitude": "Embraces tools that genuinely improve efficiency; skeptical of technology that adds complexity without clear benefit"
+      },
+      {
+        "domain": "teamwork",
+        "attitude": "Highly collaborative; believes success comes from strong relationships with colleagues and customers"
+      },
+      {
+        "domain": "change",
+        "attitude": "Open to change when benefits are clear, but protective of workflows that already work well"
+      },
+      {
+        "domain": "learning",
+        "attitude": "Prefers hands-on learning and peer support over formal training"
+      }
+    ],
+    "technologyComfort": {
+      "level": "advanced",
+      "description": "Highly proficient with CRM systems and mobile tools. Quick to adopt new technology that saves time. Uses mobile devices extensively while travelling. Comfortable with digital collaboration tools.",
+      "preferredDevices": ["smartphone", "laptop", "tablet"]
+    },
+    "communicationPreferences": {
+      "preferred": ["video_call", "in_person"],
+      "acceptable": ["chat", "email"],
+      "avoided": [],
+      "style": "Direct and action-oriented. Values face-to-face for important conversations. Uses quick digital channels for coordination."
+    },
+    "influences": [
+      {
+        "source": "Peers and colleagues",
+        "description": "Learns from successful colleagues and values peer recommendations on tools and techniques"
+      },
+      {
+        "source": "Customers",
+        "description": "Customer feedback shapes her approach and priorities"
+      },
+      {
+        "source": "Mentors and managers",
+        "description": "Values guidance from experienced leaders on career development"
+      }
+    ],
+    "behaviouralPatterns": [
+      {
+        "pattern": "Prioritises customer-facing activities over administrative tasks",
+        "context": "Daily work allocation and time management"
+      },
+      {
+        "pattern": "Builds informal networks to get things done efficiently",
+        "context": "Navigating organisational processes and approvals"
+      },
+      {
+        "pattern": "Mentors and supports colleagues, especially new team members",
+        "context": "Team interactions and knowledge sharing"
+      },
+      {
+        "pattern": "Develops workarounds when official processes are too slow",
+        "context": "Customer-urgent situations that require quick action"
+      }
+    ],
+    "learningStyle": "Hands-on learner who prefers learning by doing with peer support. Values quick reference guides over comprehensive documentation.",
+    "riskTolerance": "moderate",
+    "decisionMakingStyle": "Action-oriented with customer focus. Makes quick decisions based on experience and customer needs, then adapts as needed."
+  },
+  "validation": {
+    "research_sources": [
+      {
+        "source": "Employee satisfaction survey (January 2024)",
+        "type": "survey",
+        "date": "2024-01-30",
+        "confidence": "high"
+      },
+      {
+        "source": "Focus group sessions",
+        "type": "interview",
+        "confidence": "high"
+      },
+      {
+        "source": "Manager feedback interviews",
+        "type": "interview",
+        "confidence": "medium"
+      }
+    ],
+    "confidence_level": "medium"
+  },
+  "extensions": {
+    "custom": {},
+    "legacy": {
+      "migrated_from": "maria-rodriguez-senior-sales-rep (v1.0.3)",
+      "original_persona_type": "employee"
+    }
+  }
+}

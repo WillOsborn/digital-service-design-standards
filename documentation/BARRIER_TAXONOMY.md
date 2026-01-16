@@ -1,7 +1,7 @@
 # Canonical Barrier Taxonomy
 
-**Version:** 1.0.2
-**Last Updated:** 2025-11-28
+**Version:** 1.1.0
+**Last Updated:** 2026-01-06
 **Status:** Official Reference
 
 ## Overview
@@ -27,6 +27,20 @@ This document defines the official 9-type barrier taxonomy used across all Digit
 | `vision` | Strategic alignment and clarity issues | What misalignment exists in goals and priorities | Leadership education, strategic alignment, ROI demonstration |
 | `communications` | Information flow and stakeholder alignment | Where communication breaks down | Notifications, status updates, transparency features |
 | `governance` | Decision-making and approval processes | Who needs to approve what and when | Workflow optimization, approval tracking, escalation paths |
+
+---
+
+## Severity Scale
+
+| Severity | Label | Definition |
+|----------|-------|------------|
+| 1 | Minimal | Minor inconvenience, easily worked around |
+| 2 | Low | Noticeable friction, workarounds exist |
+| 3 | Moderate | Significant impact, workarounds difficult |
+| 4 | High | Major blocker, workarounds inadequate |
+| 5 | Critical | Complete blocker, no workarounds |
+
+Use the numeric value in JSON schemas. Labels are for human communication.
 
 ---
 
@@ -61,7 +75,7 @@ This document defines the official 9-type barrier taxonomy used across all Digit
 {
   "type": "process",
   "description": "CRM requires duplicate data entry across 4 different systems for each prospect",
-  "severity": "high",
+  "severity": 4,
   "impact_areas": ["time_efficiency", "data_accuracy", "user_frustration"],
   "business_impact": "10+ hours weekly on admin vs revenue-generating activities"
 }
@@ -98,7 +112,7 @@ This document defines the official 9-type barrier taxonomy used across all Digit
 {
   "type": "technology",
   "description": "Legacy EHR system built on outdated architecture, incompatible with modern cloud security tools",
-  "severity": "high",
+  "severity": 4,
   "impact_areas": ["security", "scalability", "integration"],
   "business_impact": "Blocking $200K in planned security improvements"
 }
@@ -135,7 +149,7 @@ This document defines the official 9-type barrier taxonomy used across all Digit
 {
   "type": "knowledge",
   "description": "Team lacks cloud-native security expertise needed to evaluate solutions",
-  "severity": "medium",
+  "severity": 3,
   "impact_areas": ["implementation_risk", "vendor_evaluation", "ongoing_management"],
   "business_impact": "Can't properly assess security solutions, may make poor choices"
 }
@@ -172,7 +186,7 @@ This document defines the official 9-type barrier taxonomy used across all Digit
 {
   "type": "resource",
   "description": "Limited time for research - only 15-20 minutes available during lunch breaks",
-  "severity": "high",
+  "severity": 4,
   "impact_areas": ["decision_quality", "stress_levels", "satisfaction"],
   "business_impact": "Defaults to first acceptable option vs optimal choice"
 }
@@ -209,7 +223,7 @@ This document defines the official 9-type barrier taxonomy used across all Digit
 {
   "type": "policy",
   "description": "HIPAA compliance requires 6-month vendor security review before any healthcare data access",
-  "severity": "high",
+  "severity": 4,
   "impact_areas": ["speed_to_market", "vendor_selection", "implementation_timeline"],
   "business_impact": "12-18 month delay vs competitors in non-regulated industries"
 }
@@ -246,7 +260,7 @@ This document defines the official 9-type barrier taxonomy used across all Digit
 {
   "type": "cultural",
   "description": "Sales team prefers manual Excel tracking despite CRM availability due to perceived flexibility",
-  "severity": "medium",
+  "severity": 3,
   "impact_areas": ["data_quality", "visibility", "collaboration"],
   "business_impact": "Management lacks real-time pipeline visibility, forecasting inaccurate"
 }
@@ -283,7 +297,7 @@ This document defines the official 9-type barrier taxonomy used across all Digit
 {
   "type": "vision",
   "description": "Board lacks understanding of cloud-first strategy benefits vs perceived risks",
-  "severity": "high",
+  "severity": 4,
   "impact_areas": ["strategic_alignment", "budget_approval", "innovation_speed"],
   "business_impact": "Limited to tactical improvements vs strategic transformation"
 }
@@ -320,7 +334,7 @@ This document defines the official 9-type barrier taxonomy used across all Digit
 {
   "type": "communications",
   "description": "School, daycare, and activity coordinators all use different apps and methods to communicate",
-  "severity": "medium",
+  "severity": 3,
   "impact_areas": ["cognitive_load", "missed_communications", "family_coordination"],
   "business_impact": "30+ minutes daily managing different systems, frequent missed events"
 }
@@ -393,6 +407,56 @@ This document defines the official 9-type barrier taxonomy used across all Digit
 - Use vague descriptions like "Things are complicated"
 - Assume severity - base it on business impact
 - Ignore cultural/vision barriers (they're often most important)
+
+---
+
+## Usage in Pairings (v1.1)
+
+In the v1.1 compositional model, barriers appear in **Pairings** - the synthesis of a Core Persona with one or more Role Cards. Pairing barriers capture friction that emerges from the specific combination of this persona's tendencies with this role's demands.
+
+### The `emergesFrom` Field
+
+Pairing barriers include an `emergesFrom` field that explains the synthesis:
+
+```json
+{
+  "barriers": [
+    {
+      "barrier": "Concerns about product quality when buying online",
+      "type": "knowledge",
+      "impact": "Hesitation to purchase unfamiliar products",
+      "workarounds": "Relies heavily on reviews and return policies",
+      "emergesFrom": "Sarah's cautious, research-oriented nature meets the role's need for efficient online shopping"
+    },
+    {
+      "barrier": "Time scarcity amplifies decision anxiety",
+      "type": "resource",
+      "impact": "Rushed decisions lead to returns",
+      "workarounds": "Relies on trusted brands and quick filters",
+      "emergesFrom": "Sarah's thorough decision-making style collides with the role's time constraints"
+    }
+  ]
+}
+```
+
+### Barrier Sources in Pairings
+
+Barriers in pairings can emerge from:
+
+1. **Persona tendency + Role demand**: The most common synthesis. E.g., "analytical nature + time pressure"
+2. **Amplified role barriers**: A barrier inherent to the role that hits THIS persona harder
+3. **Persona workarounds failing**: How this persona typically copes doesn't work in this role
+
+### Writing Good `emergesFrom` Explanations
+
+**Good examples:**
+- "David's methodical evaluation process clashes with the role's pressure for quick decisions"
+- "Maria's relationship-building strength is undermined by poor mobile tools while travelling"
+- "Sarah's trust concerns meet the role's reliance on online reviews"
+
+**Avoid:**
+- Restating the barrier: "This is a knowledge barrier about sizing"
+- Being too vague: "Persona and role conflict"
 
 ---
 

@@ -1,0 +1,116 @@
+{
+  "schema_info": {
+    "version": "1.1.0",
+    "standard": "Service Design Role Card Standard v1.1",
+    "schema_type": "role-card",
+    "created_date": "2026-01-06",
+    "last_updated": "2026-01-15",
+    "created_by": "Digital Service Design Team",
+    "organization": "Digital Service Design Working"
+  },
+  "identity": {
+    "id": "role-it-director-healthcare",
+    "title": "IT Director - Healthcare Technology",
+    "description": "Senior IT leadership role responsible for technology strategy, vendor management, and digital transformation in a HIPAA-regulated healthcare environment. Champions modernisation while ensuring security and compliance."
+  },
+  "roleType": "Professional",
+  "roleContext": {
+    "professionalContext": {
+      "organisational_relationship": "external",
+      "role_title": "IT Director",
+      "department": "Information Technology",
+      "industry": "Healthcare Technology",
+      "organisation_size": "201-1000",
+      "seniority_level": "director",
+      "decision_authority": "Has budget authority up to $50K. Needs C-level approval for larger purchases. Influences vendor selection and evaluates technical requirements. Key stakeholder in digital transformation initiatives.",
+      "budget_range": "10k_50k",
+      "stakeholders": [
+        "C-level executives",
+        "Department heads",
+        "Security and compliance team",
+        "Vendor partners",
+        "End users across the organisation"
+      ],
+      "compliance_requirements": [
+        "HIPAA",
+        "SOC 2",
+        "State healthcare regulations"
+      ],
+      "tools_and_systems": [
+        "EHR systems",
+        "Cloud infrastructure",
+        "Security tools",
+        "Integration middleware"
+      ]
+    }
+  },
+  "roleBasedNeeds": [
+    {
+      "text": "Implement cloud-first infrastructure strategy",
+      "priority": "primary",
+      "timeframe": "long_term"
+    },
+    {
+      "text": "Improve system uptime and performance",
+      "priority": "primary",
+      "timeframe": "short_term"
+    },
+    {
+      "text": "Ensure HIPAA compliance across all systems",
+      "priority": "primary",
+      "timeframe": "immediate"
+    },
+    {
+      "text": "Reduce IT operational costs by 15%",
+      "priority": "secondary",
+      "timeframe": "long_term"
+    },
+    {
+      "text": "Find vendors who understand healthcare compliance requirements",
+      "priority": "secondary",
+      "timeframe": "immediate"
+    }
+  ],
+  "roleBasedFrustrations": [
+    {
+      "text": "Legacy systems that are expensive to maintain",
+      "severity": 4,
+      "frequency": "daily",
+      "context": "Particularly affecting daily operations and budget planning"
+    },
+    {
+      "text": "Difficulty finding vendors who understand healthcare compliance",
+      "severity": 3,
+      "frequency": "weekly",
+      "context": "During vendor evaluation processes"
+    },
+    {
+      "text": "Limited IT budget despite growing technology needs",
+      "severity": 4,
+      "frequency": "monthly",
+      "context": "Budget planning and resource allocation"
+    },
+    {
+      "text": "Pressure to deliver faster while maintaining security",
+      "severity": 3,
+      "frequency": "daily",
+      "context": "Balancing speed and security requirements"
+    }
+  ],
+  "extensions": {
+    "custom": {
+      "approval_process": [
+        {
+          "step": "Technical evaluation",
+          "stakeholder": "IT Director",
+          "criteria": "Technical fit, security compliance, and integration requirements"
+        },
+        {
+          "step": "Budget review",
+          "stakeholder": "C-level executives",
+          "criteria": "ROI analysis and budget availability"
+        }
+      ]
+    }
+  }
+}

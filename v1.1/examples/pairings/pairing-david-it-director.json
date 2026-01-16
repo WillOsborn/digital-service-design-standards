@@ -1,0 +1,243 @@
+{
+  "schema_info": {
+    "version": "1.1.0",
+    "standard": "Service Design Pairing Standard v1.1",
+    "schema_type": "pairing",
+    "created_date": "2026-01-06",
+    "last_updated": "2026-01-06",
+    "created_by": "Digital Service Design Team",
+    "organization": "Digital Service Design Working"
+  },
+  "identity": {
+    "id": "pairing-david-it-director",
+    "title": "David Chen as IT Director in Healthcare",
+    "description": "David's technology leadership orientation and methodical decision-making combined with the demands of driving digital transformation in a highly regulated healthcare environment."
+  },
+  "references": {
+    "personaRef": "persona-david-chen",
+    "roleRefs": ["role-it-director-healthcare"]
+  },
+  "synthesis": {
+    "quote": "I need to modernise our infrastructure while keeping patient data absolutely secure. Every vendor I evaluate needs to understand that compliance isn't optional - it's foundational.",
+    "goalsAsExperienced": [
+      {
+        "text": "Successfully execute cloud migration while maintaining zero compliance violations",
+        "source": "persona+role",
+        "priority": "primary"
+      },
+      {
+        "text": "Build a business case that gets C-level buy-in for necessary investments",
+        "source": "persona+role",
+        "priority": "primary"
+      },
+      {
+        "text": "Find technology partners who genuinely understand healthcare compliance",
+        "source": "role",
+        "priority": "primary"
+      },
+      {
+        "text": "Demonstrate clear ROI to advance his career and credibility",
+        "source": "persona",
+        "priority": "secondary"
+      }
+    ],
+    "painPoints": [
+      {
+        "text": "Methodical evaluation process clashes with pressure for quick technology decisions",
+        "severity": 4,
+        "emergesFrom": "David's thorough decision-making style conflicts with role's urgency to modernise"
+      },
+      {
+        "text": "Technical expertise frustrates him when non-technical stakeholders slow decisions",
+        "severity": 3,
+        "emergesFrom": "David's expert-level knowledge meets role's requirement for cross-functional consensus"
+      },
+      {
+        "text": "Innovation ambition constrained by compliance requirements",
+        "severity": 3,
+        "emergesFrom": "David's desire to stay ahead of trends meets role's rigid compliance environment"
+      },
+      {
+        "text": "Budget constraints force compromises on solutions he knows are suboptimal",
+        "severity": 4,
+        "emergesFrom": "David's quality standards meet role's limited budget authority"
+      }
+    ],
+    "barriers": [
+      {
+        "barrier": "Complex approval processes for new technology",
+        "type": "process",
+        "impact": "Delays decisions by 2-3 months on average",
+        "workarounds": "Build business cases with clear ROI and compliance benefits",
+        "emergesFrom": "David's desire for progress meets healthcare's governance requirements"
+      },
+      {
+        "barrier": "Integration challenges with existing legacy systems",
+        "type": "technology",
+        "impact": "Requires extensive testing and may block adoption",
+        "workarounds": "Require detailed integration documentation and sandbox testing"
+      },
+      {
+        "barrier": "Vendor lock-in concerns in regulated environment",
+        "type": "policy",
+        "impact": "Hesitation to commit to long-term contracts that may limit future options",
+        "workarounds": "Negotiate exit clauses and data portability guarantees"
+      },
+      {
+        "barrier": "Staff training and change management requirements",
+        "type": "knowledge",
+        "impact": "Slows adoption and increases implementation costs",
+        "workarounds": "Request comprehensive training programs and documentation"
+      },
+      {
+        "barrier": "Unclear digital transformation strategy across departments",
+        "type": "vision",
+        "impact": "Misaligned priorities and duplicated efforts",
+        "workarounds": "Participate in strategic planning sessions and advocate for IT alignment",
+        "emergesFrom": "David's strategic thinking meets organisational silos"
+      },
+      {
+        "barrier": "Poor communication of technical requirements to non-technical stakeholders",
+        "type": "communications",
+        "impact": "Misunderstandings and unrealistic expectations",
+        "workarounds": "Create simplified documentation and regular stakeholder briefings",
+        "emergesFrom": "David's technical depth meets role's cross-functional communication needs"
+      }
+    ],
+    "opportunities": [
+      "Vendors who lead with compliance credentials and healthcare expertise",
+      "Clear ROI frameworks that translate technical benefits to business outcomes",
+      "Proof-of-concept programs that reduce perceived risk for large investments",
+      "Integration-first solutions that work with legacy healthcare systems",
+      "Executive education materials that help build stakeholder consensus",
+      "Peer networks and case studies from similar healthcare organisations"
+    ],
+    "emotionalContext": "Generally confident but often frustrated by pace of change. Feels personal responsibility for security incidents. Satisfaction comes from successful implementations that prove technology value to the business."
+  },
+  "extendedContext": {
+    "channels": [
+      {
+        "channel": "in_person",
+        "medium": "non_digital",
+        "serviceModel": "managed",
+        "name": "Industry conferences and webinars",
+        "usage_context": "Learning about new technologies and best practices, building peer network",
+        "preference_level": "preferred"
+      },
+      {
+        "channel": "social_media",
+        "medium": "digital",
+        "serviceModel": "both",
+        "name": "LinkedIn and professional networks",
+        "usage_context": "Peer discussions and industry insights",
+        "preference_level": "preferred"
+      },
+      {
+        "channel": "in_person",
+        "medium": "non_digital",
+        "serviceModel": "managed",
+        "name": "Direct sales meetings and demos",
+        "usage_context": "Vendor evaluations and product demonstrations",
+        "preference_level": "acceptable"
+      },
+      {
+        "channel": "email",
+        "medium": "digital",
+        "serviceModel": "managed",
+        "name": "Email and technical documentation",
+        "usage_context": "Initial vendor outreach, technical evaluations, and formal communications",
+        "preference_level": "acceptable"
+      }
+    ],
+    "moments_that_matter": [
+      {
+        "moment": "Initial vendor evaluation and RFP process",
+        "emotional_intensity": -1,
+        "importance": "critical",
+        "current_experience": "High stress due to compliance requirements and stakeholder pressure"
+      },
+      {
+        "moment": "Technical proof-of-concept demonstrations",
+        "emotional_intensity": 0,
+        "importance": "high",
+        "current_experience": "Cautious optimism while evaluating technical fit"
+      },
+      {
+        "moment": "Contract negotiation and implementation planning",
+        "emotional_intensity": -1,
+        "importance": "high",
+        "current_experience": "Anxiety about integration complexity and timeline risks"
+      },
+      {
+        "moment": "Go-live support and post-implementation review",
+        "emotional_intensity": 1,
+        "importance": "critical",
+        "current_experience": "Relief and satisfaction when implementation succeeds"
+      }
+    ],
+    "use_cases": [
+      {
+        "scenario": "Evaluating cloud migration solutions",
+        "trigger": "Strategic initiative to modernise infrastructure",
+        "outcome": "Compliant, cost-effective cloud solution with clear implementation path"
+      },
+      {
+        "scenario": "Assessing cybersecurity tools and services",
+        "trigger": "Security audit findings or emerging threats",
+        "outcome": "Enhanced security posture with documented compliance"
+      },
+      {
+        "scenario": "Researching automation platforms for IT operations",
+        "trigger": "Cost reduction targets or efficiency initiatives",
+        "outcome": "Operational efficiency gains with measurable ROI"
+      }
+    ],
+    "success_metrics": [
+      {
+        "metric": "System uptime percentage",
+        "target": "99.9%"
+      },
+      {
+        "metric": "Cost reduction achieved",
+        "target": "15% reduction in operational costs"
+      },
+      {
+        "metric": "Successful compliance audit results",
+        "target": "Zero critical findings"
+      },
+      {
+        "metric": "User satisfaction scores",
+        "target": ">80% satisfaction"
+      }
+    ]
+  },
+  "reviewMetadata": {
+    "personaLastUpdated": "2026-01-06",
+    "roleLastUpdated": "2026-01-06",
+    "pairingLastReviewed": "2026-01-06"
+  },
+  "validation": {
+    "research_sources": [
+      {
+        "source": "Stakeholder interviews (February 2024)",
+        "type": "interview",
+        "date": "2024-02-15",
+        "confidence": "high"
+      },
+      {
+        "source": "Industry survey data",
+        "type": "existing_research",
+        "confidence": "medium"
+      },
+      {
+        "source": "Sales team feedback",
+        "type": "observation",
+        "confidence": "medium"
+      }
+    ],
+    "confidence_level": "high"
+  },
+  "extensions": {
+    "migrated_from": "david-chen-it-director-healthcare (v1.0.3)"
+  }
+}

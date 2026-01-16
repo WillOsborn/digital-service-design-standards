@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schemas.digitalservice.design/dsds-config/v1",
+  "_comment": "DSDS Organisation Configuration - Copy this to .dsds-config.json in your project root",
+
+  "org_name": "Your Organisation",
+  "base_schema_version": "1.1.0",
+  "artifacts_path": "./artifacts",
+
+  "custom_fields": {
+    "persona": {
+      "required": [],
+      "optional": []
+    },
+    "role": {
+      "required": [],
+      "optional": []
+    },
+    "pairing": {
+      "required": [],
+      "optional": []
+    },
+    "journey": {
+      "required": [],
+      "optional": []
+    }
+  },
+
+  "validation": {
+    "strict_mode": false,
+    "require_research_sources": false,
+    "minimum_completeness_score": 0
+  },
+
+  "workflow": {
+    "require_approval": false,
+    "approval_states": ["draft", "approved"]
+  }
+}

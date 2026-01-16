@@ -1,0 +1,299 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.digitalservice.design/role/v1.1/role-card",
+  "title": "Role Card Schema",
+  "description": "Contextual goals schema - what someone is trying to achieve in a particular situation. Per Service Design Role Card Standard v1.1",
+  "type": "object",
+  "properties": {
+    "schema_info": {
+      "type": "object",
+      "description": "Metadata about this role card document",
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^1\\.1\\.[0-9]+$",
+          "description": "Schema version number"
+        },
+        "standard": {
+          "type": "string",
+          "const": "Service Design Role Card Standard v1.1",
+          "description": "Name of the standard this role card conforms to"
+        },
+        "schema_type": {
+          "type": "string",
+          "const": "role-card",
+          "description": "Type of schema artifact"
+        },
+        "created_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Date role card was created"
+        },
+        "last_updated": {
+          "type": "string",
+          "format": "date",
+          "description": "Date role card was last updated"
+        },
+        "created_by": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Person or team who created this role card"
+        },
+        "organization": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Organization that owns this role card"
+        }
+      },
+      "required": ["version", "schema_type", "last_updated"],
+      "additionalProperties": false
+    },
+    "identity": {
+      "type": "object",
+      "description": "Core identity information for the role",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^role-[a-z0-9_-]+$",
+          "maxLength": 60,
+          "description": "Unique identifier with role- prefix (e.g., role-working-mom-consumer)"
+        },
+        "title": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Human-readable name for the role"
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Brief summary of what this role involves"
+        }
+      },
+      "required": ["id", "title"],
+      "additionalProperties": false
+    },
+    "roleType": {
+      "type": "string",
+      "maxLength": 50,
+      "description": "Organization-defined category. Common patterns: Consumer, Professional. Free text, not enumerated."
+    },
+    "roleContext": {
+      "type": "object",
+      "description": "Context-specific information. Use consumerContext for personal capacity roles, professionalContext for organisational capacity roles.",
+      "properties": {
+        "consumerContext": {
+          "type": "object",
+          "description": "Context for consumer roles - anyone acting in personal capacity for personal or household needs",
+          "properties": {
+            "shopping_behavior": {
+              "type": "string",
+              "maxLength": 500,
+              "description": "Purchase patterns, research habits, and shopping preferences"
+            },
+            "purchasing_context": {
+              "type": "string",
+              "maxLength": 300,
+              "description": "Context and circumstances of purchases (e.g., primary decision maker, shared decisions)"
+            },
+            "brand_relationships": {
+              "type": "string",
+              "maxLength": 300,
+              "description": "How they relate to and select brands"
+            },
+            "decision_factors": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "description": "Key factors influencing purchase decisions"
+            },
+            "budget_constraints": {
+              "type": "string",
+              "maxLength": 200,
+              "description": "Budget considerations and financial context"
+            },
+            "household_context": {
+              "type": "string",
+              "maxLength": 300,
+              "description": "Household composition and how it affects decisions (e.g., shared house, family dynamics)"
+            }
+          },
+          "additionalProperties": true
+        },
+        "professionalContext": {
+          "type": "object",
+          "description": "Context for professional roles - anyone acting in organisational capacity (employees, B2B buyers, partners, suppliers, contractors)",
+          "properties": {
+            "organisational_relationship": {
+              "type": "string",
+              "enum": ["internal", "external", "partner"],
+              "description": "Relationship to the organisation: internal (employee/contractor), external (customer/buyer from another org), partner (supplier/agency/alliance)"
+            },
+            "role_title": {
+              "type": "string",
+              "maxLength": 100,
+              "description": "Job title or position"
+            },
+            "department": {
+              "type": "string",
+              "maxLength": 100,
+              "description": "Department, function, or team"
+            },
+            "industry": {
+              "type": "string",
+              "maxLength": 100,
+              "description": "Industry vertical or sector"
+            },
+            "organisation_size": {
+              "type": "string",
+              "enum": ["1-10", "11-50", "51-200", "201-1000", "1000+"],
+              "description": "Size of the organisation"
+            },
+            "seniority_level": {
+              "type": "string",
+              "enum": ["individual_contributor", "team_lead", "manager", "director", "vp", "c_level"],
+              "description": "Level in organisational hierarchy"
+            },
+            "career_stage": {
+              "type": "string",
+              "maxLength": 100,
+              "description": "Career progression stage (e.g., early career, mid-level, senior, executive)"
+            },
+            "decision_authority": {
+              "type": "string",
+              "maxLength": 300,
+              "description": "Decision-making power, scope, and approval requirements"
+            },
+            "budget_range": {
+              "type": "string",
+              "enum": ["under_1k", "1k_10k", "10k_50k", "50k_250k", "250k_1m", "over_1m"],
+              "description": "Budget authority range"
+            },
+            "stakeholders": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "description": "Key stakeholders this role interacts with"
+            },
+            "responsibilities": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "description": "Key responsibilities of this role"
+            },
+            "tools_and_systems": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 100
+              },
+              "description": "Tools and systems used in this role"
+            },
+            "success_metrics": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "description": "How success is measured in this role"
+            },
+            "compliance_requirements": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "description": "Regulatory or compliance requirements"
+            },
+            "workflows": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "maxLength": 200
+              },
+              "description": "Key workflows and processes"
+            }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "roleBasedNeeds": {
+      "type": "array",
+      "description": "What the role requires the person to accomplish",
+      "items": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "maxLength": 500,
+            "description": "Description of the role-based need"
+          },
+          "priority": {
+            "enum": ["primary", "secondary", "aspirational"],
+            "description": "Importance of this need"
+          },
+          "timeframe": {
+            "enum": ["immediate", "short_term", "long_term"],
+            "description": "When this need must be addressed"
+          }
+        },
+        "required": ["text"],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "roleBasedFrustrations": {
+      "type": "array",
+      "description": "Friction inherent to this role",
+      "items": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "maxLength": 500,
+            "description": "Description of the role-based frustration"
+          },
+          "severity": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5,
+            "description": "Severity rating from 1 (minor) to 5 (significant)"
+          },
+          "frequency": {
+            "enum": ["daily", "weekly", "monthly", "occasional", "rare"],
+            "description": "How often this frustration occurs"
+          },
+          "context": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "When or where this frustration occurs"
+          }
+        },
+        "required": ["text"],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "extensions": {
+      "type": "object",
+      "description": "Custom and organization-specific fields for role-specific attributes",
+      "properties": {
+        "custom": {
+          "type": "object",
+          "description": "Organization-specific fields",
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "required": ["schema_info", "identity", "roleBasedNeeds", "roleBasedFrustrations"],
+  "additionalProperties": false
+}

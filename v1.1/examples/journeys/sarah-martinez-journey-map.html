@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sarah Martinez - Online Clothes Shopping Journey</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8f9fa; }
+    #root { padding: 20px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const JourneyMap = () => {
+      const getEmotionDisplay = (intensity) => {
+        const emotions = {
+          '-2': { emoji: '😫', color: '#f44336', label: 'Very Negative' },
+          '-1': { emoji: '😟', color: '#ff9800', label: 'Negative' },
+          '0': { emoji: '😐', color: '#9e9e9e', label: 'Neutral' },
+          '1': { emoji: '😊', color: '#8bc34a', label: 'Positive' },
+          '2': { emoji: '😄', color: '#4caf50', label: 'Very Positive' }
+        };
+        return emotions[intensity.toString()] || emotions['0'];
+      };
+
+      const phaseColors = ['#2196F3', '#9C27B0', '#FF9800', '#607D8B', '#4CAF50', '#E91E63', '#00BCD4'];
+
+      const journeyData = {
+        title: "Online Clothes Shopping Journey - Personal Treat Purchase",
+        persona: "Sarah Martinez",
+        personaContext: "32-year-old working mom in Austin. Smartphone-first, values convenience and quality. Price-conscious but treats herself for good deals.",
+        phases: [
+          {
+            id: "discovery",
+            name: "Discovery",
+            steps: [
+              {
+                id: "receive-notification",
+                name: "Receive promotional notification",
+                actions: ["Phone buzzes with notification", "Glances at lock screen", "Reads notification preview"],
+                thoughts: "Oh, StyleMart has a flash sale... 40% off? That's actually good. Maybe I could get that cardigan I've been eyeing.",
+                emotion: { state: "intrigued", intensity: 1 },
+                channels: [{ type: "app", name: "StyleMart App" }],
+                barriers: [],
+                opportunities: ["Personalize notification based on browsing history", "Include specific product recommendations"]
+              },
+              {
+                id: "open-app",
+                name: "Open app to explore sale",
+                actions: ["Taps notification to open app", "Waits for app to load", "Views sale landing page"],
+                thoughts: "Let me just have a quick look while I have a few minutes. The sale ends tonight so I need to decide soon.",
+                emotion: { state: "curious", intensity: 1 },
+                channels: [{ type: "app", name: "StyleMart App" }],
+                barriers: [{ type: "technology", description: "App takes 8 seconds to fully load sale page", severity: 2 }],
+                opportunities: ["Pre-cache sale content before notification send", "Show countdown timer"]
+              }
+            ]
+          },
+          {
+            id: "browsing",
+            name: "Browsing & Selection",
+            steps: [
+              {
+                id: "browse-categories",
+                name: "Browse sale categories",
+                actions: ["Scrolls through sale categories", "Taps into 'Women's Clothing'", "Filters by size and price range", "Scrolls through product grid"],
+                thoughts: "There's so much here. Let me filter this down. I don't need another basic t-shirt... I want something a bit special.",
+                emotion: { state: "slightly overwhelmed", intensity: 0 },
+                channels: [{ type: "app", name: "StyleMart App" }],
+                barriers: [
+                  { type: "knowledge", description: "Difficult to assess fabric quality from photos alone", severity: 3 },
+                  { type: "process", description: "Filter options reset when navigating back", severity: 2 }
+                ],
+                opportunities: ["Persist filter selections throughout session", "Show fabric detail close-ups"]
+              },
+              {
+                id: "find-item",
+                name: "Find appealing item",
+                actions: ["Spots a wrap dress", "Taps to view product details", "Swipes through images", "Checks original vs sale price"],
+                thoughts: "Oh this is lovely! That emerald green would be perfect for date nights. £85 down to £51... that's actually reasonable for a treat.",
+                emotion: { state: "excited", intensity: 2 },
+                channels: [{ type: "app", name: "StyleMart App" }],
+                barriers: [],
+                opportunities: ["Show 'you saved £X' prominently", "Suggest styling options"]
+              },
+              {
+                id: "check-sizing",
+                name: "Check sizing information",
+                actions: ["Scrolls to size guide", "Tries to interpret measurements", "Compares to clothes she owns", "Debates between two sizes"],
+                thoughts: "I'm usually a 10 but this brand might run small. The size guide says 10 is 28-inch waist... Maybe I should go for 12 to be safe.",
+                emotion: { state: "uncertain", intensity: -1 },
+                channels: [{ type: "app", name: "StyleMart App" }],
+                barriers: [
+                  { type: "knowledge", description: "Size guide shows measurements but no guidance on fit style", severity: 4 },
+                  { type: "communications", description: "No information about model's size for reference", severity: 3 }
+                ],
+                opportunities: ["Add model size info", "Include fit predictor", "Show customer photos with sizes"]
+              },
+              {
+                id: "check-reviews",
+                name: "Read customer reviews",
+                actions: ["Scrolls to reviews section", "Filters to show reviews with photos", "Reads detailed reviews", "Looks for sizing comments"],
+                thoughts: "4.2 stars from 89 reviews, that's decent. 'runs slightly large', 'true to size', 'I sized down'... everyone says something different.",
+                emotion: { state: "conflicted", intensity: 0 },
+                channels: [{ type: "app", name: "StyleMart App" }],
+                barriers: [
+                  { type: "knowledge", description: "Contradictory sizing feedback in reviews", severity: 3 },
+                  { type: "knowledge", description: "Cannot verify if reviews are genuine", severity: 2 }
+                ],
+                opportunities: ["Aggregate sizing feedback into simple indicator", "Allow filtering by reviewer body type"]
+              },
+              {
+                id: "check-returns",
+                name: "Check return policy",
+                actions: ["Looks for return policy", "Finds and taps 'Returns' link", "Reads return conditions", "Notes the return window"],
+                thoughts: "Free returns within 30 days, that's reassuring. As long as I keep the tags on I can send it back if it doesn't fit.",
+                emotion: { state: "reassured", intensity: 1 },
+                channels: [{ type: "app", name: "StyleMart App" }],
+                barriers: [{ type: "communications", description: "Return policy requires navigating away from product page", severity: 2 }],
+                opportunities: ["Show return policy summary on product page", "Badge products with 'Free Returns'"]
+              }
+            ]
+          },
+          {
+            id: "purchase",
+            name: "Purchase",
+            steps: [
+              {
+                id: "add-to-cart",
+                name: "Add item to cart",
+                actions: ["Selects size 10", "Taps 'Add to Bag' button", "Sees confirmation animation", "Taps cart icon"],
+                thoughts: "I'll go with my usual size. If it doesn't fit, I can always return it. Let me check out before the sale ends.",
+                emotion: { state: "decided", intensity: 1 },
+                channels: [{ type: "app", name: "StyleMart App" }],
+                barriers: [],
+                opportunities: ["Suggest complementary items on sale"]
+              },
+              {
+                id: "review-cart",
+                name: "Review cart and apply discount",
+                actions: ["Reviews item in cart", "Checks sale price is applied", "Sees free delivery threshold", "Decides not to add more items"],
+                thoughts: "£51 total, free delivery over £50 - perfect, just made it. I don't need anything else, let's not get carried away.",
+                emotion: { state: "pleased", intensity: 1 },
+                channels: [{ type: "app", name: "StyleMart App" }],
+                barriers: [{ type: "process", description: "Promotional upsell suggestions add friction to checkout flow", severity: 1 }],
+                opportunities: ["Make upsells less intrusive", "Show savings summary"]
+              },
+              {
+                id: "checkout",
+                name: "Complete checkout",
+                actions: ["Confirms saved delivery address", "Selects standard delivery (free)", "Reviews delivery estimate (2-4 days)", "Proceeds to payment"],
+                thoughts: "Good, my address is saved. Standard delivery is fine, I'm not in a rush. Should arrive by Friday.",
+                emotion: { state: "efficient", intensity: 1 },
+                channels: [{ type: "app", name: "StyleMart App" }],
+                barriers: [],
+                opportunities: ["Show specific delivery date rather than range"]
+              },
+              {
+                id: "payment",
+                name: "Complete payment",
+                actions: ["Selects saved payment method (Apple Pay)", "Authenticates with Face ID", "Payment processes successfully"],
+                thoughts: "Love that I can just use Face ID. So much easier than typing card details.",
+                emotion: { state: "satisfied", intensity: 1 },
+                channels: [{ type: "app", name: "StyleMart App" }, { type: "app", name: "Apple Pay" }],
+                barriers: [],
+                opportunities: []
+              },
+              {
+                id: "confirm-order",
+                name: "Receive order confirmation",
+                actions: ["Sees order confirmation screen", "Notes order number", "Receives confirmation email", "Closes app and returns to lunch"],
+                thoughts: "Done! That was quick. Excited for it to arrive. I deserve a little treat.",
+                emotion: { state: "happy", intensity: 2 },
+                channels: [{ type: "app", name: "StyleMart App" }, { type: "email", name: "Confirmation email" }],
+                barriers: [],
+                opportunities: ["Include styling tips in confirmation", "Offer calendar reminder for trying on"]
+              }
+            ]
+          },
+          {
+            id: "waiting",
+            name: "Waiting & Tracking",
+            steps: [
+              {
+                id: "dispatch-notification",
+                name: "Receive dispatch notification",
+                actions: ["Receives push notification that order has shipped", "Taps to view tracking information", "Notes estimated delivery date"],
+                thoughts: "Great, it's on its way. Should be here Thursday. Looking forward to trying it on.",
+                emotion: { state: "anticipating", intensity: 1 },
+                channels: [{ type: "app", name: "StyleMart App" }],
+                barriers: [],
+                opportunities: []
+              },
+              {
+                id: "track-delivery",
+                name: "Check tracking periodically",
+                actions: ["Opens app to check tracking status", "Views package location updates", "Confirms still on track for Thursday"],
+                thoughts: "Just checking it's still coming tomorrow. Good, it's at the local depot.",
+                emotion: { state: "mild anticipation", intensity: 0 },
+                channels: [{ type: "app", name: "StyleMart App" }],
+                barriers: [{ type: "communications", description: "Tracking updates are generic, no specific delivery time", severity: 2 }],
+                opportunities: ["Provide delivery time window", "Allow scheduling specific delivery time"]
+              }
+            ]
+          },
+          {
+            id: "delivery",
+            name: "Delivery & Unboxing",
+            steps: [
+              {
+                id: "delivery-notification",
+                name: "Receive delivery notification",
+                actions: ["Receives notification that delivery is out for delivery", "Receives 'delivered' notification with photo", "Checks photo to see where package was left"],
+                thoughts: "It's here! Left by the front door. I'll grab it when I get home from work.",
+                emotion: { state: "excited", intensity: 1 },
+                channels: [{ type: "app", name: "StyleMart App" }, { type: "app", name: "Carrier tracking app" }],
+                barriers: [],
+                opportunities: []
+              },
+              {
+                id: "retrieve-package",
+                name: "Retrieve package",
+                actions: ["Arrives home from work", "Finds package at door", "Brings inside"],
+                thoughts: "There it is! Can't wait to try it on after I sort dinner for the kids.",
+                emotion: { state: "eager", intensity: 1 },
+                channels: [{ type: "in_person", name: "Package delivery" }],
+                barriers: [],
+                opportunities: []
+              },
+              {
+                id: "unbox-item",
+                name: "Unbox and inspect item",
+                actions: ["Opens packaging", "Removes dress from bag", "Inspects fabric and construction", "Checks color matches expectations", "Leaves tags on"],
+                thoughts: "The packaging is nice. Oh, the color is gorgeous, just like the photos. Fabric feels decent quality. Let me keep the tags on until I've tried it properly.",
+                emotion: { state: "pleased", intensity: 1 },
+                channels: [{ type: "in_person", name: "Product packaging" }],
+                barriers: [],
+                opportunities: ["Include styling card or lookbook", "Add QR code linking to styling videos"]
+              }
+            ]
+          },
+          {
+            id: "try-on",
+            name: "Try On & Evaluation",
+            steps: [
+              {
+                id: "try-on-item",
+                name: "Try on the dress",
+                actions: ["Puts on the dress", "Looks in mirror", "Adjusts and tries different positions", "Tries with different accessories", "Takes photos to evaluate"],
+                thoughts: "Hmm. The color is beautiful but... it's tight across the hips and the waist isn't sitting right. The wrap isn't falling properly. It's just not the right fit for my body shape.",
+                emotion: { state: "disappointed", intensity: -1 },
+                channels: [{ type: "in_person", name: "Trying on at home" }],
+                barriers: [{ type: "knowledge", description: "Sizing information didn't adequately predict fit for her body type", severity: 4 }],
+                opportunities: ["Offer virtual try-on technology", "Provide body-shape specific recommendations", "Better sizing prediction based on purchase history"]
+              },
+              {
+                id: "decide-to-return",
+                name: "Decide to return",
+                actions: ["Considers whether to keep it anyway", "Checks if different size is available", "Sees size 12 is sold out", "Decides to return"],
+                thoughts: "Such a shame, I really love the color. Size 12 might have worked but it's sold out now. I can't keep something that doesn't fit properly - it'll just hang in my wardrobe.",
+                emotion: { state: "resigned", intensity: -1 },
+                channels: [{ type: "app", name: "StyleMart App" }],
+                barriers: [{ type: "resource", description: "Preferred size is out of stock", severity: 4 }],
+                opportunities: ["Offer waitlist for size availability", "Suggest similar styles that might fit better", "Provide exchange incentive"]
+              }
+            ]
+          },
+          {
+            id: "return",
+            name: "Return Process",
+            steps: [
+              {
+                id: "initiate-return",
+                name: "Initiate return in app",
+                actions: ["Opens app and goes to Orders", "Finds the order and taps 'Return items'", "Selects the dress", "Selects return reason: 'Didn't fit'", "Adds detail: 'Too small around hips'"],
+                thoughts: "Okay, let's get this return started. At least the app has a clear return option... 'Why are you returning?' - fair enough, I'll say it didn't fit.",
+                emotion: { state: "neutral", intensity: 0 },
+                channels: [{ type: "app", name: "StyleMart App" }],
+                barriers: [{ type: "process", description: "Required to provide detailed reason for return", severity: 1 }],
+                opportunities: ["Use return reason to improve sizing recommendations", "Offer style consultation for future purchases"]
+              },
+              {
+                id: "select-return-method",
+                name: "Select return method",
+                actions: ["Views return options", "Sees options: Post Office drop-off, Locker drop-off, Home collection", "Selects Locker drop-off", "Chooses locker near office", "Receives QR code for drop-off"],
+                thoughts: "Good, I can drop it at the locker near work. That's easy - I'll do it tomorrow on my lunch break.",
+                emotion: { state: "relieved", intensity: 1 },
+                channels: [{ type: "app", name: "StyleMart App" }],
+                barriers: [],
+                opportunities: ["Pre-select nearest return location", "Show wait time estimates for different methods"]
+              },
+              {
+                id: "package-return",
+                name: "Package item for return",
+                actions: ["Finds original packaging", "Refolds dress carefully", "Places back in original bag", "Puts in mailing bag", "No need to print label - will use QR code"],
+                thoughts: "Glad I kept the packaging. This is much easier than the old days of having to print labels.",
+                emotion: { state: "satisfied", intensity: 0 },
+                channels: [{ type: "in_person", name: "Return packaging" }],
+                barriers: [],
+                opportunities: ["Provide reusable return packaging with original shipment", "Include clear repackaging instructions"]
+              },
+              {
+                id: "drop-off-return",
+                name: "Drop off at locker",
+                actions: ["Goes to locker location during lunch", "Opens app to display QR code", "Scans QR code at locker", "Locker door opens", "Places package in locker", "Receives confirmation notification"],
+                thoughts: "That was painless. Scanned, deposited, done. Should get my refund in a few days.",
+                emotion: { state: "satisfied", intensity: 1 },
+                channels: [{ type: "in_person", name: "Parcel locker" }, { type: "app", name: "StyleMart App" }],
+                barriers: [],
+                opportunities: ["Provide estimated refund date at drop-off", "Offer instant refund option for trusted customers"]
+              },
+              {
+                id: "return-received",
+                name: "Return received notification",
+                actions: ["Receives notification that return is being processed", "Opens app to check status", "Sees 'Return received - refund processing'"],
+                thoughts: "Good, they've got it. Now I just need to wait for the refund.",
+                emotion: { state: "reassured", intensity: 0 },
+                channels: [{ type: "app", name: "StyleMart App" }],
+                barriers: [{ type: "communications", description: "No specific timeframe given for refund processing", severity: 2 }],
+                opportunities: ["Provide specific refund date estimate", "Show refund progress tracker"]
+              },
+              {
+                id: "receive-refund",
+                name: "Receive refund",
+                actions: ["Receives email notification of refund", "Checks bank account to confirm", "Sees £51 refund has been processed"],
+                thoughts: "Refund's come through. That was fairly painless overall. Shame the dress didn't fit but at least returning it wasn't a hassle. I'd still shop with them again.",
+                emotion: { state: "satisfied", intensity: 1 },
+                channels: [{ type: "email", name: "Refund confirmation email" }, { type: "app", name: "Banking app" }],
+                barriers: [],
+                opportunities: ["Include personalized recommendations in refund confirmation", "Offer incentive for next purchase"]
+              }
+            ]
+          }
+        ]
+      };
+
+      // Flatten all steps for easier rendering
+      const allSteps = journeyData.phases.flatMap((phase, phaseIndex) =>
+        phase.steps.map(step => ({ ...step, phaseIndex, phaseName: phase.name }))
+      );
+
+      return (
+        <div style={{ fontFamily: 'system-ui, -apple-system, sans-serif', padding: '20px', maxWidth: '100%' }}>
+          {/* Header */}
+          <div style={{ marginBottom: '24px', borderBottom: '3px solid #2196F3', paddingBottom: '16px' }}>
+            <h1 style={{ margin: 0, fontSize: '24px', color: '#1a1a2e' }}>{journeyData.title}</h1>
+            <p style={{ margin: '8px 0 0', color: '#666', fontSize: '14px' }}>
+              <strong>Persona:</strong> {journeyData.persona}
+            </p>
+            <p style={{ margin: '4px 0 0', color: '#888', fontSize: '13px', maxWidth: '800px' }}>
+              {journeyData.personaContext}
+            </p>
+          </div>
+
+          {/* Journey Map Container - Horizontal Scroll */}
+          <div style={{ overflowX: 'auto', border: '1px solid #e0e0e0', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+            <table style={{ borderCollapse: 'collapse', minWidth: '100%' }}>
+              <thead>
+                {/* Phase Row */}
+                <tr>
+                  <th style={{
+                    padding: '14px 16px',
+                    backgroundColor: '#f5f5f5',
+                    borderBottom: '2px solid #e0e0e0',
+                    borderRight: '2px solid #e0e0e0',
+                    position: 'sticky',
+                    left: 0,
+                    zIndex: 20,
+                    minWidth: '100px',
+                    fontWeight: '600',
+                    color: '#333',
+                    textTransform: 'uppercase',
+                    fontSize: '11px',
+                    letterSpacing: '0.5px'
+                  }}>Phases</th>
+                  {journeyData.phases.map((phase, phaseIndex) => (
+                    <th
+                      key={phase.id}
+                      colSpan={phase.steps.length}
+                      style={{
+                        padding: '14px 16px',
+                        backgroundColor: phaseColors[phaseIndex % phaseColors.length],
+                        color: 'white',
+                        fontWeight: '600',
+                        textAlign: 'center',
+                        borderBottom: '2px solid #e0e0e0',
+                        fontSize: '13px',
+                        letterSpacing: '0.3px'
+                      }}
+                    >
+                      {phase.name}
+                    </th>
+                  ))}
+                </tr>
+
+                {/* Steps Row */}
+                <tr>
+                  <th style={{
+                    padding: '12px 16px',
+                    backgroundColor: '#f5f5f5',
+                    borderBottom: '1px solid #e0e0e0',
+                    borderRight: '2px solid #e0e0e0',
+                    position: 'sticky',
+                    left: 0,
+                    zIndex: 20,
+                    fontWeight: '600',
+                    fontSize: '11px',
+                    color: '#333',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px'
+                  }}>Steps</th>
+                  {journeyData.phases.flatMap((phase, phaseIndex) =>
+                    phase.steps.map((step, stepIndex) => (
+                      <th
+                        key={step.id}
+                        style={{
+                          padding: '10px 12px',
+                          backgroundColor: `${phaseColors[phaseIndex % phaseColors.length]}18`,
+                          borderBottom: '1px solid #e0e0e0',
+                          borderLeft: stepIndex === 0 ? `4px solid ${phaseColors[phaseIndex % phaseColors.length]}` : '1px solid #e0e0e0',
+                          fontWeight: '500',
+                          fontSize: '12px',
+                          minWidth: '160px',
+                          maxWidth: '200px',
+                          color: '#333',
+                          verticalAlign: 'top'
+                        }}
+                      >
+                        {step.name}
+                      </th>
+                    ))
+                  )}
+                </tr>
+              </thead>
+
+              <tbody>
+                {/* Actions Lane */}
+                <tr>
+                  <td style={{
+                    padding: '12px 16px',
+                    backgroundColor: '#fafafa',
+                    fontWeight: '600',
+                    fontSize: '11px',
+                    color: '#555',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px',
+                    position: 'sticky',
+                    left: 0,
+                    zIndex: 10,
+                    borderRight: '2px solid #e0e0e0',
+                    borderBottom: '1px solid #eee'
+                  }}>Actions</td>
+                  {journeyData.phases.flatMap((phase, phaseIndex) =>
+                    phase.steps.map((step, stepIndex) => (
+                      <td
+                        key={`${step.id}-actions`}
+                        style={{
+                          padding: '10px 12px',
+                          borderBottom: '1px solid #eee',
+                          borderLeft: stepIndex === 0 ? `4px solid ${phaseColors[phaseIndex % phaseColors.length]}` : '1px solid #eee',
+                          verticalAlign: 'top',
+                          fontSize: '11px',
+                          lineHeight: '1.4'
+                        }}
+                      >
+                        <ul style={{ margin: 0, paddingLeft: '14px', color: '#444' }}>
+                          {step.actions.map((action, i) => (
+                            <li key={i} style={{ marginBottom: '3px' }}>{action}</li>
+                          ))}
+                        </ul>
+                      </td>
+                    ))
+                  )}
+                </tr>
+
+                {/* Thoughts Lane */}
+                <tr>
+                  <td style={{
+                    padding: '12px 16px',
+                    backgroundColor: '#fafafa',
+                    fontWeight: '600',
+                    fontSize: '11px',
+                    color: '#555',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px',
+                    position: 'sticky',
+                    left: 0,
+                    zIndex: 10,
+                    borderRight: '2px solid #e0e0e0',
+                    borderBottom: '1px solid #eee'
+                  }}>Thoughts</td>
+                  {journeyData.phases.flatMap((phase, phaseIndex) =>
+                    phase.steps.map((step, stepIndex) => (
+                      <td
+                        key={`${step.id}-thoughts`}
+                        style={{
+                          padding: '10px 12px',
+                          borderBottom: '1px solid #eee',
+                          borderLeft: stepIndex === 0 ? `4px solid ${phaseColors[phaseIndex % phaseColors.length]}` : '1px solid #eee',
+                          verticalAlign: 'top',
+                          fontSize: '11px',
+                          fontStyle: 'italic',
+                          color: '#555',
+                          lineHeight: '1.5',
+                          backgroundColor: '#fefefe'
+                        }}
+                      >
+                        "{step.thoughts}"
+                      </td>
+                    ))
+                  )}
+                </tr>
+
+                {/* Emotions Lane */}
+                <tr>
+                  <td style={{
+                    padding: '12px 16px',
+                    backgroundColor: '#fafafa',
+                    fontWeight: '600',
+                    fontSize: '11px',
+                    color: '#555',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px',
+                    position: 'sticky',
+                    left: 0,
+                    zIndex: 10,
+                    borderRight: '2px solid #e0e0e0',
+                    borderBottom: '1px solid #eee'
+                  }}>Emotions</td>
+                  {journeyData.phases.flatMap((phase, phaseIndex) =>
+                    phase.steps.map((step, stepIndex) => {
+                      const emotion = getEmotionDisplay(step.emotion.intensity);
+                      return (
+                        <td
+                          key={`${step.id}-emotions`}
+                          style={{
+                            padding: '10px 12px',
+                            borderBottom: '1px solid #eee',
+                            borderLeft: stepIndex === 0 ? `4px solid ${phaseColors[phaseIndex % phaseColors.length]}` : '1px solid #eee',
+                            textAlign: 'center',
+                            backgroundColor: `${emotion.color}12`
+                          }}
+                        >
+                          <div style={{ fontSize: '28px', marginBottom: '4px' }}>{emotion.emoji}</div>
+                          <div style={{ fontSize: '10px', color: '#666', fontWeight: '500' }}>
+                            {step.emotion.state}
+                          </div>
+                          <div style={{
+                            fontSize: '9px',
+                            color: emotion.color,
+                            fontWeight: '600',
+                            marginTop: '2px'
+                          }}>
+                            {step.emotion.intensity > 0 ? '+' : ''}{step.emotion.intensity}
+                          </div>
+                        </td>
+                      );
+                    })
+                  )}
+                </tr>
+
+                {/* Channels Lane */}
+                <tr>
+                  <td style={{
+                    padding: '12px 16px',
+                    backgroundColor: '#fafafa',
+                    fontWeight: '600',
+                    fontSize: '11px',
+                    color: '#555',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px',
+                    position: 'sticky',
+                    left: 0,
+                    zIndex: 10,
+                    borderRight: '2px solid #e0e0e0',
+                    borderBottom: '1px solid #eee'
+                  }}>Channels</td>
+                  {journeyData.phases.flatMap((phase, phaseIndex) =>
+                    phase.steps.map((step, stepIndex) => (
+                      <td
+                        key={`${step.id}-channels`}
+                        style={{
+                          padding: '10px 12px',
+                          borderBottom: '1px solid #eee',
+                          borderLeft: stepIndex === 0 ? `4px solid ${phaseColors[phaseIndex % phaseColors.length]}` : '1px solid #eee',
+                          verticalAlign: 'top',
+                          fontSize: '11px'
+                        }}
+                      >
+                        {step.channels.map((channel, i) => (
+                          <div
+                            key={i}
+                            style={{
+                              display: 'inline-block',
+                              padding: '3px 8px',
+                              marginRight: '4px',
+                              marginBottom: '4px',
+                              backgroundColor: channel.type === 'app' ? '#e3f2fd' :
+                                              channel.type === 'email' ? '#fce4ec' :
+                                              channel.type === 'in_person' ? '#e8f5e9' : '#f5f5f5',
+                              borderRadius: '12px',
+                              fontSize: '10px',
+                              fontWeight: '500',
+                              color: channel.type === 'app' ? '#1565c0' :
+                                     channel.type === 'email' ? '#c2185b' :
+                                     channel.type === 'in_person' ? '#2e7d32' : '#666'
+                            }}
+                          >
+                            {channel.name || channel.type}
+                          </div>
+                        ))}
+                      </td>
+                    ))
+                  )}
+                </tr>
+
+                {/* Barriers Lane */}
+                <tr>
+                  <td style={{
+                    padding: '12px 16px',
+                    backgroundColor: '#fafafa',
+                    fontWeight: '600',
+                    fontSize: '11px',
+                    color: '#555',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px',
+                    position: 'sticky',
+                    left: 0,
+                    zIndex: 10,
+                    borderRight: '2px solid #e0e0e0',
+                    borderBottom: '1px solid #eee'
+                  }}>Barriers</td>
+                  {journeyData.phases.flatMap((phase, phaseIndex) =>
+                    phase.steps.map((step, stepIndex) => (
+                      <td
+                        key={`${step.id}-barriers`}
+                        style={{
+                          padding: '10px 12px',
+                          borderBottom: '1px solid #eee',
+                          borderLeft: stepIndex === 0 ? `4px solid ${phaseColors[phaseIndex % phaseColors.length]}` : '1px solid #eee',
+                          verticalAlign: 'top',
+                          fontSize: '11px',
+                          backgroundColor: step.barriers.length > 0 ? '#fff8e1' : 'transparent'
+                        }}
+                      >
+                        {step.barriers.map((barrier, i) => (
+                          <div
+                            key={i}
+                            style={{
+                              padding: '6px 8px',
+                              marginBottom: '4px',
+                              backgroundColor: '#fff3e0',
+                              borderLeft: `3px solid ${barrier.severity >= 4 ? '#f44336' : barrier.severity >= 3 ? '#ff9800' : '#ffc107'}`,
+                              borderRadius: '0 4px 4px 0',
+                              fontSize: '10px',
+                              lineHeight: '1.4'
+                            }}
+                          >
+                            <strong style={{
+                              textTransform: 'uppercase',
+                              fontSize: '9px',
+                              color: barrier.severity >= 4 ? '#c62828' : barrier.severity >= 3 ? '#e65100' : '#f57c00',
+                              letterSpacing: '0.3px'
+                            }}>
+                              {barrier.type}
+                            </strong>
+                            <div style={{ color: '#555', marginTop: '2px' }}>{barrier.description}</div>
+                          </div>
+                        ))}
+                      </td>
+                    ))
+                  )}
+                </tr>
+
+                {/* Opportunities Lane */}
+                <tr>
+                  <td style={{
+                    padding: '12px 16px',
+                    backgroundColor: '#fafafa',
+                    fontWeight: '600',
+                    fontSize: '11px',
+                    color: '#555',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px',
+                    position: 'sticky',
+                    left: 0,
+                    zIndex: 10,
+                    borderRight: '2px solid #e0e0e0'
+                  }}>Opportunities</td>
+                  {journeyData.phases.flatMap((phase, phaseIndex) =>
+                    phase.steps.map((step, stepIndex) => (
+                      <td
+                        key={`${step.id}-opps`}
+                        style={{
+                          padding: '10px 12px',
+                          borderLeft: stepIndex === 0 ? `4px solid ${phaseColors[phaseIndex % phaseColors.length]}` : '1px solid #eee',
+                          verticalAlign: 'top',
+                          fontSize: '10px',
+                          backgroundColor: step.opportunities.length > 0 ? '#e8f5e9' : 'transparent'
+                        }}
+                      >
+                        {step.opportunities.length > 0 && (
+                          <ul style={{ margin: 0, paddingLeft: '14px', color: '#2e7d32' }}>
+                            {step.opportunities.map((opp, i) => (
+                              <li key={i} style={{ marginBottom: '3px' }}>{opp}</li>
+                            ))}
+                          </ul>
+                        )}
+                      </td>
+                    ))
+                  )}
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* Legend */}
+          <div style={{ marginTop: '24px', padding: '16px', backgroundColor: '#fff', borderRadius: '8px', border: '1px solid #e0e0e0' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '32px' }}>
+              <div>
+                <h3 style={{ margin: '0 0 10px', fontSize: '12px', color: '#333', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Emotion Scale</h3>
+                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                  {['-2', '-1', '0', '1', '2'].map(intensity => {
+                    const e = getEmotionDisplay(parseInt(intensity));
+                    return (
+                      <div key={intensity} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <span style={{ fontSize: '16px' }}>{e.emoji}</span>
+                        <span style={{ fontSize: '11px', color: '#666' }}>{intensity}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+              <div>
+                <h3 style={{ margin: '0 0 10px', fontSize: '12px', color: '#333', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Channel Types</h3>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  {[
+                    { type: 'App', color: '#e3f2fd', textColor: '#1565c0' },
+                    { type: 'Email', color: '#fce4ec', textColor: '#c2185b' },
+                    { type: 'In-person', color: '#e8f5e9', textColor: '#2e7d32' }
+                  ].map(ch => (
+                    <span key={ch.type} style={{
+                      padding: '3px 8px',
+                      backgroundColor: ch.color,
+                      borderRadius: '12px',
+                      fontSize: '10px',
+                      fontWeight: '500',
+                      color: ch.textColor
+                    }}>
+                      {ch.type}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h3 style={{ margin: '0 0 10px', fontSize: '12px', color: '#333', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Barrier Severity</h3>
+                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', fontSize: '10px', color: '#666' }}>
+                  <span><span style={{ color: '#ffc107', fontWeight: 'bold' }}>●</span> Low (1-2)</span>
+                  <span><span style={{ color: '#ff9800', fontWeight: 'bold' }}>●</span> Medium (3)</span>
+                  <span><span style={{ color: '#f44336', fontWeight: 'bold' }}>●</span> High (4-5)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Summary Stats */}
+          <div style={{ marginTop: '16px', padding: '16px', backgroundColor: '#f5f5f5', borderRadius: '8px', display: 'flex', gap: '32px', flexWrap: 'wrap' }}>
+            <div>
+              <div style={{ fontSize: '24px', fontWeight: '600', color: '#2196F3' }}>{journeyData.phases.length}</div>
+              <div style={{ fontSize: '11px', color: '#666', textTransform: 'uppercase' }}>Phases</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '24px', fontWeight: '600', color: '#9C27B0' }}>{allSteps.length}</div>
+              <div style={{ fontSize: '11px', color: '#666', textTransform: 'uppercase' }}>Steps</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '24px', fontWeight: '600', color: '#FF9800' }}>
+                {allSteps.reduce((sum, step) => sum + step.barriers.length, 0)}
+              </div>
+              <div style={{ fontSize: '11px', color: '#666', textTransform: 'uppercase' }}>Barriers Identified</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '24px', fontWeight: '600', color: '#4CAF50' }}>
+                {allSteps.reduce((sum, step) => sum + step.opportunities.length, 0)}
+              </div>
+              <div style={{ fontSize: '11px', color: '#666', textTransform: 'uppercase' }}>Opportunities</div>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<JourneyMap />);
+  </script>
+</body>
+</html>

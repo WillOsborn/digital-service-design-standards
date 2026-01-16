@@ -1,0 +1,165 @@
+{
+  "schema_info": {
+    "version": "1.1.0",
+    "standard": "Service Design Persona Standard v1.1",
+    "schema_type": "core-persona",
+    "created_date": "2024-02-28",
+    "last_updated": "2026-01-06",
+    "created_by": "Digital Service Design Team",
+    "organization": "Digital Service Design Working"
+  },
+  "identity": {
+    "id": "persona-david-chen",
+    "name": "David Chen",
+    "summary": "Technology leader who balances innovation ambition with pragmatic risk management. Champions digital transformation while maintaining rigorous attention to security and compliance. Methodical decision-maker who builds consensus through data and demonstrated value."
+  },
+  "demographics": {
+    "age": 45,
+    "location": "San Francisco Bay Area",
+    "education": "MBA and Computer Science degree",
+    "background": "20+ years in technology leadership roles across healthcare and financial services. Member of Healthcare IT Security Council. Frequent speaker at industry events."
+  },
+  "behavioural_attributes": {
+    "personalNeeds": [
+      {
+        "text": "Demonstrate tangible value from technology investments",
+        "type": "recognition"
+      },
+      {
+        "text": "Stay ahead of technology trends to remain relevant in career",
+        "type": "growth"
+      },
+      {
+        "text": "Ensure stability and security in systems under his responsibility",
+        "type": "security"
+      },
+      {
+        "text": "Have authority and resources to drive meaningful change",
+        "type": "autonomy"
+      }
+    ],
+    "personalFrustrations": [
+      {
+        "text": "Impatience with slow decision-making processes",
+        "severity": 4,
+        "context": "When clear technical solutions are delayed by organisational bureaucracy"
+      },
+      {
+        "text": "Frustration when business stakeholders don't understand technical constraints",
+        "severity": 3,
+        "context": "During budget discussions or strategic planning"
+      },
+      {
+        "text": "Anxiety about missing emerging technology trends",
+        "severity": 3,
+        "context": "Rapid industry changes and competitive pressure"
+      }
+    ],
+    "motivations": [
+      {
+        "text": "Advancing his career through successful digital transformation",
+        "type": "achievement"
+      },
+      {
+        "text": "Ensuring patient data security and privacy",
+        "type": "intrinsic"
+      },
+      {
+        "text": "Demonstrating measurable business value from IT investments",
+        "type": "extrinsic"
+      }
+    ],
+    "attitudes": [
+      {
+        "domain": "technology",
+        "attitude": "Embraces innovation but requires proven ROI and integration feasibility"
+      },
+      {
+        "domain": "risk",
+        "attitude": "Conservative on security, more willing to take calculated risks on efficiency gains"
+      },
+      {
+        "domain": "vendors",
+        "attitude": "Values long-term partnerships over transactional relationships"
+      },
+      {
+        "domain": "change",
+        "attitude": "Believes in incremental improvement over big-bang transformations"
+      }
+    ],
+    "technologyComfort": {
+      "level": "expert",
+      "description": "Deep technical expertise spanning infrastructure, security, and enterprise systems. Stays current through industry publications, conferences, and peer networks. Comfortable evaluating emerging technologies and understanding implementation complexity.",
+      "preferredDevices": ["laptop", "smartphone", "tablet"]
+    },
+    "communicationPreferences": {
+      "preferred": ["in_person", "video_call"],
+      "acceptable": ["email"],
+      "avoided": ["chat"],
+      "style": "Prefers structured, data-driven discussions. Values executive summaries with detailed appendices available. Appreciates visual representations of complex systems."
+    },
+    "influences": [
+      {
+        "source": "Industry peers and professional network",
+        "description": "Values insights from peers facing similar challenges in regulated industries"
+      },
+      {
+        "source": "Industry analysts (Gartner, Forrester)",
+        "description": "Uses analyst research to validate technology decisions and build business cases"
+      },
+      {
+        "source": "Conference presentations and case studies",
+        "description": "Learns from documented successes and failures in similar organisations"
+      }
+    ],
+    "behaviouralPatterns": [
+      {
+        "pattern": "Builds comprehensive business cases before advocating for significant investments",
+        "context": "Any technology purchase over $50K"
+      },
+      {
+        "pattern": "Seeks proof-of-concept validation before committing to new vendors",
+        "context": "New technology adoption or vendor selection"
+      },
+      {
+        "pattern": "Creates cross-functional alignment before moving forward",
+        "context": "Major initiatives that span departments"
+      },
+      {
+        "pattern": "Documents lessons learned and shares with professional network",
+        "context": "After significant projects or implementations"
+      }
+    ],
+    "learningStyle": "Analytical learner who prefers documentation, technical deep-dives, and hands-on evaluation. Values peer discussions and case studies from similar organisations.",
+    "riskTolerance": "cautious",
+    "decisionMakingStyle": "Analytical and consensus-driven. Gathers data, consults stakeholders, evaluates options methodically, then builds coalition for approval."
+  },
+  "validation": {
+    "research_sources": [
+      {
+        "source": "Stakeholder interviews (February 2024)",
+        "type": "interview",
+        "date": "2024-02-15",
+        "confidence": "high"
+      },
+      {
+        "source": "Industry survey data",
+        "type": "existing_research",
+        "confidence": "medium"
+      },
+      {
+        "source": "Sales team feedback",
+        "type": "observation",
+        "confidence": "medium"
+      }
+    ],
+    "confidence_level": "high"
+  },
+  "extensions": {
+    "custom": {},
+    "legacy": {
+      "migrated_from": "david-chen-it-director-healthcare (v1.0.3)",
+      "original_persona_type": "business"
+    }
+  }
+}

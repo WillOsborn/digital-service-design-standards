@@ -1,0 +1,82 @@
+{
+  "$schema": "https://schemas.digitalservice.design/dsds-config/v1",
+  "_comment": "DSDS Organisation Configuration - Full example with common custom fields",
+
+  "org_name": "Example Organisation",
+  "base_schema_version": "1.1.0",
+  "artifacts_path": "./artifacts",
+
+  "custom_fields": {
+    "persona": {
+      "required": ["customer_segment"],
+      "optional": ["department", "crm_id", "cost_centre"]
+    },
+    "role": {
+      "required": ["department"],
+      "optional": ["product_area"]
+    },
+    "pairing": {
+      "required": [],
+      "optional": ["use_case"]
+    },
+    "journey": {
+      "required": ["product_area"],
+      "optional": ["squad_owner", "last_validated"]
+    }
+  },
+
+  "custom_field_definitions": {
+    "customer_segment": {
+      "type": "enum",
+      "values": ["Premium", "Standard", "Basic", "Enterprise"],
+      "description": "Customer tier for segmentation and service differentiation"
+    },
+    "department": {
+      "type": "string",
+      "description": "Owning department or team"
+    },
+    "crm_id": {
+      "type": "string",
+      "pattern": "^CRM-[0-9]+$",
+      "description": "Link to CRM record for this persona"
+    },
+    "cost_centre": {
+      "type": "string",
+      "description": "Cost centre for budget allocation"
+    },
+    "product_area": {
+      "type": "enum",
+      "values": ["Onboarding", "Core Product", "Payments", "Support", "Account Management"],
+      "description": "Which product area this relates to"
+    },
+    "squad_owner": {
+      "type": "string",
+      "description": "Squad or team responsible for this journey"
+    },
+    "last_validated": {
+      "type": "date",
+      "description": "When this artifact was last validated against reality"
+    },
+    "use_case": {
+      "type": "string",
+      "description": "Primary use case this pairing represents"
+    }
+  },
+
+  "validation": {
+    "strict_mode": false,
+    "require_research_sources": false,
+    "minimum_completeness_score": 60
+  },
+
+  "workflow": {
+    "require_approval": true,
+    "approval_states": ["draft", "approved"]
+  },
+
+  "categories": {
+    "personas": ["consumer", "employee", "business", "partner"],
+    "roles": ["consumer", "employee", "business"],
+    "journeys": ["onboarding", "purchase", "service", "support", "offboarding"]
+  }
+}

@@ -1,3 +1,23 @@
+# === PRIVATE DIRECTORIES ===
+
+# Claude local configuration (user keeps their own)
+.claude/
+
+# Internal tools (not ready for public)
+tools-internal/
+
+# Backlog (internal planning)
+BACKLOG.md
+backlog.json
+
+# Client examples (not for public release)
+v1.1/examples/Energy/
+
+# Patterns system (not ready yet)
+patterns/
+
+# === SYSTEM FILES ===
+
 # Operating System Files
 .DS_Store
 .DS_Store?
@@ -13,7 +33,8 @@ Thumbs.db
 *.swp
 *.swo
 *~
-.claude/
+
+# === DEPENDENCIES ===
 
 # Node.js
 node_modules/
@@ -22,24 +43,33 @@ yarn-debug.log*
 yarn-error.log*
 package-lock.json
 
+# === ENVIRONMENT ===
+
 # Environment Variables
 .env
 .env.local
 .env.*.local
 
-# Build Outputs
+# === BUILD OUTPUTS ===
+
 dist/
 build/
 *.log
 
-# Temporary Files
+# === TEMPORARY FILES ===
+
 tmp/
 temp/
 *.tmp
 
-# Excluded directories (not ready for GitHub)
-website/
-tools/
+# === GENERATED FILES ===
 
-# Working documents (internal process docs, not user-facing)
+.dsds-index.json
+artifacts-index.json
+
+# === NOT READY ===
+
+website/
+
+# Working documents (internal)
 **/Archive/

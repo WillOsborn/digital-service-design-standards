@@ -1,0 +1,410 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.digitalservice.design/pairing/v1.1/pairing",
+  "title": "Persona-Role Pairing Schema",
+  "description": "Synthesises a Core Persona with one or more Role Cards, capturing the emergent experience. Per Service Design Pairing Standard v1.1",
+  "type": "object",
+  "properties": {
+    "schema_info": {
+      "type": "object",
+      "description": "Metadata about this pairing document",
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^1\\.1\\.[0-9]+$",
+          "description": "Schema version number"
+        },
+        "standard": {
+          "type": "string",
+          "const": "Service Design Pairing Standard v1.1",
+          "description": "Name of the standard this pairing conforms to"
+        },
+        "schema_type": {
+          "type": "string",
+          "const": "pairing",
+          "description": "Type of schema artifact"
+        },
+        "created_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Date pairing was created"
+        },
+        "last_updated": {
+          "type": "string",
+          "format": "date",
+          "description": "Date pairing was last updated"
+        },
+        "created_by": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Person or team who created this pairing"
+        },
+        "organization": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Organization that owns this pairing"
+        }
+      },
+      "required": ["version", "schema_type", "last_updated"],
+      "additionalProperties": false
+    },
+    "identity": {
+      "type": "object",
+      "description": "Identity information for this pairing",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^pairing-[a-z0-9_-]+$",
+          "maxLength": 80,
+          "description": "Unique identifier with pairing- prefix (e.g., pairing-sarah-working-mom)"
+        },
+        "title": {
+          "type": "string",
+          "maxLength": 150,
+          "description": "Human-readable name (e.g., 'Sarah Martinez as Working Mom Consumer')"
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Summary of this pairing"
+        }
+      },
+      "required": ["id"],
+      "additionalProperties": false
+    },
+    "references": {
+      "type": "object",
+      "description": "References to the Core Persona and Role Card(s) that form this pairing",
+      "properties": {
+        "personaRef": {
+          "type": "string",
+          "pattern": "^persona-[a-z0-9_-]+$",
+          "description": "Reference to Core Persona ID"
+        },
+        "roleRefs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^role-[a-z0-9_-]+$"
+          },
+          "minItems": 1,
+          "description": "References to one or more Role Card IDs (supports role stacking)"
+        }
+      },
+      "required": ["personaRef", "roleRefs"],
+      "additionalProperties": false
+    },
+    "synthesis": {
+      "type": "object",
+      "description": "Emergent insights from the persona + role combination",
+      "properties": {
+        "quote": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "A statement that brings to life this persona's experience in this role context"
+        },
+        "goalsAsExperienced": {
+          "type": "array",
+          "description": "How this persona frames success in this role - emerges from combining personal needs with role demands",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "maxLength": 500,
+                "description": "Description of the goal as experienced"
+              },
+              "source": {
+                "enum": ["persona", "role", "persona+role"],
+                "description": "Where this goal primarily emerges from"
+              },
+              "priority": {
+                "enum": ["primary", "secondary", "aspirational"],
+                "description": "Importance of this goal"
+              }
+            },
+            "required": ["text"],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "painPoints": {
+          "type": "array",
+          "description": "Friction from the collision of persona tendencies with role demands",
+          "items": {
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "maxLength": 500,
+                "description": "Description of the pain point"
+              },
+              "severity": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 5,
+                "description": "Severity rating from 1 (minor) to 5 (critical)"
+              },
+              "emergesFrom": {
+                "type": "string",
+                "maxLength": 200,
+                "description": "How this pain point emerges from the persona-role interaction"
+              }
+            },
+            "required": ["text"],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "barriers": {
+          "type": "array",
+          "description": "Which challenges hit hardest for this persona in this role (uses 9-type barrier taxonomy)",
+          "items": {
+            "type": "object",
+            "properties": {
+              "barrier": {
+                "type": "string",
+                "maxLength": 500,
+                "description": "Description of the barrier"
+              },
+              "type": {
+                "enum": ["process", "technology", "knowledge", "resource", "policy", "cultural", "vision", "communications", "governance"],
+                "description": "Category of barrier from the 9-type taxonomy"
+              },
+              "impact": {
+                "type": "string",
+                "maxLength": 300,
+                "description": "How this barrier affects this persona in this role"
+              },
+              "workarounds": {
+                "type": "string",
+                "maxLength": 300,
+                "description": "How this persona copes with this barrier"
+              },
+              "emergesFrom": {
+                "type": "string",
+                "maxLength": 200,
+                "description": "How this barrier emerges from the persona-role interaction"
+              }
+            },
+            "required": ["barrier", "type"],
+            "additionalProperties": false
+          }
+        },
+        "opportunities": {
+          "type": "array",
+          "description": "Where this persona's strengths create advantage in this role",
+          "items": {
+            "type": "string",
+            "maxLength": 300
+          }
+        },
+        "emotionalContext": {
+          "type": "string",
+          "maxLength": 300,
+          "description": "Overall emotional tone of this persona's experience in this role"
+        }
+      },
+      "required": ["goalsAsExperienced", "painPoints"],
+      "additionalProperties": false
+    },
+    "extendedContext": {
+      "type": "object",
+      "description": "Additional context for this pairing",
+      "properties": {
+        "channels": {
+          "type": "array",
+          "description": "How this persona-role combination prefers to interact",
+          "items": {
+            "type": "object",
+            "properties": {
+              "channel": {
+                "enum": ["website", "app", "chat", "email", "social_media", "phone", "video_call", "in_person", "post", "kiosk", "sms", "other"],
+                "description": "Channel type"
+              },
+              "medium": {
+                "enum": ["digital", "non_digital"],
+                "description": "Whether the channel is digital or non-digital"
+              },
+              "serviceModel": {
+                "enum": ["self_service", "managed", "both"],
+                "description": "Whether interaction is self-service, managed, or both"
+              },
+              "name": {
+                "type": "string",
+                "maxLength": 100,
+                "description": "Descriptive name for this channel instance"
+              },
+              "usage_context": {
+                "type": "string",
+                "maxLength": 300,
+                "description": "When and why this channel is used in this pairing context"
+              },
+              "preference_level": {
+                "enum": ["preferred", "acceptable", "avoided"],
+                "description": "How much this pairing prefers this channel"
+              }
+            },
+            "required": ["channel", "medium", "serviceModel"],
+            "additionalProperties": false
+          }
+        },
+        "moments_that_matter": {
+          "type": "array",
+          "description": "Critical emotional touchpoints for this pairing",
+          "items": {
+            "type": "object",
+            "properties": {
+              "moment": {
+                "type": "string",
+                "maxLength": 300,
+                "description": "Description of the moment"
+              },
+              "emotional_intensity": {
+                "type": "integer",
+                "minimum": -2,
+                "maximum": 2,
+                "description": "Emotional intensity from -2 (high stress) to +2 (excited)"
+              },
+              "importance": {
+                "enum": ["critical", "high", "medium", "low"],
+                "description": "How important this moment is"
+              },
+              "current_experience": {
+                "type": "string",
+                "maxLength": 300,
+                "description": "What the current experience is like"
+              }
+            },
+            "required": ["moment"],
+            "additionalProperties": false
+          }
+        },
+        "use_cases": {
+          "type": "array",
+          "description": "Common interaction scenarios for this pairing",
+          "items": {
+            "type": "object",
+            "properties": {
+              "scenario": {
+                "type": "string",
+                "maxLength": 200,
+                "description": "Description of the use case"
+              },
+              "trigger": {
+                "type": "string",
+                "maxLength": 200,
+                "description": "What initiates this scenario"
+              },
+              "outcome": {
+                "type": "string",
+                "maxLength": 200,
+                "description": "Expected result"
+              }
+            },
+            "required": ["scenario"],
+            "additionalProperties": false
+          }
+        },
+        "success_metrics": {
+          "type": "array",
+          "description": "How this pairing measures success",
+          "items": {
+            "type": "object",
+            "properties": {
+              "metric": {
+                "type": "string",
+                "maxLength": 200,
+                "description": "Name of the metric"
+              },
+              "target": {
+                "type": "string",
+                "maxLength": 100,
+                "description": "Target value or goal"
+              }
+            },
+            "required": ["metric"],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "reviewMetadata": {
+      "type": "object",
+      "description": "Optional tracking for when source artifacts change",
+      "properties": {
+        "personaLastUpdated": {
+          "type": "string",
+          "format": "date",
+          "description": "When referenced persona was last updated"
+        },
+        "roleLastUpdated": {
+          "type": "string",
+          "format": "date",
+          "description": "When referenced role(s) were last updated"
+        },
+        "pairingLastReviewed": {
+          "type": "string",
+          "format": "date",
+          "description": "When this pairing was last reviewed for consistency"
+        },
+        "reviewNotes": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Notes from the last review"
+        }
+      },
+      "additionalProperties": false
+    },
+    "validation": {
+      "type": "object",
+      "description": "Research sources and confidence level",
+      "properties": {
+        "research_sources": {
+          "type": "array",
+          "description": "Sources of research backing this pairing synthesis",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "type": "string",
+                "maxLength": 200,
+                "description": "Description of the research source"
+              },
+              "type": {
+                "enum": ["interview", "survey", "analytics", "observation", "existing_research"],
+                "description": "Type of research"
+              },
+              "date": {
+                "type": "string",
+                "format": "date",
+                "description": "When the research was conducted"
+              },
+              "confidence": {
+                "enum": ["high", "medium", "low"],
+                "description": "Confidence in this source"
+              }
+            },
+            "required": ["source", "type"],
+            "additionalProperties": false
+          },
+          "minItems": 1
+        },
+        "confidence_level": {
+          "enum": ["high", "medium", "low"],
+          "description": "Overall confidence in this pairing synthesis"
+        }
+      },
+      "required": ["research_sources", "confidence_level"],
+      "additionalProperties": false
+    },
+    "extensions": {
+      "type": "object",
+      "description": "Custom and organization-specific fields",
+      "additionalProperties": true
+    }
+  },
+  "required": ["schema_info", "identity", "references", "synthesis", "validation"],
+  "additionalProperties": false
+}

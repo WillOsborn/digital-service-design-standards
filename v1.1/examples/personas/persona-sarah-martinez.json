@@ -1,0 +1,157 @@
+{
+  "schema_info": {
+    "version": "1.1.0",
+    "standard": "Service Design Persona Standard v1.1",
+    "schema_type": "core-persona",
+    "created_date": "2024-03-15",
+    "last_updated": "2026-01-06",
+    "created_by": "Digital Service Design Team",
+    "organization": "Digital Service Design Working"
+  },
+  "identity": {
+    "id": "persona-sarah-martinez",
+    "name": "Sarah Martinez",
+    "summary": "32-year-old in Austin who values convenience, quality, and family wellbeing. Smartphone-first user who seeks time-saving solutions while maintaining family values. Thorough researcher who balances efficiency with careful decision-making."
+  },
+  "demographics": {
+    "age": 32,
+    "location": "Austin, Texas",
+    "education": "Bachelor's Degree in Marketing",
+    "background": "Working professional and mom. Active in her community and values work-life balance."
+  },
+  "behavioural_attributes": {
+    "personalNeeds": [
+      {
+        "text": "Maintain family wellbeing and happiness",
+        "type": "belonging"
+      },
+      {
+        "text": "Feel confident in decisions that affect her family",
+        "type": "security"
+      },
+      {
+        "text": "Achieve recognition as a capable, organised person",
+        "type": "recognition"
+      },
+      {
+        "text": "Have autonomy over her schedule and choices",
+        "type": "autonomy"
+      }
+    ],
+    "personalFrustrations": [
+      {
+        "text": "Feeling rushed and time-pressured in daily routines",
+        "severity": 4,
+        "context": "Consistently balancing multiple responsibilities"
+      },
+      {
+        "text": "Anxiety about making wrong decisions with limited information",
+        "severity": 3,
+        "context": "When facing choices that affect family wellbeing"
+      },
+      {
+        "text": "Difficulty trusting information sources",
+        "severity": 3,
+        "context": "When evaluating products or services online"
+      }
+    ],
+    "motivations": [
+      {
+        "text": "Family wellbeing and happiness",
+        "type": "intrinsic"
+      },
+      {
+        "text": "Efficiency and time-saving",
+        "type": "intrinsic"
+      },
+      {
+        "text": "Value for money",
+        "type": "extrinsic"
+      }
+    ],
+    "attitudes": [
+      {
+        "domain": "quality",
+        "attitude": "Willing to pay more for quality and convenience when it benefits the family"
+      },
+      {
+        "domain": "brands",
+        "attitude": "Values brands that align with family values and ethical practices"
+      },
+      {
+        "domain": "technology",
+        "attitude": "Embraces technology that genuinely saves time rather than tech for tech's sake"
+      }
+    ],
+    "technologyComfort": {
+      "level": "intermediate",
+      "description": "Smartphone-first user. Active on Instagram and Pinterest. Uses apps for shopping, banking, and family organization. Comfortable with online purchases but prefers secure payment methods.",
+      "preferredDevices": ["smartphone", "tablet", "laptop"]
+    },
+    "communicationPreferences": {
+      "preferred": ["app", "social_media"],
+      "acceptable": ["email", "in_person"],
+      "avoided": ["phone"],
+      "style": "Prefers concise, visual communication. Values quick, scannable information over lengthy explanations."
+    },
+    "influences": [
+      {
+        "source": "Family and friends",
+        "description": "Trusted recommendations from people with similar lifestyles"
+      },
+      {
+        "source": "Social media parenting community",
+        "description": "Follows parenting blogs and Instagram accounts for product discovery"
+      },
+      {
+        "source": "Online reviews",
+        "description": "Relies heavily on verified reviews when researching purchases"
+      }
+    ],
+    "behaviouralPatterns": [
+      {
+        "pattern": "Researches thoroughly before committing to significant purchases",
+        "context": "Any purchase affecting family wellbeing or budget"
+      },
+      {
+        "pattern": "Optimises routines for efficiency and reduced friction",
+        "context": "Daily household management and scheduling"
+      },
+      {
+        "pattern": "Seeks social validation for major decisions",
+        "context": "Consults family or friends before committing to big decisions"
+      }
+    ],
+    "learningStyle": "Visual learner who prefers tutorials, videos, and step-by-step guides over documentation",
+    "riskTolerance": "cautious",
+    "decisionMakingStyle": "Analytical with a social component - researches thoroughly then validates with trusted others"
+  },
+  "validation": {
+    "research_sources": [
+      {
+        "source": "Customer interviews (March 2024)",
+        "type": "interview",
+        "date": "2024-03-15",
+        "confidence": "high"
+      },
+      {
+        "source": "Online survey responses",
+        "type": "survey",
+        "confidence": "high"
+      },
+      {
+        "source": "Social media behaviour analysis",
+        "type": "analytics",
+        "confidence": "medium"
+      }
+    ],
+    "confidence_level": "high"
+  },
+  "extensions": {
+    "custom": {},
+    "legacy": {
+      "migrated_from": "sarah-martinez-working-mom-consumer (v1.0.3)",
+      "original_persona_type": "consumer"
+    }
+  }
+}

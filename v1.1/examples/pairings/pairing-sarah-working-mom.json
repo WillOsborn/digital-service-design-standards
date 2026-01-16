@@ -1,0 +1,230 @@
+{
+  "schema_info": {
+    "version": "1.1.0",
+    "standard": "Service Design Pairing Standard v1.1",
+    "schema_type": "pairing",
+    "created_date": "2026-01-06",
+    "last_updated": "2026-01-06",
+    "created_by": "Digital Service Design Team",
+    "organization": "Digital Service Design Working"
+  },
+  "identity": {
+    "id": "pairing-sarah-working-mom",
+    "title": "Sarah Martinez as Working Mom Consumer",
+    "description": "Sarah's personal values of family wellbeing and efficiency combined with the demands of being a primary household purchasing decision maker."
+  },
+  "references": {
+    "personaRef": "persona-sarah-martinez",
+    "roleRefs": ["role-working-mom-consumer"]
+  },
+  "synthesis": {
+    "quote": "I just want to find good products for my family without spending hours researching. Time is more precious than money, but I still need to make smart choices.",
+    "goalsAsExperienced": [
+      {
+        "text": "Make quick, confident purchase decisions that serve family needs",
+        "source": "persona+role",
+        "priority": "primary"
+      },
+      {
+        "text": "Balance quality expectations with budget constraints without guilt",
+        "source": "role",
+        "priority": "primary"
+      },
+      {
+        "text": "Find trustworthy product information that respects her limited time",
+        "source": "persona+role",
+        "priority": "secondary"
+      },
+      {
+        "text": "Feel like a capable, organised mom who makes good decisions",
+        "source": "persona",
+        "priority": "secondary"
+      }
+    ],
+    "painPoints": [
+      {
+        "text": "Time scarcity amplifies anxiety about making wrong purchase decisions",
+        "severity": 4,
+        "emergesFrom": "Sarah's decision-making thoroughness collides with the role's time constraints"
+      },
+      {
+        "text": "Review skepticism conflicts with need for quick validation",
+        "severity": 3,
+        "emergesFrom": "Sarah's trust issues combined with the role's need for fast, confident decisions"
+      },
+      {
+        "text": "Choice overload triggers her analytical nature but she lacks time to satisfy it",
+        "severity": 3,
+        "emergesFrom": "Sarah's research orientation conflicts with role's time pressures"
+      },
+      {
+        "text": "Fear of being seen as a bad mom if she makes wrong product choices",
+        "severity": 3,
+        "emergesFrom": "Sarah's need for recognition and security meets the role's family responsibility"
+      }
+    ],
+    "barriers": [
+      {
+        "barrier": "Concerns about product quality when buying online",
+        "type": "knowledge",
+        "impact": "Hesitation to purchase unfamiliar products, extending research time",
+        "workarounds": "Relies heavily on reviews and generous return policies",
+        "emergesFrom": "Sarah's cautious nature meets the role's need for efficient online shopping"
+      },
+      {
+        "barrier": "Complicated return processes",
+        "type": "process",
+        "impact": "Avoids retailers with difficult returns, limiting options",
+        "workarounds": "Chooses retailers with simple return policies, even at higher prices"
+      },
+      {
+        "barrier": "Subscription services that are hard to cancel",
+        "type": "process",
+        "impact": "Avoids potentially useful subscriptions due to anxiety about cancellation",
+        "workarounds": "Sets calendar reminders to review and cancel before renewal"
+      },
+      {
+        "barrier": "Confusing product information and unclear return policies",
+        "type": "communications",
+        "impact": "Delays purchase decisions while seeking clarification",
+        "workarounds": "Seeks clarification through customer service before purchasing"
+      },
+      {
+        "barrier": "Unclear escalation path when initial customer service fails",
+        "type": "governance",
+        "impact": "Frustration leads to brand switching after poor experiences",
+        "workarounds": "Uses social media complaints or seeks manager contacts"
+      }
+    ],
+    "opportunities": [
+      "Time-aware product recommendations that surface quality options quickly",
+      "Trust signals optimised for quick scanning (verified reviews, clear quality indicators)",
+      "Frictionless return experiences that reduce purchase anxiety",
+      "Smart filtering that matches her values (family-friendly, ethical, quality-focused)",
+      "Mobile-first shopping experiences for limited-time windows"
+    ],
+    "emotionalContext": "Generally optimistic but frequently time-stressed. Seeks control and confidence in decisions. Feels guilty when purchases don't work out or when she can't find time for proper research."
+  },
+  "extendedContext": {
+    "channels": [
+      {
+        "channel": "app",
+        "medium": "digital",
+        "serviceModel": "self_service",
+        "name": "Mobile shopping apps",
+        "usage_context": "Quick shopping and reordering during short time windows (lunch breaks, after bedtime)",
+        "preference_level": "preferred"
+      },
+      {
+        "channel": "social_media",
+        "medium": "digital",
+        "serviceModel": "both",
+        "name": "Instagram and Pinterest",
+        "usage_context": "Product discovery and peer recommendations",
+        "preference_level": "preferred"
+      },
+      {
+        "channel": "email",
+        "medium": "digital",
+        "serviceModel": "managed",
+        "name": "Email newsletters",
+        "usage_context": "Deals, promotions, and new product announcements",
+        "preference_level": "acceptable"
+      },
+      {
+        "channel": "in_person",
+        "medium": "non_digital",
+        "serviceModel": "managed",
+        "name": "In-store shopping",
+        "usage_context": "Hands-on product evaluation and immediate needs",
+        "preference_level": "acceptable"
+      }
+    ],
+    "moments_that_matter": [
+      {
+        "moment": "First-time purchase decision for unfamiliar product",
+        "emotional_intensity": -1,
+        "importance": "critical",
+        "current_experience": "Anxiety about making the right choice for her family with limited research time"
+      },
+      {
+        "moment": "Product delivery and unboxing experience",
+        "emotional_intensity": 1,
+        "importance": "high",
+        "current_experience": "Excitement and relief when products arrive as expected and meet quality expectations"
+      },
+      {
+        "moment": "Customer service interactions when issues arise",
+        "emotional_intensity": -2,
+        "importance": "critical",
+        "current_experience": "High stress when problems occur due to limited time to resolve issues"
+      },
+      {
+        "moment": "Discovering a product that genuinely saves time",
+        "emotional_intensity": 2,
+        "importance": "high",
+        "current_experience": "Delight and strong loyalty when a product delivers on time-saving promise"
+      }
+    ],
+    "use_cases": [
+      {
+        "scenario": "Quick reordering of household essentials",
+        "trigger": "Running low on regular items",
+        "outcome": "Fast, one-click repurchase with confidence"
+      },
+      {
+        "scenario": "Discovering new products recommended for families",
+        "trigger": "Social media browsing or friend recommendation",
+        "outcome": "Easy evaluation and confident first purchase"
+      },
+      {
+        "scenario": "Comparing prices and reading reviews before major purchases",
+        "trigger": "Need for significant household item",
+        "outcome": "Efficient comparison leading to confident decision"
+      }
+    ],
+    "success_metrics": [
+      {
+        "metric": "Time saved on shopping and household tasks"
+      },
+      {
+        "metric": "Family satisfaction with purchased products"
+      },
+      {
+        "metric": "Staying within monthly spending budget"
+      },
+      {
+        "metric": "Low return rate (indicating good purchase decisions)"
+      }
+    ]
+  },
+  "reviewMetadata": {
+    "personaLastUpdated": "2026-01-06",
+    "roleLastUpdated": "2026-01-06",
+    "pairingLastReviewed": "2026-01-06"
+  },
+  "validation": {
+    "research_sources": [
+      {
+        "source": "Customer interviews (March 2024)",
+        "type": "interview",
+        "date": "2024-03-15",
+        "confidence": "high"
+      },
+      {
+        "source": "Online survey responses",
+        "type": "survey",
+        "confidence": "high"
+      },
+      {
+        "source": "Social media behaviour analysis",
+        "type": "analytics",
+        "confidence": "medium"
+      }
+    ],
+    "confidence_level": "high"
+  },
+  "extensions": {
+    "migrated_from": "sarah-martinez-working-mom-consumer (v1.0.3)"
+  }
+}

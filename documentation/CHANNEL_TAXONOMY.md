@@ -1,318 +1,233 @@
 # Channel Taxonomy
 
-**Version:** 1.0.2
-**Last Updated:** 2025-11-28
+**Version:** 1.1.0
+**Last Updated:** 2026-01-15
 **Status:** Official Reference
 
 ## Overview
 
-This document defines the official channel taxonomy used across all Digital Service Design Schemas. The taxonomy uses a two-level system: **3 broad categories** for analysis and **7 standard types** for specific channel classification, with extensibility for organization-specific needs.
+This document defines the official channel taxonomy used across all Digital Service Design Schemas. The taxonomy provides a flexible, multi-attribute approach with minimal required fields to lower the barrier to adoption while enabling rich analysis when needed.
+
+**Design Philosophy:** Only `type` and `serviceModel` are required. All other fields are optional, allowing teams to adopt the level of detail that works for them.
 
 ---
 
-## The Channel Taxonomy System
+## Quick Start
 
-### Three-Level Architecture
+### Minimal Channel Entry
 
-1. **Categories** - Broad groupings for analysis (digital, physical, direct)
-2. **Standard Types** - 7 common channel types covering most use cases
-3. **Custom Extensions** - Organization-specific types when needed
+```json
+{
+  "type": "app",
+  "serviceModel": "self_service"
+}
+```
+
+### Full Channel Entry
+
+```json
+{
+  "type": "app",
+  "serviceModel": "self_service",
+  "category": "digital",
+  "interaction": "automated",
+  "name": "StyleMart App",
+  "usage_context": "Product browsing and checkout",
+  "ownership": "own"
+}
+```
+
+---
+
+## Required Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `type` | string | The specific channel type (see suggested types below, or use custom) |
+| `serviceModel` | enum | Who controls the interaction: `self_service`, `managed`, or `both` |
+
+### Service Model Definitions
+
+| Value | Definition | Examples |
+|-------|------------|----------|
+| `self_service` | User controls the interaction | Browsing website, using app, checking tracking |
+| `managed` | Staff controls the interaction | Phone support call, in-store assistance |
+| `both` | Either user or staff can lead | Chat that can be self-service or escalate to human |
+
+---
+
+## Optional Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `category` | enum | High-level grouping: `digital`, `telecom`, `physical` |
+| `interaction` | enum | Whether response is `human` or `automated` |
+| `name` | string | Specific instance name (e.g., "StyleMart App") |
+| `usage_context` | string | When and why this channel is used |
+| `ownership` | enum | Who owns the channel: `own`, `third_party`, `partner` |
+| `custom_type` | string | Description when using non-standard types |
+
+---
+
+## Suggested Channel Types
+
+Use these common types, or define your own. Custom types are fully supported.
+
+### Digital Channels
+
+Owned by digital teams. Lowest cost to serve at scale.
+
+| Type | Description |
+|------|-------------|
+| `website` | Web browser-based interactions |
+| `app` | Mobile or desktop applications |
+| `email` | Email communications |
+| `chat` | Live chat or chatbot interactions |
+| `social_media` | Social platform interactions |
+| `messaging_app` | WhatsApp, Messenger, etc. |
+| `push_notification` | Mobile or web push notifications |
+
+### Telecom Channels
+
+Typically owned by contact centres. Medium cost to serve.
+
+| Type | Description |
+|------|-------------|
+| `phone` | Voice telephone calls |
+| `sms` | Text message communications |
+| `video_call` | Video conferencing (Zoom, Teams, etc.) |
+
+### Physical Channels
+
+Owned by branch/ops teams. Highest cost to serve.
+
+| Type | Description |
+|------|-------------|
+| `in_person` | Face-to-face interactions at locations |
+| `post` | Physical mail (letters, parcels) |
+| `print` | Printed materials (brochures, signage) |
 
 ---
 
 ## Channel Categories
 
-The three categories provide high-level grouping for cross-channel analysis:
+Categories provide high-level grouping useful for ownership analysis and cost-to-serve prioritisation.
 
-| Category | Definition | Purpose |
-|----------|------------|---------|
-| **digital** | Online and electronic interactions | Website browsing, app usage, social media engagement |
-| **physical** | In-person and tangible touchpoints | Face-to-face meetings, physical locations, printed materials |
-| **direct** | One-to-one communication channels | Email, phone, personal messaging |
+| Category | Definition | Typical Owner | Cost Profile |
+|----------|------------|---------------|--------------|
+| `digital` | Apps, websites, online platforms (connected or offline) | Digital team | Lowest - highly scalable |
+| `telecom` | Phone calls and SMS via telephone networks | Contact centre | Medium - often human involvement |
+| `physical` | Locations, staff presence, or tangible materials | Branch/Ops | Highest - property, staff, logistics |
 
----
+### When to Use Categories
 
-## Standard Channel Types
+Categories are optional but valuable for:
 
-### The 7 Standard Types
-
-| Type | Category | Definition | Common Examples |
-|------|----------|------------|-----------------|
-| **website** | digital | Web browser-based interactions | Company websites, web portals, online platforms |
-| **app** | digital | Native mobile or tablet applications | Mobile apps, desktop applications |
-| **social_media** | digital | Social networking platforms | Facebook, LinkedIn, Instagram, Twitter/X |
-| **email** | direct | Email communication | Marketing emails, personal correspondence, newsletters |
-| **phone** | direct | Voice telephone calls | Customer service calls, sales calls, support hotlines |
-| **in_person** | physical | Face-to-face interactions | Meetings, conferences, in-store visits |
-| **post** | physical | Physical mail and printed materials | Letters, brochures, catalogs |
-
-### Extension Type
-
-| Type | Category | Usage |
-|------|----------|-------|
-| **other** | Any | Used with `custom_type` field for organization-specific channels |
+- **Ownership analysis**: "Which team owns this touchpoint?"
+- **Cost analysis**: "What's our channel mix by cost-to-serve?"
+- **Digital transformation**: "What percentage of interactions are digital?"
+- **Service design**: "Are we over-reliant on high-cost channels?"
 
 ---
 
-## Custom Channel Extensions
+## Interaction Type
 
-When the 7 standard types don't cover a specific need, organizations can add custom channel types:
+The `interaction` field captures whether a human responds.
 
-### How to Use Custom Types
+| Value | Definition | Examples |
+|-------|------------|----------|
+| `human` | A human responds or assists | Phone call with agent, in-store staff |
+| `automated` | No human involved in response | App browsing, chatbot, IVR menu |
+
+### Why Track Interaction Type
+
+- **Customer experience**: Some customers prefer human contact
+- **Capacity planning**: Human channels have capacity constraints
+- **Cost analysis**: Automated channels typically cost less per interaction
+
+---
+
+## Ownership
+
+The `ownership` field tracks who operates the channel.
+
+| Value | Definition | Examples |
+|-------|------------|----------|
+| `own` | Your organisation owns and operates | Your website, your app, your stores |
+| `third_party` | External provider operates | Carrier delivery, banking app verification |
+| `partner` | Jointly operated or partnered | Partner lockers, affiliate sites |
+
+---
+
+## Usage Examples
+
+### Journey Step Channels
 
 ```json
 {
-  "name": "Customer Service SMS Alerts",
-  "category": "direct",
-  "type": "other",
-  "custom_type": "sms",
-  "usage_context": "Appointment reminders and delivery notifications",
-  "preference_level": "acceptable"
+  "lane_content": {
+    "channels": [
+      {
+        "type": "app",
+        "serviceModel": "self_service",
+        "category": "digital",
+        "name": "StyleMart App",
+        "usage_context": "Browsing flash sale products"
+      }
+    ]
+  }
 }
 ```
 
-### Common Custom Types
-
-| Custom Type | Suggested Category | Use Case |
-|-------------|-------------------|----------|
-| `sms` | direct | Text message communications |
-| `chatbot` | digital | Automated chat interactions |
-| `tv` | digital | Television advertising/content |
-| `kiosk` | physical | Self-service terminals |
-| `radio` | digital | Radio broadcasts/podcasts |
-| `video_call` | direct | Video conferencing (Zoom, Teams, etc.) |
-
----
-
-## Type-to-Category Alignment
-
-Each channel type must align with its category:
-
-### Digital Category
-- `website` - Web-based interactions
-- `app` - Mobile/desktop applications
-- `social_media` - Social platforms
-
-### Physical Category
-- `in_person` - Face-to-face interactions
-- `post` - Physical mail
-
-### Direct Category
-- `email` - Email communication
-- `phone` - Voice calls
-
-**Validation:** Schemas enforce type-to-category alignment. Mismatched combinations will fail validation.
-
----
-
-## Usage in Personas
-
-Personas document channel **preferences** - how the persona likes to interact across their entire experience.
-
-### Structure
-
-```json
-"channels": [
-  {
-    "name": "LinkedIn professional network",
-    "category": "digital",
-    "type": "social_media",
-    "usage_context": "Industry news and peer networking",
-    "preference_level": "preferred"
-  }
-]
-```
-
-### Complete Example
+### Multi-Channel Step
 
 ```json
 {
-  "name": "Company website research",
-  "category": "digital",
-  "type": "website",
-  "custom_type": null,
-  "usage_context": "Initial vendor evaluation and feature comparison",
-  "preference_level": "preferred"
+  "lane_content": {
+    "channels": [
+      {
+        "type": "in_person",
+        "serviceModel": "managed",
+        "category": "physical",
+        "name": "Parcel locker",
+        "usage_context": "Return drop-off"
+      },
+      {
+        "type": "app",
+        "serviceModel": "self_service",
+        "category": "digital",
+        "name": "StyleMart App",
+        "usage_context": "QR code for locker access"
+      }
+    ]
+  }
 }
 ```
 
-### Persona Context Examples
+### Minimal Entries
 
-#### Business Persona (B2B)
-```json
-[
-  {
-    "name": "Industry conferences and trade shows",
-    "category": "physical",
-    "type": "in_person",
-    "usage_context": "Learning about new technologies and vendor discovery",
-    "preference_level": "preferred"
-  },
-  {
-    "name": "Vendor websites and product documentation",
-    "category": "digital",
-    "type": "website",
-    "usage_context": "Detailed technical research and compliance review",
-    "preference_level": "preferred"
-  },
-  {
-    "name": "Sales representative calls",
-    "category": "direct",
-    "type": "phone",
-    "usage_context": "Custom requirements discussion and pricing",
-    "preference_level": "acceptable"
-  }
-]
-```
-
-#### Consumer Persona (B2C)
-```json
-[
-  {
-    "name": "Instagram and Facebook",
-    "category": "digital",
-    "type": "social_media",
-    "usage_context": "Product discovery and reviews from friends",
-    "preference_level": "preferred"
-  },
-  {
-    "name": "Retail mobile apps",
-    "category": "digital",
-    "type": "app",
-    "usage_context": "Quick shopping and delivery tracking",
-    "preference_level": "preferred"
-  },
-  {
-    "name": "Customer service email",
-    "category": "direct",
-    "type": "email",
-    "usage_context": "Non-urgent questions and order issues",
-    "preference_level": "acceptable"
-  }
-]
-```
-
-#### Employee Persona (Internal)
-```json
-[
-  {
-    "name": "Internal knowledge base",
-    "category": "digital",
-    "type": "website",
-    "usage_context": "Finding procedures and documentation",
-    "preference_level": "preferred"
-  },
-  {
-    "name": "Team meetings",
-    "category": "physical",
-    "type": "in_person",
-    "usage_context": "Weekly status updates and collaboration",
-    "preference_level": "acceptable"
-  },
-  {
-    "name": "Manager email",
-    "category": "direct",
-    "type": "email",
-    "usage_context": "Formal requests and documentation",
-    "preference_level": "avoided"
-  }
-]
-```
-
----
-
-## Usage in Journeys
-
-Journeys document **actual channels used** at specific steps - where personas interact with the service in practice.
-
-### Structure
-
-```json
-"channels": [
-  {
-    "category": "digital",
-    "type": "website",
-    "name": "Vendor comparison site (G2, Capterra)",
-    "usage_context": "Initial research and peer reviews"
-  }
-]
-```
-
-### Journey Progression Example
+For teams wanting quick documentation:
 
 ```json
 {
-  "phases": [
-    {
-      "name": "Awareness",
-      "steps": [
-        {
-          "id": "discover-need",
-          "name": "Recognize problem",
-          "lane_content": {
-            "channels": [
-              {
-                "category": "physical",
-                "type": "in_person",
-                "name": "Industry conference presentation",
-                "usage_context": "Learned about new solution category"
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "Research",
-      "steps": [
-        {
-          "id": "evaluate-options",
-          "name": "Compare vendors",
-          "lane_content": {
-            "channels": [
-              {
-                "category": "digital",
-                "type": "website",
-                "name": "Vendor websites",
-                "usage_context": "Feature comparison and pricing"
-              },
-              {
-                "category": "digital",
-                "type": "social_media",
-                "name": "LinkedIn peer posts",
-                "usage_context": "Seeking recommendations from network"
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "Decision",
-      "steps": [
-        {
-          "id": "final-negotiation",
-          "name": "Contract discussions",
-          "lane_content": {
-            "channels": [
-              {
-                "category": "direct",
-                "type": "phone",
-                "name": "Sales calls",
-                "usage_context": "Pricing negotiation and custom terms"
-              },
-              {
-                "category": "direct",
-                "type": "email",
-                "name": "Legal correspondence",
-                "usage_context": "Contract review and approval"
-              }
-            ]
-          }
-        }
-      ]
-    }
+  "channels": [
+    { "type": "website", "serviceModel": "self_service" },
+    { "type": "phone", "serviceModel": "managed" },
+    { "type": "email", "serviceModel": "managed" }
   ]
+}
+```
+
+### With Custom Type
+
+```json
+{
+  "type": "atm",
+  "serviceModel": "self_service",
+  "category": "physical",
+  "custom_type": "Automated teller machine for banking transactions",
+  "name": "Branch ATM",
+  "usage_context": "Cash withdrawal and balance check"
 }
 ```
 
@@ -320,131 +235,71 @@ Journeys document **actual channels used** at specific steps - where personas in
 
 ## Common Channel Patterns
 
-### B2B Technology Buying
-`in_person` (conferences) → `website` (research) → `phone` (sales) → `email` (contracts)
+### E-Commerce Purchase Journey
 
-### Consumer E-Commerce
-`social_media` (discovery) → `app` (shopping) → `email` (confirmation) → `post` (delivery)
+```
+push_notification (digital) → app (digital) → email (digital) → in_person (physical)
+```
 
-### Employee Support
-`website` (knowledge base) → `email` (help desk) → `in_person` (escalation)
+### Customer Support Escalation
 
-### Service Inquiry
-`phone` (initial call) → `email` (follow-up) → `in_person` (appointment) → `app` (tracking)
+```
+chat/automated (digital) → chat/human (digital) → phone (telecom) → in_person (physical)
+```
+
+### B2B Sales Cycle
+
+```
+website (digital) → email (digital) → video_call (telecom) → in_person (physical)
+```
 
 ---
 
-## Channel vs Persona Integration
+## Schema Definition
 
-### Alignment Principles
+### Journey Channel Schema (v1.1)
 
-**Persona channels define preferences:**
-- What channels they prefer overall
-- Why they prefer certain channels
-- How they typically interact
-
-**Journey channels show reality:**
-- What channels are actually used at each step
-- Why those specific channels were chosen for that moment
-- How the channel supports the step's goal
-
-### Example Integration
-
-**Persona Preference:**
 ```json
 {
-  "name": "Sarah - Working Mom",
-  "channels": [
-    {
-      "name": "Mobile shopping apps",
-      "category": "digital",
-      "type": "app",
-      "preference_level": "preferred",
-      "usage_context": "Busy schedule requires quick mobile access"
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "description": "Channel type - use suggested types or custom"
+    },
+    "serviceModel": {
+      "enum": ["self_service", "managed", "both"],
+      "description": "Who controls the interaction"
+    },
+    "category": {
+      "enum": ["digital", "telecom", "physical"],
+      "description": "High-level grouping for ownership and cost analysis"
+    },
+    "interaction": {
+      "enum": ["human", "automated"],
+      "description": "Whether a human responds"
+    },
+    "name": {
+      "type": "string",
+      "maxLength": 100,
+      "description": "Specific instance name"
+    },
+    "usage_context": {
+      "type": "string",
+      "maxLength": 200,
+      "description": "When and why this channel is used"
+    },
+    "ownership": {
+      "enum": ["own", "third_party", "partner"],
+      "description": "Who owns/operates this channel"
+    },
+    "custom_type": {
+      "type": "string",
+      "maxLength": 50,
+      "description": "Custom type description"
     }
-  ]
-}
-```
-
-**Journey Reality:**
-```json
-{
-  "step": "Emergency purchase",
-  "channels": [
-    {
-      "category": "digital",
-      "type": "app",
-      "name": "Retailer mobile app",
-      "usage_context": "Quick checkout during lunch break"
-    }
-  ]
-}
-```
-
-The journey validates the persona - Sarah uses her preferred app channel when time-constrained.
-
----
-
-## Validation Rules
-
-### Schema Validation
-
-✅ **Required Fields:**
-- `name` - Specific channel instance name
-- `category` - Must be: digital, physical, or direct
-- `type` - Must be one of the 7 standard types or "other"
-
-✅ **Conditional Requirements:**
-- When `type` is "other", `custom_type` must be provided
-- `category` and `type` must align per taxonomy
-
-✅ **Optional Fields:**
-- `custom_type` - Only when type is "other"
-- `usage_context` - Recommended for clarity
-- `preference_level` - Only in personas (not journeys)
-
-### Content Quality
-
-✅ **DO:**
-- Use specific channel names (not just the type)
-- Provide usage context explaining when/why
-- Align type with category
-- Document preference levels in personas
-- Show actual usage in journeys
-
-❌ **DON'T:**
-- Use generic names like "website" without specificity
-- Omit usage context
-- Misalign type and category
-- Create unnecessary custom types
-- Mix up persona preferences with journey touchpoints
-
----
-
-## Schema Definitions
-
-### Persona Channel Schema
-
-```json
-{
-  "name": {"type": "string", "maxLength": 100},
-  "category": {"enum": ["digital", "physical", "direct"]},
-  "type": {"enum": ["website", "app", "email", "social_media", "phone", "in_person", "post", "other"]},
-  "custom_type": {"type": "string", "maxLength": 50},
-  "usage_context": {"type": "string", "maxLength": 300},
-  "preference_level": {"enum": ["preferred", "acceptable", "avoided"]}
-}
-```
-
-### Journey Channel Schema
-
-```json
-{
-  "category": {"enum": ["digital", "physical", "direct"]},
-  "type": {"enum": ["website", "app", "email", "social_media", "phone", "in_person", "post", "other"]},
-  "custom_type": {"type": "string", "maxLength": 50},
-  "name": {"type": "string", "maxLength": 100},
-  "usage_context": {"type": "string", "maxLength": 200}
+  },
+  "required": ["type", "serviceModel"]
 }
 ```
 
@@ -452,62 +307,97 @@ The journey validates the persona - Sarah uses her preferred app channel when ti
 
 ## Migration from Previous Versions
 
-### From 10-Type System (v1.0.1)
+### From v1.0.2 (3-category/7-type system)
 
-| Old Type | New Category | New Type |
-|----------|--------------|----------|
-| `digital` | digital | website |
-| `social` | digital | social_media |
-| `media` | digital | website or other (custom_type: media) |
-| `direct` | direct | email or phone |
-| `physical` | physical | in_person |
-| `human` | varies | in_person or phone (context-dependent) |
-| `hybrid` | varies | Multiple channel entries |
-| `self_service` | digital | website or app |
-| `in_person_events` | physical | in_person |
-| `self_service_digital` | digital | website |
-| `personal_interaction` | physical or direct | in_person or phone |
-| `mobile_app` | digital | app |
-| `social_recommendations` | digital | social_media |
+| Old Field | New Field | Notes |
+|-----------|-----------|-------|
+| `channel` | `type` | Direct rename |
+| `medium: "digital"` | `category: "digital"` | Optional now |
+| `medium: "non_digital"` | `category: "physical"` or `"telecom"` | Choose based on context |
+| `custom_channel` | `custom_type` | Rename |
+| `name` | `name` | Unchanged |
+| `usage_context` | `usage_context` | Unchanged |
+| `serviceModel` | `serviceModel` | Unchanged |
 
-### From 5-Type System (v1.0.2 early)
+### Breaking Changes
 
-| Old Type | New Category | New Type |
-|----------|--------------|----------|
-| `digital` | digital | website or app (context-dependent) |
-| `physical` | physical | in_person |
-| `human` | physical or direct | in_person or phone (context-dependent) |
-| `hybrid` | varies | Multiple channel entries |
-| `self_service` | digital | website or app |
+- `channel` field renamed to `type`
+- `medium` field removed (use `category` instead)
+- Required fields reduced from 3 (`channel`, `medium`, `serviceModel`) to 2 (`type`, `serviceModel`)
+
+### Example Migration
+
+**Before (v1.0.2):**
+```json
+{
+  "channel": "app",
+  "medium": "digital",
+  "serviceModel": "self_service",
+  "name": "StyleMart App",
+  "usage_context": "Product browsing"
+}
+```
+
+**After (v1.1):**
+```json
+{
+  "type": "app",
+  "serviceModel": "self_service",
+  "category": "digital",
+  "name": "StyleMart App",
+  "usage_context": "Product browsing"
+}
+```
+
+---
+
+## Best Practices
+
+### DO
+
+- Start with just `type` and `serviceModel` - add detail as needed
+- Use descriptive `name` values for specific channel instances
+- Include `usage_context` to explain why this channel at this step
+- Use categories for cross-journey analysis
+
+### DON'T
+
+- Force all fields if they don't add value
+- Create custom types for channels already in the suggested list
+- Overthink category assignment - it's for analysis, not precision
 
 ---
 
 ## Version History
 
+### Version 1.1.0 (2026-01-15)
+
+- **Breaking:** Renamed `channel` to `type`, removed `medium`
+- **Simplified:** Only `type` and `serviceModel` required
+- **New categories:** `digital`, `telecom`, `physical` (based on ownership/cost)
+- **New fields:** `interaction`, `ownership`
+- **Updated suggested types:** Added `messaging_app`, `push_notification`; removed `kiosk`, `signage`
+
 ### Version 1.0.2 (2025-11-28)
-- **Major Update:** Introduced 3-category/7-type taxonomy
-- Added `category` field (digital, physical, direct)
-- Reduced types from 10 to 7 standard types plus "other"
-- Added custom_type extension mechanism
-- Enforced type-to-category alignment validation
-- Updated all examples and documentation
-- Removed "Enhanced" terminology
+
+- 3-category/7-type taxonomy with `channel`, `medium`, `serviceModel` required
 
 ### Version 1.0.1 (2025-10-11)
-- 10-type taxonomy with core and extended types
+
+- 10-type taxonomy
 
 ### Version 1.0.0 (2024-09-30)
+
 - Initial 5-type taxonomy
 
 ---
 
 ## Related Documentation
 
-- [SERVICE-DESIGN-PERSONA-STANDARD.md](../v1.0.2/SERVICE-DESIGN-PERSONA-STANDARD.md) - Persona specification
-- [SERVICE-DESIGN-JOURNEY-STANDARD.md](../v1.0.2/SERVICE-DESIGN-JOURNEY-STANDARD.md) - Journey specification
-- [CANONICAL_REFERENCES.md](CANONICAL_REFERENCES.md) - All schema components
+- [SERVICE-DESIGN-JOURNEY-STANDARD.md](../v1.1/SERVICE-DESIGN-JOURNEY-STANDARD.md) - Journey specification
+- [SERVICE-DESIGN-PERSONA-STANDARD.md](../v1.1/SERVICE-DESIGN-PERSONA-STANDARD.md) - Persona specification
 - [BARRIER_TAXONOMY.md](BARRIER_TAXONOMY.md) - Barrier type definitions
 
 ---
 
-**This is the authoritative reference for channel types. Use this taxonomy consistently across all schemas, documentation, and examples.**
+**This is the authoritative reference for channel types. The taxonomy is designed to be simple to adopt while enabling rich analysis when needed.**

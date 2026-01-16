@@ -1,0 +1,95 @@
+{
+  "schema_info": {
+    "version": "1.1.0",
+    "standard": "Service Design Role Card Standard v1.1",
+    "schema_type": "role-card",
+    "created_date": "2026-01-06",
+    "last_updated": "2026-01-06",
+    "created_by": "Digital Service Design Team",
+    "organization": "Digital Service Design Working"
+  },
+  "identity": {
+    "id": "role-working-mom-consumer",
+    "title": "Working Mom Consumer",
+    "description": "Primary household decision maker balancing work and family responsibilities while managing household purchases and ensuring family needs are met within budget constraints."
+  },
+  "roleType": "Consumer",
+  "roleContext": {
+    "consumerContext": {
+      "shopping_behavior": "Researches products thoroughly before purchasing. Prefers brands with good reviews and ethical practices. Price-conscious but willing to pay more for quality and convenience.",
+      "purchasing_context": "Primary decision maker for household purchases. Manages family budget and ensures purchases align with family values.",
+      "brand_relationships": "Loyal to brands that consistently deliver value and align with family-first values. Quick to switch if trust is broken.",
+      "decision_factors": [
+        "Time savings",
+        "Quality and durability",
+        "Price-value ratio",
+        "Reviews and recommendations",
+        "Ethical business practices"
+      ],
+      "budget_constraints": "Monthly household budget with flexibility for quality purchases that save time or benefit family wellbeing"
+    }
+  },
+  "roleBasedNeeds": [
+    {
+      "text": "Find products that save time in daily routines",
+      "priority": "primary",
+      "timeframe": "immediate"
+    },
+    {
+      "text": "Make healthy and safe choices for her family",
+      "priority": "primary",
+      "timeframe": "long_term"
+    },
+    {
+      "text": "Stay within monthly budget while maintaining quality of life",
+      "priority": "primary",
+      "timeframe": "immediate"
+    },
+    {
+      "text": "Access trustworthy product information quickly",
+      "priority": "secondary",
+      "timeframe": "immediate"
+    }
+  ],
+  "roleBasedFrustrations": [
+    {
+      "text": "Limited time for research and comparison shopping",
+      "severity": 4,
+      "frequency": "daily",
+      "context": "Between work and family responsibilities, lacks time for thorough product research"
+    },
+    {
+      "text": "Overwhelmed by too many product options",
+      "severity": 3,
+      "frequency": "weekly",
+      "context": "Choice overload when shopping online or in stores"
+    },
+    {
+      "text": "Difficulty finding trustworthy product reviews",
+      "severity": 3,
+      "frequency": "weekly",
+      "context": "Uncertain about authenticity of online reviews and recommendations"
+    },
+    {
+      "text": "Products that don't live up to marketing promises",
+      "severity": 3,
+      "frequency": "occasional",
+      "context": "Disappointment after purchase based on misleading information"
+    }
+  ],
+  "extensions": {
+    "custom": {
+      "typical_purchase_categories": [
+        "Household essentials",
+        "Children's products",
+        "Family entertainment",
+        "Health and wellness"
+      ],
+      "peak_shopping_times": [
+        "Lunch breaks",
+        "After children's bedtime",
+        "Weekend mornings"
+      ]
+    }
+  }
+}

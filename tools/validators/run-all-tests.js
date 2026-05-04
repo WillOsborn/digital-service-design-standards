@@ -1,4 +1,4 @@
-// Complete test suite for v1.0.1 schemas
+// Complete test suite — v1.1 schemas and v2.0 schemas
 const fs = require('fs');
 const path = require('path');
 const { validatePersona } = require('./validate-persona');
@@ -336,29 +336,102 @@ function runAllTests(options = {}) {
     };
 }
 
+// ---------------------------------------------------------------------------
+// v2.0 batch validation — validate all v2.0 examples directly
+// ---------------------------------------------------------------------------
+
+/**
+ * Validate all v2.0 example artifacts and report quality scores.
+ * Returns true if all pass.
+ */
+function runV2Validation() {
+    console.log('\n\n🆕 v2.0 Schema Batch Validation');
+    console.log('=================================');
+
+    let v2Validator;
+    try {
+        v2Validator = require('./validate-v2.0');
+    } catch (err) {
+        console.error('  Could not load v2.0 validator: ' + err.message);
+        return false;
+    }
+
+    const { validateFile } = v2Validator;
+    const examplesDir = path.join(__dirname, '../../v2.0/examples');
+
+    function findJsonFiles(dir) {
+        const results = [];
+        try {
+            for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+                const p = path.join(dir, entry.name);
+                if (entry.isDirectory()) results.push(...findJsonFiles(p));
+                else if (entry.name.endsWith('.json')) results.push(p);
+            }
+        } catch (_) {}
+        return results;
+    }
+
+    const files = findJsonFiles(examplesDir);
+    if (files.length === 0) {
+        console.log('  (no v2.0 example files found)');
+        return true;
+    }
+
+    let passed = 0;
+    let failed = 0;
+
+    for (const f of files) {
+        const rel = path.relative(path.join(__dirname, '../../'), f);
+        const result = validateFile(f);
+        const qualityStr = result.quality ? ' [quality: ' + result.quality.score + '/100]' : '';
+        if (result.valid) {
+            console.log('  PASS: ' + rel + qualityStr);
+            passed++;
+        } else {
+            console.log('  FAIL: ' + rel + qualityStr);
+            result.errors.slice(0, 3).forEach(function(e) { console.log('     ' + e); });
+            failed++;
+        }
+    }
+
+    console.log('\n  v2.0 examples: ' + passed + ' passed, ' + failed + ' failed');
+    return failed === 0;
+}
+
 // Run if called directly
 if (require.main === module) {
     const args = process.argv.slice(2);
     const options = {};
+    const skipV2 = args.includes('--skip-v2');
 
     // Parse arguments
     for (let i = 0; i < args.length; i++) {
         if (args[i] === '--schema-dir' && args[i + 1]) {
             options.schemaDir = args[i + 1];
             i++;
+        } else if (args[i] === '--skip-v2') {
+            // handled above
         } else if (args[i] === '--help' || args[i] === '-h') {
             console.log("Usage: node run-all-tests.js [options]");
             console.log("\nOptions:");
-            console.log("  --schema-dir <dir> Directory containing schema files (default: ../../)");
+            console.log("  --schema-dir <dir>  Directory containing v1.1 schema files");
+            console.log("  --skip-v2           Skip v2.0 validation");
             console.log("\nExamples:");
             console.log("  node run-all-tests.js");
-            console.log("  node run-all-tests.js --schema-dir /path/to/schemas");
+            console.log("  node run-all-tests.js --skip-v2");
             process.exit(0);
         }
     }
 
-    const results = runAllTests(options);
-    process.exit(results.passed ? 0 : 1);
+    const v1Results = runAllTests(options);
+    let allPassed = v1Results.passed;
+
+    if (!skipV2) {
+        const v2Passed = runV2Validation();
+        allPassed = allPassed && v2Passed;
+    }
+
+    process.exit(allPassed ? 0 : 1);
 }
 
-module.exports = { runAllTests, validateSchemaStructure };
+module.exports = { runAllTests, validateSchemaStructure, runV2Validation };

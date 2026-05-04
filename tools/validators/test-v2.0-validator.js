@@ -397,6 +397,258 @@ for (const exFile of exampleFiles) {
 }
 
 // ---------------------------------------------------------------------------
+// Task 2.5 — Quality scoring
+// ---------------------------------------------------------------------------
+
+section('Task 2.5 — Quality scoring');
+
+const { scoreActor, scoreMission, scoreExperience, scoreArtifact } = require('./v2.0-quality-scoring');
+
+// scoreArtifact auto-dispatches by $type
+{
+  const result = scoreArtifact({ $type: 'Actor', traits: {}, contexts: [] });
+  assert(typeof result.score === 'number', 'scoreArtifact returns numeric score');
+  assert(result.max === 100, 'scoreArtifact max is 100');
+  assert(result.schemaType === 'Actor', 'scoreArtifact sets schemaType');
+  assert(result.breakdown && typeof result.breakdown === 'object', 'scoreArtifact returns breakdown object');
+}
+
+// Unknown type returns score:0
+{
+  const result = scoreArtifact({ foo: 'bar' });
+  assert(result.schemaType === null, 'scoreArtifact returns null schemaType for unknown type');
+  assert(result.score === 0, 'scoreArtifact returns 0 for unknown type');
+}
+
+// Minimal actor (no optional fields) → low score, but returns valid structure
+{
+  const minimal = { $type: 'Actor', id: 'actor-test', version: '2.0.0', name: 'Test', actorType: 'human', traits: {}, contexts: [] };
+  const result = scoreActor(minimal);
+  assert(result.score >= 0 && result.score <= 100, 'scoreActor result is in 0-100 range');
+  assert(result.score < 70, 'Minimal actor scores below 70 (not enough content)');
+  assert('requiredFields' in result.breakdown, 'breakdown has requiredFields category');
+  assert('traitsDepth' in result.breakdown, 'breakdown has traitsDepth category');
+}
+
+// Rich actor (Sarah Martinez) → score ≥ 70
+{
+  const result = validateFile('v2.0/examples/retail/actor-sarah-martinez.json');
+  // Re-score directly
+  const fs = require('fs');
+  const data = JSON.parse(fs.readFileSync(path.join(PROJECT_ROOT, 'v2.0/examples/retail/actor-sarah-martinez.json'), 'utf8'));
+  const scoreResult = scoreActor(data);
+  assert(scoreResult.score >= 70, `Sarah actor scores ≥70 (got ${scoreResult.score})`, JSON.stringify(scoreResult.breakdown));
+}
+
+// Rich mission (retail) → score ≥ 70
+{
+  const fs = require('fs');
+  const data = JSON.parse(fs.readFileSync(path.join(PROJECT_ROOT, 'v2.0/examples/retail/mission-online-clothes-shopping.json'), 'utf8'));
+  const scoreResult = scoreMission(data);
+  assert(scoreResult.score >= 70, `Retail mission scores ≥70 (got ${scoreResult.score})`, JSON.stringify(scoreResult.breakdown));
+}
+
+// Rich experience (Sarah retail) → score ≥ 70
+{
+  const fs = require('fs');
+  const data = JSON.parse(fs.readFileSync(path.join(PROJECT_ROOT, 'v2.0/examples/retail/exp-sarah-clothes-shopping.json'), 'utf8'));
+  const scoreResult = scoreExperience(data);
+  assert(scoreResult.score >= 70, `Sarah experience scores ≥70 (got ${scoreResult.score})`, JSON.stringify(scoreResult.breakdown));
+}
+
+// Breakdown categories present for Mission
+{
+  const data = {
+    $type: 'Mission',
+    id: 'm1', version: '2.0.0', title: 'T', goal: 'G',
+    actors: [{ actorRef: 'a' }],
+    nodes: [{ nodeId: 'n1', nodeType: 'touchpoint' }],
+    edges: [],
+    meta: { updated: '2026-01-01' }
+  };
+  const result = scoreMission(data);
+  const expectedCategories = ['requiredFields', 'nodeVariety', 'edgeConnectivity', 'lanes', 'serviceBlueprint', 'paths', 'sla'];
+  for (const cat of expectedCategories) {
+    assert(cat in result.breakdown, `scoreMission breakdown has "${cat}"`);
+  }
+}
+
+// Breakdown categories present for Experience
+{
+  const data = {
+    $type: 'Experience',
+    id: 'e1', version: '2.0.0', title: 'T',
+    references: { actorRef: 'a', missionRef: 'm' },
+    path: { nodeSequence: ['n1'] },
+    nodes: [],
+    meta: { updated: '2026-01-01' }
+  };
+  const result = scoreExperience(data);
+  const expectedCategories = ['requiredFields', 'pathCoverage', 'thoughtsEmotions', 'needAtStep', 'painAtStep', 'barriers', 'outcome'];
+  for (const cat of expectedCategories) {
+    assert(cat in result.breakdown, `scoreExperience breakdown has "${cat}"`);
+  }
+}
+
+// needAtStep and painAtStep scoring
+{
+  function makeExpWithNeeds(needCount, painCount) {
+    const nodes = [];
+    for (let i = 0; i < 10; i++) {
+      const laneContent = {
+        thoughts: 'think',
+        emotions: { state: 'ok', intensity: 1 }
+      };
+      if (i < needCount) laneContent.needAtStep = 'a need';
+      if (i < painCount) laneContent.painAtStep = 'a pain';
+      nodes.push({ nodeRef: `n${i}`, laneContent });
+    }
+    return {
+      $type: 'Experience', id: 'e', version: '2.0.0', title: 'T',
+      references: { actorRef: 'a', missionRef: 'm' },
+      path: { nodeSequence: nodes.map((_, i) => `n${i}`) },
+      nodes,
+      meta: { updated: '2026-01-01' }
+    };
+  }
+  const r3needs = scoreExperience(makeExpWithNeeds(3, 2));
+  assert(r3needs.breakdown.needAtStep.score === 15, 'needAtStep ≥3 scores full 15pts');
+  assert(r3needs.breakdown.painAtStep.score === 10, 'painAtStep ≥2 scores full 10pts');
+  const r0needs = scoreExperience(makeExpWithNeeds(0, 0));
+  assert(r0needs.breakdown.needAtStep.score === 0, 'needAtStep=0 scores 0pts');
+  assert(r0needs.breakdown.painAtStep.score === 0, 'painAtStep=0 scores 0pts');
+}
+
+// ---------------------------------------------------------------------------
+// Task 2.4 — Cross-reference validation
+// ---------------------------------------------------------------------------
+
+section('Task 2.4 — Cross-reference validation');
+
+const { checkCrossRefs } = require('./validate-v2.0');
+
+// checkCrossRefs returns an array
+{
+  assert(typeof checkCrossRefs === 'function', 'checkCrossRefs is exported from validate-v2.0');
+}
+
+// Experience with valid refs against a known artifact set → no ref errors
+{
+  const fs = require('fs');
+  const actor = JSON.parse(fs.readFileSync(path.join(PROJECT_ROOT, 'v2.0/examples/retail/actor-sarah-martinez.json'), 'utf8'));
+  const mission = JSON.parse(fs.readFileSync(path.join(PROJECT_ROOT, 'v2.0/examples/retail/mission-online-clothes-shopping.json'), 'utf8'));
+  const exp = JSON.parse(fs.readFileSync(path.join(PROJECT_ROOT, 'v2.0/examples/retail/exp-sarah-clothes-shopping.json'), 'utf8'));
+  const artifacts = [
+    { id: actor.id, schemaType: 'Actor', data: actor },
+    { id: mission.id, schemaType: 'Mission', data: mission }
+  ];
+  const errors = checkCrossRefs(exp, 'Experience', artifacts);
+  assert(Array.isArray(errors), 'checkCrossRefs returns an array');
+  assert(errors.length === 0, 'Experience with valid refs → no cross-ref errors', errors.join('; '));
+}
+
+// Experience with missing actorRef → ref error
+{
+  const exp = {
+    $type: 'Experience',
+    id: 'e1', version: '2.0.0', title: 'T',
+    references: { actorRef: 'actor-does-not-exist', missionRef: 'mission-x' },
+    path: { nodeSequence: ['n1'] },
+    nodes: [{ nodeRef: 'n1', laneContent: {} }],
+    meta: { updated: '2026-01-01' }
+  };
+  const artifacts = [
+    { id: 'mission-x', schemaType: 'Mission', data: { nodes: [{ nodeId: 'n1' }] } }
+  ];
+  const errors = checkCrossRefs(exp, 'Experience', artifacts);
+  assert(errors.length > 0, 'Missing actorRef produces a cross-ref error');
+  assert(errors.some(e => e.includes('actorRef') || e.includes('actor-does-not-exist')), 'Error mentions the missing actorRef');
+}
+
+// Experience with missing missionRef → ref error
+{
+  const exp = {
+    $type: 'Experience',
+    id: 'e1', version: '2.0.0', title: 'T',
+    references: { actorRef: 'actor-x', missionRef: 'mission-does-not-exist' },
+    path: { nodeSequence: ['n1'] },
+    nodes: [{ nodeRef: 'n1', laneContent: {} }],
+    meta: { updated: '2026-01-01' }
+  };
+  const artifacts = [
+    { id: 'actor-x', schemaType: 'Actor', data: {} }
+  ];
+  const errors = checkCrossRefs(exp, 'Experience', artifacts);
+  assert(errors.length > 0, 'Missing missionRef produces a cross-ref error');
+  assert(errors.some(e => e.includes('missionRef') || e.includes('mission-does-not-exist')), 'Error mentions the missing missionRef');
+}
+
+// Experience with nodeSequence containing an ID not in Mission → ref error
+{
+  const exp = {
+    $type: 'Experience',
+    id: 'e1', version: '2.0.0', title: 'T',
+    references: { actorRef: 'actor-x', missionRef: 'mission-y' },
+    path: { nodeSequence: ['n1', 'n-does-not-exist'] },
+    nodes: [{ nodeRef: 'n1', laneContent: {} }],
+    meta: { updated: '2026-01-01' }
+  };
+  const missionData = { nodes: [{ nodeId: 'n1' }] };
+  const artifacts = [
+    { id: 'actor-x', schemaType: 'Actor', data: {} },
+    { id: 'mission-y', schemaType: 'Mission', data: missionData }
+  ];
+  const errors = checkCrossRefs(exp, 'Experience', artifacts);
+  assert(errors.length > 0, 'nodeSequence ID not in Mission → cross-ref error');
+  assert(errors.some(e => e.includes('n-does-not-exist')), 'Error names the missing node ID');
+}
+
+// checkCrossRefs with empty artifact set → warns but doesn't crash
+{
+  const exp = {
+    $type: 'Experience',
+    id: 'e1', version: '2.0.0', title: 'T',
+    references: { actorRef: 'actor-x', missionRef: 'mission-y' },
+    path: { nodeSequence: ['n1'] },
+    nodes: [],
+    meta: { updated: '2026-01-01' }
+  };
+  let threw = false;
+  try {
+    const errors = checkCrossRefs(exp, 'Experience', []);
+    assert(Array.isArray(errors), 'checkCrossRefs with empty artifacts returns array (not throw)');
+  } catch (e) {
+    threw = true;
+  }
+  assert(!threw, 'checkCrossRefs does not throw with empty artifact set');
+}
+
+// checkCrossRefs on Actor or Mission with no refs → no errors (only Experience is checked)
+{
+  const actor = { $type: 'Actor', id: 'a1', traits: {}, contexts: [] };
+  const errors = checkCrossRefs(actor, 'Actor', []);
+  assert(Array.isArray(errors), 'checkCrossRefs on Actor returns array');
+  assert(errors.length === 0, 'checkCrossRefs on Actor produces no ref errors');
+}
+
+// validateFile with checkRefs:true resolves retail Experience correctly (file-based)
+{
+  const result = validateFile('v2.0/examples/retail/exp-sarah-clothes-shopping.json', {
+    checkRefs: true,
+    artifactsDir: path.join(PROJECT_ROOT, 'v2.0/examples/retail')
+  });
+  assert(result.valid === true, 'Retail experience validates with check-refs enabled', result.errors.join('; '));
+  assert(result.refErrors.length === 0, 'No cross-ref errors for retail experience', result.refErrors.join('; '));
+}
+
+// validateFile result always has refErrors array (even when checkRefs:false)
+{
+  const result = validateFile('v2.0/examples/retail/actor-sarah-martinez.json');
+  assert(Array.isArray(result.refErrors), 'validateFile result always has refErrors array');
+  assert(result.refErrors.length === 0, 'No refErrors when checkRefs not enabled');
+}
+
+// ---------------------------------------------------------------------------
 // Summary
 // ---------------------------------------------------------------------------
 

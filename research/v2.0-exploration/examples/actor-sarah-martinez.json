@@ -1,0 +1,275 @@
+{
+  "$context": "https://schemas.digitalservice.design/v2.0",
+  "$type": "Actor",
+  "id": "actor-sarah-martinez",
+  "version": "2.0.0",
+  "name": "Sarah Martinez",
+  "summary": "32-year-old working mom in Austin who values convenience, quality, and family wellbeing. Smartphone-first user who seeks time-saving solutions while maintaining family values. Thorough researcher who balances efficiency with careful decision-making.",
+  "actorType": "human",
+  "quote": "I just want to find good products for my family without spending hours researching. Time is more precious than money, but I still need to make smart choices.",
+
+  "traits": {
+    "demographics": {
+      "age": 32,
+      "location": "Austin, Texas",
+      "education": "Bachelor's Degree in Marketing",
+      "background": "Working professional and mom. Active in her community and values work-life balance."
+    },
+    "needs": [
+      { "need": "Maintain family wellbeing and happiness", "type": "belonging" },
+      { "need": "Feel confident in decisions that affect her family", "type": "security" },
+      { "need": "Achieve recognition as a capable, organised person", "type": "recognition" },
+      { "need": "Have autonomy over her schedule and choices", "type": "autonomy" }
+    ],
+    "frustrations": [
+      {
+        "frustration": "Feeling rushed and time-pressured in daily routines",
+        "severity": 4,
+        "$provenance": {
+          "source": "user_research",
+          "confidence": 0.9,
+          "evidence": "Customer interviews March 2024, n=12"
+        }
+      },
+      {
+        "frustration": "Anxiety about making wrong decisions with limited information",
+        "severity": 3
+      },
+      {
+        "frustration": "Difficulty trusting information sources",
+        "severity": 3
+      }
+    ],
+    "motivations": [
+      { "motivation": "Family wellbeing and happiness", "type": "intrinsic" },
+      { "motivation": "Efficiency and time-saving", "type": "intrinsic" },
+      { "motivation": "Value for money", "type": "extrinsic" }
+    ],
+    "technology": {
+      "comfort": "intermediate",
+      "description": "Smartphone-first user. Active on Instagram and Pinterest. Uses apps for shopping, banking, and family organization. Comfortable with online purchases but prefers secure payment methods.",
+      "preferredDevices": ["smartphone", "tablet", "laptop"]
+    },
+    "communication": {
+      "preferred": ["app", "social_media"],
+      "acceptable": ["email", "in_person"],
+      "avoided": ["phone"],
+      "style": "Prefers concise, visual communication. Values quick, scannable information over lengthy explanations."
+    },
+    "learningStyle": "Visual learner who prefers tutorials, videos, and step-by-step guides over documentation",
+    "influences": [
+      { "source": "Family and friends", "description": "Trusted recommendations from people with similar lifestyles" },
+      { "source": "Social media parenting community", "description": "Follows parenting blogs and Instagram accounts for product discovery" },
+      { "source": "Online reviews", "description": "Relies heavily on verified reviews when researching purchases" }
+    ],
+    "decisionMaking": {
+      "style": "Analytical with a social component — researches thoroughly then validates with trusted others",
+      "riskTolerance": "cautious"
+    },
+    "accessibility": {
+      "dimensions": [
+        {
+          "dimension": "situational",
+          "description": "Frequently in time-pressured, distracted environments (multitasking with children)",
+          "impact": "moderate"
+        }
+      ]
+    },
+    "behaviouralPatterns": [
+      {
+        "pattern": "Researches thoroughly before committing to significant purchases",
+        "context": "Any purchase affecting family wellbeing or budget"
+      },
+      {
+        "pattern": "Optimises routines for efficiency and reduced friction",
+        "context": "Daily household management and scheduling"
+      },
+      {
+        "pattern": "Seeks social validation for major decisions",
+        "context": "Consults family or friends before committing to big decisions"
+      }
+    ]
+  },
+
+  "contexts": [
+    {
+      "contextId": "ctx-working-mom-consumer",
+      "title": "Working Mom Consumer",
+      "description": "Primary household decision maker balancing work and family responsibilities while managing household purchases and ensuring family needs are met within budget constraints.",
+      "contextType": "Consumer",
+      "needs": [
+        { "need": "Find products that save time in daily routines", "priority": "primary", "timeframe": "immediate" },
+        { "need": "Make healthy and safe choices for her family", "priority": "primary", "timeframe": "long_term" },
+        { "need": "Stay within monthly budget while maintaining quality of life", "priority": "primary", "timeframe": "immediate" },
+        { "need": "Access trustworthy product information quickly", "priority": "secondary", "timeframe": "immediate" }
+      ],
+      "frustrations": [
+        { "frustration": "Limited time for research and comparison shopping", "severity": 4, "frequency": "daily" },
+        { "frustration": "Overwhelmed by too many product options", "severity": 3, "frequency": "weekly" },
+        { "frustration": "Difficulty finding trustworthy product reviews", "severity": 3, "frequency": "weekly" },
+        { "frustration": "Products that don't live up to marketing promises", "severity": 3, "frequency": "occasional" }
+      ],
+      "channels": [
+        {
+          "channel": "app",
+          "category": "digital",
+          "serviceModel": "self_service",
+          "preference": "preferred",
+          "usageContext": "Quick shopping and reordering during short time windows (lunch breaks, after bedtime)"
+        },
+        {
+          "channel": "social_media",
+          "category": "digital",
+          "serviceModel": "both",
+          "preference": "preferred",
+          "usageContext": "Product discovery and peer recommendations"
+        },
+        {
+          "channel": "email",
+          "category": "digital",
+          "serviceModel": "managed",
+          "preference": "acceptable",
+          "usageContext": "Deals, promotions, and new product announcements"
+        },
+        {
+          "channel": "in_person",
+          "category": "physical",
+          "serviceModel": "managed",
+          "preference": "acceptable",
+          "usageContext": "Hands-on product evaluation and immediate needs"
+        }
+      ],
+      "details": {
+        "shoppingBehaviour": "Researches products thoroughly before purchasing. Prefers brands with good reviews and ethical practices. Price-conscious but willing to pay more for quality and convenience.",
+        "purchasingContext": "Primary decision maker for household purchases. Manages family budget and ensures purchases align with family values.",
+        "brandRelationships": "Loyal to brands that consistently deliver value and align with family-first values. Quick to switch if trust is broken.",
+        "decisionFactors": ["Time savings", "Quality and durability", "Price-value ratio", "Reviews and recommendations", "Ethical business practices"],
+        "budgetConstraints": "Monthly household budget with flexibility for quality purchases that save time or benefit family wellbeing",
+        "typicalCategories": ["Household essentials", "Children's products", "Family entertainment", "Health and wellness"],
+        "peakShoppingTimes": ["Lunch breaks", "After children's bedtime", "Weekend mornings"]
+      },
+      "momentsThatMatter": [
+        {
+          "moment": "First-time purchase decision for unfamiliar product",
+          "emotionalIntensity": -1,
+          "importance": "critical"
+        },
+        {
+          "moment": "Product delivery and unboxing experience",
+          "emotionalIntensity": 1,
+          "importance": "high"
+        },
+        {
+          "moment": "Customer service interactions when issues arise",
+          "emotionalIntensity": -2,
+          "importance": "critical"
+        },
+        {
+          "moment": "Discovering a product that genuinely saves time",
+          "emotionalIntensity": 2,
+          "importance": "high"
+        }
+      ]
+    }
+  ],
+
+  "emergence": [
+    {
+      "contextRef": "ctx-working-mom-consumer",
+      "goalsAsExperienced": [
+        { "goal": "Make quick, confident purchase decisions that serve family needs", "source": "collision", "priority": "primary" },
+        { "goal": "Balance quality expectations with budget constraints without guilt", "source": "context", "priority": "primary" },
+        { "goal": "Find trustworthy product information that respects her limited time", "source": "collision", "priority": "secondary" },
+        { "goal": "Feel like a capable, organised mom who makes good decisions", "source": "traits", "priority": "secondary" }
+      ],
+      "painPoints": [
+        {
+          "painPoint": "Time scarcity amplifies anxiety about making wrong purchase decisions",
+          "severity": 4,
+          "emergesFrom": "Sarah's decision-making thoroughness collides with the role's time constraints"
+        },
+        {
+          "painPoint": "Review skepticism conflicts with need for quick validation",
+          "severity": 3,
+          "emergesFrom": "Sarah's trust issues combined with the role's need for fast, confident decisions"
+        },
+        {
+          "painPoint": "Choice overload triggers her analytical nature but she lacks time to satisfy it",
+          "severity": 3,
+          "emergesFrom": "Sarah's research orientation conflicts with role's time pressures"
+        },
+        {
+          "painPoint": "Fear of being seen as a bad mom if she makes wrong product choices",
+          "severity": 3,
+          "emergesFrom": "Sarah's need for recognition and security meets the role's family responsibility"
+        }
+      ],
+      "opportunities": [
+        "Time-aware product recommendations that surface quality options quickly",
+        "Trust signals optimised for quick scanning (verified reviews, clear quality indicators)",
+        "Frictionless return experiences that reduce purchase anxiety",
+        "Smart filtering that matches her values (family-friendly, ethical, quality-focused)",
+        "Mobile-first shopping experiences for limited-time windows"
+      ],
+      "emotionalContext": "Generally optimistic but frequently time-stressed. Seeks control and confidence in decisions. Feels guilty when purchases don't work out or when she can't find time for proper research.",
+      "useCases": [
+        { "scenario": "Quick reordering of household essentials", "trigger": "Running low on regular items", "outcome": "Fast, one-click repurchase with confidence" },
+        { "scenario": "Discovering new products recommended for families", "trigger": "Social media browsing or friend recommendation", "outcome": "Easy evaluation and confident first purchase" },
+        { "scenario": "Comparing prices and reading reviews before major purchases", "trigger": "Need for significant household item", "outcome": "Efficient comparison leading to confident decision" }
+      ],
+      "successMetrics": [
+        "Time saved on shopping and household tasks",
+        "Family satisfaction with purchased products",
+        "Staying within monthly spending budget",
+        "Low return rate (indicating good purchase decisions)"
+      ]
+    }
+  ],
+
+  "relationships": [
+    {
+      "target": "mission-online-clothes-shopping",
+      "type": "participates_in",
+      "description": "Sarah is the primary actor in the clothes shopping mission"
+    }
+  ],
+
+  "provenance": {
+    "source": "user_research",
+    "confidence": 0.85,
+    "researchSources": [
+      { "source": "Customer interviews (March 2024)", "type": "interview", "date": "2024-03-15", "confidence": "high" },
+      { "source": "Online survey responses", "type": "survey", "confidence": "high" },
+      { "source": "Social media behaviour analysis", "type": "analytics", "confidence": "medium" }
+    ],
+    "generationMethod": "ai_assisted",
+    "aiToolsUsed": [
+      {
+        "tool": "Claude",
+        "version": "claude-sonnet-4-6",
+        "usage": "Initial draft generation from research notes and interview transcripts"
+      }
+    ],
+    "humanReviewed": true,
+    "humanReviewedDate": "2024-03-20",
+    "dataSourcesConsent": true
+  },
+
+  "governance": {
+    "dataClassification": "internal",
+    "containsPii": true,
+    "piiCategories": ["name", "location", "age", "employment"],
+    "anonymisationMethod": "fictional_composite",
+    "retentionPolicy": "Retain for project duration + 12 months, then review",
+    "legalBasis": "Legitimate interest — service design and user experience improvement",
+    "dataOwner": "Digital Service Design Team"
+  },
+
+  "meta": {
+    "created": "2024-03-15",
+    "updated": "2026-05-04",
+    "createdBy": "Digital Service Design Team",
+    "organisation": "Digital Service Design Working",
+    "tags": ["consumer", "working-parent", "mobile-first", "example"]
+  }
+}

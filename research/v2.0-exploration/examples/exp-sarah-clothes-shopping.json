@@ -1,0 +1,326 @@
+{
+  "$context": "https://schemas.digitalservice.design/v2.0",
+  "$type": "Experience",
+  "id": "exp-sarah-clothes-shopping",
+  "version": "2.0.0",
+  "title": "Sarah Martinez — Clothes Shopping Experience (Return Path)",
+  "summary": "Sarah receives a promotional notification about a flash sale during her lunch break, finds an emerald green wrap dress, purchases it confidently thanks to the free returns policy, but returns it when it doesn't fit. Despite the return, the smooth process means she'd shop with StyleMart again. This experience follows the return path through the Online Clothes Shopping mission.",
+
+  "references": {
+    "actorRef": "actor-sarah-martinez",
+    "contextRef": "ctx-working-mom-consumer",
+    "missionRef": "mission-online-clothes-shopping"
+  },
+
+  "path": {
+    "pathType": "observed",
+    "nodeSequence": [
+      "receive-notification", "open-app", "browse-categories", "find-item",
+      "check-sizing", "check-reviews", "check-returns", "decide-to-buy",
+      "add-to-cart", "review-cart", "checkout", "payment", "order-confirmed",
+      "dispatch-notification", "track-delivery", "receive-delivery",
+      "try-on", "fit-decision", "initiate-return", "select-return-method",
+      "package-return", "drop-off-return", "return-received", "receive-refund"
+    ],
+    "totalDuration": "10 days"
+  },
+
+  "lanes": [
+    { "id": "actions", "label": "Actions", "type": "list", "description": "What this actor specifically does" },
+    { "id": "thoughts", "label": "Thoughts", "type": "text", "description": "What this actor is thinking" },
+    { "id": "emotions", "label": "Emotions", "type": "emotion", "description": "Emotional state" },
+    { "id": "barriers", "label": "Barriers", "type": "barrier", "description": "Persona-specific barriers with emergesFrom" },
+    { "id": "need-at-step", "label": "Need at Step", "type": "text", "description": "What this actor specifically needs at this moment — the micro-emergence of persona traits meeting service touchpoint" },
+    { "id": "pain-at-step", "label": "Pain at Step", "type": "text", "description": "How this step causes pain for this actor — the gap between need and what the service provides" },
+    { "id": "opportunities", "label": "Opportunities", "type": "list", "description": "Improvement opportunities specific to this actor's experience" }
+  ],
+
+  "nodes": [
+    {
+      "nodeRef": "receive-notification",
+      "laneContent": {
+        "actions": ["Phone buzzes with notification", "Glances at lock screen", "Reads notification preview"],
+        "thoughts": "Oh, StyleMart has a flash sale... 40% off? That's actually good. Maybe I could get that cardigan I've been eyeing.",
+        "emotions": { "state": "intrigued", "intensity": 1 }
+      },
+      "momentThatMatters": {
+        "description": "The notification arrives at a moment when Sarah can actually engage with it",
+        "importance": "high",
+        "emotionalIntensity": 1
+      }
+    },
+    {
+      "nodeRef": "open-app",
+      "laneContent": {
+        "actions": ["Taps notification to open app", "Waits for app to load", "Views sale landing page"],
+        "thoughts": "Let me just have a quick look while I have a few minutes. The sale ends tonight so I need to decide soon.",
+        "emotions": { "state": "curious", "intensity": 1 }
+      }
+    },
+    {
+      "nodeRef": "browse-categories",
+      "laneContent": {
+        "actions": ["Scrolls through sale categories", "Taps into 'Women's Clothing'", "Filters by size and price range", "Scrolls through product grid"],
+        "thoughts": "There's so much here. Let me filter this down. I don't need another basic t-shirt... I want something a bit special that I wouldn't normally buy.",
+        "emotions": { "state": "slightly overwhelmed but engaged", "intensity": 0 },
+        "barriers": [
+          { "type": "knowledge", "description": "Difficult to assess fabric quality from photos alone", "severity": 3, "emergesFrom": "Sarah's quality-conscious nature meets the limitations of digital shopping" }
+        ],
+        "opportunities": ["Add 'treat yourself' or 'special occasion' filter category"]
+      }
+    },
+    {
+      "nodeRef": "find-item",
+      "laneContent": {
+        "actions": ["Spots a wrap dress in a color she loves", "Taps to view product details", "Swipes through all product images", "Checks original price vs sale price"],
+        "thoughts": "Oh this is lovely! That emerald green would be perfect for date nights. £85 down to £51... that's actually reasonable for a treat. I'd never pay full price but this feels justified.",
+        "emotions": { "state": "excited", "intensity": 2, "model": "categorical", "category": "joy" }
+      },
+      "momentThatMatters": {
+        "description": "Finding an item that feels special enough to be a treat but practical enough to justify",
+        "importance": "critical",
+        "emotionalIntensity": 2
+      }
+    },
+    {
+      "nodeRef": "check-sizing",
+      "laneContent": {
+        "actions": ["Scrolls to size guide", "Tries to interpret measurements", "Compares to clothes she owns", "Debates between two sizes"],
+        "thoughts": "I'm usually a 10 but this brand might run small. The size guide says 10 is 28-inch waist... I think that's me? Maybe I should go for 12 to be safe. But then it might be too loose on top.",
+        "emotions": { "state": "uncertain", "intensity": -1 },
+        "needAtStep": "Confidence that the size she picks will fit her body shape — not just measurements, but guidance on how this specific garment will sit on someone like her",
+        "painAtStep": "The size guide gives her numbers but not the answer she actually needs. Her analytical nature demands certainty, but the information provided creates more doubt, not less. She's forced to gamble on fit.",
+        "barriers": [
+          { "type": "knowledge", "description": "Size guide shows measurements but no guidance on fit style", "severity": 4, "emergesFrom": "Sarah's anxiety about wrong decisions meets inadequate product information" }
+        ]
+      }
+    },
+    {
+      "nodeRef": "check-reviews",
+      "laneContent": {
+        "actions": ["Scrolls to reviews section", "Filters to show reviews with photos", "Reads several detailed reviews", "Specifically looks for sizing comments"],
+        "thoughts": "4.2 stars from 89 reviews, that's decent. Let me see what people say about the fit... everyone says something different.",
+        "emotions": { "state": "conflicted", "intensity": 0 },
+        "needAtStep": "Quick social validation from people like her — someone with a similar body type who bought this item and can confirm it works",
+        "painAtStep": "Her trust-but-verify approach is thwarted by contradictory reviews. She can't find the 'someone like me' signal in the noise, and her limited time means she can't read enough reviews to build statistical confidence.",
+        "barriers": [
+          { "type": "knowledge", "description": "Contradictory sizing feedback in reviews", "severity": 3, "emergesFrom": "Sarah's analytical research style meets inconsistent user-generated content" }
+        ]
+      },
+      "momentThatMatters": {
+        "description": "Reading reviews that either build or undermine confidence in the purchase",
+        "importance": "high",
+        "emotionalIntensity": 0
+      }
+    },
+    {
+      "nodeRef": "check-returns",
+      "laneContent": {
+        "actions": ["Looks for return policy information", "Finds and taps 'Returns' link", "Reads return conditions", "Notes the return window"],
+        "thoughts": "Free returns within 30 days, that's reassuring. As long as I keep the tags on I can send it back if it doesn't fit. That makes this less risky.",
+        "emotions": { "state": "reassured", "intensity": 1 }
+      }
+    },
+    {
+      "nodeRef": "decide-to-buy",
+      "laneContent": {
+        "thoughts": "I'll go with my usual size. If it doesn't fit, I can always return it.",
+        "emotions": { "state": "decided", "intensity": 1 }
+      }
+    },
+    {
+      "nodeRef": "add-to-cart",
+      "laneContent": {
+        "actions": ["Selects size 10 (her usual size)", "Taps 'Add to Bag' button", "Sees confirmation animation", "Taps cart icon"],
+        "emotions": { "state": "decided", "intensity": 1 }
+      }
+    },
+    {
+      "nodeRef": "review-cart",
+      "laneContent": {
+        "actions": ["Reviews item in cart", "Checks that sale price is applied", "Sees free delivery threshold message", "Decides not to add more items"],
+        "thoughts": "£51 total, free delivery over £50 — perfect, just made it. I don't need anything else, let's not get carried away.",
+        "emotions": { "state": "pleased", "intensity": 1 }
+      }
+    },
+    {
+      "nodeRef": "checkout",
+      "laneContent": {
+        "actions": ["Confirms saved delivery address", "Selects standard delivery (free)", "Reviews delivery estimate (2-4 days)"],
+        "thoughts": "Good, my address is saved. Standard delivery is fine, I'm not in a rush. Should arrive by Friday.",
+        "emotions": { "state": "efficient", "intensity": 1 }
+      }
+    },
+    {
+      "nodeRef": "payment",
+      "laneContent": {
+        "actions": ["Selects saved payment method (Apple Pay)", "Authenticates with Face ID", "Payment processes successfully"],
+        "thoughts": "Love that I can just use Face ID. So much easier than typing card details.",
+        "emotions": { "state": "satisfied", "intensity": 1 }
+      }
+    },
+    {
+      "nodeRef": "order-confirmed",
+      "laneContent": {
+        "actions": ["Sees order confirmation screen", "Notes order number", "Receives confirmation email", "Closes app and returns to lunch"],
+        "thoughts": "Done! That was quick. Excited for it to arrive. I deserve a little treat.",
+        "emotions": { "state": "happy and accomplished", "intensity": 2 }
+      },
+      "momentThatMatters": {
+        "description": "The moment of commitment — order placed, anticipation begins",
+        "importance": "critical",
+        "emotionalIntensity": 2
+      }
+    },
+    {
+      "nodeRef": "dispatch-notification",
+      "laneContent": {
+        "actions": ["Receives push notification that order has shipped", "Taps to view tracking information", "Notes estimated delivery date"],
+        "thoughts": "Great, it's on its way. Should be here Thursday. Looking forward to trying it on.",
+        "emotions": { "state": "anticipating", "intensity": 1 }
+      }
+    },
+    {
+      "nodeRef": "track-delivery",
+      "laneContent": {
+        "actions": ["Opens app to check tracking status", "Views package location updates", "Confirms still on track for Thursday"],
+        "thoughts": "Just checking it's still coming tomorrow. Good, it's at the local depot.",
+        "emotions": { "state": "mild anticipation", "intensity": 0 }
+      }
+    },
+    {
+      "nodeRef": "receive-delivery",
+      "laneContent": {
+        "actions": ["Arrives home from work", "Finds package at door", "Opens packaging", "Removes dress from bag", "Inspects fabric and construction", "Checks color matches expectations"],
+        "thoughts": "The packaging is nice. Oh, the color is gorgeous, just like the photos. Fabric feels decent quality. Let me keep the tags on until I've tried it properly.",
+        "emotions": { "state": "pleased", "intensity": 1 }
+      },
+      "momentThatMatters": {
+        "description": "The unboxing experience — first physical interaction with the product",
+        "importance": "high",
+        "emotionalIntensity": 1
+      }
+    },
+    {
+      "nodeRef": "try-on",
+      "laneContent": {
+        "actions": ["Puts on the dress", "Looks in mirror", "Adjusts and tries different positions", "Tries with different accessories", "Takes photos to evaluate"],
+        "thoughts": "Hmm. The color is beautiful but... it's tight across the hips and the waist isn't sitting right. The wrap isn't falling properly. Maybe if I... no, it's just not the right fit for my body shape.",
+        "emotions": { "state": "disappointed", "intensity": -1, "model": "dimensional", "valence": -0.6, "arousal": 0.3, "category": "sadness" },
+        "needAtStep": "To look and feel good in the dress — not just 'does it fit' but 'does it make me feel like the person I wanted to be when I bought it'",
+        "painAtStep": "The gap between the excitement of finding the dress and the reality of it not working on her body. She did everything right — researched, checked sizing, read reviews — and it still didn't work. This reinforces her anxiety that online shopping is fundamentally unreliable for clothes, despite the convenience she needs.",
+        "barriers": [
+          {
+            "type": "knowledge",
+            "description": "Sizing information didn't adequately predict fit for her body type",
+            "severity": 4,
+            "emergesFrom": "Sarah's thorough research couldn't overcome the inherent limitations of online clothing shopping"
+          }
+        ],
+        "opportunities": ["Virtual try-on using her body measurements", "Size recommendation based on return history", "Exchange flow that reserves the right size immediately"]
+      },
+      "momentThatMatters": {
+        "description": "The critical moment of trying on and seeing yourself in the mirror",
+        "importance": "critical",
+        "emotionalIntensity": -1
+      }
+    },
+    {
+      "nodeRef": "fit-decision",
+      "laneContent": {
+        "actions": ["Considers whether to keep it anyway", "Checks if different size is available", "Sees size 12 is sold out"],
+        "thoughts": "Such a shame, I really love the color. Size 12 might have worked but it's sold out now. I can't keep something that doesn't fit properly — it'll just hang in my wardrobe. Better to return it and get my money back.",
+        "emotions": { "state": "resigned but practical", "intensity": -1 },
+        "barriers": [
+          { "type": "resource", "description": "Preferred size is out of stock", "severity": 4, "emergesFrom": "No exchange option available due to stock limitations" }
+        ],
+        "opportunities": ["Offer waitlist for size to become available", "Suggest similar styles that might fit better", "Provide exchange incentive to maintain the sale"]
+      }
+    },
+    {
+      "nodeRef": "initiate-return",
+      "laneContent": {
+        "actions": ["Opens app and goes to Orders", "Finds the order and taps 'Return items'", "Selects the dress", "Selects return reason: 'Didn't fit'", "Adds detail: 'Too small around hips'"],
+        "thoughts": "Okay, let's get this return started. At least the app has a clear return option.",
+        "emotions": { "state": "neutral", "intensity": 0 }
+      }
+    },
+    {
+      "nodeRef": "select-return-method",
+      "laneContent": {
+        "actions": ["Views return options", "Sees options: Post Office, Locker, Home collection", "Selects Locker drop-off (most convenient)", "Chooses locker location near her office", "Receives QR code for drop-off"],
+        "thoughts": "Good, I can drop it at the locker near work. That's easy — I'll do it tomorrow on my lunch break.",
+        "emotions": { "state": "relieved", "intensity": 1 }
+      }
+    },
+    {
+      "nodeRef": "package-return",
+      "laneContent": {
+        "actions": ["Finds original packaging", "Refolds dress carefully", "Places back in original bag", "Puts in mailing bag"],
+        "thoughts": "Glad I kept the packaging. This is much easier than the old days of having to print labels.",
+        "emotions": { "state": "satisfied with process", "intensity": 0 }
+      }
+    },
+    {
+      "nodeRef": "drop-off-return",
+      "laneContent": {
+        "actions": ["Goes to locker location during lunch", "Opens app to display QR code", "Scans QR code at locker", "Locker door opens", "Places package in locker", "Receives confirmation notification"],
+        "thoughts": "That was painless. Scanned, deposited, done. Should get my refund in a few days.",
+        "emotions": { "state": "satisfied", "intensity": 1 }
+      }
+    },
+    {
+      "nodeRef": "return-received",
+      "laneContent": {
+        "actions": ["Receives notification that return is being processed", "Opens app to check status"],
+        "thoughts": "Good, they've got it. Now I just need to wait for the refund.",
+        "emotions": { "state": "reassured", "intensity": 0 }
+      }
+    },
+    {
+      "nodeRef": "receive-refund",
+      "laneContent": {
+        "actions": ["Receives email notification of refund", "Checks bank account to confirm", "Sees £51 refund has been processed"],
+        "thoughts": "Refund's come through. That was fairly painless overall. Shame the dress didn't fit but at least returning it wasn't a hassle. I'd still shop with them again.",
+        "emotions": { "state": "satisfied", "intensity": 1 }
+      },
+      "momentThatMatters": {
+        "description": "Receiving the refund closes the loop and determines future purchase confidence",
+        "importance": "high",
+        "emotionalIntensity": 1
+      }
+    }
+  ],
+
+  "outcome": {
+    "success": false,
+    "endNode": "receive-refund",
+    "reflection": "Despite the item not fitting, the overall experience was positive due to easy returns. Sarah would shop with StyleMart again. The key failure point was sizing prediction, not the service itself.",
+    "netSentiment": 1,
+    "wouldRepeat": true
+  },
+
+  "relationships": [
+    { "target": "mission-online-clothes-shopping", "type": "derived_from_mission", "description": "Sarah's experience through the clothes shopping mission" },
+    { "target": "actor-sarah-martinez", "type": "experienced_by", "description": "Sarah in her Working Mom Consumer context" }
+  ],
+
+  "provenance": {
+    "source": "user_research",
+    "confidence": 0.85,
+    "researchSources": [
+      { "source": "Customer journey mapping workshop (November 2024)", "type": "observation", "date": "2024-11-15", "confidence": "high" },
+      { "source": "Sarah Martinez persona interviews", "type": "interview", "date": "2024-03-15", "confidence": "high" },
+      { "source": "Mobile shopping behavior analytics", "type": "analytics", "confidence": "medium" },
+      { "source": "Return process user testing", "type": "observation", "date": "2024-09-20", "confidence": "high" }
+    ]
+  },
+
+  "meta": {
+    "created": "2024-11-28",
+    "updated": "2026-05-04",
+    "createdBy": "Digital Service Design Team",
+    "organisation": "Digital Service Design Working",
+    "tags": ["retail", "mobile-shopping", "return-experience", "sarah-martinez"]
+  }
+}

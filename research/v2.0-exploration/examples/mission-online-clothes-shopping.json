@@ -1,0 +1,586 @@
+{
+  "$context": "https://schemas.digitalservice.design/v2.0",
+  "$type": "Mission",
+  "id": "mission-online-clothes-shopping",
+  "version": "2.0.0",
+  "title": "Online Clothes Shopping — Promotional Purchase",
+  "goal": "Customer finds, purchases, receives, and either keeps or returns a clothing item bought through a promotional offer",
+  "summary": "A universal service mission capturing the end-to-end experience of promotional-triggered online clothes shopping. The graph covers discovery through notification, browsing and selection, purchase, delivery, try-on, and resolution (keep or return). Multiple personas can flow through this mission, each generating their own Experience artifact.",
+
+  "scope": {
+    "trigger": "Promotional push notification from shopping app",
+    "completion": "Item kept and worn, OR refund received after return",
+    "timeframe": "7-14 days from notification to resolution",
+    "asIs": true,
+    "successCriteria": [
+      { "metric": "Purchase completion rate from notification", "target": "Above 15%" },
+      { "metric": "Time to complete purchase", "target": "Under 5 minutes from opening app" },
+      { "metric": "Return initiation time", "target": "Under 10 minutes" },
+      { "metric": "Refund processing time", "target": "Within 5 business days" }
+    ]
+  },
+
+  "actors": [
+    { "actorRef": "actor-sarah-martinez", "role": "primary customer" },
+    { "actorRef": "actor-david-chen", "role": "comparison customer" }
+  ],
+
+  "lanes": [
+    { "id": "description", "label": "Description", "type": "text", "scope": "service", "description": "What happens at this touchpoint from the service perspective" },
+    { "id": "channels", "label": "Channels", "type": "channel", "scope": "service", "description": "Touchpoints and channels available" },
+    { "id": "barriers", "label": "Service Barriers", "type": "barrier", "scope": "both", "description": "Structural barriers (service-level) and persona-specific barriers (experience-level)" },
+    { "id": "design-opps", "label": "Design Opportunities", "type": "list", "scope": "both", "description": "Improvement opportunities" },
+    { "id": "accessibility", "label": "Accessibility", "type": "accessibility", "scope": "service", "description": "Accessibility profile per touchpoint" },
+    { "id": "frontstage", "label": "Frontstage", "type": "text", "scope": "service", "description": "Visible service elements the customer interacts with" },
+    { "id": "backstage", "label": "Backstage", "type": "text", "scope": "service", "description": "Behind-the-scenes processes and systems that enable this step" },
+    { "id": "support-systems", "label": "Support Systems", "type": "list", "scope": "service", "description": "Tools, platforms, and infrastructure supporting this touchpoint" },
+    { "id": "data-required", "label": "Data Required", "type": "list", "scope": "service", "description": "Data and information needed to deliver this step" },
+    { "id": "roles-involved", "label": "Roles Involved", "type": "list", "scope": "service", "description": "Teams or roles that support this touchpoint" },
+    { "id": "kpis", "label": "KPIs", "type": "metric", "scope": "service", "description": "Key performance indicators for this touchpoint" }
+  ],
+
+  "nodes": [
+    {
+      "nodeId": "receive-notification",
+      "name": "Receive promotional notification",
+      "nodeType": "signal",
+      "durationMs": 5000,
+      "laneContent": {
+        "description": "Customer receives a push notification about a flash sale from the shopping app",
+        "channels": [
+          { "channel": "app", "category": "digital", "serviceModel": "self_service", "name": "StyleMart App", "usageContext": "Push notification on mobile device" }
+        ],
+        "barriers": [],
+        "designOpportunities": ["Personalize notification based on browsing history", "Include specific product recommendations"],
+        "accessibilityProfile": { "visual": 4, "auditory": 4, "motor": 5, "cognitive": { "overallScore": 4, "decisionComplexity": "simple", "informationDensity": "minimal", "timePressure": "none" }, "emotional": 4 }
+      },
+      "significance": {
+        "description": "First contact point — notification timing and relevance determines engagement",
+        "importance": "high"
+      }
+    },
+    {
+      "nodeId": "open-app",
+      "name": "Open app to explore sale",
+      "nodeType": "touchpoint",
+      "durationMs": 15000,
+      "laneContent": {
+        "description": "Customer taps notification and lands on the sale landing page",
+        "channels": [
+          { "channel": "app", "category": "digital", "serviceModel": "self_service", "name": "StyleMart App", "usageContext": "Sale landing page" }
+        ],
+        "barriers": [
+          { "type": "technology", "description": "App takes 8 seconds to fully load sale page", "severity": 2 }
+        ],
+        "designOpportunities": ["Pre-cache sale content before notification send", "Show countdown timer for urgency"]
+      }
+    },
+    {
+      "nodeId": "browse-categories",
+      "name": "Browse and filter sale categories",
+      "nodeType": "touchpoint",
+      "durationMs": 120000,
+      "laneContent": {
+        "description": "Customer browses sale categories, applies filters (size, price, category), scrolls through products",
+        "channels": [
+          { "channel": "app", "category": "digital", "serviceModel": "self_service", "name": "StyleMart App", "usageContext": "Category browsing and filtering" }
+        ],
+        "barriers": [
+          { "type": "knowledge", "description": "Difficult to assess fabric quality from photos alone", "severity": 3 },
+          { "type": "process", "description": "Filter options reset when navigating back from product detail", "severity": 2 }
+        ],
+        "designOpportunities": ["Persist filter selections throughout session", "Show fabric detail close-ups automatically"],
+        "accessibilityProfile": {
+          "visual": 3,
+          "motor": 4,
+          "auditory": 5,
+          "emotional": 3,
+          "cognitive": {
+            "overallScore": 3,
+            "decisionComplexity": "moderate",
+            "informationDensity": "high",
+            "timePressure": "low",
+            "priorKnowledgeRequired": "Familiarity with clothing sizes and filter/sort UI patterns",
+            "supportAvailable": "Filter labels and category headings; no contextual help or guidance tooltips present"
+          }
+        }
+      }
+    },
+    {
+      "nodeId": "find-item",
+      "name": "View product detail",
+      "nodeType": "touchpoint",
+      "durationMs": 60000,
+      "laneContent": {
+        "description": "Customer selects a product and views details: images, price, description, sale discount",
+        "channels": [
+          { "channel": "app", "category": "digital", "serviceModel": "self_service", "name": "StyleMart App", "usageContext": "Product detail page" }
+        ],
+        "barriers": [],
+        "designOpportunities": ["Show 'you saved £X' prominently", "Suggest styling options or accessories"]
+      },
+      "significance": {
+        "description": "Key conversion point — product detail must build purchase intent",
+        "importance": "critical"
+      }
+    },
+    {
+      "nodeId": "check-sizing",
+      "name": "Check sizing information",
+      "nodeType": "touchpoint",
+      "durationMs": 90000,
+      "laneContent": {
+        "description": "Customer consults the size guide to determine correct size",
+        "channels": [
+          { "channel": "app", "category": "digital", "serviceModel": "self_service", "name": "StyleMart App", "usageContext": "Size guide modal" }
+        ],
+        "barriers": [
+          { "type": "knowledge", "description": "Size guide shows measurements but no guidance on fit style (relaxed vs fitted)", "severity": 4 },
+          { "type": "communications", "description": "No information about model's size for reference", "severity": 3 }
+        ],
+        "designOpportunities": ["Add model size and height information", "Include fit predictor based on previous purchases", "Show customer photos with size information"],
+        "accessibilityProfile": {
+          "visual": 3,
+          "motor": 5,
+          "auditory": 5,
+          "emotional": 3,
+          "cognitive": {
+            "overallScore": 2,
+            "decisionComplexity": "complex",
+            "informationDensity": "high",
+            "timePressure": "low",
+            "priorKnowledgeRequired": "Understanding of body measurements (cm/inches), knowledge of how fit styles (relaxed, regular, fitted) differ across brands",
+            "supportAvailable": "Measurement table only; no fit-style guidance, no comparison to previously purchased items, no contextual help"
+          }
+        }
+      }
+    },
+    {
+      "nodeId": "check-reviews",
+      "name": "Read customer reviews",
+      "nodeType": "touchpoint",
+      "durationMs": 180000,
+      "laneContent": {
+        "description": "Customer reads reviews, filters by photo reviews, looks for sizing feedback",
+        "channels": [
+          { "channel": "app", "category": "digital", "serviceModel": "self_service", "name": "StyleMart App", "usageContext": "Customer reviews section" }
+        ],
+        "barriers": [
+          { "type": "knowledge", "description": "Contradictory sizing feedback in reviews", "severity": 3 },
+          { "type": "knowledge", "description": "Cannot verify if reviews are genuine", "severity": 2 }
+        ],
+        "designOpportunities": ["Aggregate sizing feedback into a simple indicator", "Allow filtering reviews by reviewer body type", "Highlight verified purchase reviews"]
+      },
+      "significance": {
+        "description": "Trust-building point — review quality directly affects purchase confidence",
+        "importance": "high"
+      }
+    },
+    {
+      "nodeId": "check-returns",
+      "name": "Check return policy",
+      "nodeType": "touchpoint",
+      "durationMs": 45000,
+      "laneContent": {
+        "description": "Customer navigates to return policy to understand conditions and process",
+        "channels": [
+          { "channel": "app", "category": "digital", "serviceModel": "self_service", "name": "StyleMart App", "usageContext": "Return policy page" }
+        ],
+        "barriers": [
+          { "type": "communications", "description": "Return policy requires navigating away from product page", "severity": 2 }
+        ],
+        "designOpportunities": ["Show return policy summary directly on product page", "Badge products with 'Free Returns' prominently"]
+      }
+    },
+    {
+      "nodeId": "decide-to-buy",
+      "name": "Purchase decision",
+      "nodeType": "decision",
+      "laneContent": {
+        "description": "Customer decides whether the item is worth purchasing given price, reviews, sizing confidence, and return policy"
+      }
+    },
+    {
+      "nodeId": "add-to-cart",
+      "name": "Add item to cart",
+      "nodeType": "touchpoint",
+      "durationMs": 10000,
+      "laneContent": {
+        "description": "Customer selects size, adds item to cart",
+        "channels": [
+          { "channel": "app", "category": "digital", "serviceModel": "self_service", "name": "StyleMart App", "usageContext": "Add to cart interaction" }
+        ]
+      }
+    },
+    {
+      "nodeId": "review-cart",
+      "name": "Review cart",
+      "nodeType": "touchpoint",
+      "durationMs": 30000,
+      "laneContent": {
+        "description": "Customer reviews cart contents, verifies pricing, checks delivery threshold",
+        "channels": [
+          { "channel": "app", "category": "digital", "serviceModel": "self_service", "name": "StyleMart App", "usageContext": "Shopping cart" }
+        ],
+        "barriers": [
+          { "type": "process", "description": "Promotional upsell suggestions add friction to checkout flow", "severity": 1 }
+        ]
+      }
+    },
+    {
+      "nodeId": "checkout",
+      "name": "Complete checkout",
+      "nodeType": "touchpoint",
+      "durationMs": 45000,
+      "laneContent": {
+        "description": "Customer confirms delivery address, selects delivery method, reviews delivery estimate",
+        "channels": [
+          { "channel": "app", "category": "digital", "serviceModel": "self_service", "name": "StyleMart App", "usageContext": "Checkout flow — delivery" }
+        ],
+        "designOpportunities": ["Show specific delivery date rather than range where possible"],
+        "frontstage": "Saved address auto-populated, delivery options with estimated dates and costs, order summary sidebar",
+        "backstage": "Address validation service checks postcode. Carrier API queries real-time delivery slots. Inventory system confirms stock reservation.",
+        "support-systems": ["Address validation service", "Carrier delivery API", "Inventory reservation system"],
+        "data-required": ["Customer delivery address", "Postcode for carrier lookup", "Cart contents with SKUs", "Stock levels per warehouse"],
+        "roles-involved": ["Logistics operations (carrier SLA management)", "Engineering (checkout flow)"],
+        "kpis": [
+          { "metric": "Checkout completion rate", "target": "> 85%" },
+          { "metric": "Address validation error rate", "target": "< 2%" }
+        ]
+      },
+      "sla": {
+        "targetDuration": "< 60 seconds",
+        "targetDurationMs": 60000,
+        "escalation": "Flag for UX review if median session duration exceeds target; trigger A/B test on checkout form simplification"
+      }
+    },
+    {
+      "nodeId": "payment",
+      "name": "Complete payment",
+      "nodeType": "touchpoint",
+      "durationMs": 20000,
+      "laneContent": {
+        "description": "Customer selects payment method and authenticates",
+        "channels": [
+          { "channel": "app", "category": "digital", "serviceModel": "self_service", "name": "StyleMart App", "usageContext": "Payment processing" },
+          { "channel": "app", "category": "digital", "serviceModel": "self_service", "name": "Apple Pay / Google Pay", "usageContext": "Biometric payment authentication" }
+        ],
+        "frontstage": "Saved payment methods displayed, Apple Pay / Google Pay biometric prompt, processing animation",
+        "backstage": "Payment gateway sends authorisation request. Fraud engine scores transaction. On approval: inventory hard-reserved, order record created, confirmation email queued.",
+        "support-systems": ["Stripe payment gateway", "Internal fraud scoring engine", "Inventory service", "Order management system", "Email service (SendGrid)"],
+        "data-required": ["Payment token (from Apple Pay / saved card)", "Transaction amount", "Fraud score inputs (device ID, IP, purchase history)", "Inventory reservation ID"],
+        "roles-involved": ["Payments engineering", "Fraud operations (manual review queue)", "Finance (reconciliation)"],
+        "kpis": [
+          { "metric": "Payment authorisation success rate", "target": "> 99.5%" },
+          { "metric": "Fraud false positive rate", "target": "< 0.5%" },
+          { "metric": "Authorisation latency (p95)", "target": "< 3 seconds" }
+        ]
+      },
+      "sla": {
+        "targetDuration": "< 30 seconds",
+        "targetDurationMs": 30000,
+        "escalation": "Alert payments operations team; surface customer support contact if authorisation takes over 30 seconds"
+      }
+    },
+    {
+      "nodeId": "order-confirmed",
+      "name": "Order confirmation",
+      "nodeType": "signal",
+      "durationMs": 15000,
+      "laneContent": {
+        "description": "System confirms order and sends confirmation email with order number",
+        "channels": [
+          { "channel": "app", "category": "digital", "serviceModel": "self_service", "name": "StyleMart App", "usageContext": "Order confirmation page" },
+          { "channel": "email", "category": "digital", "serviceModel": "managed", "name": "Order confirmation email", "usageContext": "Confirmation and receipt" }
+        ],
+        "designOpportunities": ["Include styling tips in confirmation", "Offer calendar reminder for delivery"]
+      },
+      "significance": {
+        "description": "Commitment point — order is placed, customer enters waiting period",
+        "importance": "critical"
+      }
+    },
+    {
+      "nodeId": "dispatch-notification",
+      "name": "Dispatch notification",
+      "nodeType": "signal",
+      "durationMs": 10000,
+      "laneContent": {
+        "description": "System notifies customer that order has shipped with tracking information",
+        "channels": [
+          { "channel": "app", "category": "digital", "serviceModel": "self_service", "name": "StyleMart App", "usageContext": "Shipping notification" }
+        ]
+      }
+    },
+    {
+      "nodeId": "track-delivery",
+      "name": "Delivery tracking period",
+      "nodeType": "wait",
+      "duration": "1-3 days",
+      "laneContent": {
+        "description": "Customer can check tracking status. Package moves through courier network.",
+        "channels": [
+          { "channel": "app", "category": "digital", "serviceModel": "self_service", "name": "StyleMart App", "usageContext": "Order tracking" }
+        ],
+        "barriers": [
+          { "type": "communications", "description": "Tracking updates are generic and don't give specific delivery time", "severity": 2 }
+        ],
+        "designOpportunities": ["Provide delivery time window on day of delivery", "Allow scheduling specific delivery time"]
+      }
+    },
+    {
+      "nodeId": "receive-delivery",
+      "name": "Receive and unbox item",
+      "nodeType": "touchpoint",
+      "durationMs": 240000,
+      "laneContent": {
+        "description": "Package is delivered. Customer retrieves, opens, and inspects the item.",
+        "channels": [
+          { "channel": "in_person", "category": "physical", "serviceModel": "managed", "name": "Package delivery", "usageContext": "Physical receipt and unboxing" }
+        ],
+        "designOpportunities": ["Include styling card or lookbook", "Add QR code linking to styling videos"]
+      },
+      "significance": {
+        "description": "First physical interaction with the product — expectations meet reality",
+        "importance": "high"
+      }
+    },
+    {
+      "nodeId": "try-on",
+      "name": "Try on item",
+      "nodeType": "touchpoint",
+      "durationMs": 300000,
+      "laneContent": {
+        "description": "Customer tries on the clothing item and evaluates fit, quality, and appearance",
+        "channels": [
+          { "channel": "in_person", "category": "physical", "serviceModel": "managed", "name": "Trying on at home", "usageContext": "Fit evaluation" }
+        ],
+        "barriers": [
+          { "type": "knowledge", "description": "Online sizing information often doesn't predict fit for individual body types", "severity": 4 }
+        ],
+        "designOpportunities": ["Offer virtual try-on technology", "Provide body-shape specific recommendations", "Better sizing prediction based on purchase/return history"]
+      },
+      "significance": {
+        "description": "Critical moment of truth — determines keep or return",
+        "importance": "critical"
+      }
+    },
+    {
+      "nodeId": "fit-decision",
+      "name": "Keep or return?",
+      "nodeType": "decision",
+      "laneContent": {
+        "description": "Customer decides whether the item fits well enough to keep or needs to be returned"
+      }
+    },
+    {
+      "nodeId": "keep-item",
+      "name": "Keep and enjoy the item",
+      "nodeType": "end",
+      "laneContent": {
+        "description": "Customer removes tags and integrates the item into their wardrobe"
+      }
+    },
+    {
+      "nodeId": "initiate-return",
+      "name": "Initiate return in app",
+      "nodeType": "touchpoint",
+      "durationMs": 180000,
+      "laneContent": {
+        "description": "Customer opens the app, navigates to order, selects return, provides reason",
+        "channels": [
+          { "channel": "app", "category": "digital", "serviceModel": "self_service", "name": "StyleMart App", "usageContext": "Return initiation flow" }
+        ],
+        "barriers": [
+          { "type": "process", "description": "Required to provide detailed reason for return", "severity": 1 }
+        ],
+        "designOpportunities": ["Use return reasons to improve sizing recommendations", "Offer style consultation for future purchases"]
+      }
+    },
+    {
+      "nodeId": "select-return-method",
+      "name": "Select return method",
+      "nodeType": "touchpoint",
+      "durationMs": 120000,
+      "laneContent": {
+        "description": "Customer chooses between return methods (Post Office, Locker, Home collection) and receives return label/QR code",
+        "channels": [
+          { "channel": "app", "category": "digital", "serviceModel": "self_service", "name": "StyleMart App", "usageContext": "Return method selection" }
+        ],
+        "designOpportunities": ["Pre-select nearest return location", "Show wait time estimates for different methods"]
+      }
+    },
+    {
+      "nodeId": "package-return",
+      "name": "Package item for return",
+      "nodeType": "touchpoint",
+      "durationMs": 300000,
+      "laneContent": {
+        "description": "Customer repackages the item for return shipment",
+        "channels": [
+          { "channel": "in_person", "category": "physical", "serviceModel": "managed", "name": "Return packaging", "usageContext": "Preparing item for return" }
+        ],
+        "designOpportunities": ["Provide reusable return packaging with original shipment", "Include clear repackaging instructions"]
+      }
+    },
+    {
+      "nodeId": "drop-off-return",
+      "name": "Drop off return",
+      "nodeType": "touchpoint",
+      "durationMs": 180000,
+      "laneContent": {
+        "description": "Customer drops off packaged return at selected location (locker, post office, etc.)",
+        "channels": [
+          { "channel": "in_person", "category": "physical", "serviceModel": "managed", "name": "Parcel locker / Post Office", "usageContext": "Return drop-off" },
+          { "channel": "app", "category": "digital", "serviceModel": "self_service", "name": "StyleMart App", "usageContext": "QR code for locker access" }
+        ],
+        "designOpportunities": ["Provide estimated refund date at drop-off", "Offer instant refund for trusted customers"]
+      }
+    },
+    {
+      "nodeId": "return-received",
+      "name": "Return received notification",
+      "nodeType": "signal",
+      "durationMs": 10000,
+      "laneContent": {
+        "description": "System confirms return has been received and refund is processing",
+        "channels": [
+          { "channel": "app", "category": "digital", "serviceModel": "self_service", "name": "StyleMart App", "usageContext": "Return status notification" }
+        ],
+        "barriers": [
+          { "type": "communications", "description": "No specific timeframe given for refund processing", "severity": 2 }
+        ],
+        "designOpportunities": ["Provide specific refund date estimate", "Show refund progress tracker"]
+      }
+    },
+    {
+      "nodeId": "receive-refund",
+      "name": "Receive refund",
+      "nodeType": "end",
+      "durationMs": 30000,
+      "laneContent": {
+        "description": "Refund is processed and customer receives confirmation",
+        "channels": [
+          { "channel": "email", "category": "digital", "serviceModel": "managed", "name": "Refund confirmation email" }
+        ],
+        "designOpportunities": ["Include personalized recommendations in refund confirmation", "Offer incentive for next purchase"]
+      },
+      "significance": {
+        "description": "Closing the loop — refund experience determines future purchase confidence",
+        "importance": "high"
+      }
+    }
+  ],
+
+  "edges": [
+    { "from": "receive-notification", "to": "open-app", "edgeType": "default" },
+    { "from": "open-app", "to": "browse-categories", "edgeType": "default" },
+    { "from": "browse-categories", "to": "find-item", "edgeType": "default" },
+    { "from": "find-item", "to": "check-sizing", "edgeType": "default" },
+    { "from": "check-sizing", "to": "check-reviews", "edgeType": "default" },
+    { "from": "check-reviews", "to": "check-returns", "edgeType": "default" },
+    { "from": "check-returns", "to": "decide-to-buy", "edgeType": "default" },
+    {
+      "from": "decide-to-buy", "to": "add-to-cart", "edgeType": "conditional",
+      "condition": { "description": "Customer decides to purchase" },
+      "label": "Buy"
+    },
+    {
+      "from": "decide-to-buy", "to": "browse-categories", "edgeType": "loop_back",
+      "condition": { "description": "Item not compelling enough" },
+      "label": "Keep browsing"
+    },
+    { "from": "add-to-cart", "to": "review-cart", "edgeType": "default" },
+    { "from": "review-cart", "to": "checkout", "edgeType": "default" },
+    { "from": "checkout", "to": "payment", "edgeType": "default" },
+    { "from": "payment", "to": "order-confirmed", "edgeType": "default" },
+    { "from": "order-confirmed", "to": "dispatch-notification", "edgeType": "default" },
+    { "from": "dispatch-notification", "to": "track-delivery", "edgeType": "default" },
+    { "from": "track-delivery", "to": "receive-delivery", "edgeType": "default" },
+    { "from": "receive-delivery", "to": "try-on", "edgeType": "default" },
+    { "from": "try-on", "to": "fit-decision", "edgeType": "default" },
+    {
+      "from": "fit-decision", "to": "keep-item", "edgeType": "conditional",
+      "condition": { "description": "Item fits well and meets expectations" },
+      "label": "Fits — keep"
+    },
+    {
+      "from": "fit-decision", "to": "initiate-return", "edgeType": "conditional",
+      "condition": { "description": "Item doesn't fit or doesn't meet expectations" },
+      "label": "Doesn't fit — return"
+    },
+    { "from": "initiate-return", "to": "select-return-method", "edgeType": "default" },
+    { "from": "select-return-method", "to": "package-return", "edgeType": "default" },
+    { "from": "package-return", "to": "drop-off-return", "edgeType": "default" },
+    { "from": "drop-off-return", "to": "return-received", "edgeType": "default" },
+    { "from": "return-received", "to": "receive-refund", "edgeType": "default" }
+  ],
+
+  "paths": [
+    {
+      "pathId": "path-happy",
+      "name": "Happy path (item fits)",
+      "description": "Customer purchases and keeps the item",
+      "pathType": "designed",
+      "nodeSequence": [
+        "receive-notification", "open-app", "browse-categories", "find-item",
+        "check-sizing", "check-reviews", "check-returns", "decide-to-buy",
+        "add-to-cart", "review-cart", "checkout", "payment", "order-confirmed",
+        "dispatch-notification", "track-delivery", "receive-delivery",
+        "try-on", "fit-decision", "keep-item"
+      ],
+      "frequency": 0.65,
+      "averageDuration": "4-6 days"
+    },
+    {
+      "pathId": "path-return",
+      "name": "Return path (item doesn't fit)",
+      "description": "Customer purchases, tries on, and returns the item",
+      "pathType": "designed",
+      "nodeSequence": [
+        "receive-notification", "open-app", "browse-categories", "find-item",
+        "check-sizing", "check-reviews", "check-returns", "decide-to-buy",
+        "add-to-cart", "review-cart", "checkout", "payment", "order-confirmed",
+        "dispatch-notification", "track-delivery", "receive-delivery",
+        "try-on", "fit-decision", "initiate-return", "select-return-method",
+        "package-return", "drop-off-return", "return-received", "receive-refund"
+      ],
+      "frequency": 0.30,
+      "averageDuration": "10-14 days"
+    },
+    {
+      "pathId": "path-abandon",
+      "name": "Browse abandonment",
+      "description": "Customer browses but nothing compels purchase",
+      "pathType": "designed",
+      "nodeSequence": ["receive-notification", "open-app", "browse-categories"],
+      "frequency": 0.40
+    }
+  ],
+
+  "phases": [
+    { "phaseId": "phase-discovery", "name": "Discovery", "goal": "Become aware of a compelling offer", "nodeRefs": ["receive-notification", "open-app"] },
+    { "phaseId": "phase-selection", "name": "Browsing & Selection", "goal": "Find a desirable item", "nodeRefs": ["browse-categories", "find-item", "check-sizing", "check-reviews", "check-returns", "decide-to-buy"] },
+    { "phaseId": "phase-purchase", "name": "Purchase", "goal": "Complete the transaction", "nodeRefs": ["add-to-cart", "review-cart", "checkout", "payment", "order-confirmed"] },
+    { "phaseId": "phase-fulfilment", "name": "Fulfilment", "goal": "Receive and evaluate the item", "nodeRefs": ["dispatch-notification", "track-delivery", "receive-delivery", "try-on", "fit-decision"] },
+    { "phaseId": "phase-resolution", "name": "Resolution", "goal": "Reach satisfying conclusion", "nodeRefs": ["keep-item", "initiate-return", "select-return-method", "package-return", "drop-off-return", "return-received", "receive-refund"] }
+  ],
+
+  "provenance": {
+    "source": "mixed",
+    "confidence": 0.80,
+    "researchSources": [
+      { "source": "Customer journey mapping workshop (November 2024)", "type": "observation", "date": "2024-11-15", "confidence": "high" },
+      { "source": "Mobile shopping behavior analytics", "type": "analytics", "confidence": "medium" },
+      { "source": "Return process user testing", "type": "observation", "date": "2024-09-20", "confidence": "high" }
+    ]
+  },
+
+  "meta": {
+    "created": "2024-11-28",
+    "updated": "2026-05-04",
+    "createdBy": "Digital Service Design Team",
+    "organisation": "Digital Service Design Working",
+    "tags": ["retail", "mobile-shopping", "promotional", "return-experience"]
+  }
+}

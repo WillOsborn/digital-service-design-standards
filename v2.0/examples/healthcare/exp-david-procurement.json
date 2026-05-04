@@ -1,0 +1,299 @@
+{
+  "$context": "https://schemas.digitalservice.design/v2.0",
+  "$type": "Experience",
+  "id": "exp-david-procurement",
+  "version": "2.0.0",
+  "title": "David Chen — Healthcare IT Procurement (Happy Path)",
+  "summary": "David's experience leading the evaluation and procurement of a clinical decision support system. He navigates compliance complexity and stakeholder politics while trying to make a defensible, data-driven recommendation within a 6-month window.",
+  "references": {
+    "actorRef": "actor-david-chen",
+    "contextRef": "ctx-it-director-healthcare",
+    "missionRef": "mission-healthcare-system-procurement"
+  },
+  "path": {
+    "pathRef": "path-happy",
+    "nodeSequence": ["start", "define-requirements", "market-scan", "shortlist", "request-demos", "security-audit", "security-decision", "reference-checks", "business-case", "board-approval", "approval-decision", "contract-negotiation", "implementation-kickoff", "end-success"],
+    "actualDuration": "20 weeks"
+  },
+  "lanes": [
+    { "id": "actions", "label": "David's Actions", "type": "list" },
+    { "id": "thoughts", "label": "Thoughts", "type": "text" },
+    { "id": "emotions", "label": "Emotions", "type": "emotion" },
+    { "id": "barriers", "label": "Barriers Encountered", "type": "barrier" },
+    { "id": "need-at-step", "label": "Need at This Step", "type": "text" },
+    { "id": "pain-at-step", "label": "Pain at This Step", "type": "text" },
+    { "id": "opportunities", "label": "Design Opportunities", "type": "list" }
+  ],
+  "nodes": [
+    {
+      "nodeRef": "start",
+      "laneContent": {
+        "actions": ["Receives notification from existing vendor of end-of-life date", "Books initial planning meeting with CTO and clinical governance lead"],
+        "thoughts": "Eighteen months to find, evaluate, and implement a replacement. That sounds like a lot until you factor in NHS procurement timelines. I need to start immediately.",
+        "emotions": { "state": "focused and slightly anxious", "intensity": 2 }
+      }
+    },
+    {
+      "nodeRef": "define-requirements",
+      "laneContent": {
+        "actions": [
+          "Facilitates three stakeholder workshops with clinical leads and operations",
+          "Translates clinical needs into technical and compliance requirements",
+          "Creates a requirements specification document for sign-off"
+        ],
+        "thoughts": "The clinical leads know what they need operationally but they can't tell me whether they need HL7 FHIR or just a decent API. I have to translate between two different languages — clinical and technical — and also get this through legal. It's a juggling act.",
+        "emotions": { "state": "engaged but stretched", "intensity": 2 },
+        "barriers": [
+          {
+            "type": "communications",
+            "description": "Clinical director articulates needs in patient outcome terms; David has to infer the technical specification",
+            "severity": 4,
+            "emergesFrom": "David's technical expertise clashes with clinical stakeholders' non-technical language — his precision frustrates him when he can't get the specification he needs to proceed safely"
+          }
+        ],
+        "needAtStep": "A structured requirements template that prompts clinical stakeholders with the right questions — without requiring them to know what DSP Toolkit is",
+        "opportunities": [
+          "Healthcare IT requirements canvas that bridges clinical needs and technical/compliance requirements",
+          "Pre-populated NHS compliance requirements to avoid stakeholders having to articulate what they can't know"
+        ]
+      }
+    },
+    {
+      "nodeRef": "market-scan",
+      "laneContent": {
+        "actions": [
+          "Issues RFI through Find a Tender Service",
+          "Searches G-Cloud for pre-approved vendors",
+          "Reviews Digital Health Intelligence market report",
+          "Sends direct outreach to 4 vendors with known NHS track records"
+        ],
+        "thoughts": "There are a lot of vendors claiming NHS experience that have done one pilot in a 50-bed community trust. I need to separate genuine NHS-at-scale providers from the ones who've rebranded their generic SaaS with a stock photo of a hospital.",
+        "emotions": { "state": "methodical, mild frustration", "intensity": 1 },
+        "barriers": [
+          {
+            "type": "knowledge",
+            "description": "Vendor marketing claims are hard to verify without reference calls — market scan produces a list, not a quality signal",
+            "severity": 3,
+            "emergesFrom": "David's risk-averse, data-driven approach is undermined by a market where genuine NHS credentials are hard to distinguish from aspirational marketing"
+          }
+        ],
+        "needAtStep": "An independent NHS IT vendor registry that shows verified reference sites, DSP compliance status, and implementation track record — not vendor self-reporting"
+      }
+    },
+    {
+      "nodeRef": "shortlist",
+      "laneContent": {
+        "actions": [
+          "Scores 12 RFI responses against weighted criteria matrix",
+          "Presents shortlist of 4 vendors to internal panel",
+          "Secures sign-off from CTO and clinical governance lead"
+        ],
+        "thoughts": "The scoring is only as good as the criteria. I've weighted compliance at 35%, clinical fit at 30%, commercial at 20%, implementation track record at 15%. But the CTO will want to talk about integration architecture. I need to have that conversation now, not at demo stage.",
+        "emotions": { "state": "confident but watchful", "intensity": 1 }
+      }
+    },
+    {
+      "nodeRef": "request-demos",
+      "laneContent": {
+        "actions": [
+          "Schedules 4 vendor demonstrations over 3 weeks",
+          "Distributes demo evaluation scorecard to panel (6 evaluators)",
+          "Sends structured question set to vendors 48 hours before each demo",
+          "Attends one reference site visit for the leading vendor"
+        ],
+        "thoughts": "I sent them the compliance question set in advance. Half of them are still hand-waving on DSP. One vendor actually came with a pre-completed evidence pack — that tells me something about how they'll handle implementation. The others are telling me what I want to hear.",
+        "emotions": { "state": "alert, increasingly selective", "intensity": 2 },
+        "barriers": [
+          {
+            "type": "knowledge",
+            "description": "Vendors avoid specific answers on DSP Toolkit coverage — it requires persistent follow-up questions that slow the demo flow",
+            "severity": 4,
+            "emergesFrom": "David's precision and compliance focus collides with vendors who have learned to deflect hard questions — his frustration peaks when technical evasion is dressed up as flexibility"
+          }
+        ],
+        "painAtStep": "Having to chase vendors for DSP evidence packs after the demo. The evaluation scorecard is now blocked on compliance questions, and the clinical panel is impatient to make a decision."
+      },
+      "momentThatMatters": {
+        "description": "One vendor provides a pre-completed DSP evidence pack unprompted — this signals genuine NHS readiness and shifts David's assessment decisively",
+        "importance": "critical",
+        "emotionalIntensity": 2
+      }
+    },
+    {
+      "nodeRef": "security-audit",
+      "laneContent": {
+        "actions": [
+          "Briefs preferred vendor on DSP Toolkit evidence requirements",
+          "Coordinates DPO review of Data Processing Agreement",
+          "Commissions penetration test from approved third-party supplier"
+        ],
+        "thoughts": "Our DPO is shared with two other trusts. She has a three-week queue. The vendor's evidence pack is incomplete — they're missing the business continuity element. I can't submit to the DPO until this is resolved. The timeline is slipping.",
+        "emotions": { "state": "tense, managing upward pressure", "intensity": 2 },
+        "barriers": [
+          {
+            "type": "resource",
+            "description": "Shared DPO creates a bottleneck — David cannot control the audit timeline",
+            "severity": 5,
+            "emergesFrom": "David's methodical risk management is blocked by organisational resource constraints entirely outside his control — the tension between his professional standards and his capacity to deliver on time is acute"
+          }
+        ],
+        "needAtStep": "A clear checklist of what a complete DSP evidence submission looks like — ideally one the vendor can self-certify against before submission, so the DPO review isn't the first quality check",
+        "opportunities": [
+          "Vendor DSP pre-submission checklist to shift quality left",
+          "Shared NHS DPO capacity model or specialist DPO service for smaller trusts"
+        ]
+      }
+    },
+    {
+      "nodeRef": "security-decision",
+      "laneContent": {
+        "actions": [
+          "Receives DPO sign-off with two minor conditions",
+          "Agrees remediation plan with vendor for outstanding items",
+          "Documents decision in procurement log"
+        ],
+        "thoughts": "Conditional approval with two action items. The vendor accepted both conditions without pushback. That's the right signal — a compliant vendor takes compliance seriously. We can proceed.",
+        "emotions": { "state": "relieved, regaining momentum", "intensity": 2 }
+      }
+    },
+    {
+      "nodeRef": "reference-checks",
+      "laneContent": {
+        "actions": [
+          "Contacts three NHS organisations known to use the vendor (two from vendor references, one via NHS CIO Network)",
+          "Conducts structured 45-minute reference calls focused on implementation, support, and post-go-live compliance"
+        ],
+        "thoughts": "The vendor gave me two glowing references. I found a third independently through the CIO network — the one they didn't give me. That conversation was more useful than the other two combined. The onboarding took 40% longer than contracted, but support was responsive when things went wrong.",
+        "emotions": { "state": "analytical, appropriately cautious", "intensity": 1 },
+        "needAtStep": "A way to surface independent peer references from NHS colleagues who've used the vendor — not just the vendor's preferred advocates",
+        "opportunities": [
+          "NHS Digital Health vendor review platform (peer-rated, verified by trust affiliation)"
+        ]
+      }
+    },
+    {
+      "nodeRef": "business-case",
+      "laneContent": {
+        "actions": [
+          "Builds ROI model: time savings, compliance risk reduction, avoided incident costs",
+          "Writes five-case business case following HM Treasury model",
+          "Reviews draft with CFO before board submission"
+        ],
+        "thoughts": "The CFO wants to see the ROI in year two, not year five. But the real value — reduced compliance risk, avoided clinical incidents, better data for QI — doesn't sit neatly in a spreadsheet. I need to present both: the financial case and the risk case. The CFO will approve the financial case; the CEO will approve the risk case.",
+        "emotions": { "state": "focused, strategic", "intensity": 2 },
+        "barriers": [
+          {
+            "type": "communications",
+            "description": "Quantifying compliance risk reduction in financial terms requires assumptions the CFO may not accept",
+            "severity": 4,
+            "emergesFrom": "David's technical and compliance expertise is fully visible to him but opaque to the board — he must translate complex risk into financial language without oversimplifying to the point of inaccuracy"
+          }
+        ],
+        "painAtStep": "The five-case model template is structured for infrastructure projects. Applying it to a SaaS procurement with complex compliance implications requires significant interpretation — there's no healthcare IT-specific guidance."
+      }
+    },
+    {
+      "nodeRef": "board-approval",
+      "laneContent": {
+        "actions": [
+          "Presents business case to Executive Committee",
+          "Answers CFO questions on TCO and exit provisions",
+          "Responds to CEO question on clinical benefit evidence"
+        ],
+        "thoughts": "The CFO is focused on the exit clause. The CEO wants to hear from the clinical lead, not me. I've prepared a clinical benefits summary from the clinical governance lead for exactly this question. The board wants to be reassured, not impressed.",
+        "emotions": { "state": "composed, professionally contained", "intensity": 2 },
+        "needAtStep": "A one-page clinical benefit summary that a clinical governance lead — not an IT Director — can present convincingly to a non-technical board"
+      },
+      "momentThatMatters": {
+        "description": "The clinical director speaks compellingly about patient safety implications — this shifts the board from cautious to convinced",
+        "importance": "high",
+        "emotionalIntensity": 2
+      }
+    },
+    {
+      "nodeRef": "approval-decision",
+      "laneContent": {
+        "actions": ["Receives unanimous board approval", "Notifies vendor and procurement team"],
+        "thoughts": "Six months of work, and it comes down to a 40-minute board meeting. But the groundwork was right. When the CFO asked about exit provisions, I had the answer. When the CEO asked about clinical benefit, the clinical director had the answer. Preparation made this look easy.",
+        "emotions": { "state": "satisfied, quietly proud", "intensity": 2 }
+      }
+    },
+    {
+      "nodeRef": "contract-negotiation",
+      "laneContent": {
+        "actions": [
+          "Passes approved business case to procurement and legal teams",
+          "Monitors contract review progress against procurement timeline",
+          "Escalates two significant redlines to CTO for decision"
+        ],
+        "thoughts": "Legal is taking longer than I'd like. The vendor has redlined our standard exit provision — they want 12 months notice for contract termination, we want 6. This is a legitimate business risk. I've escalated to the CTO. We can't let legal drag us past the implementation window.",
+        "emotions": { "state": "impatient, managing risk", "intensity": 2 },
+        "barriers": [
+          {
+            "type": "process",
+            "description": "Vendor legal team responds slowly to redlines — multiple rounds of review are adding 3-4 weeks to contract closure",
+            "severity": 3,
+            "emergesFrom": "David's drive to execute conflicts with the necessarily slow pace of legal review — he knows every week of delay is a week of implementation risk"
+          }
+        ],
+        "painAtStep": "There's no clear escalation path when vendor legal response times are causing timeline risk. The procurement team can't force the vendor's lawyers."
+      }
+    },
+    {
+      "nodeRef": "implementation-kickoff",
+      "laneContent": {
+        "actions": [
+          "Signs project charter with vendor",
+          "Establishes project governance structure: steering group, working group, clinical champions",
+          "Registers project with PMO and confirms delivery milestones"
+        ],
+        "thoughts": "Contract signed. Implementation lead from the vendor is excellent — she's done three NHS deployments and knows the DSP audit cycle. That reference from the CIO network paid off — I knew what to ask for in the implementation team.",
+        "emotions": { "state": "energised, ready to execute", "intensity": 2 }
+      },
+      "momentThatMatters": {
+        "description": "Vendor implementation lead briefs the team with an NHS-specific deployment plan — David recognises genuine NHS expertise immediately",
+        "importance": "high",
+        "emotionalIntensity": 2
+      }
+    },
+    {
+      "nodeRef": "end-success",
+      "laneContent": {
+        "actions": ["Documents lessons learned", "Closes procurement process in PMO system", "Briefs CTO on implementation risks and mitigation plan"],
+        "thoughts": "Twenty weeks. Within the window. The compliance process was slower than planned but the outcome is solid. The vendor we chose is the right one — not the cheapest, not the flashiest demo, but the one that took compliance seriously from day one. That matters in healthcare.",
+        "emotions": { "state": "accomplished, cautiously optimistic", "intensity": 2 }
+      }
+    }
+  ],
+  "outcome": {
+    "success": true,
+    "endNode": "end-success",
+    "reflection": "A methodical, evidence-based procurement process that prioritised compliance without sacrificing clinical fit. The 20-week timeline was tight but achievable. The key insight: the vendor who takes compliance seriously in procurement will take it seriously in implementation.",
+    "netSentiment": 2,
+    "wouldRepeat": true,
+    "learnings": [
+      "Independent reference discovery via peer networks is more valuable than vendor-provided references",
+      "A pre-completed DSP evidence pack from a vendor is a leading indicator of implementation quality",
+      "Clinical director involvement in the board presentation was decisive — IT Directors should not present clinical benefit alone"
+    ]
+  },
+  "relationships": [],
+  "provenance": {
+    "generationMethod": "ai_assisted",
+    "generationTool": "experience-generator skill (v2.0)",
+    "researchSources": [
+      {
+        "source": "NHS IT procurement process research and David Chen actor development",
+        "type": "existing_research",
+        "confidence": "medium"
+      }
+    ]
+  },
+  "meta": {
+    "created": "2026-05-04",
+    "updated": "2026-05-04",
+    "createdBy": "Digital Service Design Team",
+    "organisation": "Digital Service Design Working",
+    "tags": ["healthcare", "procurement", "NHS", "IT-director", "compliance", "B2B"]
+  }
+}

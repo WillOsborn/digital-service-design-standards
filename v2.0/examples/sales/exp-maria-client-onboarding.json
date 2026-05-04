@@ -1,0 +1,250 @@
+{
+  "$context": "https://schemas.digitalservice.design/v2.0",
+  "$type": "Experience",
+  "id": "exp-maria-client-onboarding",
+  "version": "2.0.0",
+  "title": "Maria Rodriguez — Enterprise Client Onboarding (Happy Path)",
+  "summary": "Maria's experience onboarding Apex Solutions, a 200-person financial services firm — her largest single account this quarter. She's energised by the win but frustrated by the CRM admin overhead that pulls her away from relationship work.",
+  "references": {
+    "actorRef": "actor-maria-rodriguez",
+    "contextRef": "ctx-senior-sales-rep",
+    "missionRef": "mission-client-relationship-management"
+  },
+  "path": {
+    "pathRef": "path-happy",
+    "nodeSequence": ["start", "crm-setup", "kickoff-prep", "client-kickoff", "stakeholder-mapped", "implementation-support", "first-checkin", "adoption-check", "sixty-day-checkin", "ninety-day-review", "renewal-signal", "ongoing-cadence", "end-active"],
+    "actualDuration": "94 days"
+  },
+  "lanes": [
+    { "id": "actions", "label": "Maria's Actions", "type": "list" },
+    { "id": "thoughts", "label": "Thoughts", "type": "text" },
+    { "id": "emotions", "label": "Emotions", "type": "emotion" },
+    { "id": "barriers", "label": "Barriers Encountered", "type": "barrier" },
+    { "id": "need-at-step", "label": "Need at This Step", "type": "text" },
+    { "id": "pain-at-step", "label": "Pain at This Step", "type": "text" },
+    { "id": "opportunities", "label": "Design Opportunities", "type": "list" }
+  ],
+  "nodes": [
+    {
+      "nodeRef": "start",
+      "laneContent": {
+        "actions": ["Receives deal handover from enterprise deal team", "Celebrates the close with her team on the sales floor"],
+        "thoughts": "Apex Solutions. Finally. That was a 6-month deal. Now the real work begins — I've got to make sure they actually succeed so this becomes a reference account. And hopefully an upsell.",
+        "emotions": { "state": "elated and determined", "intensity": 2 }
+      }
+    },
+    {
+      "nodeRef": "crm-setup",
+      "laneContent": {
+        "actions": [
+          "Opens Salesforce to create the account record",
+          "Pulls deal data from the handover sheet (PDF in email)",
+          "Manually types contract value, renewal date, key contacts into Salesforce",
+          "Assigns account to her region and connects to her open pipeline"
+        ],
+        "thoughts": "This is the part I hate. I'm copying and pasting from a PDF into Salesforce for 20 minutes. Everything the deal team documented in their system I'm now re-entering in mine. Why can't this just sync?",
+        "emotions": { "state": "mildly irritated", "intensity": 1 },
+        "barriers": [
+          {
+            "type": "technology",
+            "description": "Deal team uses a different CRM module — no automated handover; Maria manually re-keys 15+ fields",
+            "severity": 4,
+            "emergesFrom": "Maria's drive for efficiency meets a process that burns time on administration instead of relationship-building — particularly painful because she's just won a deal and wants to be celebrating, not data entering"
+          }
+        ],
+        "painAtStep": "20 minutes of manual data entry to create a record that should auto-populate from the deal team's Salesforce records. The system is supposed to save time, not create it.",
+        "opportunities": [
+          "One-click account handover: auto-create account record from closed deal record",
+          "Progressive CRM enrichment — pre-fill from LinkedIn and contract data"
+        ]
+      }
+    },
+    {
+      "nodeRef": "kickoff-prep",
+      "laneContent": {
+        "actions": [
+          "Reviews contract terms and committed success metrics",
+          "Researches Apex Solutions on LinkedIn — finds 4 key stakeholders",
+          "Calls CS lead to align on implementation timeline",
+          "Drafts kick-off agenda and sends to client champion"
+        ],
+        "thoughts": "The CFO signed the contract but her direct report is the one who'll actually run the implementation. I need to get to him this week before the CS team does — I want to be the face of the relationship, not a handover transaction.",
+        "emotions": { "state": "strategic, slightly pressured", "intensity": 2 },
+        "needAtStep": "An automated stakeholder map that pulls from LinkedIn and the signed contract — so I know who the real decision-makers are before I pick up the phone, not after the first awkward call"
+      }
+    },
+    {
+      "nodeRef": "client-kickoff",
+      "laneContent": {
+        "actions": [
+          "Runs 90-minute kick-off on Teams with 6 Apex stakeholders",
+          "Agrees communication cadence: monthly calls, shared Slack channel for Tier 1",
+          "Identifies Jamie (Head of Ops) as internal champion",
+          "Takes structured notes in Salesforce during the call"
+        ],
+        "thoughts": "Jamie is the one. He's asked three smart questions, he already understands the product, and he's going to be the person who makes this work internally. I need to build that relationship separately from the formal check-ins.",
+        "emotions": { "state": "energised and confident", "intensity": 2 },
+        "needAtStep": "A quick way to flag Jamie as 'internal champion' in Salesforce and set up a separate, lighter-touch relationship cadence with him outside the formal account schedule"
+      },
+      "momentThatMatters": {
+        "description": "Jamie's engagement during the kick-off signals a strong internal champion — Maria recognises this immediately and makes a mental note to invest in that relationship",
+        "importance": "critical",
+        "emotionalIntensity": 2
+      }
+    },
+    {
+      "nodeRef": "stakeholder-mapped",
+      "laneContent": {
+        "actions": [
+          "Updates stakeholder map in Salesforce with 5 contacts and roles",
+          "Notes that the CFO (economic buyer) is not attending any implementation calls — flags as risk"
+        ],
+        "thoughts": "Green on the champion side, amber on the economic buyer. The CFO signed the contract but I've never spoken to her directly. I need a reason to get face time before renewal.",
+        "emotions": { "state": "thoughtful, building a plan", "intensity": 1 }
+      }
+    },
+    {
+      "nodeRef": "implementation-support",
+      "laneContent": {
+        "actions": [
+          "Monitors implementation milestones in Salesforce weekly",
+          "Checks in with Jamie via Slack twice a week during implementation",
+          "Flags a 2-week delay to CS lead when integration issue emerges"
+        ],
+        "thoughts": "The integration issue is a risk. Two weeks behind already and we're only in week three. I've flagged it to the CS team but they're saying it's a client-side configuration issue. Jamie is frustrated. I need to own this politically even if I don't own it technically.",
+        "emotions": { "state": "alert, managing risk", "intensity": 2 },
+        "barriers": [
+          {
+            "type": "process",
+            "description": "No clear escalation path when CS and client disagree on ownership of an integration issue — Maria is caught in the middle",
+            "severity": 4,
+            "emergesFrom": "Maria's drive to maintain client relationships collides with unclear CS/sales accountability boundaries — she risks being associated with a problem she can't fix"
+          }
+        ],
+        "painAtStep": "The escalation path is unclear. CS says it's the client's IT team's issue; the client's IT team says it's our product. I'm relaying messages and losing credibility with Jamie every time I don't have an answer."
+      }
+    },
+    {
+      "nodeRef": "first-checkin",
+      "laneContent": {
+        "actions": [
+          "Books 30-day check-in with Jamie and two senior users",
+          "Calls CS lead for adoption data before the meeting",
+          "Runs the call from her car between two other appointments (mobile)"
+        ],
+        "thoughts": "CS says they can't share product analytics directly with me — 'not my system'. So I'm going into this call not knowing whether they've actually logged in more than once. I'm going to ask directly and hope it doesn't expose anything.",
+        "emotions": { "state": "prepared but uncertain", "intensity": 1 },
+        "barriers": [
+          {
+            "type": "technology",
+            "description": "Product usage analytics are not surfaced in Salesforce — Maria has to request adoption data from CS, who may not respond before the call",
+            "severity": 4,
+            "emergesFrom": "Maria's relationship-driven approach depends on knowing how the client is using the product — without usage data, she can't personalise the conversation or identify at-risk users before they become a problem"
+          }
+        ],
+        "needAtStep": "Real-time product usage data in Salesforce — which users have logged in, which features they've used, and what they haven't touched yet — so I can personalise every check-in conversation",
+        "opportunities": [
+          "CRM-embedded product analytics dashboard showing per-account and per-user adoption",
+          "Pre-call brief that auto-generates from Salesforce health score and usage data"
+        ]
+      }
+    },
+    {
+      "nodeRef": "adoption-check",
+      "laneContent": {
+        "actions": ["Updates Salesforce health score to Green based on Jamie's positive feedback", "Notes that two senior users haven't logged in — flags as minor risk but not escalating"],
+        "thoughts": "Green overall but those two non-adopters worry me. If they're not using it after 30 days, they probably won't. I'll mention it gently to Jamie next week.",
+        "emotions": { "state": "cautiously positive", "intensity": 1 }
+      }
+    },
+    {
+      "nodeRef": "sixty-day-checkin",
+      "laneContent": {
+        "actions": [
+          "Prepares value realisation summary with Jamie's input",
+          "Identifies a potential upsell opportunity — Apex is expanding into two new regions",
+          "Books the call for a Thursday — knows CFO has more availability Thursdays"
+        ],
+        "thoughts": "The expansion into two regions is interesting. If I can get that upsell on the table before the 90-day review, it frames the renewal conversation differently — it's not 'are you happy' it's 'how do we grow'. That changes the whole dynamic.",
+        "emotions": { "state": "confident, seeing opportunity", "intensity": 2 }
+      }
+    },
+    {
+      "nodeRef": "ninety-day-review",
+      "laneContent": {
+        "actions": [
+          "Prepares QBR deck with CS input — achievement vs. metrics, roadmap, expansion proposal",
+          "Gets CFO in the room for the first time (in-person at Apex offices)",
+          "Presents expansion proposal for the two new regions"
+        ],
+        "thoughts": "Getting the CFO in the room was the goal from day one. The in-person format was the right call — she wouldn't have engaged the same way on Teams. The expansion proposal landed well. She asked about pricing for the new regions. That's a buying signal.",
+        "emotions": { "state": "professionally excited, controlled", "intensity": 2 },
+        "needAtStep": "A QBR deck template that auto-generates the 'achievement vs. metrics' section from Salesforce data, so I can spend my prep time on the expansion proposal rather than formatting slides"
+      },
+      "momentThatMatters": {
+        "description": "CFO engages directly in the expansion discussion — first time Maria has had executive access; the QBR format created the right environment",
+        "importance": "critical",
+        "emotionalIntensity": 2
+      }
+    },
+    {
+      "nodeRef": "renewal-signal",
+      "laneContent": {
+        "actions": ["Updates Salesforce: renewal forecast Green, expansion opportunity open", "Sends follow-up to CFO with expansion pricing proposal"],
+        "thoughts": "Green on renewal, expansion in play. This account is going to finish the year much bigger than it started. That's the job.",
+        "emotions": { "state": "satisfied, forward-focused", "intensity": 2 }
+      }
+    },
+    {
+      "nodeRef": "ongoing-cadence",
+      "laneContent": {
+        "actions": [
+          "Establishes monthly call cadence with Jamie",
+          "Quarterly executive touch with CFO",
+          "Monitors health score weekly in Salesforce mobile"
+        ],
+        "thoughts": "The rhythm is set. Jamie is a strong champion. The CFO is engaged. Now I need to convert the expansion proposal and make this a reference account for the financial services vertical.",
+        "emotions": { "state": "steady, strategic", "intensity": 1 }
+      }
+    },
+    {
+      "nodeRef": "end-active",
+      "laneContent": {
+        "actions": ["Logs Apex Solutions as a potential reference account in Salesforce", "Nominates them for a case study with marketing"],
+        "thoughts": "90 days in, Green health, expansion in pipeline, CFO access established. I'll take that. If the expansion closes, this is the account story of the year.",
+        "emotions": { "state": "accomplished, energised for next stage", "intensity": 2 }
+      }
+    }
+  ],
+  "outcome": {
+    "success": true,
+    "endNode": "end-active",
+    "reflection": "A smooth onboarding despite early friction with CRM admin and a mid-implementation integration issue. The investment in identifying Jamie as champion paid dividends throughout. Getting CFO access at the 90-day QBR was the defining moment. Expansion proposal in progress.",
+    "netSentiment": 2,
+    "wouldRepeat": true,
+    "learnings": [
+      "Identifying the internal champion early (not just the economic buyer) was critical to navigating implementation issues",
+      "In-person QBR created executive access that video calls wouldn't have achieved",
+      "CRM admin overhead at account setup burned 45 minutes that should have gone into kick-off preparation"
+    ]
+  },
+  "relationships": [],
+  "provenance": {
+    "generationMethod": "ai_assisted",
+    "generationTool": "experience-generator skill (v2.0)",
+    "researchSources": [
+      {
+        "source": "B2B sales CRM process research and Maria Rodriguez actor development",
+        "type": "existing_research",
+        "confidence": "medium"
+      }
+    ]
+  },
+  "meta": {
+    "created": "2026-05-04",
+    "updated": "2026-05-04",
+    "createdBy": "Digital Service Design Team",
+    "organisation": "Digital Service Design Working",
+    "tags": ["sales", "CRM", "B2B", "enterprise", "client-onboarding", "Salesforce"]
+  }
+}

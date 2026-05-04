@@ -1,0 +1,460 @@
+{
+  "$context": "https://schemas.digitalservice.design/v2.0",
+  "$type": "Mission",
+  "id": "mission-client-relationship-management",
+  "version": "2.0.0",
+  "title": "Enterprise Client Onboarding and Relationship Management",
+  "goal": "Successfully onboard a new enterprise client from signed contract through to active account, establishing the ongoing relationship management rhythm that sustains and grows the account",
+  "summary": "A B2B sales CRM workflow covering the critical first 90 days of a new enterprise client relationship — from post-contract kick-off through activation, first renewal signal, and ongoing account health management. Designed for senior sales reps using Salesforce or equivalent CRM.",
+  "scope": {
+    "included": ["Contract handover from deal team", "Client kick-off", "Stakeholder mapping", "Implementation support coordination", "First check-in cadence", "Renewal signal tracking", "Account health scoring"],
+    "excluded": ["Pre-sales and deal closure", "Legal contract negotiation", "Technical implementation delivery", "Customer success post-year-one"],
+    "assumptions": ["CRM (Salesforce) is the system of record", "Sales rep has quota responsibility for the account during onboarding", "Implementation is handled by a separate CS/technical team"]
+  },
+  "actors": [
+    {
+      "actorRef": "actor-maria-rodriguez",
+      "role": "primary account owner and relationship lead"
+    }
+  ],
+  "lanes": [
+    { "id": "description", "label": "What happens", "type": "text" },
+    { "id": "channels", "label": "Channels", "type": "channel" },
+    { "id": "barriers", "label": "Barriers", "type": "barrier" },
+    { "id": "frontstage", "label": "Frontstage (Visible to client)", "type": "text" },
+    { "id": "backstage", "label": "Backstage (Internal)", "type": "text" },
+    { "id": "support-systems", "label": "Support Systems", "type": "list" },
+    { "id": "design-opps", "label": "Design Opportunities", "type": "list" }
+  ],
+  "nodes": [
+    {
+      "nodeId": "start",
+      "name": "Start — Contract Signed",
+      "nodeType": "start",
+      "laneContent": {
+        "description": "Deal closes. Sales rep receives handover from deal team and assumes full account ownership"
+      }
+    },
+    {
+      "nodeId": "crm-setup",
+      "name": "CRM Account Setup",
+      "nodeType": "touchpoint",
+      "durationMs": 86400000,
+      "laneContent": {
+        "description": "Sales rep creates and populates the client account record in Salesforce: contacts, contract value, renewal date, account tier, and initial health score",
+        "channels": [
+          {
+            "channel": "salesforce",
+            "category": "digital",
+            "serviceModel": "self_service",
+            "name": "Salesforce CRM",
+            "usageContext": "Account record creation and data entry"
+          }
+        ],
+        "barriers": [
+          {
+            "type": "technology",
+            "description": "Deal team often uses different field conventions — data migration from deal records to account records requires manual reconciliation",
+            "severity": 3
+          }
+        ],
+        "frontstage": "Not visible to client",
+        "backstage": "Sales rep manually reconciles data from deal team handover sheet into Salesforce account record",
+        "support-systems": ["Salesforce CRM", "Deal handover template", "Contract management system"],
+        "design-opps": ["Auto-populate account record from signed contract data", "Standardised deal-to-account data handover format"]
+      },
+      "sla": {
+        "targetDuration": "CRM setup within 24h of contract signing",
+        "targetDurationMs": 86400000,
+        "escalation": "Flag to sales manager if setup delayed beyond 48 hours"
+      }
+    },
+    {
+      "nodeId": "kickoff-prep",
+      "name": "Kick-off Preparation",
+      "nodeType": "touchpoint",
+      "durationMs": 172800000,
+      "laneContent": {
+        "description": "Sales rep researches client stakeholders, reviews contract commitments, and prepares kick-off agenda in coordination with CS/implementation team",
+        "channels": [
+          {
+            "channel": "email",
+            "category": "digital",
+            "serviceModel": "managed",
+            "name": "Email",
+            "usageContext": "Coordinating kick-off logistics with client and internal team"
+          },
+          {
+            "channel": "linkedin",
+            "category": "digital",
+            "serviceModel": "self_service",
+            "name": "LinkedIn",
+            "usageContext": "Stakeholder research and mapping"
+          }
+        ],
+        "barriers": [
+          {
+            "type": "knowledge",
+            "description": "Sales rep has deal-level knowledge but limited visibility of day-to-day client contacts who will actually use the product",
+            "severity": 3
+          }
+        ],
+        "frontstage": "Kick-off meeting invitation and pre-read document sent to client",
+        "backstage": "Internal briefing with CS team, review of contract commitments and implementation timeline",
+        "support-systems": ["Salesforce CRM", "Internal kick-off agenda template", "CS handover portal"],
+        "design-opps": ["AI-powered stakeholder mapping from LinkedIn and client public information"]
+      }
+    },
+    {
+      "nodeId": "client-kickoff",
+      "name": "Client Kick-off Meeting",
+      "nodeType": "touchpoint",
+      "durationMs": 5400000,
+      "laneContent": {
+        "description": "90-minute session: introductions, review contract scope and success metrics, agree communication cadence, identify internal champions",
+        "channels": [
+          {
+            "channel": "video-call",
+            "category": "digital",
+            "serviceModel": "managed",
+            "name": "Teams / Zoom",
+            "usageContext": "Primary kick-off channel for most enterprise clients"
+          },
+          {
+            "channel": "in-person",
+            "category": "physical",
+            "serviceModel": "managed",
+            "name": "On-site meeting (strategic accounts)",
+            "usageContext": "Tier 1 accounts: in-person kick-off at client offices"
+          }
+        ],
+        "barriers": [
+          {
+            "type": "process",
+            "description": "Client-side stakeholders invited may not be the actual power users — kick-off can become political rather than practical",
+            "severity": 3
+          }
+        ],
+        "frontstage": "Kick-off agenda, success metrics alignment, communication plan",
+        "backstage": "Sales rep takes structured notes in Salesforce; CS lead captures technical requirements",
+        "support-systems": ["Salesforce CRM (meeting notes)", "Kick-off agenda template", "Success metrics framework"],
+        "design-opps": ["Auto-generate stakeholder map from kick-off attendance and roles"]
+      },
+      "significance": {
+        "description": "Sets the tone for the entire relationship — first impressions determine whether the client views this as a transactional or strategic partnership",
+        "importance": "critical"
+      }
+    },
+    {
+      "nodeId": "stakeholder-mapped",
+      "name": "Stakeholder Map Complete",
+      "nodeType": "decision",
+      "laneContent": {
+        "description": "Post kick-off review: has sales rep identified economic buyer, champion, and key users? Missing stakeholders = account risk",
+        "frontstage": "Not visible to client",
+        "backstage": "Sales rep reviews stakeholder map with manager — accounts with unidentified economic buyers are flagged"
+      }
+    },
+    {
+      "nodeId": "implementation-support",
+      "name": "Implementation Support Coordination",
+      "nodeType": "wait",
+      "durationMs": 2592000000,
+      "laneContent": {
+        "description": "CS/technical team leads implementation. Sales rep maintains client relationship, monitors progress, and escalates blockers to CS lead",
+        "channels": [
+          {
+            "channel": "email",
+            "category": "digital",
+            "serviceModel": "managed",
+            "name": "Email",
+            "usageContext": "Relationship check-ins and escalation comms during implementation"
+          },
+          {
+            "channel": "slack",
+            "category": "digital",
+            "serviceModel": "managed",
+            "name": "Shared Slack channel (enterprise clients)",
+            "usageContext": "Real-time coordination for Tier 1 enterprise accounts"
+          }
+        ],
+        "barriers": [
+          {
+            "type": "process",
+            "description": "No clear escalation path when implementation delays risk client satisfaction — CS and sales accountability boundaries are blurry",
+            "severity": 4
+          }
+        ],
+        "frontstage": "Regular implementation status updates, proactive escalation if timeline slips",
+        "backstage": "CS team manages technical delivery; sales rep monitors Salesforce health score and implementation milestone tracking",
+        "support-systems": ["Salesforce CRM (health score, implementation milestones)", "CS implementation tracker", "Shared Slack channel"]
+      }
+    },
+    {
+      "nodeId": "first-checkin",
+      "name": "30-Day Check-in",
+      "nodeType": "touchpoint",
+      "durationMs": 3600000,
+      "laneContent": {
+        "description": "Sales rep-led call at 30 days. Goal: early value realisation check, uncover any adoption concerns, reinforce relationship",
+        "channels": [
+          {
+            "channel": "video-call",
+            "category": "digital",
+            "serviceModel": "managed",
+            "name": "Teams / Zoom",
+            "usageContext": "30-day relationship check-in"
+          }
+        ],
+        "barriers": [
+          {
+            "type": "technology",
+            "description": "No product usage data available in CRM — sales rep can't see whether client is actually adopting the product",
+            "severity": 4
+          }
+        ],
+        "frontstage": "Check-in agenda focusing on early value and any concerns",
+        "backstage": "Salesforce health score reviewed pre-call; CS provides adoption metrics if available",
+        "support-systems": ["Salesforce CRM", "Product analytics (if CS provides access)", "30-day check-in call guide"],
+        "design-opps": ["Real-time product adoption data surfaced in CRM so sales rep can personalise check-in conversation"]
+      },
+      "sla": {
+        "targetDuration": "Check-in within 35 days of contract signing",
+        "targetDurationMs": 3024000000,
+        "escalation": "Flag to manager if check-in not booked within 30 days"
+      }
+    },
+    {
+      "nodeId": "adoption-check",
+      "name": "Adoption Health Check",
+      "nodeType": "decision",
+      "laneContent": {
+        "description": "Based on check-in: is adoption on track? Low adoption triggers an intervention path; healthy adoption moves to 60-day check-in",
+        "frontstage": "Not visible to client",
+        "backstage": "Sales rep updates Salesforce health score; flags intervention accounts to CS lead"
+      }
+    },
+    {
+      "nodeId": "intervention",
+      "name": "Adoption Intervention",
+      "nodeType": "touchpoint",
+      "durationMs": 604800000,
+      "laneContent": {
+        "description": "For low-adoption accounts: CS and sales jointly identify root cause (product fit, onboarding quality, internal champions) and agree an intervention plan",
+        "channels": [
+          {
+            "channel": "video-call",
+            "category": "digital",
+            "serviceModel": "managed",
+            "name": "Joint CS/Sales call with client champion",
+            "usageContext": "Adoption intervention — uncover blockers and agree recovery plan"
+          }
+        ],
+        "frontstage": "Structured recovery plan: additional training, configuration changes, or executive escalation",
+        "backstage": "CS reviews product configuration and usage logs; sales rep prepares recovery plan with manager"
+      }
+    },
+    {
+      "nodeId": "sixty-day-checkin",
+      "name": "60-Day Check-in",
+      "nodeType": "touchpoint",
+      "durationMs": 3600000,
+      "laneContent": {
+        "description": "Mid-point check. Focus shifts from adoption to value realisation — can client articulate a business outcome from the product?",
+        "channels": [
+          {
+            "channel": "video-call",
+            "category": "digital",
+            "serviceModel": "managed",
+            "name": "Teams / Zoom",
+            "usageContext": "60-day value realisation check-in"
+          }
+        ],
+        "frontstage": "Value realisation review, expansion opportunity discussion if appropriate",
+        "backstage": "Sales rep documents case study potential, identifies upsell opportunity signals in Salesforce",
+        "support-systems": ["Salesforce CRM", "Case study template", "Expansion playbook"],
+        "design-opps": ["Value realisation scoring framework that auto-generates ROI evidence for client business case"]
+      }
+    },
+    {
+      "nodeId": "ninety-day-review",
+      "name": "90-Day Formal Review",
+      "nodeType": "touchpoint",
+      "durationMs": 7200000,
+      "laneContent": {
+        "description": "Formal quarterly review: achievement against success metrics, roadmap alignment, expansion opportunity, and renewal intent signal",
+        "channels": [
+          {
+            "channel": "in-person",
+            "category": "physical",
+            "serviceModel": "managed",
+            "name": "On-site QBR (strategic accounts)",
+            "usageContext": "90-day Quarterly Business Review for Tier 1 accounts"
+          },
+          {
+            "channel": "video-call",
+            "category": "digital",
+            "serviceModel": "managed",
+            "name": "Video QBR (standard accounts)",
+            "usageContext": "90-day review for Tier 2-3 accounts"
+          }
+        ],
+        "barriers": [
+          {
+            "type": "communications",
+            "description": "Client stakeholders for the QBR are often different from day-to-day contacts — building executive access takes deliberate effort",
+            "severity": 3
+          }
+        ],
+        "frontstage": "QBR deck: achievement vs. metrics, roadmap, next 90-day plan",
+        "backstage": "Sales rep prepares QBR with CS input; manager reviews expansion opportunity before call",
+        "support-systems": ["Salesforce CRM", "QBR deck template", "Expansion playbook", "Success metrics dashboard"],
+        "design-opps": ["Auto-generated QBR deck from Salesforce metrics and product usage data"]
+      },
+      "significance": {
+        "description": "First formal review — sets the expectation for ongoing executive engagement and surfaces early renewal intent",
+        "importance": "high"
+      }
+    },
+    {
+      "nodeId": "renewal-signal",
+      "name": "Renewal Intent Signal",
+      "nodeType": "decision",
+      "laneContent": {
+        "description": "Post-QBR: is renewal likely (green), at risk (amber), or unlikely (red)? Determines account management intensity for next quarter",
+        "frontstage": "Not visible to client",
+        "backstage": "Sales rep updates renewal forecast in Salesforce; red accounts escalated to manager"
+      }
+    },
+    {
+      "nodeId": "ongoing-cadence",
+      "name": "Ongoing Relationship Cadence",
+      "nodeType": "touchpoint",
+      "laneContent": {
+        "description": "Regular check-ins, expansion conversations, and account health monitoring through the contract term",
+        "channels": [
+          {
+            "channel": "email",
+            "category": "digital",
+            "serviceModel": "self_service",
+            "name": "Email newsletter / product updates",
+            "usageContext": "Proactive value-add communication between check-ins"
+          }
+        ],
+        "frontstage": "Proactive updates, peer benchmarking, early access to new features",
+        "backstage": "Salesforce health score monitoring, expansion pipeline tracking",
+        "support-systems": ["Salesforce CRM", "Account health dashboard", "Expansion playbook"]
+      }
+    },
+    {
+      "nodeId": "end-active",
+      "name": "End — Active Account",
+      "nodeType": "end",
+      "laneContent": {
+        "description": "Client is actively engaged, adoption healthy, renewal intent positive. Account transitions to standard annual cycle."
+      }
+    }
+  ],
+  "edges": [
+    { "from": "start", "to": "crm-setup", "edgeType": "default" },
+    { "from": "crm-setup", "to": "kickoff-prep", "edgeType": "default" },
+    { "from": "kickoff-prep", "to": "client-kickoff", "edgeType": "default" },
+    { "from": "client-kickoff", "to": "stakeholder-mapped", "edgeType": "default" },
+    { "from": "stakeholder-mapped", "to": "implementation-support", "label": "Map complete", "edgeType": "conditional" },
+    { "from": "stakeholder-mapped", "to": "kickoff-prep", "label": "Key stakeholders missing — re-engage", "edgeType": "loop_back" },
+    { "from": "implementation-support", "to": "first-checkin", "edgeType": "default" },
+    { "from": "first-checkin", "to": "adoption-check", "edgeType": "default" },
+    { "from": "adoption-check", "to": "sixty-day-checkin", "label": "Adoption healthy", "edgeType": "conditional" },
+    { "from": "adoption-check", "to": "intervention", "label": "Low adoption — intervene", "edgeType": "conditional" },
+    { "from": "intervention", "to": "sixty-day-checkin", "edgeType": "default" },
+    { "from": "sixty-day-checkin", "to": "ninety-day-review", "edgeType": "default" },
+    { "from": "ninety-day-review", "to": "renewal-signal", "edgeType": "default" },
+    { "from": "renewal-signal", "to": "ongoing-cadence", "label": "Green or amber", "edgeType": "conditional" },
+    { "from": "renewal-signal", "to": "intervention", "label": "Red — at risk", "edgeType": "conditional" },
+    { "from": "ongoing-cadence", "to": "end-active", "edgeType": "default" }
+  ],
+  "paths": [
+    {
+      "pathId": "path-happy",
+      "name": "Healthy onboarding — active account",
+      "description": "Adoption healthy from day 30, positive renewal signal at 90-day QBR",
+      "pathType": "designed",
+      "nodeSequence": ["start", "crm-setup", "kickoff-prep", "client-kickoff", "stakeholder-mapped", "implementation-support", "first-checkin", "adoption-check", "sixty-day-checkin", "ninety-day-review", "renewal-signal", "ongoing-cadence", "end-active"],
+      "frequency": 0.60,
+      "averageDuration": "90 days"
+    },
+    {
+      "pathId": "path-intervention",
+      "name": "Low adoption — intervention required",
+      "description": "Adoption concerns at 30 days trigger CS intervention before 60-day check-in",
+      "pathType": "edge_case",
+      "nodeSequence": ["start", "crm-setup", "kickoff-prep", "client-kickoff", "stakeholder-mapped", "implementation-support", "first-checkin", "adoption-check", "intervention", "sixty-day-checkin", "ninety-day-review", "renewal-signal", "ongoing-cadence", "end-active"],
+      "frequency": 0.30,
+      "averageDuration": "110 days"
+    },
+    {
+      "pathId": "path-at-risk",
+      "name": "At-risk account — renewal intervention",
+      "description": "Red renewal signal at 90-day QBR triggers escalated intervention",
+      "pathType": "edge_case",
+      "nodeSequence": ["start", "crm-setup", "kickoff-prep", "client-kickoff", "stakeholder-mapped", "implementation-support", "first-checkin", "adoption-check", "sixty-day-checkin", "ninety-day-review", "renewal-signal", "intervention", "ongoing-cadence", "end-active"],
+      "frequency": 0.10,
+      "averageDuration": "120 days"
+    }
+  ],
+  "phases": [
+    {
+      "phaseId": "phase-setup",
+      "name": "Account Setup",
+      "goal": "Establish CRM record and prepare for client kick-off",
+      "nodeRefs": ["start", "crm-setup", "kickoff-prep"]
+    },
+    {
+      "phaseId": "phase-kickoff",
+      "name": "Kick-off and Stakeholder Mapping",
+      "goal": "Establish relationship and identify key contacts",
+      "nodeRefs": ["client-kickoff", "stakeholder-mapped"]
+    },
+    {
+      "phaseId": "phase-implementation",
+      "name": "Implementation Support",
+      "goal": "Support successful implementation and monitor adoption",
+      "nodeRefs": ["implementation-support", "first-checkin", "adoption-check", "intervention"]
+    },
+    {
+      "phaseId": "phase-value",
+      "name": "Value Realisation",
+      "goal": "Confirm client is achieving intended business outcomes",
+      "nodeRefs": ["sixty-day-checkin", "ninety-day-review"]
+    },
+    {
+      "phaseId": "phase-ongoing",
+      "name": "Ongoing Management",
+      "goal": "Sustain relationship health and manage renewal",
+      "nodeRefs": ["renewal-signal", "ongoing-cadence", "end-active"]
+    }
+  ],
+  "provenance": {
+    "source": "mixed",
+    "confidence": 0.75,
+    "researchSources": [
+      {
+        "source": "B2B sales onboarding and CRM process research, Salesforce best practice documentation",
+        "type": "existing_research",
+        "confidence": "medium"
+      },
+      {
+        "source": "Composite from senior sales representative research (Maria Rodriguez actor development)",
+        "type": "interview",
+        "confidence": "medium"
+      }
+    ]
+  },
+  "meta": {
+    "created": "2026-05-04",
+    "updated": "2026-05-04",
+    "createdBy": "Digital Service Design Team",
+    "organisation": "Digital Service Design Working",
+    "tags": ["sales", "CRM", "B2B", "enterprise", "client-onboarding", "account-management"]
+  }
+}

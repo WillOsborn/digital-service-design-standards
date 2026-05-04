@@ -1,0 +1,502 @@
+{
+  "$context": "https://schemas.digitalservice.design/v2.0",
+  "$type": "Mission",
+  "id": "mission-healthcare-system-procurement",
+  "version": "2.0.0",
+  "title": "Healthcare Technology System Procurement",
+  "goal": "Enable NHS organisations to systematically evaluate, select, and contract a clinical or administrative IT system that meets clinical, security, and compliance requirements",
+  "summary": "A structured procurement process for healthcare IT systems — from business case through market scan, vendor evaluation, compliance review, and contract award. Applicable to EHR upgrades, clinical decision support tools, and administrative platforms requiring IG Toolkit compliance.",
+  "scope": {
+    "included": ["Requirements definition", "Market scan and RFI", "Vendor shortlisting", "Demonstrations", "Security and compliance audit", "Reference checks", "Board approval", "Contract negotiation", "Implementation kickoff"],
+    "excluded": ["Live implementation", "Change management post-go-live", "Ongoing vendor management"],
+    "assumptions": ["Organisation is subject to NHS IG Toolkit and Data Security and Protection (DSP) requirements", "Procurement value requires board sign-off (typically >£100k)", "A dedicated procurement lead and IT security officer are available"]
+  },
+  "actors": [
+    {
+      "actorRef": "actor-david-chen",
+      "role": "procurement lead and technical evaluator"
+    }
+  ],
+  "lanes": [
+    { "id": "description", "label": "What happens", "type": "text" },
+    { "id": "channels", "label": "Channels", "type": "channel" },
+    { "id": "barriers", "label": "Barriers", "type": "barrier" },
+    { "id": "frontstage", "label": "Frontstage (Visible to actors)", "type": "text" },
+    { "id": "backstage", "label": "Backstage (Behind the scenes)", "type": "text" },
+    { "id": "support-systems", "label": "Support Systems", "type": "list" },
+    { "id": "design-opps", "label": "Design Opportunities", "type": "list" }
+  ],
+  "nodes": [
+    {
+      "nodeId": "start",
+      "name": "Start",
+      "nodeType": "start",
+      "laneContent": {
+        "description": "Business need identified — current system end-of-life, new clinical capability required, or compliance gap discovered"
+      }
+    },
+    {
+      "nodeId": "define-requirements",
+      "name": "Define Requirements",
+      "nodeType": "touchpoint",
+      "durationMs": 1209600000,
+      "laneContent": {
+        "description": "IT Director works with clinical leads, compliance officer, and operations to document functional, technical, and regulatory requirements",
+        "channels": [
+          {
+            "channel": "internal-workshops",
+            "category": "physical",
+            "serviceModel": "managed",
+            "name": "Stakeholder workshops",
+            "usageContext": "Requirements gathering with clinical and operational stakeholders"
+          },
+          {
+            "channel": "shared-documents",
+            "category": "digital",
+            "serviceModel": "self_service",
+            "name": "Requirements specification document (SharePoint)",
+            "usageContext": "Collaborative requirements editing and sign-off"
+          }
+        ],
+        "barriers": [
+          {
+            "type": "communications",
+            "description": "Clinical stakeholders struggle to articulate technical requirements in procurement language",
+            "severity": 4
+          },
+          {
+            "type": "governance",
+            "description": "DSP Toolkit requirements are not always known upfront — compliance officer involvement varies",
+            "severity": 3
+          }
+        ],
+        "frontstage": "Requirements specification document, stakeholder workshop sessions",
+        "backstage": "IT security review of mandatory compliance requirements, clinical governance sign-off on functional needs",
+        "support-systems": ["NHS DSP Toolkit compliance checklist", "Existing system documentation", "Clinical governance framework"],
+        "design-opps": ["Create a healthcare-specific requirements template that embeds DSP Toolkit controls automatically", "Provide a stakeholder interview guide for non-technical clinical leads"]
+      }
+    },
+    {
+      "nodeId": "market-scan",
+      "name": "Market Scan and RFI",
+      "nodeType": "touchpoint",
+      "durationMs": 1209600000,
+      "laneContent": {
+        "description": "Issue a Request for Information to known vendors and run independent market research to identify candidate solutions",
+        "channels": [
+          {
+            "channel": "find-a-tender",
+            "category": "digital",
+            "serviceModel": "self_service",
+            "name": "Find a Tender Service (FTS)",
+            "usageContext": "Issuing public RFI for above-threshold procurements"
+          },
+          {
+            "channel": "g-cloud",
+            "category": "digital",
+            "serviceModel": "self_service",
+            "name": "G-Cloud / NHS Procurement frameworks",
+            "usageContext": "Identifying pre-approved vendors to reduce procurement overhead"
+          }
+        ],
+        "barriers": [
+          {
+            "type": "knowledge",
+            "description": "Market is fragmented — it's hard to know which vendors have genuine NHS track records vs. generic SaaS pivoting to healthcare",
+            "severity": 3
+          }
+        ],
+        "frontstage": "RFI document, vendor questionnaire, market scan report",
+        "backstage": "Procurement team manages RFI responses, legal reviews NDA requirements",
+        "support-systems": ["Find a Tender Service", "NHS Shared Business Services catalogue", "Digital Health Intelligence market reports"],
+        "design-opps": ["Publish a healthcare IT vendor maturity index benchmarking DSP compliance, NHS interoperability, and implementation track record"]
+      }
+    },
+    {
+      "nodeId": "shortlist",
+      "name": "Shortlist Vendors",
+      "nodeType": "decision",
+      "laneContent": {
+        "description": "Evaluate RFI responses against scored criteria. Typically shortlists 3-5 vendors for full evaluation",
+        "frontstage": "Shortlist scoring matrix presented to procurement board",
+        "backstage": "IT and clinical leads score independently; scores reconciled in panel meeting"
+      },
+      "significance": {
+        "description": "First major gate — wrong shortlist selection propagates through the entire evaluation",
+        "importance": "high"
+      }
+    },
+    {
+      "nodeId": "request-demos",
+      "name": "Vendor Demonstrations",
+      "nodeType": "touchpoint",
+      "durationMs": 1814400000,
+      "laneContent": {
+        "description": "Shortlisted vendors present their solutions. Sessions include clinical workflow demonstrations, technical Q&A, and security discussions",
+        "channels": [
+          {
+            "channel": "video-call",
+            "category": "digital",
+            "serviceModel": "managed",
+            "name": "Video conference (Teams/Zoom)",
+            "usageContext": "Remote vendor demonstrations and follow-up Q&A"
+          },
+          {
+            "channel": "on-site-visit",
+            "category": "physical",
+            "serviceModel": "managed",
+            "name": "Vendor premises or reference site visit",
+            "usageContext": "In-person system demonstration with reference customer"
+          }
+        ],
+        "barriers": [
+          {
+            "type": "knowledge",
+            "description": "Vendors tailor demos to show strengths — evaluators need structured question banks to expose compliance gaps",
+            "severity": 4
+          },
+          {
+            "type": "process",
+            "description": "Scheduling 5 vendors across a panel of 6 internal stakeholders takes weeks",
+            "severity": 3
+          }
+        ],
+        "frontstage": "Demo scripts, evaluation scorecards, live system demonstrations",
+        "backstage": "Security team prepares DSP Toolkit compliance question set; clinical governance team reviews clinical workflow mapping",
+        "support-systems": ["Demo evaluation scorecard", "OWASP / NHS Cyber Security Framework question set"],
+        "design-opps": ["Create a standardised NHS vendor demo script that forces vendors to address DSP controls in sequence"]
+      },
+      "sla": {
+        "targetDuration": "Demos within 6 weeks of shortlist decision",
+        "targetDurationMs": 3628800000,
+        "escalation": "Escalate to CTO if any vendor fails to respond to demo scheduling within 5 working days"
+      }
+    },
+    {
+      "nodeId": "security-audit",
+      "name": "Security and Compliance Audit",
+      "nodeType": "wait",
+      "durationMs": 2419200000,
+      "laneContent": {
+        "description": "IT security officer and data protection lead conduct a formal DSP Toolkit and cyber security assessment of preferred vendor(s)",
+        "channels": [
+          {
+            "channel": "structured-questionnaire",
+            "category": "digital",
+            "serviceModel": "self_service",
+            "name": "DSP Toolkit assessment portal",
+            "usageContext": "Formal compliance evidence submission and review"
+          }
+        ],
+        "barriers": [
+          {
+            "type": "process",
+            "description": "Vendors rarely have their DSP evidence pack pre-prepared — collection takes weeks and delays procurement timeline",
+            "severity": 5
+          },
+          {
+            "type": "resource",
+            "description": "NHS organisations often have only one data protection officer, creating a bottleneck",
+            "severity": 4
+          }
+        ],
+        "frontstage": "DSP Toolkit questionnaire responses, penetration test reports, data processing agreements",
+        "backstage": "IT security team reviews OWASP vulnerability disclosures, DPO reviews data flows and retention policies",
+        "support-systems": ["NHS DSP Toolkit", "Data Processing Agreement template", "NHS Cyber Security Framework"],
+        "design-opps": ["Create a vendor DSP readiness pre-check that can be shared before formal procurement begins, reducing audit cycle time"]
+      }
+    },
+    {
+      "nodeId": "security-decision",
+      "name": "Security Review Outcome",
+      "nodeType": "decision",
+      "laneContent": {
+        "description": "Security officer presents findings. Decision: proceed, conditional approval (remediation required), or reject vendor",
+        "frontstage": "Security review report presented to procurement board",
+        "backstage": "IT security lead documents findings; DPO confirms data protection compliance"
+      },
+      "significance": {
+        "description": "Non-negotiable gate — a vendor that fails security cannot proceed regardless of clinical or commercial merit",
+        "importance": "critical"
+      }
+    },
+    {
+      "nodeId": "reference-checks",
+      "name": "Reference Site Checks",
+      "nodeType": "touchpoint",
+      "durationMs": 604800000,
+      "laneContent": {
+        "description": "Calls with 2-3 NHS organisations already using the preferred vendor — focusing on implementation experience, support quality, and real-world DSP compliance",
+        "channels": [
+          {
+            "channel": "phone-call",
+            "category": "physical",
+            "serviceModel": "managed",
+            "name": "Reference calls (peer NHS organisations)",
+            "usageContext": "Structured reference conversations with IT Directors at reference sites"
+          }
+        ],
+        "barriers": [
+          {
+            "type": "process",
+            "description": "Vendors only provide positive references — independent reference discovery through NHS networks is time-consuming",
+            "severity": 3
+          }
+        ],
+        "frontstage": "Reference call guide, reference site summary report",
+        "backstage": "Procurement lead identifies independent references via NHS Digital networks and peer contacts",
+        "support-systems": ["NHS CIO Network", "HSCIC peer network", "LinkedIn NHS Digital Health community"],
+        "design-opps": ["Build an NHS vendor reference database where IT Directors contribute post-implementation reviews"]
+      }
+    },
+    {
+      "nodeId": "business-case",
+      "name": "Build Final Business Case",
+      "nodeType": "touchpoint",
+      "durationMs": 604800000,
+      "laneContent": {
+        "description": "IT Director synthesises evaluation findings into a board-ready business case: ROI, risk register, implementation timeline, and total cost of ownership",
+        "channels": [
+          {
+            "channel": "presentation",
+            "category": "physical",
+            "serviceModel": "managed",
+            "name": "Board presentation (PowerPoint/slides)",
+            "usageContext": "Presenting procurement recommendation to C-suite and board"
+          }
+        ],
+        "barriers": [
+          {
+            "type": "communications",
+            "description": "Translating technical merit and compliance risk into financial terms that a non-technical CFO will approve is difficult",
+            "severity": 4
+          }
+        ],
+        "frontstage": "Business case document, ROI model, risk register",
+        "backstage": "Finance team reviews TCO model; clinical governance provides clinical benefit evidence",
+        "support-systems": ["NHS Green Book business case guidance", "HM Treasury five-case model", "IT cost modelling spreadsheet"],
+        "design-opps": ["Provide a healthcare IT business case template pre-populated with common ROI metrics and risk categories"]
+      }
+    },
+    {
+      "nodeId": "board-approval",
+      "name": "Board Approval",
+      "nodeType": "wait",
+      "durationMs": 1209600000,
+      "laneContent": {
+        "description": "Business case submitted to board agenda. IT Director presents recommendation and answers questions",
+        "channels": [
+          {
+            "channel": "board-meeting",
+            "category": "physical",
+            "serviceModel": "managed",
+            "name": "Board or Executive Committee meeting",
+            "usageContext": "Formal procurement decision at executive level"
+          }
+        ],
+        "barriers": [
+          {
+            "type": "process",
+            "description": "Board meeting cycles (monthly or quarterly) create fixed decision windows — missing one cycle adds weeks of delay",
+            "severity": 4
+          }
+        ],
+        "frontstage": "Board agenda item, business case presentation",
+        "backstage": "CFO pre-reads and provides finance committee endorsement; CEO aligns with organisational strategy",
+        "support-systems": ["Board management software", "Finance committee workflow"]
+      },
+      "significance": {
+        "description": "Final organisational commitment — approval triggers contract negotiation and resource allocation",
+        "importance": "critical"
+      }
+    },
+    {
+      "nodeId": "approval-decision",
+      "name": "Approval Decision",
+      "nodeType": "decision",
+      "laneContent": {
+        "description": "Board votes: approve, reject, or defer with conditions",
+        "frontstage": "Board minutes recording the decision",
+        "backstage": "Company secretary records decision; procurement lead notified"
+      }
+    },
+    {
+      "nodeId": "contract-negotiation",
+      "name": "Contract Negotiation",
+      "nodeType": "touchpoint",
+      "durationMs": 1814400000,
+      "laneContent": {
+        "description": "Legal and procurement teams negotiate contract terms: SLAs, data processing agreement, exit provisions, and implementation milestones",
+        "channels": [
+          {
+            "channel": "legal-portal",
+            "category": "digital",
+            "serviceModel": "managed",
+            "name": "Contract management platform",
+            "usageContext": "Redlined contract review and version management"
+          }
+        ],
+        "barriers": [
+          {
+            "type": "process",
+            "description": "Vendors often redline NHS standard terms, triggering multiple legal review cycles",
+            "severity": 4
+          }
+        ],
+        "frontstage": "Contract draft, negotiation summary",
+        "backstage": "Legal team reviews redlines; DPO approves Data Processing Agreement; procurement finalises commercial terms",
+        "support-systems": ["NHS Standard Contract template", "NHS Information Governance DPA template", "Procurement contract register"],
+        "design-opps": ["Publish vendor-facing guidance on NHS standard contract expectations to reduce first-round redline volume"]
+      }
+    },
+    {
+      "nodeId": "implementation-kickoff",
+      "name": "Implementation Kickoff",
+      "nodeType": "touchpoint",
+      "laneContent": {
+        "description": "Project formally begins. Governance structure established, project charter signed, and delivery plan agreed",
+        "channels": [
+          {
+            "channel": "kickoff-meeting",
+            "category": "physical",
+            "serviceModel": "managed",
+            "name": "Project kickoff workshop",
+            "usageContext": "Establishing project governance and delivery plan"
+          }
+        ],
+        "frontstage": "Project charter, delivery plan, RACI matrix",
+        "backstage": "PMO registers project; IT team allocates infrastructure capacity; vendor assigns implementation lead",
+        "support-systems": ["Project management office (PMO) system", "PRINCE2 / MSP project governance framework"]
+      },
+      "significance": {
+        "description": "Transition from procurement to delivery — marks successful completion of the procurement process",
+        "importance": "high"
+      }
+    },
+    {
+      "nodeId": "end-success",
+      "name": "End — Contract Awarded",
+      "nodeType": "end",
+      "laneContent": {
+        "description": "Contract signed, implementation underway, procurement process formally closed"
+      }
+    },
+    {
+      "nodeId": "end-rejected",
+      "name": "End — Procurement Cancelled",
+      "nodeType": "end",
+      "laneContent": {
+        "description": "Board rejects or defers procurement. Requirements review initiated for future re-tender"
+      }
+    }
+  ],
+  "edges": [
+    { "from": "start", "to": "define-requirements", "edgeType": "default" },
+    { "from": "define-requirements", "to": "market-scan", "edgeType": "default" },
+    { "from": "market-scan", "to": "shortlist", "edgeType": "default" },
+    { "from": "shortlist", "to": "request-demos", "label": "Vendors shortlisted", "edgeType": "conditional" },
+    { "from": "shortlist", "to": "market-scan", "label": "Insufficient responses — re-issue RFI", "edgeType": "loop_back" },
+    { "from": "request-demos", "to": "security-audit", "edgeType": "default" },
+    { "from": "security-audit", "to": "security-decision", "edgeType": "default" },
+    { "from": "security-decision", "to": "reference-checks", "label": "Security approved", "edgeType": "conditional" },
+    { "from": "security-decision", "to": "shortlist", "label": "Vendor rejected — re-evaluate shortlist", "edgeType": "conditional" },
+    { "from": "reference-checks", "to": "business-case", "edgeType": "default" },
+    { "from": "business-case", "to": "board-approval", "edgeType": "default" },
+    { "from": "board-approval", "to": "approval-decision", "edgeType": "default" },
+    { "from": "approval-decision", "to": "contract-negotiation", "label": "Approved", "edgeType": "conditional" },
+    { "from": "approval-decision", "to": "business-case", "label": "Deferred — revise business case", "edgeType": "loop_back" },
+    { "from": "approval-decision", "to": "end-rejected", "label": "Rejected", "edgeType": "conditional" },
+    { "from": "contract-negotiation", "to": "implementation-kickoff", "edgeType": "default" },
+    { "from": "implementation-kickoff", "to": "end-success", "edgeType": "default" }
+  ],
+  "paths": [
+    {
+      "pathId": "path-happy",
+      "name": "Successful procurement",
+      "description": "First-pass shortlist, single security audit cycle, board approval at first submission",
+      "pathType": "designed",
+      "nodeSequence": ["start", "define-requirements", "market-scan", "shortlist", "request-demos", "security-audit", "security-decision", "reference-checks", "business-case", "board-approval", "approval-decision", "contract-negotiation", "implementation-kickoff", "end-success"],
+      "frequency": 0.45,
+      "averageDuration": "16–24 weeks"
+    },
+    {
+      "pathId": "path-security-fail",
+      "name": "Preferred vendor fails security — re-evaluate",
+      "description": "Security audit rejects preferred vendor; second-shortlist vendor progresses",
+      "pathType": "edge_case",
+      "nodeSequence": ["start", "define-requirements", "market-scan", "shortlist", "request-demos", "security-audit", "security-decision", "shortlist", "request-demos", "security-audit", "security-decision", "reference-checks", "business-case", "board-approval", "approval-decision", "contract-negotiation", "implementation-kickoff", "end-success"],
+      "frequency": 0.25,
+      "averageDuration": "24–36 weeks"
+    },
+    {
+      "pathId": "path-deferred",
+      "name": "Board defers — revised business case required",
+      "description": "Board requests more information or cost reduction before approving",
+      "pathType": "edge_case",
+      "nodeSequence": ["start", "define-requirements", "market-scan", "shortlist", "request-demos", "security-audit", "security-decision", "reference-checks", "business-case", "board-approval", "approval-decision", "business-case", "board-approval", "approval-decision", "contract-negotiation", "implementation-kickoff", "end-success"],
+      "frequency": 0.20,
+      "averageDuration": "28–40 weeks"
+    }
+  ],
+  "phases": [
+    {
+      "phaseId": "phase-discovery",
+      "name": "Discovery and Requirements",
+      "goal": "Define what the organisation needs and why",
+      "nodeRefs": ["start", "define-requirements"]
+    },
+    {
+      "phaseId": "phase-market",
+      "name": "Market Engagement",
+      "goal": "Identify and shortlist capable vendors",
+      "nodeRefs": ["market-scan", "shortlist"]
+    },
+    {
+      "phaseId": "phase-evaluation",
+      "name": "Detailed Evaluation",
+      "goal": "Assess shortlisted vendors across clinical, technical, and commercial dimensions",
+      "nodeRefs": ["request-demos", "security-audit", "security-decision", "reference-checks"]
+    },
+    {
+      "phaseId": "phase-decision",
+      "name": "Decision and Contract",
+      "goal": "Secure organisational approval and agree contract terms",
+      "nodeRefs": ["business-case", "board-approval", "approval-decision", "contract-negotiation"]
+    },
+    {
+      "phaseId": "phase-initiation",
+      "name": "Implementation Initiation",
+      "goal": "Formally begin the implementation project",
+      "nodeRefs": ["implementation-kickoff", "end-success", "end-rejected"]
+    }
+  ],
+  "provenance": {
+    "source": "mixed",
+    "confidence": 0.75,
+    "researchSources": [
+      {
+        "source": "NHS Procurement Framework guidance and Find a Tender Service documentation",
+        "type": "existing_research",
+        "confidence": "high"
+      },
+      {
+        "source": "DSP Toolkit and NHS Cyber Security Framework requirements",
+        "type": "existing_research",
+        "date": "2024-01-01",
+        "confidence": "high"
+      },
+      {
+        "source": "Composite from NHS IT Director interviews (research personas)",
+        "type": "interview",
+        "confidence": "medium"
+      }
+    ]
+  },
+  "meta": {
+    "created": "2026-05-04",
+    "updated": "2026-05-04",
+    "createdBy": "Digital Service Design Team",
+    "organisation": "Digital Service Design Working",
+    "tags": ["healthcare", "procurement", "NHS", "compliance", "DSP-toolkit", "IT-director"]
+  }
+}

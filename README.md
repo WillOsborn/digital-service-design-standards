@@ -123,7 +123,13 @@ schemas/
 ├── GETTING_STARTED.md     ← Full introduction
 ├── CHANGELOG.md           ← Version history
 │
-├── v1.1/                  ← Current version
+├── v2.0/                  ← Active development
+│   ├── schemas/           ← Actor, Mission, Experience schemas
+│   ├── examples/          ← retail, healthcare, sales, energy sets
+│   ├── standards/         ← Actor, Mission, Experience standards
+│   └── migration-guide.md ← v1.1 → v2.0 conversion guide
+│
+├── v1.1/                  ← Stable release
 │   ├── schemas/           ← JSON Schema definitions
 │   ├── examples/          ← Working examples
 │   └── SERVICE-DESIGN-*   ← Detailed specifications
@@ -137,7 +143,8 @@ schemas/
 │   └── CHANNEL_TAXONOMY   ← Channel classification
 │
 └── tools/                 ← Utilities
-    ├── validators/        ← CLI validation
+    ├── validators/        ← CLI validation (v1.1 + v2.0)
+    ├── converters/        ← v1.1 → v2.0 conversion
     └── claude-manager/    ← Scale management
 ```
 
@@ -162,9 +169,41 @@ schemas/
 2. Set up [Claude Manager](tools/claude-manager/) for org configuration
 3. Follow [implementation guide](documentation/implementation/)
 
+## v2.0 — Actor / Mission / Experience
+
+> **v2.0 is in active development.** All v1.1 artifacts continue to work. v2.0 schemas coexist alongside v1.1 in the `v2.0/` directory.
+
+v2.0 replaces the four-artifact pipeline with three primitives that are better suited for AI-era service design:
+
+| v1.1 | v2.0 | Change |
+|------|------|--------|
+| Persona + Role + Pairing | **Actor** | Three files → one layered artifact |
+| Journey | **Mission** + **Experience** | Service structure separated from persona content |
+
+**Key new capabilities in v2.0:**
+- **Graph-structured Missions** — branching, loops, and multi-path services (not just linear journeys)
+- **One Mission, many Experiences** — define the service once, walk different actors through it
+- **needAtStep / painAtStep** — the micro-emergence insight only visible when a specific person meets a specific touchpoint
+- **Declaration-driven lanes** — service blueprint, accessibility, KPIs as first-class citizens
+- **Native governance** — GDPR and EU AI Act compliance metadata built in
+
+**v2.0 quick start:**
+```
+"Build an actor for a first-time home buyer"   → actor-builder skill
+"Map the mortgage application service"          → mission-builder skill
+"Walk Sarah through the mortgage mission"       → experience-generator skill
+```
+
+**v2.0 documentation:**
+- [v2.0/standards/](v2.0/standards/) — Actor, Mission, Experience standards
+- [v2.0/migration-guide.md](v2.0/migration-guide.md) — converting v1.1 artifacts
+- [v2.0/schemas/](v2.0/schemas/) — JSON Schema definitions
+- [v2.0/examples/](v2.0/examples/) — four complete example sets (retail, healthcare, sales, energy)
+
 ## Version History
 
-- **v1.1** (Current) - Compositional model with Persona + Role + Pairing + Journey
+- **v2.0** (In development) - Actor/Mission/Experience — graph model, micro-emergence, native governance
+- **v1.1** (Stable) - Compositional model with Persona + Role + Pairing + Journey
 - **v1.0.3** - Multi-attribute channel taxonomy
 - **v1.0.2** - Enhanced persona schema
 

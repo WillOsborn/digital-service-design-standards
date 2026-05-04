@@ -1,0 +1,341 @@
+{
+  "$context": "https://schemas.digitalservice.design/v2.0",
+  "$type": "Experience",
+  "id": "exp-jake-energy-switch",
+  "version": "2.0.0",
+  "title": "Jake Holloway — Energy Supplier Switch Experience",
+  "summary": "Jake, a 22-year-old junior developer in a shared house, takes on the responsibility of switching his household's energy provider. He navigates comparing tariffs online, coordinating agreement with three housemates via WhatsApp, completing a fully digital registration, and establishing bill-splitting via Monzo. His journey is shaped by his preference for efficient digital processes colliding with the messy reality of group decision-making and an industry that still expects phone-based interactions. Despite the coordination friction, Jake successfully completes the switch and establishes an ongoing routine, proving to himself he can handle adult responsibilities.",
+
+  "references": {
+    "actorRef": "actor-jake-holloway",
+    "contextRef": "ctx-energy-switcher-shared-house",
+    "missionRef": "mission-energy-supplier-switch"
+  },
+
+  "path": {
+    "pathType": "observed",
+    "nodeSequence": [
+      "start", "realise-need", "research-options", "compare-tariffs", "get-agreement",
+      "decide-to-switch", "start-switch", "enter-details", "verify-identity",
+      "credit-check", "credit-result", "setup-payment", "configure-account",
+      "welcome-email", "cooling-off", "switch-day", "first-bill",
+      "ongoing-management", "end"
+    ],
+    "totalDuration": "3 weeks"
+  },
+
+  "lanes": [
+    { "id": "actions", "label": "Actions", "type": "list", "description": "What Jake specifically does" },
+    { "id": "thoughts", "label": "Thoughts", "type": "text", "description": "What Jake is thinking" },
+    { "id": "emotions", "label": "Emotions", "type": "emotion", "description": "Jake's emotional state" },
+    { "id": "barriers", "label": "Barriers", "type": "barrier", "description": "Persona-specific barriers with emergesFrom" },
+    { "id": "need-at-step", "label": "Need at Step", "type": "text", "description": "What Jake specifically needs at this moment — the micro-emergence of his traits meeting the service touchpoint" },
+    { "id": "pain-at-step", "label": "Pain at Step", "type": "text", "description": "How this step causes pain for Jake — the gap between his need and what the service provides" },
+    { "id": "opportunities", "label": "Opportunities", "type": "list", "description": "Improvement opportunities specific to Jake's experience" }
+  ],
+
+  "nodes": [
+    {
+      "nodeRef": "start",
+      "laneContent": {
+        "emotions": { "state": "neutral", "intensity": 0 }
+      }
+    },
+    {
+      "nodeRef": "realise-need",
+      "laneContent": {
+        "actions": ["Receives email from current provider about rate increase", "Checks Reddit and MoneySavingExpert to understand if this is normal"],
+        "thoughts": "This seems like a lot more than my mates are paying. I should probably look into switching - isn't that what adults do?",
+        "emotions": { "state": "concerned", "intensity": -1 },
+        "needAtStep": "Quick confirmation that switching is the right move and that the rate increase is genuinely above market — validation that his instinct to act is correct",
+        "painAtStep": "Jake's first encounter with 'adulting' territory he was never taught about. The rate increase letter uses jargon he's not fully confident with, triggering his frustration with unnecessarily complicated processes."
+      }
+    },
+    {
+      "nodeRef": "research-options",
+      "laneContent": {
+        "actions": ["Googles 'how to switch energy provider UK'", "Reads MoneySavingExpert guides", "Checks if landlord permission is needed for rental property"],
+        "thoughts": "This seems more complicated than I expected. Do I need to tell the landlord? What about the meter readings? At least I can do this all online.",
+        "emotions": { "state": "cautiously engaged", "intensity": 0 },
+        "barriers": [
+          {
+            "type": "knowledge",
+            "description": "Uncertainty about rental property rules for switching — unclear if landlord approval is needed",
+            "severity": 3,
+            "workarounds": "Researches online, finds that tenants can usually switch without landlord permission if paying bills directly",
+            "emergesFrom": "Jake's first-time experience with utility management combined with the shared tenancy complexity creates knowledge gaps about permissions and responsibilities"
+          }
+        ],
+        "needAtStep": "A clear, jargon-free answer to 'can I actually do this as a renter in a shared house?' — he needs permission and process clarity before he can commit his research energy",
+        "painAtStep": "The information he finds is scattered across multiple sources and written for a general audience, not specifically for young renters in shared houses. His analytical style wants a clear decision tree but the guidance is ambiguous."
+      }
+    },
+    {
+      "nodeRef": "compare-tariffs",
+      "laneContent": {
+        "actions": ["Uses comparison websites to find deals", "Filters for no exit fees for tenancy flexibility", "Screenshots best options to share with housemates"],
+        "thoughts": "PowerGrid Energy looks good - decent app reviews, no exit fees, and the price is competitive. Their app looks modern too. I'll put together a comparison for the house WhatsApp.",
+        "emotions": { "state": "engaged and positive", "intensity": 1 },
+        "barriers": [
+          {
+            "type": "knowledge",
+            "description": "Confusing tariff structures make like-for-like comparison difficult",
+            "severity": 3,
+            "workarounds": "Uses MSE's comparison tool which standardises calculations",
+            "emergesFrom": "Jake's analytical decision-making style clashes with the industry's complex pricing — he wants clear data but tariffs obscure true costs"
+          }
+        ],
+        "needAtStep": "A way to quickly generate a clear, shareable comparison that his housemates (who care less about details) can understand and approve in minutes, not days",
+        "opportunities": ["Create shareable comparison cards optimised for messaging apps", "Highlight key differentiators relevant to renters (exit fees, app quality, bill-splitting)"]
+      },
+      "momentThatMatters": {
+        "description": "Finding a deal that balances cost savings with no exit fees — important for rental flexibility",
+        "importance": "critical",
+        "emotionalIntensity": 1
+      }
+    },
+    {
+      "nodeRef": "get-agreement",
+      "laneContent": {
+        "actions": ["Posts comparison in house WhatsApp", "Chases responses over several days", "Eventually calls a quick house meeting to finalise decision"],
+        "thoughts": "Why is it so hard to get everyone to respond? Tom's read the messages but not replied. I just want to get this sorted so we can stop overpaying.",
+        "emotions": { "state": "frustrated", "intensity": -1 },
+        "barriers": [
+          {
+            "type": "process",
+            "description": "Coordinating decisions with 4 people with different priorities and availability is time-consuming and frustrating",
+            "severity": 4,
+            "workarounds": "Sets a deadline and arranges brief in-person chat to force decision",
+            "emergesFrom": "Jake's desire for efficient, path-of-least-resistance processes directly conflicts with the multi-stakeholder coordination required by the shared house context"
+          }
+        ],
+        "needAtStep": "A mechanism to get a quick 'yes' from everyone without it turning into an endless group chat debate — he needs to convert his research into a decision without losing momentum",
+        "painAtStep": "Jake has done the hard work of researching and comparing, but now he's stuck waiting for three other people who don't share his urgency. His research-then-act pattern breaks down when the 'act' requires group consensus. Every day of delay feels like money wasted on the old tariff."
+      },
+      "momentThatMatters": {
+        "description": "The point where research meets group decision-making — success here unlocks progress",
+        "importance": "critical",
+        "emotionalIntensity": -1
+      }
+    },
+    {
+      "nodeRef": "decide-to-switch",
+      "laneContent": {
+        "thoughts": "Finally, everyone's agreed. PowerGrid it is. Let me get this done before anyone changes their mind.",
+        "emotions": { "state": "relieved and determined", "intensity": 1 }
+      }
+    },
+    {
+      "nodeRef": "start-switch",
+      "laneContent": {
+        "actions": ["Navigates to PowerGrid Energy website from comparison site link", "Clicks 'Switch to us' and enters postcode"],
+        "thoughts": "Good, I can do this all online. The website looks decent - not some janky old thing. Let's see how easy this actually is.",
+        "emotions": { "state": "optimistic", "intensity": 1 }
+      }
+    },
+    {
+      "nodeRef": "enter-details",
+      "laneContent": {
+        "actions": ["Enters name, email, phone number reluctantly", "Provides property details including current meter readings", "Selects tariff and payment method"],
+        "thoughts": "Wait, I have to give a phone number? I hope they don't call me. And being the 'account holder' means I'm responsible for the whole bill... what if someone doesn't pay their share?",
+        "emotions": { "state": "anxious", "intensity": 0 },
+        "barriers": [
+          {
+            "type": "policy",
+            "description": "Phone number is a required field even though Jake prefers digital-only contact",
+            "severity": 2,
+            "workarounds": "Enters number but immediately sets communication preferences to email/app only in settings",
+            "emergesFrom": "Jake's strong aversion to phone calls meets the provider's data collection requirements"
+          },
+          {
+            "type": "knowledge",
+            "description": "Uncertainty about personal liability as account holder if housemates don't pay their share",
+            "severity": 4,
+            "workarounds": "Plans to set up a shared pot or payment app to collect money upfront each month",
+            "emergesFrom": "Jake's need to avoid unexpected costs and be seen as reliable intensifies the liability concern inherent in the shared-house account holder role"
+          }
+        ],
+        "needAtStep": "Reassurance that being the named account holder won't leave him financially exposed — he needs to understand the risk before he commits",
+        "painAtStep": "The form forces him to confront the financial risk of being the sole liable party. The provider gives no guidance on shared household arrangements, treating this like a single-person account setup. His security need is directly threatened."
+      },
+      "momentThatMatters": {
+        "description": "Realising he'll be personally liable for the whole bill as the named account holder",
+        "importance": "high",
+        "emotionalIntensity": -1
+      }
+    },
+    {
+      "nodeRef": "verify-identity",
+      "laneContent": {
+        "actions": ["Completes online identity check", "Enters details from driving licence", "Answers security questions"],
+        "thoughts": "Okay, standard KYC stuff. At least I don't have to post documents or anything. Pretty smooth so far.",
+        "emotions": { "state": "satisfied", "intensity": 1 }
+      }
+    },
+    {
+      "nodeRef": "credit-check",
+      "laneContent": {
+        "actions": ["Submits application", "Sees message that credit check is being performed"],
+        "thoughts": "Credit check? I've only had a credit card for a year. What if I fail? That would be embarrassing to tell the others.",
+        "emotions": { "state": "anxious", "intensity": -1 },
+        "barriers": [
+          {
+            "type": "knowledge",
+            "description": "Uncertainty about credit check criteria for first-time account holders with limited credit history",
+            "severity": 3,
+            "workarounds": "None available — just has to wait and hope",
+            "emergesFrom": "Jake's need for control and to avoid surprises clashes with the opaque credit assessment process — his thin credit file as a recent graduate adds genuine uncertainty"
+          }
+        ],
+        "needAtStep": "Transparency about what the credit check involves and whether his thin credit history is likely to be a problem — he needs to manage the risk of embarrassment before it materialises",
+        "painAtStep": "The credit check is a black box. Jake has no way to predict the outcome, and failure would mean going back to his housemates empty-handed after promising he'd handle it. His need for recognition as capable is directly at stake."
+      },
+      "momentThatMatters": {
+        "description": "Waiting for credit check result — anxiety about whether first-time applicant will be approved",
+        "importance": "critical",
+        "emotionalIntensity": -1
+      }
+    },
+    {
+      "nodeRef": "credit-result",
+      "laneContent": {
+        "actions": ["Receives on-screen confirmation that credit check passed", "Proceeds to payment setup"],
+        "thoughts": "Yes! Passed. Okay, I can actually do this adult stuff. Now let's get the payment sorted.",
+        "emotions": { "state": "elated", "intensity": 2, "model": "categorical", "category": "joy" }
+      },
+      "momentThatMatters": {
+        "description": "Credit check passed — validation that he can handle adult financial responsibilities",
+        "importance": "critical",
+        "emotionalIntensity": 2
+      }
+    },
+    {
+      "nodeRef": "setup-payment",
+      "laneContent": {
+        "actions": ["Enters bank details for Direct Debit", "Sets up Monzo shared pot with housemates", "Sends invites to all housemates with monthly contribution amount"],
+        "thoughts": "Direct Debit from my account, then collect from everyone via Monzo. This should work - we already split Netflix this way. Setting reminder to chase if anyone misses payment.",
+        "emotions": { "state": "practical and positive", "intensity": 1 },
+        "needAtStep": "A bill-splitting mechanism that automates collection so he doesn't become the household nag — he needs the social dynamic to stay comfortable",
+        "opportunities": ["Offer in-app bill-splitting that sends payment requests directly to housemates", "Integrate with popular fintech apps for automated collection"]
+      },
+      "momentThatMatters": {
+        "description": "Setting up bill-splitting arrangement with housemates — sets the tone for ongoing payment dynamics",
+        "importance": "high",
+        "emotionalIntensity": 1
+      }
+    },
+    {
+      "nodeRef": "configure-account",
+      "laneContent": {
+        "actions": ["Downloads PowerGrid app", "Sets notification preferences to email and app push only", "Enables paperless billing"],
+        "thoughts": "Finally, an energy company with a decent app. Push notifications for bills, email for important stuff, definitely no phone calls. Perfect.",
+        "emotions": { "state": "pleased", "intensity": 2 }
+      }
+    },
+    {
+      "nodeRef": "welcome-email",
+      "laneContent": {
+        "actions": ["Receives welcome email with account details and switch timeline", "Checks app to see account status", "Forwards key dates to house WhatsApp"],
+        "thoughts": "Nice, clear timeline of what happens next. Switch completes in about 3 weeks. Just need to submit final meter reading on switch day.",
+        "emotions": { "state": "reassured", "intensity": 1 }
+      }
+    },
+    {
+      "nodeRef": "cooling-off",
+      "laneContent": {
+        "actions": ["Waits during 14-day cooling off period", "Checks app occasionally to see progress", "Receives notification that cooling off has ended"],
+        "thoughts": "Good to know I could have cancelled if needed. Now it's definitely happening. Just need to remember the meter reading on switch day.",
+        "emotions": { "state": "patient", "intensity": 0 }
+      }
+    },
+    {
+      "nodeRef": "switch-day",
+      "laneContent": {
+        "actions": ["Receives app notification that today is switch day", "Takes photos of meter readings", "Submits via app", "Asks Tom to let him into room with second meter"],
+        "thoughts": "Okay, meter reading time. App makes this easy - just take a photo. Done. Now we're officially with PowerGrid.",
+        "emotions": { "state": "accomplished", "intensity": 1 }
+      }
+    },
+    {
+      "nodeRef": "first-bill",
+      "laneContent": {
+        "actions": ["Receives first bill notification via app", "Reviews charges and confirms tariff matches", "Screenshots and sends to house WhatsApp with 'your share' amounts", "Checks Monzo pot has funds"],
+        "thoughts": "First bill looks right - the tariff rate matches what we signed up for. Breaking it into quarters for everyone. We're actually saving money compared to before!",
+        "emotions": { "state": "validated and proud", "intensity": 2, "model": "categorical", "category": "joy" },
+        "needAtStep": "Confirmation that the deal is as promised and that he can demonstrate the savings to his housemates — proof that his effort was worth it",
+        "opportunities": ["Show savings comparison vs previous provider directly in the app", "Generate shareable bill breakdown for household groups"]
+      },
+      "momentThatMatters": {
+        "description": "Receiving first bill confirmation that the switch worked and pricing is as expected — validation of the entire effort",
+        "importance": "critical",
+        "emotionalIntensity": 2
+      }
+    },
+    {
+      "nodeRef": "ongoing-management",
+      "laneContent": {
+        "actions": ["Sets up monthly reminder to check Monzo pot before Direct Debit", "Enables usage alerts in app", "Bookmarks how to submit meter readings"],
+        "thoughts": "Okay, this is manageable. Monthly check that everyone's paid, keep an eye on usage. I've actually got this adulting thing sorted.",
+        "emotions": { "state": "confident", "intensity": 2 },
+        "barriers": [
+          {
+            "type": "process",
+            "description": "Ongoing administrative burden of collecting money from housemates each month",
+            "severity": 3,
+            "workarounds": "Automated Monzo scheduled payments from each housemate reduce chase effort",
+            "emergesFrom": "Jake's desire for efficient, low-friction processes will be tested monthly by the account holder collection responsibility — mitigated by smart use of fintech tools"
+          }
+        ],
+        "needAtStep": "An autopilot system that handles the recurring admin so he can maintain the household harmony without becoming the money-chaser",
+        "painAtStep": "Even with Monzo automating most of it, Jake knows he'll need to monitor and chase if anyone's payment bounces. The ongoing vigilance is a low-grade tax on the social dynamic he values."
+      }
+    },
+    {
+      "nodeRef": "end",
+      "laneContent": {
+        "emotions": { "state": "accomplished", "intensity": 2 }
+      }
+    }
+  ],
+
+  "outcome": {
+    "success": true,
+    "endNode": "end",
+    "reflection": "Jake successfully navigated his first energy switch, proving to himself and his housemates that he can handle adult responsibilities. The hardest part wasn't the provider process itself — which was largely smooth and digital — but the coordination overhead of getting housemates aligned and establishing fair payment routines. The experience would have been significantly improved by built-in bill-splitting and clearer guidance for shared households.",
+    "netSentiment": 2,
+    "wouldRepeat": true
+  },
+
+  "relationships": [
+    { "target": "mission-energy-supplier-switch", "type": "derived_from_mission", "description": "Jake's experience through the energy supplier switch mission" },
+    { "target": "actor-jake-holloway", "type": "experienced_by", "description": "Jake in his Energy Switcher Shared House context" }
+  ],
+
+  "provenance": {
+    "source": "mixed",
+    "confidence": 0.75,
+    "researchSources": [
+      { "source": "UK energy switching consumer research", "type": "existing_research", "confidence": "medium" },
+      { "source": "Shared tenancy living experience patterns", "type": "existing_research", "confidence": "medium" },
+      { "source": "Digital native service expectations studies", "type": "existing_research", "confidence": "medium" },
+      { "source": "PowerGrid Energy process documentation", "type": "existing_research", "confidence": "high" }
+    ],
+    "generationMethod": "ai_assisted",
+    "aiToolsUsed": [
+      {
+        "tool": "Claude",
+        "version": "claude-opus-4-6",
+        "usage": "Conversion from v1.1 journey to v2.0 Experience format, extracting persona-specific content"
+      }
+    ],
+    "humanReviewed": false
+  },
+
+  "meta": {
+    "created": "2026-01-08",
+    "updated": "2026-05-04",
+    "createdBy": "Digital Service Design Team",
+    "organisation": "PowerGrid Energy",
+    "tags": ["energy", "switching", "shared-house", "jake-holloway", "example"]
+  }
+}

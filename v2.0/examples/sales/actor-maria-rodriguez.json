@@ -1,0 +1,309 @@
+{
+  "$context": "https://schemas.digitalservice.design/v2.0",
+  "$type": "Actor",
+  "id": "actor-maria-rodriguez",
+  "version": "2.0.0",
+  "name": "Maria Rodriguez",
+  "summary": "High-achieving 35-year-old sales professional in Los Angeles driven by career advancement and recognition. Collaborative team player who values efficiency, customer relationships, and peer support. Embraces tools that improve productivity but resists changes that disrupt established workflows.",
+  "actorType": "human",
+  "quote": "Every minute I spend fighting with our systems is a minute I'm not spending with customers. I've figured out workarounds, but I shouldn't have to.",
+
+  "traits": {
+    "demographics": {
+      "age": 35,
+      "location": "Los Angeles, California",
+      "education": "Bachelor's Degree in Business Administration",
+      "background": "8 years of sales experience with consistent high performance. Active mentor to new hires and advocate for diversity and inclusion initiatives."
+    },
+    "needs": [
+      { "need": "Achieve recognition for high performance and contributions", "type": "recognition" },
+      { "need": "Grow professionally and advance to leadership roles", "type": "growth" },
+      { "need": "Build meaningful relationships and help others succeed", "type": "belonging" },
+      { "need": "Have autonomy in how she approaches her work", "type": "autonomy" }
+    ],
+    "frustrations": [
+      {
+        "frustration": "Impatience with inefficient processes that waste time",
+        "severity": 4
+      },
+      {
+        "frustration": "Frustration when lack of information affects her ability to perform",
+        "severity": 3
+      },
+      {
+        "frustration": "Resistance to changes that disrupt established, successful workflows",
+        "severity": 3
+      }
+    ],
+    "motivations": [
+      { "motivation": "Career advancement and professional growth", "type": "achievement" },
+      { "motivation": "Recognition for high performance", "type": "extrinsic" },
+      { "motivation": "Helping customers solve business problems", "type": "intrinsic" },
+      { "motivation": "Financial incentives and commission earnings", "type": "extrinsic" }
+    ],
+    "technology": {
+      "comfort": "advanced",
+      "description": "Highly proficient with CRM systems and mobile tools. Quick to adopt new technology that saves time. Uses mobile devices extensively while travelling. Comfortable with digital collaboration tools.",
+      "preferredDevices": ["smartphone", "laptop", "tablet"]
+    },
+    "communication": {
+      "preferred": ["video_call", "in_person"],
+      "acceptable": ["chat", "email"],
+      "avoided": [],
+      "style": "Direct and action-oriented. Values face-to-face for important conversations. Uses quick digital channels for coordination."
+    },
+    "learningStyle": "Hands-on learner who prefers learning by doing with peer support. Values quick reference guides over comprehensive documentation.",
+    "influences": [
+      { "source": "Peers and colleagues", "description": "Learns from successful colleagues and values peer recommendations on tools and techniques" },
+      { "source": "Customers", "description": "Customer feedback shapes her approach and priorities" },
+      { "source": "Mentors and managers", "description": "Values guidance from experienced leaders on career development" }
+    ],
+    "decisionMaking": {
+      "style": "Action-oriented with customer focus. Makes quick decisions based on experience and customer needs, then adapts as needed.",
+      "riskTolerance": "moderate"
+    },
+    "accessibility": {
+      "dimensions": [
+        {
+          "dimension": "situational",
+          "description": "Frequently mobile and in transit to customer sites, requiring tools that work reliably on the go",
+          "impact": "moderate"
+        }
+      ]
+    },
+    "behaviouralPatterns": [
+      {
+        "pattern": "Prioritises customer-facing activities over administrative tasks",
+        "context": "Daily work allocation and time management"
+      },
+      {
+        "pattern": "Builds informal networks to get things done efficiently",
+        "context": "Navigating organisational processes and approvals"
+      },
+      {
+        "pattern": "Mentors and supports colleagues, especially new team members",
+        "context": "Team interactions and knowledge sharing"
+      },
+      {
+        "pattern": "Develops workarounds when official processes are too slow",
+        "context": "Customer-urgent situations that require quick action"
+      }
+    ]
+  },
+
+  "contexts": [
+    {
+      "contextId": "ctx-senior-sales-rep",
+      "title": "Senior Sales Representative",
+      "description": "High-performing individual contributor in enterprise sales, responsible for quota attainment, customer relationships, and pipeline development. Navigates complex internal systems while maximising customer-facing time.",
+      "contextType": "Professional",
+      "needs": [
+        { "need": "Exceed annual sales quota by 110%", "priority": "primary", "timeframe": "short_term" },
+        { "need": "Develop leadership skills for future management role", "priority": "primary", "timeframe": "long_term" },
+        { "need": "Build stronger relationships with key enterprise accounts", "priority": "secondary", "timeframe": "long_term" },
+        { "need": "Improve efficiency in proposal and contract processes", "priority": "secondary", "timeframe": "short_term" },
+        { "need": "Access customer information quickly while on the road", "priority": "secondary", "timeframe": "immediate" }
+      ],
+      "frustrations": [
+        { "frustration": "Too much time spent on administrative tasks instead of selling", "severity": 4, "frequency": "daily" },
+        { "frustration": "Difficulty accessing customer information while on the road", "severity": 4, "frequency": "weekly" },
+        { "frustration": "Slow approval processes for custom pricing", "severity": 3, "frequency": "monthly" },
+        { "frustration": "Inconsistent training on new products and features", "severity": 3, "frequency": "occasional" }
+      ],
+      "channels": [
+        {
+          "channel": "app",
+          "category": "digital",
+          "serviceModel": "self_service",
+          "preference": "preferred",
+          "usageContext": "Daily customer data management and opportunity tracking while on the road"
+        },
+        {
+          "channel": "video_call",
+          "category": "digital",
+          "serviceModel": "managed",
+          "preference": "preferred",
+          "usageContext": "Collaboration, updates, and strategic discussions"
+        },
+        {
+          "channel": "chat",
+          "category": "digital",
+          "serviceModel": "both",
+          "preference": "acceptable",
+          "usageContext": "Quick questions and informal coordination"
+        },
+        {
+          "channel": "website",
+          "category": "digital",
+          "serviceModel": "self_service",
+          "preference": "acceptable",
+          "usageContext": "Professional development and product knowledge when time permits"
+        }
+      ],
+      "details": {
+        "organisationalRelationship": "internal",
+        "department": "Sales - West Coast Region",
+        "careerStage": "Mid-career professional with advancement aspirations to sales management",
+        "seniorityLevel": "individual_contributor",
+        "responsibilities": [
+          "Exceed quarterly and annual sales quotas",
+          "Develop and maintain key enterprise accounts",
+          "Collaborate with internal teams on proposals and deals",
+          "Accurately forecast pipeline and opportunities",
+          "Mentor new sales hires"
+        ],
+        "toolsAndSystems": [
+          "CRM system (Salesforce)",
+          "Mobile sales app",
+          "Collaboration tools (Teams, Slack)",
+          "Learning management system",
+          "Proposal and contract tools"
+        ],
+        "successMetrics": [
+          "Sales quota attainment percentage",
+          "Customer satisfaction ratings",
+          "Pipeline quality and conversion rates",
+          "Time to close deals"
+        ],
+        "workflows": [
+          "Daily customer data management and opportunity tracking",
+          "Weekly forecast reviews and pipeline updates",
+          "Monthly performance reviews",
+          "Quarterly planning and goal setting"
+        ],
+        "travelRequirements": "Frequent travel to customer sites (40-50% of time)"
+      },
+      "momentsThatMatter": [
+        {
+          "moment": "Quarterly performance reviews",
+          "emotionalIntensity": 0,
+          "importance": "critical"
+        },
+        {
+          "moment": "New product launch announcements",
+          "emotionalIntensity": 1,
+          "importance": "high"
+        },
+        {
+          "moment": "System updates and process changes",
+          "emotionalIntensity": -1,
+          "importance": "medium"
+        },
+        {
+          "moment": "Annual planning and goal setting",
+          "emotionalIntensity": 1,
+          "importance": "high"
+        },
+        {
+          "moment": "Closing a major deal",
+          "emotionalIntensity": 2,
+          "importance": "critical"
+        }
+      ]
+    }
+  ],
+
+  "emergence": [
+    {
+      "contextRef": "ctx-senior-sales-rep",
+      "goalsAsExperienced": [
+        { "goal": "Hit aggressive sales targets while maintaining genuine customer relationships", "source": "collision", "priority": "primary" },
+        { "goal": "Minimise administrative overhead to maximise selling time", "source": "collision", "priority": "primary" },
+        { "goal": "Build reputation that supports advancement to management", "source": "traits", "priority": "primary" },
+        { "goal": "Stay informed on products and competitive landscape without lengthy training", "source": "context", "priority": "secondary" }
+      ],
+      "painPoints": [
+        {
+          "painPoint": "Achievement drive frustrated by inefficient internal systems",
+          "severity": 4,
+          "emergesFrom": "Maria's impatience with inefficiency collides with role's administrative requirements"
+        },
+        {
+          "painPoint": "Mobile limitations impact her ability to perform while travelling",
+          "severity": 4,
+          "emergesFrom": "Maria's autonomy needs meet role's heavy travel requirements"
+        },
+        {
+          "painPoint": "Change resistance conflicts with system updates that disrupt her workflow",
+          "severity": 3,
+          "emergesFrom": "Maria's protection of successful workflows meets role's evolving tool landscape"
+        },
+        {
+          "painPoint": "Information gaps undermine her customer relationships",
+          "severity": 3,
+          "emergesFrom": "Maria's relationship focus meets role's poor internal communication"
+        }
+      ],
+      "opportunities": [
+        "Mobile-first tools that work seamlessly on the road",
+        "Integrated systems that reduce context-switching and duplicate entry",
+        "Quick-reference product updates optimised for sales conversations",
+        "Streamlined approval workflows with clear authority and fast turnaround",
+        "Peer learning platforms that match her hands-on learning style",
+        "Recognition systems that highlight high performers to leadership"
+      ],
+      "emotionalContext": "Generally positive and energetic, but frequently frustrated by internal friction. Feels pride in customer successes and team contributions. Anxiety during performance reviews despite strong track record.",
+      "useCases": [
+        { "scenario": "Accessing customer data during client meetings", "trigger": "Customer meeting preparation or live discussion", "outcome": "Quick access to relevant customer history and context" },
+        { "scenario": "Updating opportunity status and forecasting", "trigger": "Deal progress or weekly forecast review", "outcome": "Accurate pipeline data with minimal effort" },
+        { "scenario": "Collaborating with internal teams on proposals", "trigger": "Complex deal requiring cross-functional support", "outcome": "Fast, coordinated proposal delivery" },
+        { "scenario": "Tracking progress toward sales targets", "trigger": "Daily performance monitoring", "outcome": "Real-time visibility into quota attainment" }
+      ],
+      "successMetrics": [
+        "Sales quota attainment percentage (target: 110%+)",
+        "Customer satisfaction ratings (target: >90%)",
+        "Pipeline quality and conversion rates",
+        "Time to complete administrative tasks (target: minimise)"
+      ]
+    }
+  ],
+
+  "relationships": [],
+
+  "provenance": {
+    "source": "user_research",
+    "confidence": 0.75,
+    "researchSources": [
+      { "source": "Employee satisfaction survey (January 2024)", "type": "survey", "date": "2024-01-30", "confidence": "high" },
+      { "source": "Focus group sessions", "type": "interview", "confidence": "high" },
+      { "source": "Manager feedback interviews", "type": "interview", "confidence": "medium" }
+    ],
+    "generationMethod": "ai_assisted",
+    "aiToolsUsed": [
+      {
+        "tool": "Claude",
+        "version": "claude-opus-4-6",
+        "usage": "Conversion from v1.1 persona/role/pairing to v2.0 Actor format"
+      }
+    ],
+    "humanReviewed": false,
+    "dataSourcesConsent": true
+  },
+
+  "governance": {
+    "dataClassification": "internal",
+    "containsPii": true,
+    "piiCategories": ["name", "location", "age", "employment"],
+    "anonymisationMethod": "fictional_composite",
+    "retentionPolicy": "Retain for project duration + 12 months, then review",
+    "legalBasis": "Legitimate interest — service design and user experience improvement",
+    "dataOwner": "Digital Service Design Team"
+  },
+
+  "annotations": {
+    "audience": ["design_team", "product_team"],
+    "usageHints": [
+      "Employee-facing persona — use for internal tool and process design",
+      "Converted from v1.1 persona + role + pairing pipeline",
+      "No associated Mission or Experience — Actor only"
+    ]
+  },
+
+  "meta": {
+    "created": "2024-01-30",
+    "updated": "2026-05-04",
+    "createdBy": "Digital Service Design Team",
+    "organisation": "Digital Service Design Working",
+    "tags": ["sales", "employee", "professional", "mobile-first", "example"]
+  }
+}

@@ -1,0 +1,287 @@
+{
+  "$context": "https://schemas.digitalservice.design/v2.0",
+  "$type": "Actor",
+  "id": "actor-david-chen",
+  "version": "2.0.0",
+  "name": "David Chen",
+  "summary": "Technology leader who balances innovation ambition with pragmatic risk management. Champions digital transformation while maintaining rigorous attention to security and compliance. Methodical decision-maker who builds consensus through data and demonstrated value.",
+  "actorType": "human",
+  "quote": "I need to modernise our infrastructure while keeping patient data absolutely secure. Every vendor I evaluate needs to understand that compliance isn't optional - it's foundational.",
+
+  "traits": {
+    "demographics": {
+      "age": 45,
+      "location": "San Francisco Bay Area",
+      "education": "MBA and Computer Science degree",
+      "background": "20+ years in technology leadership roles across healthcare and financial services. Member of Healthcare IT Security Council. Frequent speaker at industry events."
+    },
+    "needs": [
+      { "need": "Demonstrate tangible value from technology investments", "type": "recognition" },
+      { "need": "Stay ahead of technology trends to remain relevant in career", "type": "growth" },
+      { "need": "Ensure stability and security in systems under his responsibility", "type": "security" },
+      { "need": "Have authority and resources to drive meaningful change", "type": "autonomy" }
+    ],
+    "frustrations": [
+      {
+        "frustration": "Impatience with slow decision-making processes",
+        "severity": 4
+      },
+      {
+        "frustration": "Frustration when business stakeholders don't understand technical constraints",
+        "severity": 3
+      },
+      {
+        "frustration": "Anxiety about missing emerging technology trends",
+        "severity": 3
+      }
+    ],
+    "motivations": [
+      { "motivation": "Advancing his career through successful digital transformation", "type": "achievement" },
+      { "motivation": "Ensuring patient data security and privacy", "type": "intrinsic" },
+      { "motivation": "Demonstrating measurable business value from IT investments", "type": "extrinsic" }
+    ],
+    "technology": {
+      "comfort": "expert",
+      "description": "Deep technical expertise spanning infrastructure, security, and enterprise systems. Stays current through industry publications, conferences, and peer networks. Comfortable evaluating emerging technologies and understanding implementation complexity.",
+      "preferredDevices": ["laptop", "smartphone", "tablet"]
+    },
+    "communication": {
+      "preferred": ["in_person", "video_call"],
+      "acceptable": ["email"],
+      "avoided": ["chat"],
+      "style": "Prefers structured, data-driven discussions. Values executive summaries with detailed appendices available. Appreciates visual representations of complex systems."
+    },
+    "learningStyle": "Analytical learner who prefers documentation, technical deep-dives, and hands-on evaluation. Values peer discussions and case studies from similar organisations.",
+    "influences": [
+      { "source": "Industry peers and professional network", "description": "Values insights from peers facing similar challenges in regulated industries" },
+      { "source": "Industry analysts (Gartner, Forrester)", "description": "Uses analyst research to validate technology decisions and build business cases" },
+      { "source": "Conference presentations and case studies", "description": "Learns from documented successes and failures in similar organisations" }
+    ],
+    "decisionMaking": {
+      "style": "Analytical and consensus-driven. Gathers data, consults stakeholders, evaluates options methodically, then builds coalition for approval.",
+      "riskTolerance": "cautious"
+    },
+    "accessibility": {
+      "dimensions": [
+        {
+          "dimension": "situational",
+          "description": "Frequently in high-stakes decision environments with competing priorities and stakeholder pressure",
+          "impact": "mild"
+        }
+      ]
+    },
+    "behaviouralPatterns": [
+      {
+        "pattern": "Builds comprehensive business cases before advocating for significant investments",
+        "context": "Any technology purchase over $50K"
+      },
+      {
+        "pattern": "Seeks proof-of-concept validation before committing to new vendors",
+        "context": "New technology adoption or vendor selection"
+      },
+      {
+        "pattern": "Creates cross-functional alignment before moving forward",
+        "context": "Major initiatives that span departments"
+      },
+      {
+        "pattern": "Documents lessons learned and shares with professional network",
+        "context": "After significant projects or implementations"
+      }
+    ]
+  },
+
+  "contexts": [
+    {
+      "contextId": "ctx-it-director-healthcare",
+      "title": "IT Director - Healthcare Technology",
+      "description": "Senior IT leadership role responsible for technology strategy, vendor management, and digital transformation in a HIPAA-regulated healthcare environment. Champions modernisation while ensuring security and compliance.",
+      "contextType": "Professional",
+      "needs": [
+        { "need": "Implement cloud-first infrastructure strategy", "priority": "primary", "timeframe": "long_term" },
+        { "need": "Improve system uptime and performance", "priority": "primary", "timeframe": "short_term" },
+        { "need": "Ensure HIPAA compliance across all systems", "priority": "primary", "timeframe": "immediate" },
+        { "need": "Reduce IT operational costs by 15%", "priority": "secondary", "timeframe": "long_term" },
+        { "need": "Find vendors who understand healthcare compliance requirements", "priority": "secondary", "timeframe": "immediate" }
+      ],
+      "frustrations": [
+        { "frustration": "Legacy systems that are expensive to maintain", "severity": 4, "frequency": "daily" },
+        { "frustration": "Difficulty finding vendors who understand healthcare compliance", "severity": 3, "frequency": "weekly" },
+        { "frustration": "Limited IT budget despite growing technology needs", "severity": 4, "frequency": "monthly" },
+        { "frustration": "Pressure to deliver faster while maintaining security", "severity": 3, "frequency": "daily" }
+      ],
+      "channels": [
+        {
+          "channel": "in_person",
+          "category": "physical",
+          "serviceModel": "managed",
+          "preference": "preferred",
+          "usageContext": "Industry conferences and webinars — learning about new technologies and building peer network"
+        },
+        {
+          "channel": "social_media",
+          "category": "digital",
+          "serviceModel": "both",
+          "preference": "preferred",
+          "usageContext": "LinkedIn and professional networks for peer discussions and industry insights"
+        },
+        {
+          "channel": "in_person",
+          "category": "physical",
+          "serviceModel": "managed",
+          "preference": "acceptable",
+          "usageContext": "Direct sales meetings and demos for vendor evaluations and product demonstrations"
+        },
+        {
+          "channel": "email",
+          "category": "digital",
+          "serviceModel": "managed",
+          "preference": "acceptable",
+          "usageContext": "Initial vendor outreach, technical evaluations, and formal communications"
+        }
+      ],
+      "details": {
+        "organisationalRelationship": "external",
+        "roleTitle": "IT Director",
+        "department": "Information Technology",
+        "industry": "Healthcare Technology",
+        "organisationSize": "201-1000",
+        "seniorityLevel": "director",
+        "decisionAuthority": "Has budget authority up to $50K. Needs C-level approval for larger purchases. Influences vendor selection and evaluates technical requirements. Key stakeholder in digital transformation initiatives.",
+        "budgetRange": "10k_50k",
+        "stakeholders": [
+          "C-level executives",
+          "Department heads",
+          "Security and compliance team",
+          "Vendor partners",
+          "End users across the organisation"
+        ],
+        "complianceRequirements": ["HIPAA", "SOC 2", "State healthcare regulations"],
+        "toolsAndSystems": ["EHR systems", "Cloud infrastructure", "Security tools", "Integration middleware"]
+      },
+      "momentsThatMatter": [
+        {
+          "moment": "Initial vendor evaluation and RFP process",
+          "emotionalIntensity": -1,
+          "importance": "critical"
+        },
+        {
+          "moment": "Technical proof-of-concept demonstrations",
+          "emotionalIntensity": 0,
+          "importance": "high"
+        },
+        {
+          "moment": "Contract negotiation and implementation planning",
+          "emotionalIntensity": -1,
+          "importance": "high"
+        },
+        {
+          "moment": "Go-live support and post-implementation review",
+          "emotionalIntensity": 1,
+          "importance": "critical"
+        }
+      ]
+    }
+  ],
+
+  "emergence": [
+    {
+      "contextRef": "ctx-it-director-healthcare",
+      "goalsAsExperienced": [
+        { "goal": "Successfully execute cloud migration while maintaining zero compliance violations", "source": "collision", "priority": "primary" },
+        { "goal": "Build a business case that gets C-level buy-in for necessary investments", "source": "collision", "priority": "primary" },
+        { "goal": "Find technology partners who genuinely understand healthcare compliance", "source": "context", "priority": "primary" },
+        { "goal": "Demonstrate clear ROI to advance his career and credibility", "source": "traits", "priority": "secondary" }
+      ],
+      "painPoints": [
+        {
+          "painPoint": "Methodical evaluation process clashes with pressure for quick technology decisions",
+          "severity": 4,
+          "emergesFrom": "David's thorough decision-making style conflicts with role's urgency to modernise"
+        },
+        {
+          "painPoint": "Technical expertise frustrates him when non-technical stakeholders slow decisions",
+          "severity": 3,
+          "emergesFrom": "David's expert-level knowledge meets role's requirement for cross-functional consensus"
+        },
+        {
+          "painPoint": "Innovation ambition constrained by compliance requirements",
+          "severity": 3,
+          "emergesFrom": "David's desire to stay ahead of trends meets role's rigid compliance environment"
+        },
+        {
+          "painPoint": "Budget constraints force compromises on solutions he knows are suboptimal",
+          "severity": 4,
+          "emergesFrom": "David's quality standards meet role's limited budget authority"
+        }
+      ],
+      "opportunities": [
+        "Vendors who lead with compliance credentials and healthcare expertise",
+        "Clear ROI frameworks that translate technical benefits to business outcomes",
+        "Proof-of-concept programs that reduce perceived risk for large investments",
+        "Integration-first solutions that work with legacy healthcare systems",
+        "Executive education materials that help build stakeholder consensus",
+        "Peer networks and case studies from similar healthcare organisations"
+      ],
+      "emotionalContext": "Generally confident but often frustrated by pace of change. Feels personal responsibility for security incidents. Satisfaction comes from successful implementations that prove technology value to the business.",
+      "useCases": [
+        { "scenario": "Evaluating cloud migration solutions", "trigger": "Strategic initiative to modernise infrastructure", "outcome": "Compliant, cost-effective cloud solution with clear implementation path" },
+        { "scenario": "Assessing cybersecurity tools and services", "trigger": "Security audit findings or emerging threats", "outcome": "Enhanced security posture with documented compliance" },
+        { "scenario": "Researching automation platforms for IT operations", "trigger": "Cost reduction targets or efficiency initiatives", "outcome": "Operational efficiency gains with measurable ROI" }
+      ],
+      "successMetrics": [
+        "System uptime percentage (target: 99.9%)",
+        "Cost reduction achieved (target: 15% reduction in operational costs)",
+        "Successful compliance audit results (target: zero critical findings)",
+        "User satisfaction scores (target: >80% satisfaction)"
+      ]
+    }
+  ],
+
+  "relationships": [],
+
+  "provenance": {
+    "source": "user_research",
+    "confidence": 0.85,
+    "researchSources": [
+      { "source": "Stakeholder interviews (February 2024)", "type": "interview", "date": "2024-02-15", "confidence": "high" },
+      { "source": "Industry survey data", "type": "existing_research", "confidence": "medium" },
+      { "source": "Sales team feedback", "type": "observation", "confidence": "medium" }
+    ],
+    "generationMethod": "ai_assisted",
+    "aiToolsUsed": [
+      {
+        "tool": "Claude",
+        "version": "claude-opus-4-6",
+        "usage": "v1.1 to v2.0 migration — merging persona, role, and pairing into unified Actor"
+      }
+    ],
+    "humanReviewed": false,
+    "dataSourcesConsent": true
+  },
+
+  "governance": {
+    "dataClassification": "internal",
+    "containsPii": true,
+    "piiCategories": ["name", "location", "age", "employment"],
+    "anonymisationMethod": "fictional_composite",
+    "retentionPolicy": "Retain for project duration + 12 months, then review",
+    "legalBasis": "Legitimate interest — service design and user experience improvement",
+    "dataOwner": "Digital Service Design Team"
+  },
+
+  "annotations": {
+    "audience": ["design_team", "product_team"],
+    "usageHints": [
+      "Healthcare IT decision-maker — use for B2B vendor evaluation and enterprise sales scenarios",
+      "Migrated from v1.1 persona-david-chen + role-it-director-healthcare + pairing-david-it-director"
+    ]
+  },
+
+  "meta": {
+    "created": "2024-02-28",
+    "updated": "2026-05-04",
+    "createdBy": "Digital Service Design Team",
+    "organisation": "Digital Service Design Working",
+    "tags": ["healthcare", "it-director", "enterprise", "b2b", "example"]
+  }
+}

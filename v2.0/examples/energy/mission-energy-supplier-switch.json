@@ -1,0 +1,433 @@
+{
+  "$context": "https://schemas.digitalservice.design/v2.0",
+  "$type": "Mission",
+  "id": "mission-energy-supplier-switch",
+  "version": "2.0.0",
+  "title": "Energy Supplier Switch — Shared Rental Property",
+  "goal": "Consumer successfully switches energy provider for a shared rental property, from initial research through first bill confirmation, with no gap in supply and fair bill-splitting established",
+  "summary": "A universal service mission capturing the end-to-end experience of switching energy provider for a shared rental property. The graph covers discovering the need to switch, researching and comparing tariffs, coordinating housemate agreement, completing registration, passing verification, and establishing ongoing account management. Multiple personas can flow through this mission, each generating their own Experience artifact.",
+
+  "scope": {
+    "trigger": "Rate increase notification or discovery that current tariff is uncompetitive",
+    "completion": "First bill received and ongoing payment routine established",
+    "timeframe": "2-4 weeks from initial research to first bill",
+    "asIs": true,
+    "successCriteria": [
+      { "metric": "Successful switch completion", "target": "Account active with no supply gap" },
+      { "metric": "Housemate agreement", "target": "All housemates approve provider choice" },
+      { "metric": "Bill-splitting setup", "target": "Fair payment arrangement established" },
+      { "metric": "Digital completion rate", "target": "Process completable without phone calls" }
+    ]
+  },
+
+  "actors": [
+    { "actorRef": "actor-jake-holloway", "contextRef": "ctx-energy-switcher-shared-house", "role": "primary account holder" }
+  ],
+
+  "lanes": [
+    { "id": "description", "label": "Description", "type": "text", "scope": "service", "description": "What happens at this touchpoint from the service perspective" },
+    { "id": "channels", "label": "Channels", "type": "channel", "scope": "service", "description": "Touchpoints and channels available" },
+    { "id": "barriers", "label": "Service Barriers", "type": "barrier", "scope": "both", "description": "Structural barriers at this touchpoint" },
+    { "id": "design-opps", "label": "Design Opportunities", "type": "list", "scope": "both", "description": "Improvement opportunities" },
+    { "id": "accessibility", "label": "Accessibility", "type": "accessibility", "scope": "service", "description": "Accessibility profile per touchpoint" },
+    { "id": "frontstage", "label": "Frontstage", "type": "text", "scope": "service", "description": "Visible service elements the customer interacts with" },
+    { "id": "backstage", "label": "Backstage", "type": "text", "scope": "service", "description": "Behind-the-scenes processes and systems that enable this step" },
+    { "id": "housemate-coordination", "label": "Housemate Sync", "type": "text", "scope": "service", "description": "Coordination needed with housemates at this step" }
+  ],
+
+  "nodes": [
+    {
+      "nodeId": "start",
+      "name": "Start",
+      "nodeType": "start",
+      "laneContent": {
+        "description": "Consumer begins the energy switching journey"
+      }
+    },
+    {
+      "nodeId": "realise-need",
+      "name": "Realise current deal is expensive",
+      "nodeType": "signal",
+      "durationMs": 300000,
+      "laneContent": {
+        "description": "Consumer receives notification from current provider about rate increase, prompting investigation into switching options",
+        "channels": [
+          { "channel": "email", "category": "digital", "serviceModel": "managed", "name": "Email notification", "usageContext": "Rate increase notification from current provider" }
+        ],
+        "backstage": "Current provider sends automated rate change notification"
+      },
+      "significance": {
+        "description": "Trigger event that initiates the switching journey",
+        "importance": "high"
+      }
+    },
+    {
+      "nodeId": "research-options",
+      "name": "Research switching process",
+      "nodeType": "touchpoint",
+      "durationMs": 1800000,
+      "laneContent": {
+        "description": "Consumer researches how energy switching works, including renter rights and landlord permission requirements",
+        "channels": [
+          { "channel": "web", "category": "digital", "serviceModel": "self_service", "name": "MoneySavingExpert and guides", "usageContext": "Research switching guides and forums" }
+        ],
+        "barriers": [
+          { "type": "knowledge", "description": "Unclear information about rental property rules for switching — whether landlord approval is needed", "severity": 3 }
+        ],
+        "designOpportunities": ["Provide clear renter-specific switching guide", "Surface FAQ about tenancy permissions prominently"]
+      }
+    },
+    {
+      "nodeId": "compare-tariffs",
+      "name": "Compare energy tariffs",
+      "nodeType": "touchpoint",
+      "durationMs": 2700000,
+      "laneContent": {
+        "description": "Consumer uses comparison websites to find deals, filtering for key criteria like no exit fees and competitive pricing",
+        "channels": [
+          { "channel": "web", "category": "digital", "serviceModel": "self_service", "name": "Price comparison sites", "usageContext": "Compare tariffs across providers" }
+        ],
+        "barriers": [
+          { "type": "knowledge", "description": "Confusing tariff structures make like-for-like comparison difficult across providers", "severity": 3 }
+        ],
+        "designOpportunities": ["Standardise tariff presentation for easier comparison", "Create shareable comparison summaries for multi-person households"],
+        "accessibilityProfile": {
+          "visual": 3,
+          "motor": 5,
+          "auditory": 5,
+          "emotional": 3,
+          "cognitive": {
+            "overallScore": 2,
+            "decisionComplexity": "complex",
+            "informationDensity": "high",
+            "timePressure": "none",
+            "priorKnowledgeRequired": "Understanding of tariff structures, standing charges, unit rates, and exit fee implications",
+            "supportAvailable": "Comparison site calculators standardise some complexity"
+          }
+        }
+      },
+      "significance": {
+        "description": "Key research point — tariff selection determines ongoing costs",
+        "importance": "critical"
+      }
+    },
+    {
+      "nodeId": "get-agreement",
+      "name": "Get housemate agreement",
+      "nodeType": "touchpoint",
+      "durationMs": 259200000,
+      "laneContent": {
+        "description": "Consumer coordinates with all housemates to agree on provider choice and who will be the named account holder",
+        "channels": [
+          { "channel": "app", "category": "digital", "serviceModel": "self_service", "name": "WhatsApp group", "usageContext": "Coordinate decision with housemates" },
+          { "channel": "in_person", "category": "physical", "serviceModel": "self_service", "name": "House meeting", "usageContext": "Final decision discussion" }
+        ],
+        "barriers": [
+          { "type": "process", "description": "Coordinating decisions with multiple people with different priorities and availability is time-consuming", "severity": 4 }
+        ],
+        "designOpportunities": ["Create shareable decision packs consumers can send to housemates", "Offer digital voting or approval mechanism for household decisions"],
+        "housemateCoordination": "Critical step — needs all housemates to agree on provider and who will be named account holder"
+      },
+      "significance": {
+        "description": "Gate point — cannot proceed without group consensus",
+        "importance": "critical"
+      }
+    },
+    {
+      "nodeId": "decide-to-switch",
+      "name": "Decision to proceed with switch",
+      "nodeType": "decision",
+      "laneContent": {
+        "description": "Consumer and housemates decide whether to proceed with the chosen provider"
+      }
+    },
+    {
+      "nodeId": "start-switch",
+      "name": "Start switch on provider website",
+      "nodeType": "touchpoint",
+      "durationMs": 120000,
+      "laneContent": {
+        "description": "Consumer navigates to chosen provider's website from comparison site and begins the switch process",
+        "channels": [
+          { "channel": "web", "category": "digital", "serviceModel": "self_service", "name": "Provider website", "usageContext": "Start switch process" }
+        ],
+        "frontstage": "Switch landing page with postcode entry, address lookup",
+        "backstage": "Website validates postcode and retrieves address options"
+      }
+    },
+    {
+      "nodeId": "enter-details",
+      "name": "Enter personal and property details",
+      "nodeType": "touchpoint",
+      "durationMs": 600000,
+      "laneContent": {
+        "description": "Consumer enters personal information, property details, current meter readings, and selects tariff and payment method",
+        "channels": [
+          { "channel": "web", "category": "digital", "serviceModel": "self_service", "name": "Provider signup form", "usageContext": "Enter registration details" }
+        ],
+        "barriers": [
+          { "type": "policy", "description": "Phone number is a required field even for consumers who prefer digital-only contact", "severity": 2 },
+          { "type": "knowledge", "description": "No clear information about personal liability as account holder in shared properties", "severity": 4 }
+        ],
+        "frontstage": "Multi-step registration form with tariff selection, meter reading entry, payment method choice",
+        "backstage": "Form validates inputs, calculates estimated usage based on property size",
+        "designOpportunities": ["Make phone number optional with digital-only contact preference", "Provide clear information about shared household liability"]
+      },
+      "significance": {
+        "description": "Commitment point — consumer is investing personal details and taking on account holder responsibility",
+        "importance": "high"
+      }
+    },
+    {
+      "nodeId": "verify-identity",
+      "name": "Complete identity verification",
+      "nodeType": "touchpoint",
+      "durationMs": 180000,
+      "laneContent": {
+        "description": "Consumer completes online identity verification using driving licence or other ID",
+        "channels": [
+          { "channel": "web", "category": "digital", "serviceModel": "self_service", "name": "ID verification", "usageContext": "Verify identity online" }
+        ],
+        "backstage": "System calls Identity Verification API to validate details"
+      }
+    },
+    {
+      "nodeId": "credit-check",
+      "name": "Credit check submitted",
+      "nodeType": "touchpoint",
+      "durationMs": 30000,
+      "laneContent": {
+        "description": "Application is submitted and credit check is performed automatically",
+        "channels": [
+          { "channel": "web", "category": "digital", "serviceModel": "self_service", "name": "Provider application", "usageContext": "Submit for credit assessment" }
+        ],
+        "barriers": [
+          { "type": "knowledge", "description": "No transparency about credit check criteria or how thin credit files are assessed", "severity": 3 }
+        ],
+        "backstage": "System submits credit check request to credit bureau API",
+        "designOpportunities": ["Provide upfront guidance on credit check requirements", "Offer clear messaging about what happens if check fails"]
+      }
+    },
+    {
+      "nodeId": "credit-result",
+      "name": "Credit check result",
+      "nodeType": "decision",
+      "laneContent": {
+        "description": "Credit check result determines whether the application can proceed"
+      }
+    },
+    {
+      "nodeId": "setup-payment",
+      "name": "Set up Direct Debit",
+      "nodeType": "touchpoint",
+      "durationMs": 300000,
+      "laneContent": {
+        "description": "Consumer sets up Direct Debit payment and establishes bill-splitting arrangements with housemates",
+        "channels": [
+          { "channel": "web", "category": "digital", "serviceModel": "self_service", "name": "Provider payment setup", "usageContext": "Enter Direct Debit details" },
+          { "channel": "app", "category": "digital", "serviceModel": "self_service", "name": "Banking app", "usageContext": "Set up shared pot or payment splitting" }
+        ],
+        "designOpportunities": ["Offer built-in bill-splitting with automated collection from housemates", "Integrate with popular payment splitting apps"],
+        "backstage": "System validates bank details, sets up Direct Debit mandate"
+      },
+      "significance": {
+        "description": "Establishes the ongoing payment dynamic — critical for shared households",
+        "importance": "high"
+      }
+    },
+    {
+      "nodeId": "configure-account",
+      "name": "Configure account preferences",
+      "nodeType": "touchpoint",
+      "durationMs": 300000,
+      "laneContent": {
+        "description": "Consumer downloads provider app and configures notification and communication preferences",
+        "channels": [
+          { "channel": "app", "category": "digital", "serviceModel": "self_service", "name": "Provider mobile app", "usageContext": "Configure account and preferences" }
+        ],
+        "frontstage": "App onboarding flow with notification preferences, paperless billing toggle, communication channel settings",
+        "backstage": "System saves communication preferences, triggers welcome email sequence"
+      }
+    },
+    {
+      "nodeId": "welcome-email",
+      "name": "Receive welcome communications",
+      "nodeType": "signal",
+      "durationMs": 86400000,
+      "laneContent": {
+        "description": "System sends welcome email with account details, switch timeline, and next steps",
+        "channels": [
+          { "channel": "email", "category": "digital", "serviceModel": "managed", "name": "Welcome email", "usageContext": "Receive onboarding information" },
+          { "channel": "app", "category": "digital", "serviceModel": "self_service", "name": "Provider mobile app", "usageContext": "Check account status" }
+        ],
+        "backstage": "Automated welcome sequence triggered, switch request sent to current supplier"
+      }
+    },
+    {
+      "nodeId": "cooling-off",
+      "name": "Cooling off period",
+      "nodeType": "wait",
+      "duration": "14 days",
+      "laneContent": {
+        "description": "Mandatory 14-day cooling off period during which the consumer can cancel the switch without penalty",
+        "channels": [
+          { "channel": "app", "category": "digital", "serviceModel": "self_service", "name": "Provider mobile app", "usageContext": "Monitor switch progress" }
+        ],
+        "backstage": "System tracks cooling off period, sends progress notifications, coordinates with old supplier"
+      }
+    },
+    {
+      "nodeId": "switch-day",
+      "name": "Switch day — submit meter readings",
+      "nodeType": "touchpoint",
+      "durationMs": 600000,
+      "laneContent": {
+        "description": "On switch day, consumer submits final meter readings via the provider app to complete the transfer",
+        "channels": [
+          { "channel": "app", "category": "digital", "serviceModel": "self_service", "name": "Provider mobile app", "usageContext": "Submit switch day meter readings" }
+        ],
+        "frontstage": "App notification, photo-based meter reading submission",
+        "backstage": "OCR processes meter photo, validates reading, finalises switch with industry systems"
+      },
+      "significance": {
+        "description": "Transition point — supply officially transfers to new provider",
+        "importance": "high"
+      }
+    },
+    {
+      "nodeId": "first-bill",
+      "name": "First bill received",
+      "nodeType": "touchpoint",
+      "durationMs": 300000,
+      "laneContent": {
+        "description": "Consumer receives first bill and can verify charges match the agreed tariff",
+        "channels": [
+          { "channel": "app", "category": "digital", "serviceModel": "self_service", "name": "Provider mobile app", "usageContext": "View and verify first bill" }
+        ],
+        "designOpportunities": ["Show clear breakdown of charges vs original tariff quote", "Provide easy bill-sharing feature for multi-person households"]
+      },
+      "significance": {
+        "description": "Validation point — confirms switch was successful and pricing is as expected",
+        "importance": "critical"
+      }
+    },
+    {
+      "nodeId": "ongoing-management",
+      "name": "Establish ongoing routine",
+      "nodeType": "touchpoint",
+      "durationMs": 604800000,
+      "laneContent": {
+        "description": "Consumer sets up ongoing monitoring, usage alerts, and recurring payment collection from housemates",
+        "channels": [
+          { "channel": "app", "category": "digital", "serviceModel": "self_service", "name": "Provider mobile app", "usageContext": "Configure ongoing monitoring" }
+        ],
+        "barriers": [
+          { "type": "process", "description": "No built-in bill-splitting feature means ongoing administrative burden for the account holder", "severity": 3 }
+        ],
+        "backstage": "System configured for paperless billing, usage alerts, and push notifications"
+      }
+    },
+    {
+      "nodeId": "end",
+      "name": "End",
+      "nodeType": "end",
+      "laneContent": {
+        "description": "Energy switch complete and ongoing management routine established"
+      }
+    }
+  ],
+
+  "edges": [
+    { "from": "start", "to": "realise-need", "edgeType": "default" },
+    { "from": "realise-need", "to": "research-options", "edgeType": "default" },
+    { "from": "research-options", "to": "compare-tariffs", "edgeType": "default" },
+    { "from": "compare-tariffs", "to": "get-agreement", "edgeType": "default" },
+    { "from": "get-agreement", "to": "decide-to-switch", "edgeType": "default" },
+    { "from": "decide-to-switch", "to": "start-switch", "edgeType": "conditional", "condition": { "description": "Housemates agree to proceed with switch" }, "label": "Proceed" },
+    { "from": "decide-to-switch", "to": "compare-tariffs", "edgeType": "loop_back", "condition": { "description": "Housemates want different options" }, "label": "Reconsider options" },
+    { "from": "start-switch", "to": "enter-details", "edgeType": "default" },
+    { "from": "enter-details", "to": "verify-identity", "edgeType": "default" },
+    { "from": "verify-identity", "to": "credit-check", "edgeType": "default" },
+    { "from": "credit-check", "to": "credit-result", "edgeType": "default" },
+    { "from": "credit-result", "to": "setup-payment", "edgeType": "conditional", "condition": { "description": "Credit check passed" }, "label": "Approved" },
+    { "from": "setup-payment", "to": "configure-account", "edgeType": "default" },
+    { "from": "configure-account", "to": "welcome-email", "edgeType": "default" },
+    { "from": "welcome-email", "to": "cooling-off", "edgeType": "default" },
+    { "from": "cooling-off", "to": "switch-day", "edgeType": "default" },
+    { "from": "switch-day", "to": "first-bill", "edgeType": "default" },
+    { "from": "first-bill", "to": "ongoing-management", "edgeType": "default" },
+    { "from": "ongoing-management", "to": "end", "edgeType": "default" }
+  ],
+
+  "paths": [
+    {
+      "pathId": "path-happy",
+      "name": "Happy path (successful switch)",
+      "description": "Consumer researches, gets agreement, registers, passes credit check, and establishes ongoing management",
+      "pathType": "designed",
+      "nodeSequence": [
+        "start", "realise-need", "research-options", "compare-tariffs", "get-agreement",
+        "decide-to-switch", "start-switch", "enter-details", "verify-identity",
+        "credit-check", "credit-result", "setup-payment", "configure-account",
+        "welcome-email", "cooling-off", "switch-day", "first-bill",
+        "ongoing-management", "end"
+      ],
+      "frequency": 0.70,
+      "averageDuration": "3-4 weeks"
+    }
+  ],
+
+  "phases": [
+    {
+      "phaseId": "phase-research",
+      "name": "Research & Compare",
+      "goal": "Find the best energy deal for a shared house and get housemate buy-in",
+      "nodeRefs": ["realise-need", "research-options", "compare-tariffs", "get-agreement", "decide-to-switch"]
+    },
+    {
+      "phaseId": "phase-registration",
+      "name": "Registration",
+      "goal": "Sign up with chosen provider and provide required information",
+      "nodeRefs": ["start-switch", "enter-details", "verify-identity"]
+    },
+    {
+      "phaseId": "phase-verification",
+      "name": "Verification & Setup",
+      "goal": "Pass credit check and configure account settings",
+      "nodeRefs": ["credit-check", "credit-result", "setup-payment", "configure-account"]
+    },
+    {
+      "phaseId": "phase-onboarding",
+      "name": "Welcome & Onboarding",
+      "goal": "Complete switch transition and confirm everything is working",
+      "nodeRefs": ["welcome-email", "cooling-off", "switch-day", "first-bill", "ongoing-management"]
+    }
+  ],
+
+  "provenance": {
+    "source": "mixed",
+    "confidence": 0.75,
+    "researchSources": [
+      { "source": "UK energy market consumer research", "type": "existing_research", "confidence": "medium" },
+      { "source": "PowerGrid Energy process documentation", "type": "existing_research", "confidence": "high" },
+      { "source": "Young adult financial behaviour studies", "type": "existing_research", "confidence": "medium" }
+    ],
+    "generationMethod": "ai_assisted",
+    "aiToolsUsed": [
+      {
+        "tool": "Claude",
+        "version": "claude-opus-4-6",
+        "usage": "Conversion from v1.1 journey to v2.0 Mission format, extracting service-level content"
+      }
+    ],
+    "humanReviewed": false
+  },
+
+  "meta": {
+    "created": "2026-01-08",
+    "updated": "2026-05-04",
+    "createdBy": "Digital Service Design Team",
+    "organisation": "PowerGrid Energy",
+    "tags": ["energy", "switching", "shared-house", "rental", "example"]
+  }
+}

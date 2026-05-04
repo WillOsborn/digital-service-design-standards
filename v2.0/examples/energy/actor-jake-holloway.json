@@ -1,0 +1,217 @@
+{
+  "$context": "https://schemas.digitalservice.design/v2.0",
+  "$type": "Actor",
+  "id": "actor-jake-holloway",
+  "version": "2.0.0",
+  "name": "Jake Holloway",
+  "summary": "A 22-year-old graduate living in a shared house in Manchester, comfortable with technology and keen to manage finances smartly while navigating adult responsibilities for the first time. As a junior developer, he expects seamless digital experiences and avoids phone calls.",
+  "actorType": "human",
+  "quote": "I've done all the research and found us a better deal, but getting everyone to actually sit down and agree is like herding cats. And I really don't want to be the one chasing people for money every month.",
+
+  "traits": {
+    "demographics": {
+      "age": 22,
+      "location": "Manchester, UK",
+      "education": "Recent graduate (BSc Computer Science)",
+      "background": "Jake graduated last year and moved into a shared house with three friends from university. This is his first experience managing household bills and he's determined to be savvy about it. He works as a junior developer and is careful with money while still enjoying socialising and gaming."
+    },
+    "needs": [
+      { "need": "Feel in control of his finances and adult responsibilities", "type": "autonomy" },
+      { "need": "Be seen as reliable and capable by his housemates", "type": "recognition" },
+      { "need": "Avoid unexpected costs or nasty surprises", "type": "security" },
+      { "need": "Learn how things work so he can handle them confidently in future", "type": "mastery" }
+    ],
+    "frustrations": [
+      { "frustration": "Feels overwhelmed by 'adulting' tasks he was never taught how to handle", "severity": 3 },
+      { "frustration": "Dislikes phone calls and prefers to sort things out digitally", "severity": 4 },
+      { "frustration": "Gets frustrated when processes seem unnecessarily complicated", "severity": 3 }
+    ],
+    "motivations": [
+      { "motivation": "Wants to prove he can handle adult responsibilities independently", "type": "achievement" },
+      { "motivation": "Motivated by getting a good deal and saving money", "type": "extrinsic" },
+      { "motivation": "Values fairness and doing right by his housemates", "type": "social" }
+    ],
+    "technology": {
+      "comfort": "advanced",
+      "description": "As a developer, Jake is highly comfortable with technology. He uses apps for everything from banking to fitness tracking and expects seamless digital experiences.",
+      "preferredDevices": ["smartphone", "laptop"]
+    },
+    "communication": {
+      "preferred": ["app", "chat", "email"],
+      "acceptable": ["sms"],
+      "avoided": ["phone", "in_person"],
+      "style": "Direct and efficient - appreciates clear, jargon-free communication that gets to the point"
+    },
+    "influences": [
+      { "source": "Peer recommendations", "description": "Trusts recommendations from friends and fellow young professionals over advertising" },
+      { "source": "Online reviews and forums", "description": "Checks Reddit, Trustpilot, and comparison sites before making decisions" },
+      { "source": "Money-saving influencers", "description": "Follows accounts like MoneySavingExpert on social media" }
+    ],
+    "decisionMaking": {
+      "style": "Analytical but efficient - wants enough information to feel confident but won't over-research",
+      "riskTolerance": "moderate"
+    },
+    "behaviouralPatterns": [
+      { "pattern": "Research-then-act", "context": "Will spend time comparing options online before committing, but once decided, wants to complete quickly" },
+      { "pattern": "Path of least resistance", "context": "If a process becomes too complicated, may abandon it or postpone indefinitely" }
+    ]
+  },
+
+  "contexts": [
+    {
+      "contextId": "ctx-energy-switcher-shared-house",
+      "title": "Energy Provider Switcher (Shared House)",
+      "description": "A consumer responsible for finding, selecting, and setting up a new energy provider for a shared rental property, coordinating with multiple housemates on decisions and bill-splitting.",
+      "contextType": "Consumer",
+      "needs": [
+        { "need": "Find a competitively priced energy deal that works for everyone in the house", "priority": "primary", "timeframe": "immediate" },
+        { "need": "Understand how the switching process works and what steps are required", "priority": "primary", "timeframe": "immediate" },
+        { "need": "Set up fair and straightforward bill-splitting arrangements with housemates", "priority": "primary", "timeframe": "short_term" },
+        { "need": "Ensure a smooth transition with no gap in supply", "priority": "primary", "timeframe": "immediate" },
+        { "need": "Avoid being personally liable if housemates don't pay their share", "priority": "secondary", "timeframe": "long_term" },
+        { "need": "Keep housemates informed and get their agreement on the chosen provider", "priority": "secondary", "timeframe": "immediate" }
+      ],
+      "frustrations": [
+        { "frustration": "Coordinating decisions with multiple people who have different priorities and availability", "severity": 4, "frequency": "weekly" },
+        { "frustration": "Uncertainty about who is responsible for the account in a shared tenancy", "severity": 4, "frequency": "occasional" },
+        { "frustration": "Difficulty finding clear information about how switching works for renters", "severity": 3, "frequency": "occasional" },
+        { "frustration": "Confusing tariff structures and hidden fees that make comparison difficult", "severity": 3, "frequency": "weekly" },
+        { "frustration": "Chase effort required to collect bill money from housemates each month", "severity": 3, "frequency": "monthly" },
+        { "frustration": "Lack of transparency about estimated usage for a shared property", "severity": 2, "frequency": "occasional" }
+      ],
+      "channels": [
+        { "channel": "app", "category": "digital", "serviceModel": "self_service", "preference": "preferred", "usageContext": "Primary channel for account management, meter readings, and usage tracking" },
+        { "channel": "web", "category": "digital", "serviceModel": "self_service", "preference": "preferred", "usageContext": "Initial research and price comparison" },
+        { "channel": "chat", "category": "digital", "serviceModel": "both", "preference": "preferred", "usageContext": "Queries and problem resolution without phone calls" },
+        { "channel": "email", "category": "digital", "serviceModel": "managed", "preference": "acceptable", "usageContext": "Confirmations, bills, and non-urgent queries" },
+        { "channel": "phone", "category": "telecom", "serviceModel": "managed", "preference": "avoided", "usageContext": "Last resort for issues that cannot be resolved digitally" }
+      ],
+      "details": {
+        "shoppingBehaviour": "Comparison-focused, uses price comparison sites and seeks peer recommendations",
+        "purchasingContext": "First-time energy account holder, making decision on behalf of household",
+        "brandRelationships": "No established loyalty to energy brands; open to newer providers if well-reviewed",
+        "decisionFactors": ["Monthly cost", "Ease of account management (app/online)", "Bill-splitting features or support", "No exit fees (flexibility for tenancy changes)", "Positive reviews from other young renters"],
+        "budgetConstraints": "Cost-conscious; needs to balance affordable rates with housemate buy-in",
+        "householdSize": 4,
+        "tenancyType": "Assured Shorthold Tenancy (12 months)",
+        "currentProviderSituation": "Inherited from previous tenants, on standard variable rate"
+      },
+      "momentsThatMatter": [
+        { "moment": "Getting housemates to agree on a provider", "importance": "critical", "emotionalIntensity": -1 },
+        { "moment": "Completing the switch application", "importance": "high", "emotionalIntensity": 1 },
+        { "moment": "First bill arriving", "importance": "critical", "emotionalIntensity": 1 },
+        { "moment": "Collecting first month's contributions from housemates", "importance": "critical", "emotionalIntensity": -1 },
+        { "moment": "Encountering a problem requiring phone contact", "importance": "medium", "emotionalIntensity": -2 }
+      ]
+    }
+  ],
+
+  "emergence": [
+    {
+      "contextRef": "ctx-energy-switcher-shared-house",
+      "goalsAsExperienced": [
+        { "goal": "Find a good energy deal quickly using comparison tools, then get housemates aligned so he can complete the switch", "source": "collision", "priority": "primary" },
+        { "goal": "Set up a bill-splitting system that runs itself without awkward monthly conversations", "source": "collision", "priority": "primary" },
+        { "goal": "Complete the entire switching process digitally without needing to make phone calls", "source": "traits", "priority": "primary" },
+        { "goal": "Prove to himself and his housemates that he can handle this adult responsibility competently", "source": "traits", "priority": "secondary" },
+        { "goal": "Protect himself from being left out of pocket if housemates don't pay", "source": "context", "priority": "secondary" }
+      ],
+      "painPoints": [
+        {
+          "painPoint": "His efficient research-then-act style collides with the need to get consensus from three other people with varying levels of interest and availability",
+          "severity": 4,
+          "emergesFrom": "Jake's preference for quick, decisive action meets the role's requirement to coordinate group decisions"
+        },
+        {
+          "painPoint": "The social awkwardness of chasing housemates for money conflicts with his desire to maintain good relationships and be seen as capable, not naggy",
+          "severity": 4,
+          "emergesFrom": "Jake's need for recognition and belonging clashes with the ongoing administrative burden of being account holder"
+        },
+        {
+          "painPoint": "His phone-avoidance creates friction when energy providers require calls for account setup, meter readings, or problem resolution",
+          "severity": 3,
+          "emergesFrom": "Jake's strong communication preferences meet an industry that still relies heavily on phone-based customer service"
+        },
+        {
+          "painPoint": "Anxiety about being personally liable for the full bill undermines his sense of security and control",
+          "severity": 3,
+          "emergesFrom": "Jake's need for security conflicts with the legal reality that one person must be the named account holder"
+        },
+        {
+          "painPoint": "His expectation of intuitive digital experiences is frustrated by comparison sites and provider websites that feel dated or overly complex",
+          "severity": 3,
+          "emergesFrom": "As a developer used to well-designed apps, Jake finds the energy sector's digital experience disappointing"
+        }
+      ],
+      "opportunities": [
+        "Provide a clear, step-by-step switching guide specifically for renters and shared houses",
+        "Offer built-in bill-splitting functionality with automated payment collection from housemates",
+        "Enable fully digital account management including webchat for all support queries",
+        "Create shareable comparison summaries Jake can send to housemates for quick approval",
+        "Provide transparent, simple tariffs that are easy to compare without hidden complexity",
+        "Offer flexible contracts with no exit fees to match typical tenancy lengths",
+        "Send proactive notifications and reminders that reduce the admin burden on the account holder"
+      ],
+      "emotionalContext": "Jake approaches this task with a mix of determination and mild anxiety. He wants to prove he can handle adult responsibilities and is motivated by getting a good deal, but he's nervous about the social dynamics of money and the unfamiliar territory of energy contracts.",
+      "useCases": [
+        { "scenario": "Comparing energy deals", "trigger": "Rate increase notification from current provider", "outcome": "Clear understanding of costs, easy to share findings with housemates" },
+        { "scenario": "Submitting switch application", "trigger": "Housemate agreement on provider", "outcome": "Complete process in one session digitally" },
+        { "scenario": "Providing meter readings", "trigger": "Monthly or quarterly reminder", "outcome": "Quick submission via app in under a minute" },
+        { "scenario": "Splitting and collecting bill payments", "trigger": "Monthly bill arrival", "outcome": "Automated collection without awkward chasing" },
+        { "scenario": "Resolving a billing query", "trigger": "Unexpected charge or discrepancy", "outcome": "Issue resolved via webchat without phone call" }
+      ],
+      "successMetrics": [
+        "At least 10% reduction in monthly costs vs previous tariff",
+        "Switch completed in under 3 weeks from housemate agreement",
+        "Zero phone calls required throughout the process",
+        "All housemates pay within 3 days of bill",
+        "No complaints from housemates about the choice or process"
+      ]
+    }
+  ],
+
+  "relationships": [
+    {
+      "target": "mission-energy-supplier-switch",
+      "type": "participates_in",
+      "description": "Jake is the primary actor in the energy supplier switch mission"
+    }
+  ],
+
+  "provenance": {
+    "source": "mixed",
+    "confidence": 0.75,
+    "researchSources": [
+      { "source": "UK energy market consumer research", "type": "existing_research", "confidence": "medium" },
+      { "source": "Young adult financial behaviour studies", "type": "existing_research", "confidence": "medium" },
+      { "source": "Digital native user experience patterns", "type": "existing_research", "confidence": "medium" }
+    ],
+    "generationMethod": "ai_assisted",
+    "aiToolsUsed": [
+      {
+        "tool": "Claude",
+        "version": "claude-opus-4-6",
+        "usage": "Conversion from v1.1 persona, role, and pairing artifacts to v2.0 Actor format"
+      }
+    ],
+    "humanReviewed": false
+  },
+
+  "governance": {
+    "dataClassification": "internal",
+    "containsPii": true,
+    "piiCategories": ["name", "location", "age", "employment"],
+    "anonymisationMethod": "fictional_composite",
+    "retentionPolicy": "Retain for project duration + 12 months, then review",
+    "legalBasis": "Legitimate interest — service design and user experience improvement",
+    "dataOwner": "Digital Service Design Team"
+  },
+
+  "meta": {
+    "created": "2026-01-08",
+    "updated": "2026-05-04",
+    "createdBy": "Digital Service Design Team",
+    "organisation": "PowerGrid Energy",
+    "tags": ["consumer", "energy", "shared-house", "digital-native", "example"]
+  }
+}

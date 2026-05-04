@@ -1,0 +1,463 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.digitalservice.design/v2.0/experience",
+  "title": "Experience Schema",
+  "description": "What happens when a specific Actor goes through a specific Mission. The Experience is the persona-specific view — carrying thoughts, emotions, and barriers as experienced by this actor. It references a Mission for structure and an Actor for identity. An Experience can be rendered as a linear journey for communication.",
+  "type": "object",
+  "properties": {
+    "$context": {
+      "type": "string",
+      "const": "https://schemas.digitalservice.design/v2.0"
+    },
+    "$type": {
+      "type": "string",
+      "const": "Experience"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^exp-[a-z0-9_-]+$",
+      "maxLength": 80,
+      "description": "Unique identifier (e.g., exp-sarah-clothes-shopping)"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^2\\.0\\.[0-9]+$"
+    },
+    "title": {
+      "type": "string",
+      "maxLength": 200,
+      "description": "Human-readable title (e.g., 'Sarah Martinez — Clothes Shopping Experience')"
+    },
+    "summary": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Narrative summary of this actor's experience through the mission"
+    },
+
+    "references": {
+      "type": "object",
+      "description": "Links to the Actor and Mission this Experience is derived from",
+      "properties": {
+        "actorRef": {
+          "type": "string",
+          "description": "Reference to the Actor ID"
+        },
+        "contextRef": {
+          "type": "string",
+          "description": "Which of the actor's contexts applies (e.g., ctx-working-mom-consumer)"
+        },
+        "missionRef": {
+          "type": "string",
+          "description": "Reference to the Mission ID"
+        }
+      },
+      "required": ["actorRef", "missionRef"]
+    },
+
+    "path": {
+      "type": "object",
+      "description": "The specific route this actor takes through the mission graph",
+      "properties": {
+        "pathType": {
+          "enum": ["designed", "observed", "simulated", "failure", "edge_case"],
+          "description": "How this path was determined"
+        },
+        "nodeSequence": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Ordered list of mission node IDs this actor visits",
+          "minItems": 1
+        },
+        "totalDuration": {
+          "type": "string",
+          "maxLength": 50,
+          "description": "Total time for this experience"
+        }
+      },
+      "required": ["nodeSequence"]
+    },
+
+    "lanes": {
+      "type": "array",
+      "description": "Declares which persona-specific data layers this experience tracks. Core typed lanes (emotions, barriers) have schema-validated structure. Extended lanes (needs, pain, persona-specific observations) use simple types. Inherits the mission's lane declarations for service-level lanes; adds persona-specific ones here.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$"
+          },
+          "label": { "type": "string", "maxLength": 100 },
+          "type": {
+            "enum": ["text", "list", "metric", "channel", "barrier", "accessibility", "emotion"]
+          },
+          "description": { "type": "string", "maxLength": 300 }
+        },
+        "required": ["id", "label", "type"]
+      }
+    },
+
+    "nodes": {
+      "type": "array",
+      "description": "Persona-specific content for each node in the path. Each entry references a mission node and adds the actor's thoughts, emotions, barriers, needs, pains, and other lane content.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "nodeRef": {
+            "type": "string",
+            "description": "Reference to a node ID in the mission graph"
+          },
+          "laneContent": {
+            "type": "object",
+            "description": "This actor's experience at this node",
+            "properties": {
+              "actions": {
+                "type": "array",
+                "items": { "type": "string", "maxLength": 200 },
+                "description": "What this actor specifically does"
+              },
+              "thoughts": {
+                "type": "string",
+                "maxLength": 500,
+                "description": "What this actor is thinking"
+              },
+              "emotions": {
+                "type": "object",
+                "properties": {
+                  "state": { "type": "string", "maxLength": 50 },
+                  "intensity": { "type": "integer", "minimum": -2, "maximum": 2 },
+                  "model": {
+                    "type": "string",
+                    "enum": ["simple", "dimensional", "categorical"],
+                    "description": "Emotion model used. simple: existing -2 to +2 scale (default). dimensional: valence-arousal coordinates. categorical: discrete Plutchik primary emotion."
+                  },
+                  "valence": {
+                    "type": "number",
+                    "minimum": -1,
+                    "maximum": 1,
+                    "description": "Emotional valence from -1 (very negative) to +1 (very positive). Used with dimensional model."
+                  },
+                  "arousal": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "description": "Emotional arousal from 0 (calm) to 1 (highly activated). Used with dimensional model."
+                  },
+                  "category": {
+                    "type": "string",
+                    "enum": ["joy", "trust", "fear", "surprise", "sadness", "disgust", "anger", "anticipation"],
+                    "description": "Plutchik primary emotion category. Used with categorical model."
+                  }
+                },
+                "description": "This actor's emotional state. state and intensity are always valid (backward compatible). Optionally enrich with model, valence, arousal, or category for dimensional or categorical analysis."
+              },
+              "barriers": {
+                "type": "array",
+                "description": "Barriers as experienced by this actor (may differ from mission-level barriers)",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "enum": ["process", "technology", "knowledge", "resource", "policy", "cultural", "vision", "communications", "governance", "accessibility"]
+                    },
+                    "description": { "type": "string", "maxLength": 500 },
+                    "severity": { "type": "integer", "minimum": 1, "maximum": 5 },
+                    "workarounds": { "type": "string", "maxLength": 500 },
+                    "emergesFrom": {
+                      "type": "string",
+                      "maxLength": 300,
+                      "description": "How this barrier emerges from this actor's traits colliding with the mission context"
+                    }
+                  },
+                  "required": ["type", "description"]
+                }
+              },
+              "needAtStep": {
+                "type": "string",
+                "maxLength": 500,
+                "description": "What this actor specifically needs at this step — emerges from combining the actor's traits/context with the mission's touchpoint. This is the micro-emergence: the specific, step-level need that only exists when THIS person meets THIS moment in the service."
+              },
+              "painAtStep": {
+                "type": "string",
+                "maxLength": 500,
+                "description": "How this step causes pain for this actor, beyond structural barriers. Captures the emotional and practical impact of unmet needs — the gap between what they need and what the service provides at this moment."
+              },
+              "opportunities": {
+                "type": "array",
+                "items": { "type": "string", "maxLength": 300 },
+                "description": "Improvement opportunities specific to this actor's experience"
+              },
+              "cognitiveLoad": {
+                "type": "object",
+                "description": "How this actor experiences the cognitive demands of this node, informed by WCAG 3.0 cognitive accessibility outcomes. Complements the service-level accessibilityProfile.cognitive on the Mission node — this captures what the actor actually encounters given their specific traits and context.",
+                "properties": {
+                  "overallScore": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5,
+                    "description": "Overall cognitive load rating from 1 (minimal) to 5 (overwhelming) as experienced by this actor"
+                  },
+                  "decisionComplexity": {
+                    "type": "string",
+                    "enum": ["none", "simple", "moderate", "complex"],
+                    "description": "How complex the decisions feel to this actor at this node"
+                  },
+                  "informationDensity": {
+                    "type": "string",
+                    "enum": ["minimal", "low", "moderate", "high", "overwhelming"],
+                    "description": "How the volume and complexity of information is experienced by this actor"
+                  },
+                  "timePressure": {
+                    "type": "string",
+                    "enum": ["none", "low", "moderate", "high", "critical"],
+                    "description": "Time pressure or urgency as felt by this actor"
+                  },
+                  "priorKnowledgeRequired": {
+                    "type": "string",
+                    "maxLength": 200,
+                    "description": "Domain knowledge this actor is expected to have — and whether they actually have it"
+                  },
+                  "supportAvailable": {
+                    "type": "string",
+                    "maxLength": 200,
+                    "description": "Help or scaffolding this actor can access to reduce cognitive load at this node"
+                  }
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": true
+          },
+          "momentThatMatters": {
+            "type": "object",
+            "description": "If this node is a critical emotional touchpoint for this actor",
+            "properties": {
+              "description": { "type": "string", "maxLength": 300 },
+              "importance": { "enum": ["critical", "high", "medium", "low"] },
+              "emotionalIntensity": { "type": "integer", "minimum": -2, "maximum": 2 }
+            }
+          }
+        },
+        "required": ["nodeRef", "laneContent"]
+      },
+      "minItems": 1
+    },
+
+    "phases": {
+      "type": "array",
+      "description": "Optional phase grouping for this experience. Can inherit from the mission's phases or define custom ones for this actor's view.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "phaseId": { "type": "string", "pattern": "^phase-[a-z0-9_-]+$" },
+          "name": { "type": "string", "maxLength": 100 },
+          "goal": { "type": "string", "maxLength": 300 },
+          "nodeRefs": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "required": ["phaseId", "name", "nodeRefs"]
+      }
+    },
+
+    "outcome": {
+      "type": "object",
+      "description": "How this experience concludes for this actor",
+      "properties": {
+        "success": {
+          "type": "boolean",
+          "description": "Did the actor achieve the mission goal?"
+        },
+        "endNode": {
+          "type": "string",
+          "description": "Which end node was reached"
+        },
+        "reflection": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Actor's overall reflection on the experience"
+        },
+        "netSentiment": {
+          "type": "integer",
+          "minimum": -2,
+          "maximum": 2,
+          "description": "Overall emotional outcome"
+        },
+        "wouldRepeat": {
+          "type": "boolean",
+          "description": "Would this actor use the service again?"
+        }
+      }
+    },
+
+    "relationships": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/relationship" }
+    },
+
+    "provenance": {
+      "$ref": "#/$defs/provenance"
+    },
+
+    "governance": {
+      "type": "object",
+      "description": "Data classification and governance metadata. Supports GDPR Digital Omnibus and EU AI Act (Aug 2026) compliance. Distinct from provenance — governance covers classification and legal basis; provenance covers source and confidence.",
+      "properties": {
+        "dataClassification": {
+          "type": "string",
+          "enum": ["public", "internal", "confidential", "restricted"],
+          "description": "Data sensitivity classification. public: no restrictions. internal: organisation only. confidential: need-to-know. restricted: regulatory controls apply."
+        },
+        "containsPii": {
+          "type": "boolean",
+          "description": "Whether this artifact contains or is derived from personally identifiable information."
+        },
+        "piiCategories": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["name", "location", "age", "health", "financial", "employment", "ethnicity", "religion", "political", "sexual_orientation", "biometric", "other"]
+          },
+          "description": "Specific categories of PII present. Required when containsPii is true."
+        },
+        "anonymisationMethod": {
+          "type": "string",
+          "enum": ["fictional_composite", "k_anonymity", "aggregated", "differential_privacy", "none"],
+          "description": "How real data was anonymised. fictional_composite: persona is a fictional composite of multiple individuals. k_anonymity: data generalised so individuals cannot be distinguished. aggregated: only aggregate statistics used. differential_privacy: statistical noise added. none: no anonymisation applied."
+        },
+        "retentionPolicy": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Data retention policy reference or description (e.g., 'Retain for project duration + 12 months')."
+        },
+        "legalBasis": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Legal basis for data processing under GDPR or equivalent (e.g., 'Legitimate interest — service improvement')."
+        },
+        "dataOwner": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Person or team responsible for this data."
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "annotations": {
+      "$ref": "#/$defs/annotations"
+    },
+
+    "meta": {
+      "type": "object",
+      "properties": {
+        "created": { "type": "string", "format": "date" },
+        "updated": { "type": "string", "format": "date" },
+        "createdBy": { "type": "string", "maxLength": 100 },
+        "organisation": { "type": "string", "maxLength": 100 },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string", "maxLength": 50 }
+        }
+      },
+      "required": ["updated"]
+    }
+  },
+
+  "required": ["$type", "id", "version", "title", "references", "path", "nodes", "meta"],
+
+  "$defs": {
+    "relationship": {
+      "type": "object",
+      "properties": {
+        "target": { "type": "string" },
+        "type": {
+          "enum": ["derived_from_mission", "experienced_by", "compared_with", "preceded_by", "followed_by"]
+        },
+        "description": { "type": "string", "maxLength": 200 },
+        "strength": { "enum": ["strong", "moderate", "weak"] }
+      },
+      "required": ["target", "type"]
+    },
+
+    "provenance": {
+      "type": "object",
+      "description": "Evidence and confidence metadata. Can appear at artifact level or on any field via $provenance.",
+      "properties": {
+        "source": {
+          "enum": ["user_research", "analytics", "assumption", "ai_generated", "expert_review", "observation", "mixed"]
+        },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "evidence": { "type": "string", "maxLength": 500 },
+        "generatedBy": { "type": "string", "maxLength": 100 },
+        "researchSources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": { "type": "string", "maxLength": 200 },
+              "type": { "enum": ["interview", "survey", "analytics", "observation", "existing_research", "ai_synthesis"] },
+              "date": { "type": "string", "format": "date" },
+              "confidence": { "enum": ["high", "medium", "low"] }
+            },
+            "required": ["source", "type"]
+          }
+        },
+        "generationMethod": {
+          "type": "string",
+          "enum": ["human_created", "ai_assisted", "ai_generated", "mixed"],
+          "description": "How this artifact was created. Supports EU AI Act Article 50 transparency requirements."
+        },
+        "aiToolsUsed": {
+          "type": "array",
+          "description": "AI tools used in creating this artifact. Supports EU AI Act Article 50 transparency requirements.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tool": { "type": "string", "maxLength": 100, "description": "Name of the AI tool (e.g., 'Claude', 'GPT-4')" },
+              "version": { "type": "string", "maxLength": 50, "description": "Version or model identifier" },
+              "usage": { "type": "string", "maxLength": 200, "description": "What the tool was used for (e.g., 'initial draft generation', 'barrier analysis')" }
+            },
+            "required": ["tool"],
+            "additionalProperties": false
+          }
+        },
+        "humanReviewed": {
+          "type": "boolean",
+          "description": "Whether a human has reviewed the AI-generated content"
+        },
+        "humanReviewedDate": {
+          "type": "string",
+          "format": "date",
+          "description": "When the human review was completed"
+        },
+        "dataSourcesConsent": {
+          "type": "boolean",
+          "description": "Whether consent was obtained for data sources used in AI generation"
+        }
+      }
+    },
+
+    "annotations": {
+      "type": "object",
+      "description": "Machine-readable annotations following MCP conventions.",
+      "properties": {
+        "audience": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["design_team", "product_team", "engineering", "leadership", "external_partner", "ai_tool", "all"]
+          },
+          "description": "Who this artifact is intended for"
+        },
+        "usageHints": {
+          "type": "array",
+          "items": { "type": "string", "maxLength": 200 },
+          "description": "Guidance for consumers on how to use this artifact"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

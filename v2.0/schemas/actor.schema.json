@@ -1,0 +1,572 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.digitalservice.design/v2.0/actor",
+  "title": "Actor Schema",
+  "description": "A unified entity representing anyone (or anything) that participates in a service experience. Replaces the v1.1 Persona + Role + Pairing pipeline with a single, layered artifact. Actors can be humans, AI agents, teams, or organisations.",
+  "type": "object",
+  "properties": {
+    "$context": {
+      "type": "string",
+      "const": "https://schemas.digitalservice.design/v2.0",
+      "description": "JSON-LD-style context for graph interoperability"
+    },
+    "$type": {
+      "type": "string",
+      "const": "Actor",
+      "description": "Artifact type for graph node typing"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^actor-[a-z0-9_-]+$",
+      "maxLength": 80,
+      "description": "Unique identifier (e.g., actor-sarah-martinez)"
+    },
+    "sameAs": {
+      "type": "array",
+      "items": { "type": "string", "format": "uri" },
+      "description": "URIs identifying this same actor in other systems (e.g., CRM, CDP, analytics platform). Enables cross-system entity resolution."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^2\\.0\\.[0-9]+$"
+    },
+    "name": {
+      "type": "string",
+      "maxLength": 100,
+      "description": "Display name for the actor"
+    },
+    "summary": {
+      "type": "string",
+      "maxLength": 500,
+      "description": "One-paragraph description of who this actor is and what makes them distinctive"
+    },
+    "actorType": {
+      "enum": ["human", "ai_agent", "team", "organisation"],
+      "description": "What kind of entity this actor represents. Human-AI collaborations are modelled as two separate Actors with a collaborates_with relationship."
+    },
+    "quote": {
+      "type": "string",
+      "maxLength": 500,
+      "description": "A statement that captures this actor's perspective in their own voice"
+    },
+
+    "traits": {
+      "type": "object",
+      "description": "Enduring characteristics that persist regardless of situation. For humans: personality, needs, abilities. For AI agents: capabilities, constraints, personality.",
+      "properties": {
+        "demographics": {
+          "type": "object",
+          "description": "Factual attributes. For humans: age, location, etc. For AI agents: model, provider, deployment.",
+          "properties": {
+            "age": { "type": "integer", "minimum": 0, "maximum": 150 },
+            "location": { "type": "string", "maxLength": 100 },
+            "education": { "type": "string", "maxLength": 100 },
+            "background": { "type": "string", "maxLength": 300 }
+          },
+          "additionalProperties": true
+        },
+        "needs": {
+          "type": "array",
+          "description": "Fundamental needs that drive behaviour across all contexts",
+          "items": {
+            "type": "object",
+            "properties": {
+              "need": { "type": "string", "maxLength": 300 },
+              "type": {
+                "enum": ["recognition", "autonomy", "security", "belonging", "growth", "mastery", "efficiency", "other"]
+              },
+              "$provenance": { "$ref": "#/$defs/provenance" }
+            },
+            "required": ["need"]
+          },
+          "minItems": 1
+        },
+        "frustrations": {
+          "type": "array",
+          "description": "Enduring tendencies that create friction across contexts",
+          "items": {
+            "type": "object",
+            "properties": {
+              "frustration": { "type": "string", "maxLength": 300 },
+              "severity": { "type": "integer", "minimum": 1, "maximum": 5 },
+              "$provenance": { "$ref": "#/$defs/provenance" }
+            },
+            "required": ["frustration"]
+          },
+          "minItems": 1
+        },
+        "motivations": {
+          "type": "array",
+          "description": "What drives them as an entity",
+          "items": {
+            "type": "object",
+            "properties": {
+              "motivation": { "type": "string", "maxLength": 300 },
+              "type": { "enum": ["intrinsic", "extrinsic", "social", "achievement"] }
+            },
+            "required": ["motivation"]
+          },
+          "minItems": 1
+        },
+        "technology": {
+          "type": "object",
+          "description": "Relationship with technology",
+          "properties": {
+            "comfort": { "enum": ["beginner", "intermediate", "advanced", "expert"] },
+            "description": { "type": "string", "maxLength": 500 },
+            "preferredDevices": {
+              "type": "array",
+              "items": { "type": "string", "maxLength": 50 }
+            }
+          }
+        },
+        "communication": {
+          "type": "object",
+          "description": "How they prefer to interact",
+          "properties": {
+            "preferred": {
+              "type": "array",
+              "items": { "type": "string", "maxLength": 50 }
+            },
+            "acceptable": {
+              "type": "array",
+              "items": { "type": "string", "maxLength": 50 }
+            },
+            "avoided": {
+              "type": "array",
+              "items": { "type": "string", "maxLength": 50 }
+            },
+            "style": { "type": "string", "maxLength": 300 }
+          }
+        },
+        "learningStyle": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "How they prefer to acquire new knowledge"
+        },
+        "influences": {
+          "type": "array",
+          "description": "Who or what shapes their thinking and behaviour",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": { "type": "string", "maxLength": 100 },
+              "description": { "type": "string", "maxLength": 300 }
+            },
+            "required": ["source"]
+          }
+        },
+        "decisionMaking": {
+          "type": "object",
+          "properties": {
+            "style": { "type": "string", "maxLength": 200 },
+            "riskTolerance": {
+              "enum": ["risk_averse", "cautious", "moderate", "risk_tolerant", "risk_seeking"]
+            }
+          }
+        },
+        "accessibility": {
+          "type": "object",
+          "description": "How accessibility shapes this actor's experience — not just 'needs' but identity",
+          "properties": {
+            "dimensions": {
+              "type": "array",
+              "description": "Accessibility dimensions relevant to this actor",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "dimension": {
+                    "enum": ["visual", "auditory", "motor", "cognitive", "emotional", "situational"]
+                  },
+                  "description": { "type": "string", "maxLength": 300 },
+                  "impact": { "enum": ["none", "mild", "moderate", "significant", "primary"] }
+                },
+                "required": ["dimension"]
+              }
+            },
+            "assistiveTech": {
+              "type": "array",
+              "items": { "type": "string", "maxLength": 100 },
+              "description": "Assistive technologies used"
+            }
+          }
+        },
+        "behaviouralPatterns": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": { "type": "string", "maxLength": 300 },
+              "context": { "type": "string", "maxLength": 200 }
+            },
+            "required": ["pattern"]
+          }
+        }
+      },
+      "required": ["needs", "frustrations", "motivations"]
+    },
+
+    "contexts": {
+      "type": "array",
+      "description": "Situational layers — what this actor is trying to do in a specific situation. Each context is like a v1.1 Role Card embedded within the actor. Contexts can be shared across actors by reference.",
+      "items": {
+        "$ref": "#/$defs/context"
+      },
+      "minItems": 1
+    },
+
+    "emergence": {
+      "type": "array",
+      "description": "Insights that emerge from the collision of traits with specific contexts. Replaces v1.1 Pairing synthesis. Each entry references which context it relates to.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "contextRef": {
+            "type": "string",
+            "description": "ID of the context this emergence relates to"
+          },
+          "goalsAsExperienced": {
+            "type": "array",
+            "description": "How this actor frames success in this context",
+            "items": {
+              "type": "object",
+              "properties": {
+                "goal": { "type": "string", "maxLength": 500 },
+                "source": { "enum": ["traits", "context", "collision"] },
+                "priority": { "enum": ["primary", "secondary", "aspirational"] }
+              },
+              "required": ["goal"]
+            },
+            "minItems": 1
+          },
+          "painPoints": {
+            "type": "array",
+            "description": "Friction from the collision of enduring traits with situational demands",
+            "items": {
+              "type": "object",
+              "properties": {
+                "painPoint": { "type": "string", "maxLength": 500 },
+                "severity": { "type": "integer", "minimum": 1, "maximum": 5 },
+                "emergesFrom": { "type": "string", "maxLength": 300 }
+              },
+              "required": ["painPoint"]
+            },
+            "minItems": 1
+          },
+          "opportunities": {
+            "type": "array",
+            "items": { "type": "string", "maxLength": 300 },
+            "description": "Where this actor's strengths create advantage in this context"
+          },
+          "emotionalContext": {
+            "type": "string",
+            "maxLength": 300,
+            "description": "Overall emotional tone of this actor's experience in this context"
+          },
+          "useCases": {
+            "type": "array",
+            "description": "Common interaction scenarios in this context",
+            "items": {
+              "type": "object",
+              "properties": {
+                "scenario": { "type": "string", "maxLength": 200 },
+                "trigger": { "type": "string", "maxLength": 200 },
+                "outcome": { "type": "string", "maxLength": 200 }
+              },
+              "required": ["scenario"]
+            }
+          },
+          "successMetrics": {
+            "type": "array",
+            "description": "How success is measured in this context",
+            "items": { "type": "string", "maxLength": 200 }
+          }
+        },
+        "required": ["contextRef", "goalsAsExperienced", "painPoints"]
+      }
+    },
+
+    "relationships": {
+      "type": "array",
+      "description": "Typed edges to other artifacts in the graph",
+      "items": { "$ref": "#/$defs/relationship" }
+    },
+
+    "provenance": {
+      "$ref": "#/$defs/provenance",
+      "description": "Artifact-level provenance (field-level is optional via $provenance on any field)"
+    },
+
+    "governance": {
+      "type": "object",
+      "description": "Data classification and governance metadata. Supports GDPR Digital Omnibus and EU AI Act (Aug 2026) compliance. Distinct from provenance — governance covers classification and legal basis; provenance covers source and confidence.",
+      "properties": {
+        "dataClassification": {
+          "type": "string",
+          "enum": ["public", "internal", "confidential", "restricted"],
+          "description": "Data sensitivity classification. public: no restrictions. internal: organisation only. confidential: need-to-know. restricted: regulatory controls apply."
+        },
+        "containsPii": {
+          "type": "boolean",
+          "description": "Whether this artifact contains or is derived from personally identifiable information."
+        },
+        "piiCategories": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["name", "location", "age", "health", "financial", "employment", "ethnicity", "religion", "political", "sexual_orientation", "biometric", "other"]
+          },
+          "description": "Specific categories of PII present. Required when containsPii is true."
+        },
+        "anonymisationMethod": {
+          "type": "string",
+          "enum": ["fictional_composite", "k_anonymity", "aggregated", "differential_privacy", "none"],
+          "description": "How real data was anonymised. fictional_composite: persona is a fictional composite of multiple individuals. k_anonymity: data generalised so individuals cannot be distinguished. aggregated: only aggregate statistics used. differential_privacy: statistical noise added. none: no anonymisation applied."
+        },
+        "retentionPolicy": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Data retention policy reference or description (e.g., 'Retain for project duration + 12 months')."
+        },
+        "legalBasis": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Legal basis for data processing under GDPR or equivalent (e.g., 'Legitimate interest — service improvement')."
+        },
+        "dataOwner": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Person or team responsible for this data."
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "annotations": {
+      "$ref": "#/$defs/annotations",
+      "description": "Machine-readable annotations following MCP conventions. Makes artifacts self-describing for AI tools and orchestration platforms."
+    },
+
+    "meta": {
+      "type": "object",
+      "description": "Administrative metadata",
+      "properties": {
+        "created": { "type": "string", "format": "date" },
+        "updated": { "type": "string", "format": "date" },
+        "createdBy": { "type": "string", "maxLength": 100 },
+        "organisation": { "type": "string", "maxLength": 100 },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string", "maxLength": 50 }
+        }
+      },
+      "required": ["updated"]
+    }
+  },
+
+  "required": ["$type", "id", "version", "name", "actorType", "traits", "contexts", "meta"],
+
+  "$defs": {
+    "context": {
+      "type": "object",
+      "description": "A situational layer — what this actor is trying to achieve in a specific situation. Equivalent to a v1.1 Role Card, but embedded within the actor.",
+      "properties": {
+        "contextId": {
+          "type": "string",
+          "pattern": "^ctx-[a-z0-9_-]+$",
+          "maxLength": 80,
+          "description": "Unique context identifier (e.g., ctx-working-mom-consumer)"
+        },
+        "title": { "type": "string", "maxLength": 100 },
+        "description": { "type": "string", "maxLength": 500 },
+        "contextType": {
+          "type": "string",
+          "maxLength": 50,
+          "description": "Free-text category (e.g., Consumer, Professional, Caregiver)"
+        },
+        "needs": {
+          "type": "array",
+          "description": "Context-specific needs (what the situation demands)",
+          "items": {
+            "type": "object",
+            "properties": {
+              "need": { "type": "string", "maxLength": 500 },
+              "priority": { "enum": ["primary", "secondary", "aspirational"] },
+              "timeframe": { "enum": ["immediate", "short_term", "long_term"] }
+            },
+            "required": ["need"]
+          },
+          "minItems": 1
+        },
+        "frustrations": {
+          "type": "array",
+          "description": "Context-specific friction",
+          "items": {
+            "type": "object",
+            "properties": {
+              "frustration": { "type": "string", "maxLength": 500 },
+              "severity": { "type": "integer", "minimum": 1, "maximum": 5 },
+              "frequency": { "enum": ["daily", "weekly", "monthly", "occasional", "rare"] }
+            },
+            "required": ["frustration"]
+          },
+          "minItems": 1
+        },
+        "channels": {
+          "type": "array",
+          "description": "How this actor prefers to interact in this context",
+          "items": {
+            "type": "object",
+            "properties": {
+              "channel": { "type": "string", "maxLength": 50 },
+              "category": { "enum": ["digital", "telecom", "physical"] },
+              "serviceModel": { "enum": ["self_service", "managed", "both"] },
+              "preference": { "enum": ["preferred", "acceptable", "avoided"] },
+              "usageContext": { "type": "string", "maxLength": 200 }
+            },
+            "required": ["channel", "category", "serviceModel"]
+          }
+        },
+        "details": {
+          "type": "object",
+          "description": "Context-specific details (replaces v1.1 consumerContext/professionalContext). Free-form to support any context type.",
+          "additionalProperties": true
+        },
+        "momentsThatMatter": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "moment": { "type": "string", "maxLength": 300 },
+              "emotionalIntensity": { "type": "integer", "minimum": -2, "maximum": 2 },
+              "importance": { "enum": ["critical", "high", "medium", "low"] }
+            },
+            "required": ["moment"]
+          }
+        }
+      },
+      "required": ["contextId", "title", "needs", "frustrations"]
+    },
+
+    "relationship": {
+      "type": "object",
+      "description": "A typed edge to another artifact in the graph",
+      "properties": {
+        "target": {
+          "type": "string",
+          "description": "ID of the target artifact (e.g., actor-customer-service-agent, mission-clothes-shopping)"
+        },
+        "type": {
+          "enum": [
+            "influences", "influenced_by",
+            "enables", "enabled_by",
+            "blocks", "blocked_by",
+            "hands_off_to", "receives_from",
+            "escalates_to", "escalated_from",
+            "collaborates_with",
+            "serves", "served_by",
+            "participates_in",
+            "variant_of"
+          ],
+          "description": "Relationship type"
+        },
+        "description": { "type": "string", "maxLength": 200 },
+        "strength": { "enum": ["strong", "moderate", "weak"] }
+      },
+      "required": ["target", "type"]
+    },
+
+    "provenance": {
+      "type": "object",
+      "description": "Evidence and confidence metadata. Can appear at artifact level or on any field via $provenance.",
+      "properties": {
+        "source": {
+          "enum": ["user_research", "analytics", "assumption", "ai_generated", "expert_review", "observation", "mixed"],
+          "description": "Primary source of this data"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Confidence score from 0 (pure guess) to 1 (verified fact)"
+        },
+        "evidence": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Description of supporting evidence"
+        },
+        "generatedBy": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "If AI-generated, which model/tool produced this"
+        },
+        "researchSources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": { "type": "string", "maxLength": 200 },
+              "type": { "enum": ["interview", "survey", "analytics", "observation", "existing_research", "ai_synthesis"] },
+              "date": { "type": "string", "format": "date" },
+              "confidence": { "enum": ["high", "medium", "low"] }
+            },
+            "required": ["source", "type"]
+          }
+        },
+        "generationMethod": {
+          "type": "string",
+          "enum": ["human_created", "ai_assisted", "ai_generated", "mixed"],
+          "description": "How this artifact was created. Supports EU AI Act Article 50 transparency requirements. human_created: entirely by humans. ai_assisted: human-led with AI support. ai_generated: primarily AI-generated. mixed: multiple methods across sections."
+        },
+        "aiToolsUsed": {
+          "type": "array",
+          "description": "AI tools used in creating this artifact. Supports EU AI Act Article 50 transparency requirements.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tool": { "type": "string", "maxLength": 100, "description": "Name of the AI tool (e.g., 'Claude', 'GPT-4')" },
+              "version": { "type": "string", "maxLength": 50, "description": "Version or model identifier" },
+              "usage": { "type": "string", "maxLength": 200, "description": "What the tool was used for (e.g., 'initial draft generation', 'barrier analysis')" }
+            },
+            "required": ["tool"],
+            "additionalProperties": false
+          }
+        },
+        "humanReviewed": {
+          "type": "boolean",
+          "description": "Whether a human has reviewed the AI-generated content"
+        },
+        "humanReviewedDate": {
+          "type": "string",
+          "format": "date",
+          "description": "When the human review was completed"
+        },
+        "dataSourcesConsent": {
+          "type": "boolean",
+          "description": "Whether consent was obtained for data sources used in AI generation"
+        }
+      }
+    },
+
+    "annotations": {
+      "type": "object",
+      "description": "Machine-readable annotations following MCP conventions.",
+      "properties": {
+        "audience": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["design_team", "product_team", "engineering", "leadership", "external_partner", "ai_tool", "all"]
+          },
+          "description": "Who this artifact is intended for"
+        },
+        "usageHints": {
+          "type": "array",
+          "items": { "type": "string", "maxLength": 200 },
+          "description": "Guidance for consumers on how to use this artifact"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

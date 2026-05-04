@@ -1,0 +1,582 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.digitalservice.design/v2.0/mission",
+  "title": "Mission Schema",
+  "description": "A goal-oriented, graph-structured experience. Replaces the v1.1 linear phase-step journey with a directed graph of nodes and edges that can represent branching, looping, and adaptive experiences. A linear journey is simply one path through the graph.",
+  "type": "object",
+  "properties": {
+    "$context": {
+      "type": "string",
+      "const": "https://schemas.digitalservice.design/v2.0"
+    },
+    "$type": {
+      "type": "string",
+      "const": "Mission"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^mission-[a-z0-9_-]+$",
+      "maxLength": 80
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^2\\.0\\.[0-9]+$"
+    },
+    "title": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "goal": {
+      "type": "string",
+      "maxLength": 500,
+      "description": "What success looks like for this mission"
+    },
+    "summary": {
+      "type": "string",
+      "maxLength": 1000
+    },
+
+    "scope": {
+      "type": "object",
+      "description": "What this mission covers",
+      "properties": {
+        "trigger": {
+          "type": "string",
+          "maxLength": 300,
+          "description": "What initiates this mission"
+        },
+        "completion": {
+          "type": "string",
+          "maxLength": 300,
+          "description": "What marks this mission as complete"
+        },
+        "timeframe": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "asIs": {
+          "type": "boolean",
+          "default": true,
+          "description": "True = current state, false = future state"
+        },
+        "successCriteria": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "metric": { "type": "string", "maxLength": 200 },
+              "target": { "type": "string", "maxLength": 100 }
+            },
+            "required": ["metric"]
+          }
+        }
+      }
+    },
+
+    "actors": {
+      "type": "array",
+      "description": "Who participates in this mission. References Actor artifacts by ID.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "actorRef": {
+            "type": "string",
+            "description": "Reference to an Actor ID"
+          },
+          "contextRef": {
+            "type": "string",
+            "description": "Which of the actor's contexts applies to this mission"
+          },
+          "role": {
+            "type": "string",
+            "maxLength": 100,
+            "description": "What role this actor plays in the mission (e.g., primary, support, backstage)"
+          }
+        },
+        "required": ["actorRef"]
+      },
+      "minItems": 1
+    },
+
+    "lanes": {
+      "type": "array",
+      "description": "Declares which data layers this mission tracks. Core typed lanes (channels, barriers, accessibility) have schema-validated structure. Extended lanes (frontstage, backstage, data, teams, etc.) use simple types (text, list, metric) and are validated by type rather than by name. Renderers read this declaration to build the visual layout. Nodes populate lanes by ID in their laneContent.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$",
+            "description": "Lane identifier used as the key in node laneContent"
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 100,
+            "description": "Human-readable label for rendering"
+          },
+          "type": {
+            "enum": ["text", "list", "metric", "channel", "barrier", "accessibility", "emotion"],
+            "description": "Lane data type. Core types (channel, barrier, accessibility, emotion) have structured schemas. Simple types (text, list, metric) are validated by shape only."
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 300,
+            "description": "What this lane captures"
+          },
+          "scope": {
+            "enum": ["service", "persona", "both"],
+            "description": "Whether this lane belongs on Mission nodes (service), Experience nodes (persona), or both. Helps renderers and builders know where to populate it."
+          }
+        },
+        "required": ["id", "label", "type"]
+      }
+    },
+
+    "nodes": {
+      "type": "array",
+      "description": "The service graph. Each node represents a touchpoint, decision, or event in the service. Nodes carry service-level data (channels, structural barriers, accessibility) but NOT persona-specific content (thoughts, emotions). Persona-specific content belongs in Experience artifacts.",
+      "items": { "$ref": "#/$defs/node" },
+      "minItems": 1
+    },
+
+    "edges": {
+      "type": "array",
+      "description": "Connections between nodes. Edges can be unconditional (default flow) or conditional (branching).",
+      "items": { "$ref": "#/$defs/edge" },
+      "minItems": 1
+    },
+
+    "paths": {
+      "type": "array",
+      "description": "Named routes through the graph. Paths describe possible service routes, not persona-specific experiences. The 'designed' path is the intended happy path. Persona-specific paths belong in Experience artifacts.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "pathId": {
+            "type": "string",
+            "pattern": "^path-[a-z0-9_-]+$"
+          },
+          "name": { "type": "string", "maxLength": 100 },
+          "description": { "type": "string", "maxLength": 300 },
+          "pathType": {
+            "enum": ["designed", "observed", "simulated", "failure", "edge_case"],
+            "description": "Whether this path was designed, observed in production, or AI-simulated"
+          },
+          "nodeSequence": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Ordered list of node IDs forming this path"
+          },
+          "frequency": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "What proportion of actors take this path (0-1)"
+          },
+          "averageDuration": {
+            "type": "string",
+            "maxLength": 50,
+            "description": "Typical time to traverse this path"
+          }
+        },
+        "required": ["pathId", "name", "nodeSequence"]
+      }
+    },
+
+    "phases": {
+      "type": "array",
+      "description": "Optional grouping of nodes into named phases for visual organisation. Phases are a rendering concern, not a structural one — they don't constrain the graph.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "phaseId": { "type": "string", "pattern": "^phase-[a-z0-9_-]+$" },
+          "name": { "type": "string", "maxLength": 100 },
+          "goal": { "type": "string", "maxLength": 300 },
+          "nodeRefs": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Node IDs that belong to this phase"
+          }
+        },
+        "required": ["phaseId", "name", "nodeRefs"]
+      }
+    },
+
+    "relationships": {
+      "type": "array",
+      "description": "Typed edges to other artifacts in the graph",
+      "items": { "$ref": "#/$defs/relationship" }
+    },
+
+    "provenance": {
+      "$ref": "#/$defs/provenance"
+    },
+
+    "governance": {
+      "type": "object",
+      "description": "Data classification and governance metadata. Supports GDPR Digital Omnibus and EU AI Act (Aug 2026) compliance. Distinct from provenance — governance covers classification and legal basis; provenance covers source and confidence.",
+      "properties": {
+        "dataClassification": {
+          "type": "string",
+          "enum": ["public", "internal", "confidential", "restricted"],
+          "description": "Data sensitivity classification. public: no restrictions. internal: organisation only. confidential: need-to-know. restricted: regulatory controls apply."
+        },
+        "containsPii": {
+          "type": "boolean",
+          "description": "Whether this artifact contains or is derived from personally identifiable information."
+        },
+        "piiCategories": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["name", "location", "age", "health", "financial", "employment", "ethnicity", "religion", "political", "sexual_orientation", "biometric", "other"]
+          },
+          "description": "Specific categories of PII present. Required when containsPii is true."
+        },
+        "anonymisationMethod": {
+          "type": "string",
+          "enum": ["fictional_composite", "k_anonymity", "aggregated", "differential_privacy", "none"],
+          "description": "How real data was anonymised. fictional_composite: persona is a fictional composite of multiple individuals. k_anonymity: data generalised so individuals cannot be distinguished. aggregated: only aggregate statistics used. differential_privacy: statistical noise added. none: no anonymisation applied."
+        },
+        "retentionPolicy": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Data retention policy reference or description (e.g., 'Retain for project duration + 12 months')."
+        },
+        "legalBasis": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Legal basis for data processing under GDPR or equivalent (e.g., 'Legitimate interest — service improvement')."
+        },
+        "dataOwner": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Person or team responsible for this data."
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "annotations": {
+      "$ref": "#/$defs/annotations"
+    },
+
+    "meta": {
+      "type": "object",
+      "properties": {
+        "created": { "type": "string", "format": "date" },
+        "updated": { "type": "string", "format": "date" },
+        "createdBy": { "type": "string", "maxLength": 100 },
+        "organisation": { "type": "string", "maxLength": 100 },
+        "tags": {
+          "type": "array",
+          "items": { "type": "string", "maxLength": 50 }
+        }
+      },
+      "required": ["updated"]
+    }
+  },
+
+  "required": ["$type", "id", "version", "title", "goal", "actors", "nodes", "edges", "meta"],
+
+  "$defs": {
+    "node": {
+      "type": "object",
+      "description": "A single moment in the experience graph",
+      "properties": {
+        "nodeId": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]*$",
+          "maxLength": 60
+        },
+        "name": { "type": "string", "maxLength": 100 },
+        "nodeType": {
+          "enum": ["touchpoint", "decision", "handoff", "wait", "signal", "branch", "loop_start", "loop_end", "start", "end"],
+          "description": "What kind of moment this represents"
+        },
+        "actorRef": {
+          "type": "string",
+          "description": "Which actor is primary at this node (for multi-actor missions)"
+        },
+        "duration": {
+          "type": "string",
+          "maxLength": 50,
+          "description": "Human-readable duration (e.g., '5 seconds', '2-4 days')"
+        },
+        "durationMs": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Machine-readable duration in milliseconds"
+        },
+        "laneContent": {
+          "type": "object",
+          "description": "Service-level data for this node. Contains core typed lanes (channels, barriers, accessibility) with schema-validated structure, plus any extended lanes declared in the mission's lanes array. Extended lanes use their lane ID as the property key and are validated by their declared type (text=string, list=array of strings, metric=array of {metric,target} objects). Persona-specific content (thoughts, emotions) belongs in Experience artifacts.",
+          "properties": {
+            "description": {
+              "type": "string",
+              "maxLength": 500,
+              "description": "What happens at this touchpoint from the service perspective"
+            },
+            "channels": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "channel": { "type": "string", "maxLength": 50 },
+                  "category": { "enum": ["digital", "telecom", "physical"] },
+                  "serviceModel": { "enum": ["self_service", "managed", "both"] },
+                  "interaction": { "enum": ["human", "automated", "ai_assisted"] },
+                  "name": { "type": "string", "maxLength": 100 },
+                  "usageContext": { "type": "string", "maxLength": 200 },
+                  "ownership": { "enum": ["own", "third_party", "partner"] }
+                },
+                "required": ["channel", "serviceModel"]
+              }
+            },
+            "barriers": {
+              "type": "array",
+              "description": "Structural barriers inherent to this touchpoint (service-level, not persona-specific). Persona-specific barriers with emergesFrom belong in Experience artifacts.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "enum": ["process", "technology", "knowledge", "resource", "policy", "cultural", "vision", "communications", "governance", "accessibility"]
+                  },
+                  "description": { "type": "string", "maxLength": 500 },
+                  "severity": { "type": "integer", "minimum": 1, "maximum": 5 },
+                  "wcagOutcomes": {
+                    "type": "array",
+                    "items": { "type": "string", "maxLength": 50 },
+                    "description": "WCAG 3.0 outcome IDs affected by this barrier"
+                  }
+                },
+                "required": ["type", "description"]
+              }
+            },
+            "designOpportunities": {
+              "type": "array",
+              "items": { "type": "string", "maxLength": 300 },
+              "description": "Service improvement opportunities at this touchpoint"
+            },
+            "accessibilityProfile": {
+              "type": "object",
+              "description": "How accessible this touchpoint is across dimensions. Ratings from 1 (poor) to 5 (excellent) per dimension. The cognitive dimension is expanded into a structured object aligned with WCAG 3.0 cognitive accessibility outcomes.",
+              "properties": {
+                "visual": { "type": "integer", "minimum": 1, "maximum": 5 },
+                "auditory": { "type": "integer", "minimum": 1, "maximum": 5 },
+                "motor": { "type": "integer", "minimum": 1, "maximum": 5 },
+                "cognitive": {
+                  "type": "object",
+                  "description": "Cognitive accessibility assessment for this touchpoint, informed by WCAG 3.0 cognitive accessibility outcomes",
+                  "properties": {
+                    "overallScore": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 5,
+                      "description": "Overall cognitive accessibility rating from 1 (poor) to 5 (excellent). Retained for backward compatibility."
+                    },
+                    "decisionComplexity": {
+                      "type": "string",
+                      "enum": ["none", "simple", "moderate", "complex"],
+                      "description": "How many decisions are required at this touchpoint and how complex they are"
+                    },
+                    "informationDensity": {
+                      "type": "string",
+                      "enum": ["minimal", "low", "moderate", "high", "overwhelming"],
+                      "description": "Volume and complexity of information presented to the user"
+                    },
+                    "timePressure": {
+                      "type": "string",
+                      "enum": ["none", "low", "moderate", "high", "critical"],
+                      "description": "Degree of time pressure or urgency imposed on the user at this touchpoint"
+                    },
+                    "priorKnowledgeRequired": {
+                      "type": "string",
+                      "maxLength": 200,
+                      "description": "Domain or contextual knowledge the service assumes users already have at this touchpoint"
+                    },
+                    "supportAvailable": {
+                      "type": "string",
+                      "maxLength": 200,
+                      "description": "Help, guidance, or scaffolding available to reduce cognitive load at this touchpoint"
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                "emotional": { "type": "integer", "minimum": 1, "maximum": 5 }
+              }
+            }
+          },
+          "additionalProperties": true
+        },
+        "significance": {
+          "type": "object",
+          "description": "Service-level significance of this node — why it matters from a design perspective (persona-specific moments that matter belong in Experience artifacts)",
+          "properties": {
+            "description": { "type": "string", "maxLength": 300 },
+            "importance": { "enum": ["critical", "high", "medium", "low"] }
+          }
+        },
+        "sla": {
+          "type": "object",
+          "description": "Service level agreement for this node — target duration and escalation policy on breach",
+          "properties": {
+            "targetDuration": {
+              "type": "string",
+              "maxLength": 50,
+              "description": "Target duration for this node (e.g., '< 30 seconds', '< 2 business days')"
+            },
+            "targetDurationMs": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Target duration in milliseconds (machine-readable)"
+            },
+            "escalation": {
+              "type": "string",
+              "maxLength": 200,
+              "description": "What happens when the SLA is breached (e.g., 'Alert operations team', 'Offer compensation voucher')"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": ["nodeId", "name", "nodeType"]
+    },
+
+    "edge": {
+      "type": "object",
+      "description": "A connection between two nodes",
+      "properties": {
+        "from": {
+          "type": "string",
+          "description": "Source node ID"
+        },
+        "to": {
+          "type": "string",
+          "description": "Target node ID"
+        },
+        "edgeType": {
+          "enum": ["default", "conditional", "error", "timeout", "escalation", "loop_back"],
+          "description": "What kind of transition this is"
+        },
+        "condition": {
+          "type": "object",
+          "description": "When this edge is taken (for conditional edges)",
+          "properties": {
+            "description": {
+              "type": "string",
+              "maxLength": 300,
+              "description": "Human-readable condition"
+            },
+            "expression": {
+              "type": "string",
+              "maxLength": 200,
+              "description": "Machine-readable condition (optional, for orchestration integration)"
+            }
+          }
+        },
+        "label": {
+          "type": "string",
+          "maxLength": 100,
+          "description": "Short label shown on the edge in visualisations"
+        }
+      },
+      "required": ["from", "to"]
+    },
+
+    "relationship": {
+      "type": "object",
+      "properties": {
+        "target": { "type": "string" },
+        "type": {
+          "enum": [
+            "involves_actor", "preceded_by", "followed_by",
+            "alternative_to", "sub_mission_of", "parent_of",
+            "pattern_instance", "measured_by"
+          ]
+        },
+        "description": { "type": "string", "maxLength": 200 },
+        "strength": { "enum": ["strong", "moderate", "weak"] }
+      },
+      "required": ["target", "type"]
+    },
+
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "enum": ["user_research", "analytics", "assumption", "ai_generated", "expert_review", "observation", "mixed"]
+        },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "evidence": { "type": "string", "maxLength": 500 },
+        "generatedBy": { "type": "string", "maxLength": 100 },
+        "researchSources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": { "type": "string", "maxLength": 200 },
+              "type": { "enum": ["interview", "survey", "analytics", "observation", "existing_research", "ai_synthesis"] },
+              "date": { "type": "string", "format": "date" },
+              "confidence": { "enum": ["high", "medium", "low"] }
+            },
+            "required": ["source", "type"]
+          }
+        },
+        "generationMethod": {
+          "type": "string",
+          "enum": ["human_created", "ai_assisted", "ai_generated", "mixed"],
+          "description": "How this artifact was created. Supports EU AI Act Article 50 transparency requirements. human_created: entirely by humans. ai_assisted: human-led with AI support. ai_generated: primarily AI-generated. mixed: multiple methods across sections."
+        },
+        "aiToolsUsed": {
+          "type": "array",
+          "description": "AI tools used in creating this artifact. Supports EU AI Act Article 50 transparency requirements.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tool": { "type": "string", "maxLength": 100, "description": "Name of the AI tool (e.g., 'Claude', 'GPT-4')" },
+              "version": { "type": "string", "maxLength": 50, "description": "Version or model identifier" },
+              "usage": { "type": "string", "maxLength": 200, "description": "What the tool was used for (e.g., 'initial draft generation', 'barrier analysis')" }
+            },
+            "required": ["tool"],
+            "additionalProperties": false
+          }
+        },
+        "humanReviewed": {
+          "type": "boolean",
+          "description": "Whether a human has reviewed the AI-generated content"
+        },
+        "humanReviewedDate": {
+          "type": "string",
+          "format": "date",
+          "description": "When the human review was completed"
+        },
+        "dataSourcesConsent": {
+          "type": "boolean",
+          "description": "Whether consent was obtained for data sources used in AI generation"
+        }
+      }
+    },
+
+    "annotations": {
+      "type": "object",
+      "description": "Machine-readable annotations following MCP conventions. Makes artifacts self-describing for AI tools and orchestration platforms. Note: related artifacts are covered by relationships[] and tags are covered by meta.tags.",
+      "properties": {
+        "audience": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["design_team", "product_team", "engineering", "leadership", "external_partner", "ai_tool", "all"]
+          },
+          "description": "Who this artifact is intended for"
+        },
+        "usageHints": {
+          "type": "array",
+          "items": { "type": "string", "maxLength": 200 },
+          "description": "Guidance for consumers on how to use this artifact (e.g., 'Use as input for journey mapping workshops', 'Feed to AI orchestration pipeline')"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

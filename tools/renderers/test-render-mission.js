@@ -94,5 +94,28 @@ section('Stress: retail mission (25 nodes)');
   assert((html.match(/class="mv-edge /g) || []).length === 25, '25 edges rendered');
 }
 
+// ---------------------------------------------------------------------------
+section('Warnings strip for data issues');
+// ---------------------------------------------------------------------------
+{
+  const synth = {
+    title: 'Synthetic',
+    nodes: [
+      { nodeId: 'a', name: 'A', nodeType: 'start' },
+      { nodeId: 'b', name: 'B', nodeType: 'end' }
+    ],
+    edges: [
+      { from: 'a', to: 'b', edgeType: 'default' },
+      { from: 'a', to: 'ghost', edgeType: 'default' }
+    ],
+    phases: []
+  };
+  const { html, warnings } = renderMission(synth, {});
+  assert(warnings.length === 1, 'dangling edge produces a warning', String(warnings.length));
+  assert(html.includes('class="mv-warnings"'), 'warnings strip rendered');
+  assert(html.includes('ghost'), 'warning names the unknown node');
+  assert((html.match(/class="mv-edge /g) || []).length === 1, 'only valid edge drawn');
+}
+
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed ? 1 : 0);

@@ -219,7 +219,7 @@ const CSS = `
 .mv-caption { font-size:10.5px; fill:var(--c-text); font-weight:600; }
 .mv-node.selected .mv-shape { stroke:var(--c-text); stroke-width:2.5; }
 .mv-node:focus { outline:none; }
-.mv-app[data-mode="explore"] .mv-node:focus .mv-shape { stroke:var(--c-text); stroke-width:2; }
+.mv-node:focus-visible .mv-shape { stroke:var(--c-text); stroke-width:2; }
 
 .mv-heat { display:none; }
 .mv-app[data-mode="explore"].heat-on .mv-node[data-heat="low"] .mv-heat { display:block; fill:var(--c-heat-low); opacity:0.28; }

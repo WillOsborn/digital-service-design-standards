@@ -6,7 +6,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { computeLayout, BAND_TOP } = require('./mission-layout');
+const { computeLayout } = require('./mission-layout');
 
 // ── helpers ────────────────────────────────────────────────────────────────
 
@@ -51,6 +51,9 @@ function computeHeat(node, laneDefs) {
 // half-width / half-height used as edge anchor offsets
 const HALF_W = { start: 26, end: 28, signal: 26, decision: 79, touchpoint: 79, handoff: 79, wait: 79 };
 const HALF_H = { start: 26, end: 28, signal: 26, decision: 34, touchpoint: 28, handoff: 28, wait: 28 };
+// Widest half-width used by any node type — the offset a route must clear
+// to escape a column's node territory regardless of which type occupies it.
+const MAX_HALF_W = Math.max(...Object.values(HALF_W));
 
 function nodeSvg(node, pos, heat) {
   const t = node.nodeType || 'touchpoint';
@@ -134,16 +137,46 @@ function edgeSvg(e, layout, typeOf, idx) {
     lx = s.x;
     ly = t.y - tv - 14;
   } else if (e.edgeType === 'loop_back') {
-    // Cross-column loop-back: arc consistently just above the row grid
-    // (not merely "44px above the higher endpoint"). A peak keyed only to
-    // the two endpoints can land inside a shallower row's vertical extent
-    // in an intervening column — including a start/end/signal node's
-    // caption, which sits below the circle rather than inside it — even
-    // though neither endpoint is itself in that row.
-    const sy = s.y - sv - 6;
-    const ty = t.y - tv - 6;
-    const peak = BAND_TOP + 20;
-    d = `M ${s.x} ${sy} C ${s.x} ${peak}, ${t.x} ${peak}, ${t.x} ${ty}`;
+    // Cross-column loop-back: occupancy-aware routed elbow. Two failure
+    // modes rule out both "climb straight up from the node" and "a single
+    // peak-keyed Bezier": (1) any node sharing the SOURCE's or TARGET's own
+    // column, sitting between that endpoint and the top of the diagram, sits
+    // on the same column centre-line — a vertical climb up that centre-line
+    // runs straight through it (a variant of the same-column collapse the
+    // side-bow above already had to solve for the source/target node
+    // itself, just one column over); (2) a curve shaped only by a peak
+    // height still descends toward the endpoints while horizontally over an
+    // INTERVENING column, so a deep endpoint's curve dips into that
+    // column's row-0/1 territory (the defect this replaces). Fix: exit the
+    // node from its side into the inter-column gutter — offset past the
+    // widest node half-width used ANYWHERE in the layout (not just this
+    // node's own type), so the climb clears every node sharing that column
+    // regardless of type or row — climb straight up within that gutter,
+    // cruise flat at a height that clears the topmost node top edge across
+    // the WHOLE spanned column range (not just the two endpoints), then
+    // mirror the same shape on descent into the target.
+    const colLo = Math.min(s.col, t.col);
+    const colHi = Math.max(s.col, t.col);
+    let topEdge = Infinity;
+    Object.keys(layout.nodePos).forEach((id) => {
+      const p = layout.nodePos[id];
+      if (p.col < colLo || p.col > colHi) return;
+      topEdge = Math.min(topEdge, p.y - (HALF_H[typeOf[id]] || 28));
+    });
+    if (!Number.isFinite(topEdge)) topEdge = Math.min(s.y, t.y);
+    const CLEARANCE = 14;
+    const HEADER_FLOOR = 54; // never route through the phase-band header text
+    const MIN_CLIMB = 6; // guarantee a real (non-degenerate) climb/descent
+    let peak = Math.max(topEdge - CLEARANCE, HEADER_FLOOR);
+    peak = Math.min(peak, s.y - MIN_CLIMB, t.y - MIN_CLIMB);
+    const dir = t.x >= s.x ? 1 : -1;
+    const GUTTER = MAX_HALF_W + 6; // clears every node sharing a column, any type
+    const sx = s.x + dir * GUTTER;
+    const tx = t.x - dir * GUTTER;
+    const r = Math.max(0, Math.min(14, s.y - peak, t.y - peak)); // elbow corner radius
+    d = `M ${s.x + dir * (sh + 6)} ${s.y} L ${sx} ${s.y} L ${sx} ${peak + r} ` +
+      `Q ${sx} ${peak} ${sx + r * dir} ${peak} L ${tx - r * dir} ${peak} ` +
+      `Q ${tx} ${peak} ${tx} ${peak + r} L ${tx} ${t.y} L ${t.x - dir * (th + 6)} ${t.y}`;
     // Label: the arc's own midpoint x, centred between two different
     // columns, is not collision-safe for typical label widths (same reason
     // as the cross-column case below) — it can land under whichever

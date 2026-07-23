@@ -112,13 +112,46 @@ function edgeSvg(e, layout, typeOf, idx) {
   let lx;
   let ly;
 
-  if (e.edgeType === 'loop_back') {
+  if (e.edgeType === 'loop_back' && t.col === s.col) {
+    // Same-column loop-back: a straight vertical line here would run behind
+    // any intervening nodes in the column and read as an ordinary forward
+    // edge. Bow out to the side instead, clearing the widest node half-width
+    // (79px) so the arc is visibly distinct from the column's straight edges.
+    // A loop-back's source is usually a decision node that also has a
+    // forward conditional edge into the next column; that edge's curve
+    // settles near the gutter's midline (~half the gutter width out from
+    // this column's own node edge). Push the bow past that midline, close
+    // to (but clear of) the next column's node edge, so the two curves
+    // read as separate lines rather than one doubled/braided track.
+    const sx = s.x + sh + 6;
+    const tx = t.x + th + 6;
+    const bowX = s.x + 79 + 40;
+    d = `M ${sx} ${s.y} C ${bowX} ${s.y}, ${bowX} ${t.y}, ${tx} ${t.y}`;
+    // Label: the side-bow's own lane is too narrow (~40px) for typical label
+    // text without overlapping a neighbouring column's nodes. Place the label
+    // centred on the column instead, in the open gap just above the target
+    // (row gap, or the header margin when the target is the column's top row).
+    lx = s.x;
+    ly = t.y - tv - 14;
+  } else if (e.edgeType === 'loop_back') {
+    // Cross-column loop-back: arc consistently just above the row grid
+    // (not merely "44px above the higher endpoint"). A peak keyed only to
+    // the two endpoints can land inside a shallower row's vertical extent
+    // in an intervening column — including a start/end/signal node's
+    // caption, which sits below the circle rather than inside it — even
+    // though neither endpoint is itself in that row.
     const sy = s.y - sv - 6;
     const ty = t.y - tv - 6;
-    const peak = Math.min(sy, ty) - 44;
+    const peak = BAND_TOP + 20;
     d = `M ${s.x} ${sy} C ${s.x} ${peak}, ${t.x} ${peak}, ${t.x} ${ty}`;
-    lx = (s.x + t.x) / 2;
-    ly = peak + 14;
+    // Label: the arc's own midpoint x, centred between two different
+    // columns, is not collision-safe for typical label widths (same reason
+    // as the cross-column case below) — it can land under whichever
+    // endpoint's node is wider. Anchor on the shallower endpoint's own
+    // column instead, in the row-gap above it.
+    const shallow = t.row <= s.row ? { pos: t, half: tv } : { pos: s, half: sv };
+    lx = shallow.pos.x;
+    ly = shallow.pos.y - shallow.half - 14;
   } else if (t.col === s.col) {
     const down = t.y > s.y;
     const sy = s.y + (down ? sv + 4 : -(sv + 4));
@@ -132,8 +165,28 @@ function edgeSvg(e, layout, typeOf, idx) {
     const tx = t.x + (forward ? -(th + 4) : th + 4);
     const mx = (sx + tx) / 2;
     d = `M ${sx} ${s.y} C ${mx} ${s.y}, ${mx} ${t.y}, ${tx} ${t.y}`;
-    lx = mx;
-    ly = (s.y + t.y) / 2 - 8;
+    if (Math.abs(t.row - s.row) > 1) {
+      // A large row-span crosses rows that are occupied by unrelated nodes
+      // in one or both columns — including, often, the source's own row in
+      // the target column. A typical label is wider than the ~40px
+      // inter-column gutter, so no x position centred in the gutter is
+      // collision-safe. Anchor it instead in the row-gap above whichever
+      // endpoint is shallower (closer to the top row), centred on that
+      // endpoint's own column — full column width, guaranteed node-free
+      // above the top of that node — mirroring the same-column loop-back
+      // label placement above.
+      const shallow = t.row <= s.row ? { pos: t, half: tv } : { pos: s, half: sv };
+      lx = shallow.pos.x;
+      ly = shallow.pos.y - shallow.half - 14;
+    } else {
+      // Label x: the column midpoint, not the path's own control point. mx
+      // shifts toward whichever endpoint has the narrower node (e.g. an
+      // 'end' circle, half-width 28) so it can drift out of the
+      // inter-column gutter — (s.x+t.x)/2 always stays inside the gutter
+      // regardless of either node's actual width.
+      lx = (s.x + t.x) / 2;
+      ly = (s.y + t.y) / 2 - 8;
+    }
   }
 
   const kind = e.edgeType || 'default';
@@ -433,6 +486,24 @@ ${nodesSvg}
     return h + ' h';
   }
 
+  function humanizeKey(key) {
+    return key
+      .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+      .replace(/[-_]+/g, ' ')
+      .replace(/\\b\\w/g, function (c) { return c.toUpperCase(); })
+      .trim();
+  }
+
+  function guessLaneType(value) {
+    if (!Array.isArray(value) || !value.length) return 'text';
+    var first = value[0];
+    if (first && typeof first === 'object') {
+      if ('severity' in first) return 'barrier';
+      if ('channel' in first || 'name' in first) return 'channel';
+    }
+    return 'list';
+  }
+
   function renderLaneValue(host, def, value) {
     var items = Array.isArray(value) ? value : [value];
     if (def.type === 'list') {
@@ -487,12 +558,27 @@ ${nodesSvg}
     var sub = (node.nodeType || '') + (node.durationMs ? ' \u00b7 ~' + humanDuration(node.durationMs) : '');
     panel.appendChild(el('p', 'mv-panel-type', sub));
     var lc = node.laneContent || {};
+    var knownLaneIds = {};
     laneDefs.forEach(function (def) {
+      knownLaneIds[def.id] = true;
       if (!enabledLanes[def.id]) return;
       if (!(def.id in lc)) return;
       var sec = el('section', 'mv-lane');
       sec.appendChild(el('h3', null, def.label || def.id));
       renderLaneValue(sec, def, lc[def.id]);
+      panel.appendChild(sec);
+    });
+    // A node can carry laneContent keys the mission's own lanes list
+    // doesn't declare (an authoring mismatch between the two, e.g. a lane
+    // id of 'design-opps' next to node content keyed 'designOpportunities').
+    // Rather than silently dropping authored content the schema didn't
+    // anticipate, show it under a humanised heading with a best-guess
+    // rendering, so nothing a node author wrote is hidden from Explore.
+    Object.keys(lc).forEach(function (key) {
+      if (knownLaneIds[key]) return;
+      var sec = el('section', 'mv-lane');
+      sec.appendChild(el('h3', null, humanizeKey(key)));
+      renderLaneValue(sec, { type: guessLaneType(lc[key]) }, lc[key]);
       panel.appendChild(sec);
     });
   }

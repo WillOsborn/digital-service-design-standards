@@ -338,14 +338,177 @@ ${nodesSvg}
       <p class="mv-goal">${esc(mission.goal || '')}</p>
       <p class="mv-meta">${badge}${counts}</p>
     </div>
-    <div class="mv-controls"></div>
+    <div class="mv-controls">
+      <div class="mv-mode" role="group" aria-label="View mode">
+        <button type="button" class="mv-mode-btn" data-setmode="overview">Overview</button>
+        <button type="button" class="mv-mode-btn" data-setmode="explore">Explore</button>
+      </div>
+      <label class="mv-explore-only mv-heat-toggle"><input type="checkbox" id="mv-heat-cb"> Barrier heat</label>
+      <details class="mv-explore-only mv-filters"><summary>Lanes</summary><div id="mv-lane-cbs"></div></details>
+    </div>
   </header>
   ${warningsHtml}
   <div class="mv-body">
     <div class="mv-canvas">${svg}</div>
+    <aside class="mv-panel" id="mv-panel" hidden></aside>
   </div>
   ${LEGEND}
-</div>`;
+</div>
+<script type="application/json" id="mv-data">${JSON.stringify(mission).replace(/</g, '\\u003c')}</script>
+<script>
+(function () {
+  var app = document.querySelector('.mv-app');
+  var data = JSON.parse(document.getElementById('mv-data').textContent);
+  var nodesById = {};
+  (data.nodes || []).forEach(function (n) { nodesById[n.nodeId] = n; });
+
+  var laneDefs = (data.lanes && data.lanes.length) ? data.lanes : (function () {
+    var keys = [];
+    (data.nodes || []).forEach(function (n) {
+      Object.keys(n.laneContent || {}).forEach(function (k) {
+        if (keys.indexOf(k) === -1) keys.push(k);
+      });
+    });
+    return keys.map(function (k) { return { id: k, label: k, type: 'text' }; });
+  })();
+  var enabledLanes = {};
+  laneDefs.forEach(function (d) { enabledLanes[d.id] = true; });
+  var openNodeId = null;
+  var panel = document.getElementById('mv-panel');
+
+  function el(tag, cls, text) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+
+  function syncModeButtons() {
+    app.querySelectorAll('[data-setmode]').forEach(function (b) {
+      b.classList.toggle('active', b.getAttribute('data-setmode') === app.getAttribute('data-mode'));
+    });
+  }
+  app.querySelectorAll('[data-setmode]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      app.setAttribute('data-mode', btn.getAttribute('data-setmode'));
+      syncModeButtons();
+      if (app.getAttribute('data-mode') === 'overview') closePanel();
+    });
+  });
+  syncModeButtons();
+
+  // Spec: hide the heat toggle entirely when the mission has no barriers anywhere.
+  var anyHeat = app.querySelector('.mv-node[data-heat="low"], .mv-node[data-heat="medium"], .mv-node[data-heat="high"]');
+  if (!anyHeat) document.querySelector('.mv-heat-toggle').hidden = true;
+
+  document.getElementById('mv-heat-cb').addEventListener('change', function (e) {
+    app.classList.toggle('heat-on', e.target.checked);
+  });
+
+  var cbHost = document.getElementById('mv-lane-cbs');
+  laneDefs.forEach(function (def) {
+    var label = el('label');
+    var cb = el('input');
+    cb.type = 'checkbox';
+    cb.checked = true;
+    cb.addEventListener('change', function () {
+      enabledLanes[def.id] = cb.checked;
+      if (openNodeId) renderPanel(openNodeId);
+    });
+    label.appendChild(cb);
+    label.appendChild(document.createTextNode(' ' + (def.label || def.id)));
+    cbHost.appendChild(label);
+  });
+
+  function closePanel() {
+    panel.hidden = true;
+    openNodeId = null;
+    app.querySelectorAll('.mv-node.selected').forEach(function (n) { n.classList.remove('selected'); });
+  }
+
+  function humanDuration(ms) {
+    var m = Math.round(ms / 60000);
+    if (m < 60) return m + ' min';
+    var h = Math.round(m / 6) / 10;
+    return h + ' h';
+  }
+
+  function renderLaneValue(host, def, value) {
+    var items = Array.isArray(value) ? value : [value];
+    if (def.type === 'list') {
+      var ul = el('ul');
+      items.forEach(function (item) { ul.appendChild(el('li', null, String(item))); });
+      host.appendChild(ul);
+      return;
+    }
+    items.forEach(function (item) {
+      if (def.type === 'barrier' && item && typeof item === 'object') {
+        var row = el('div', 'mv-barrier');
+        var sev = Math.max(0, Math.min(5, item.severity || 0));
+        var dots = '';
+        for (var i = 0; i < 5; i++) dots += i < sev ? '\u25cf' : '\u25cb';
+        row.appendChild(el('span', 'mv-sev', dots));
+        if (item.type) row.appendChild(el('span', 'mv-tag', item.type));
+        row.appendChild(el('p', null, item.description || ''));
+        host.appendChild(row);
+      } else if (def.type === 'channel' && item && typeof item === 'object') {
+        var ch = el('div', 'mv-channel');
+        ch.appendChild(el('strong', null, item.name || item.channel || ''));
+        var meta = [item.channel, item.category, item.serviceModel].filter(Boolean).join(' \u00b7 ');
+        if (meta) ch.appendChild(el('p', 'mv-dim', meta));
+        if (item.usageContext) ch.appendChild(el('p', null, item.usageContext));
+        host.appendChild(ch);
+      } else if (item && typeof item === 'object') {
+        host.appendChild(el('p', null, Object.keys(item).map(function (k) {
+          return k + ': ' + item[k];
+        }).join(' \u00b7 ')));
+      } else {
+        host.appendChild(el('p', null, String(item)));
+      }
+    });
+  }
+
+  function renderPanel(nodeId) {
+    var node = nodesById[nodeId];
+    if (!node) return;
+    openNodeId = nodeId;
+    app.querySelectorAll('.mv-node.selected').forEach(function (n) { n.classList.remove('selected'); });
+    var g = app.querySelector('.mv-node[data-node="' + nodeId + '"]');
+    if (g) g.classList.add('selected');
+    panel.hidden = false;
+    panel.textContent = '';
+    var head = el('div', 'mv-panel-head');
+    head.appendChild(el('h2', null, node.name || node.nodeId));
+    var close = el('button', 'mv-close', '\u00d7');
+    close.setAttribute('aria-label', 'Close details');
+    close.addEventListener('click', closePanel);
+    head.appendChild(close);
+    panel.appendChild(head);
+    var sub = (node.nodeType || '') + (node.durationMs ? ' \u00b7 ~' + humanDuration(node.durationMs) : '');
+    panel.appendChild(el('p', 'mv-panel-type', sub));
+    var lc = node.laneContent || {};
+    laneDefs.forEach(function (def) {
+      if (!enabledLanes[def.id]) return;
+      if (!(def.id in lc)) return;
+      var sec = el('section', 'mv-lane');
+      sec.appendChild(el('h3', null, def.label || def.id));
+      renderLaneValue(sec, def, lc[def.id]);
+      panel.appendChild(sec);
+    });
+  }
+
+  app.querySelectorAll('.mv-node').forEach(function (g) {
+    function open() {
+      if (app.getAttribute('data-mode') !== 'explore') return;
+      renderPanel(g.getAttribute('data-node'));
+    }
+    g.addEventListener('click', open);
+    g.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
+    });
+  });
+})();
+</script>`;
 
   const html = standalone
     ? `<!doctype html>

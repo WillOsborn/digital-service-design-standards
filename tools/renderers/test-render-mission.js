@@ -117,5 +117,31 @@ section('Warnings strip for data issues');
   assert((html.match(/class="mv-edge /g) || []).length === 1, 'only valid edge drawn');
 }
 
+// ---------------------------------------------------------------------------
+section('Explore mode interactivity scaffolding');
+// ---------------------------------------------------------------------------
+{
+  const { html } = renderMission(energy, {});
+  assert(html.includes('data-setmode="overview"') && html.includes('data-setmode="explore"'),
+    'mode toggle buttons present');
+  assert(html.includes('id="mv-heat-cb"'), 'heat toggle present');
+  assert(html.includes('id="mv-lane-cbs"'), 'lane filter container present');
+  assert(html.includes('id="mv-panel"'), 'detail panel present');
+
+  const m = html.match(/<script type="application\/json" id="mv-data">([\s\S]*?)<\/script>/);
+  assert(Boolean(m), 'embedded mission data blob present');
+  if (m) {
+    const data = JSON.parse(m[1]);
+    assert(data.nodes.length === energy.nodes.length, 'data blob carries all nodes');
+    assert(Array.isArray(data.lanes) && data.lanes.length === energy.lanes.length,
+      'data blob carries lane definitions');
+  }
+  assert(html.includes('renderPanel'), 'client script included');
+  // default mode is overview; explore opt-in via --mode
+  assert(html.includes('data-mode="overview"'), 'default mode is overview');
+  const explore = renderMission(energy, { mode: 'explore' }).html;
+  assert(explore.includes('data-mode="explore"'), '--mode explore respected');
+}
+
 console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed ? 1 : 0);

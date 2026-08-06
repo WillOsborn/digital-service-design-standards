@@ -146,6 +146,20 @@
         "owner-insurer-refuses",
         "recall-bundled-cover"
       ]
+    },
+    {
+      "phaseId": "phase-reaching-service",
+      "name": "Reaching the Service",
+      "goal": "Get through to someone or something that can dispatch help",
+      "nodeRefs": [
+        "open-benefits-app",
+        "view-cover-summary",
+        "choose-contact-route",
+        "call-overseas-number",
+        "agent-deflects-to-app",
+        "install-provider-app",
+        "app-location-entry-fails"
+      ]
     }
   ],
   "nodes": [
@@ -509,6 +523,510 @@
         "description": "The gate for the entire service. Everything downstream is contingent on a memory formed for unrelated reasons, at a moment nobody designed.",
         "importance": "critical"
       }
+    },
+    {
+      "nodeId": "open-benefits-app",
+      "name": "Open the benefits app",
+      "nodeType": "touchpoint",
+      "durationMs": 60000,
+      "laneContent": {
+        "description": "The customer opens the bank's benefits app at the roadside and navigates to the roadside assistance section. This is the bank's own channel and the only part of the journey it directly controls.",
+        "channels": [
+          {
+            "channel": "app",
+            "category": "digital",
+            "serviceModel": "self_service",
+            "interaction": "automated",
+            "ownership": "own",
+            "name": "Bank benefits app",
+            "usageContext": "Opened at the roadside on mobile data to find the roadside assistance entry"
+          }
+        ],
+        "barriers": [
+          {
+            "type": "technology",
+            "description": "Requires working mobile data at the roadside. The same weak signal that will shortly defeat location capture also has to carry app loading and authentication.",
+            "severity": 3
+          }
+        ],
+        "accessibilityProfile": {
+          "visual": 2,
+          "auditory": 4,
+          "motor": 3,
+          "cognitive": {
+            "overallScore": 3,
+            "decisionComplexity": "simple",
+            "informationDensity": "moderate",
+            "timePressure": "high",
+            "priorKnowledgeRequired": "That the benefit exists and lives in this app rather than the main banking app",
+            "supportAvailable": "Benefit list and search within the app; no contextual help for an active emergency"
+          },
+          "emotional": 2
+        },
+        "designOpportunities": [
+          "Detect that the customer is abroad and surface travel-relevant benefits first",
+          "Allow the roadside section to load and function on a poor connection",
+          "Offer a single tap to contact, rather than a section to be navigated"
+        ],
+        "frontstage": "Benefits app home screen; a roadside assistance section reached by browsing or search.",
+        "backstage": "App authenticates the customer against the core banking platform and checks account tier for entitlement. No case is created at this point — the bank's involvement ends at handing over contact details.",
+        "support-systems": [
+          "Bank benefits app",
+          "Core banking authentication",
+          "Entitlement register"
+        ],
+        "data-required": [
+          "Customer identity and session",
+          "Account tier and entitlement status"
+        ],
+        "roles-involved": [
+          "Digital product",
+          "Benefits management"
+        ],
+        "kpis": [
+          {
+            "metric": "Roadside section load time on a poor connection",
+            "target": "Under 3 seconds"
+          },
+          {
+            "metric": "Taps from app open to contact details",
+            "target": "3 or fewer"
+          }
+        ]
+      },
+      "significance": {
+        "description": "The last node the bank owns outright. From here the customer passes to a partner, and the bank's visibility of its own benefit effectively ends.",
+        "importance": "high"
+      }
+    },
+    {
+      "nodeId": "view-cover-summary",
+      "name": "Read what the cover includes",
+      "nodeType": "touchpoint",
+      "durationMs": 90000,
+      "laneContent": {
+        "description": "The roadside assistance section summarises what the cover includes and presents contact details. This is where the customer confirms the cover applies to a vehicle they do not own, in another country — the two facts the whole decision rests on.",
+        "channels": [
+          {
+            "channel": "app",
+            "category": "digital",
+            "serviceModel": "self_service",
+            "interaction": "automated",
+            "ownership": "own",
+            "name": "Roadside assistance benefit page",
+            "usageContext": "Summary of cover plus contact options, presented in the bank's own app"
+          },
+          {
+            "channel": "website",
+            "category": "digital",
+            "serviceModel": "self_service",
+            "interaction": "automated",
+            "ownership": "partner",
+            "name": "Assistance provider website",
+            "usageContext": "SCHEMA LIMITATION: a usable route that exists but is never signposted here. Nothing distinguishes an available channel from a discoverable one. See prediction 3."
+          }
+        ],
+        "barriers": [
+          {
+            "type": "knowledge",
+            "description": "The customer must work out, under pressure, whether cover that follows a person extends to someone else's vehicle abroad. A summary written for browsing is being read as a decision aid in an emergency.",
+            "severity": 4
+          },
+          {
+            "type": "communications",
+            "description": "The provider's website is a working route to help and is not mentioned at the one moment it would be used. The customer only ever learns of the app and the phone numbers.",
+            "severity": 2
+          }
+        ],
+        "designOpportunities": [
+          "Answer 'does this apply to me, right now?' before listing what is included",
+          "Signpost every route to help, including the provider's own website",
+          "Show the overseas number first when the customer is demonstrably overseas"
+        ],
+        "frontstage": "Cover summary; contact details for domestic and overseas numbers; a prompt to install the provider app.",
+        "backstage": "Static benefit content maintained by the bank under contract with the provider. Not personalised to location, vehicle, or circumstance.",
+        "support-systems": [
+          "Benefits content management system",
+          "Partner contact directory"
+        ],
+        "data-required": [
+          "Benefit terms and inclusions",
+          "Provider contact numbers by region"
+        ],
+        "roles-involved": [
+          "Content design",
+          "Partnerships and benefits management",
+          "Legal and compliance"
+        ],
+        "kpis": [
+          {
+            "metric": "Customers who correctly identify whether cover applies",
+            "target": "Above 90%"
+          },
+          {
+            "metric": "Time from opening the section to initiating contact",
+            "target": "Under 60 seconds"
+          }
+        ]
+      },
+      "significance": {
+        "description": "Where an unsignposted third route to help stays invisible. The customer chooses between two options believing they are the only two.",
+        "importance": "high"
+      }
+    },
+    {
+      "nodeId": "choose-contact-route",
+      "name": "Choose how to make contact",
+      "nodeType": "branch",
+      "laneContent": {
+        "description": "The service presents two routes simultaneously — install the provider's app, or call, with separate domestic and overseas numbers. Both are genuinely offered and either can be taken. This is a service-offered fork, not a customer deliberation.",
+        "channels": [
+          {
+            "channel": "app",
+            "category": "digital",
+            "serviceModel": "self_service",
+            "interaction": "automated",
+            "ownership": "partner",
+            "name": "Assistance provider app",
+            "usageContext": "Offered as the first option for raising a case; requires installation before it can be used"
+          },
+          {
+            "channel": "phone",
+            "category": "telecom",
+            "serviceModel": "managed",
+            "interaction": "human",
+            "ownership": "partner",
+            "name": "Overseas assistance number",
+            "usageContext": "Offered for customers calling from outside the home country"
+          },
+          {
+            "channel": "phone",
+            "category": "telecom",
+            "serviceModel": "managed",
+            "interaction": "human",
+            "ownership": "partner",
+            "name": "Domestic assistance number",
+            "usageContext": "Offered for customers calling from within the home country"
+          }
+        ],
+        "barriers": [
+          {
+            "type": "knowledge",
+            "description": "Nothing indicates which route is faster or more reliable in the customer's actual situation. The choice is made on a guess, and the guess turns out to matter a great deal.",
+            "severity": 3
+          },
+          {
+            "type": "process",
+            "description": "The app route requires a download and setup before it can do anything, at a roadside, on weak signal. The cost of that route is invisible at the point of choosing it.",
+            "severity": 4
+          }
+        ],
+        "designOpportunities": [
+          "Recommend a route based on signal strength, location and case type rather than presenting a flat choice",
+          "State what each route will require before the customer commits to it",
+          "Let the app raise a case without installation, through the browser"
+        ],
+        "frontstage": "Two contact options presented side by side: install the app, or call one of two numbers.",
+        "backstage": "No routing logic. The same options are shown to every customer regardless of circumstance, and no signal is passed to the provider about which was chosen.",
+        "support-systems": [
+          "Benefits content management system",
+          "App store links",
+          "Partner telephony"
+        ],
+        "data-required": [
+          "Provider contact numbers by region",
+          "App store availability by platform"
+        ],
+        "roles-involved": [
+          "Content design",
+          "Partnerships and benefits management"
+        ],
+        "kpis": [
+          {
+            "metric": "Cases raised by app versus phone",
+            "target": "Tracked, not targeted"
+          },
+          {
+            "metric": "Customers who switch route after choosing",
+            "target": "Below 10%"
+          }
+        ]
+      },
+      "significance": {
+        "description": "The only genuine branch in the map — two channels offered at once, with no guidance on which suits the situation. The customer picks the phone on instinct, and is then pushed back to the app.",
+        "importance": "critical"
+      }
+    },
+    {
+      "nodeId": "call-overseas-number",
+      "name": "Call the overseas assistance number",
+      "nodeType": "touchpoint",
+      "durationMs": 180000,
+      "laneContent": {
+        "description": "The customer calls the overseas number, judging a person faster than an app install. The call reaches the provider's contact centre through a bank-specific route, so the agent knows which bank's customer they are supporting.",
+        "channels": [
+          {
+            "channel": "phone",
+            "category": "telecom",
+            "serviceModel": "managed",
+            "interaction": "human",
+            "ownership": "partner",
+            "name": "Bank-specific overseas assistance line",
+            "usageContext": "A dedicated number for this bank's customers. Reliably answered quickly, and the agent knows which bank's benefit is being claimed."
+          }
+        ],
+        "barriers": [
+          {
+            "type": "process",
+            "description": "An international call from a mobile at the roadside, on a shared and depleting battery, with an interactive menu to navigate before reaching a person.",
+            "severity": 3
+          }
+        ],
+        "designOpportunities": [
+          "Offer a call-back so the customer is not holding an international call on a finite battery",
+          "Skip the menu entirely on the bank-specific line, where the benefit is already known"
+        ],
+        "frontstage": "Interactive menu, then a contact centre agent who already knows which bank's benefit applies.",
+        "backstage": "Dedicated inbound routing per partner bank means entitlement is pre-established. Agent opens a case record in the provider's system; the bank sees none of this.",
+        "support-systems": [
+          "Partner telephony and IVR",
+          "Provider case management system",
+          "Partner entitlement register"
+        ],
+        "data-required": [
+          "Inbound number dialled, which identifies the partner bank",
+          "Customer identity",
+          "Nature of the incident"
+        ],
+        "roles-involved": [
+          "Contact centre agent",
+          "Partner account management"
+        ],
+        "kpis": [
+          {
+            "metric": "Time to answer on partner-specific lines",
+            "target": "Under 60 seconds"
+          },
+          {
+            "metric": "Cases where entitlement is confirmed without customer effort",
+            "target": "Above 95%"
+          }
+        ]
+      },
+      "significance": {
+        "description": "The dedicated partner line works well and is the one piece of the partner relationship the customer can feel. It is also the thing the agent then talks them out of using.",
+        "importance": "high"
+      }
+    },
+    {
+      "nodeId": "agent-deflects-to-app",
+      "name": "Agent suggests using the app instead",
+      "nodeType": "touchpoint",
+      "durationMs": 60000,
+      "laneContent": {
+        "description": "Mid-call, the agent suggests it would be easier to use the app or the website. The customer abandons a working, answered call and installs the app. No case is created before the call ends, so nothing is carried forward.",
+        "channels": [
+          {
+            "channel": "phone",
+            "category": "telecom",
+            "serviceModel": "managed",
+            "interaction": "human",
+            "ownership": "partner",
+            "name": "Bank-specific overseas assistance line",
+            "usageContext": "The call during which the customer is directed to a digital channel and then ends the call"
+          }
+        ],
+        "barriers": [
+          {
+            "type": "process",
+            "description": "Deflection to digital happens with no state carried across. The call ends without a case, so when the digital route fails the customer restarts from nothing — new call, new menu, identity confirmed again.",
+            "severity": 5
+          },
+          {
+            "type": "vision",
+            "description": "The deflection optimises for contact-centre cost in a situation where the customer has already judged the phone to be the faster route, and where the app's dependencies cannot be met.",
+            "severity": 4
+          }
+        ],
+        "designOpportunities": [
+          "Never deflect without first creating the case, so a failed deflection costs nothing",
+          "Check whether the digital route can actually work here before recommending it",
+          "Let the agent stay on the line while the customer tries the app"
+        ],
+        "frontstage": "Agent suggesting the app or website would be easier.",
+        "backstage": "Channel deflection guidance in agent scripting, aimed at reducing call handling time. No mechanism to persist a partial case across the switch.",
+        "support-systems": [
+          "Agent scripting and guidance",
+          "Provider case management system"
+        ],
+        "data-required": [
+          "Nothing retained — the call ends without a case record"
+        ],
+        "roles-involved": [
+          "Contact centre agent",
+          "Contact centre operations"
+        ],
+        "kpis": [
+          {
+            "metric": "Deflected contacts that succeed digitally without a return call",
+            "target": "Above 80%"
+          },
+          {
+            "metric": "Average handling time",
+            "target": "Reduced — the intent behind the deflection"
+          }
+        ]
+      },
+      "significance": {
+        "description": "The single most costly decision in the map. A working channel is abandoned on the service's advice, for a channel that cannot function in this situation, with no state carried across.",
+        "importance": "critical"
+      }
+    },
+    {
+      "nodeId": "install-provider-app",
+      "name": "Install the assistance provider app",
+      "nodeType": "touchpoint",
+      "durationMs": 180000,
+      "laneContent": {
+        "description": "The customer downloads and opens the provider's app at the roadside. It installs quickly. Raising a case requires no login — only entering some details — which is a genuinely good decision for an emergency.",
+        "channels": [
+          {
+            "channel": "app",
+            "category": "digital",
+            "serviceModel": "self_service",
+            "interaction": "automated",
+            "ownership": "partner",
+            "name": "Assistance provider app",
+            "usageContext": "Installed at the roadside. Raising a case needs no account — details are entered directly."
+          }
+        ],
+        "barriers": [
+          {
+            "type": "technology",
+            "description": "An app download over weak mobile data, on a depleting shared battery, at the moment help is most needed. The install succeeded here; on a worse connection it would not have.",
+            "severity": 3
+          }
+        ],
+        "designOpportunities": [
+          "Offer the same no-login case creation through a browser, removing the install entirely",
+          "Preinstall or deep-link the provider app from the bank's benefits app ahead of travel"
+        ],
+        "frontstage": "App store download; app opens straight to case creation with no account required.",
+        "backstage": "Anonymous case creation path in the provider's platform, identified later by phone number rather than by account.",
+        "support-systems": [
+          "App stores",
+          "Provider mobile app",
+          "Provider case management system"
+        ],
+        "data-required": [
+          "Contact phone number",
+          "Vehicle and incident details",
+          "Location"
+        ],
+        "roles-involved": [
+          "Provider digital product",
+          "Provider platform engineering"
+        ],
+        "kpis": [
+          {
+            "metric": "App install to case created",
+            "target": "Under 3 minutes"
+          },
+          {
+            "metric": "Case creation abandonment rate",
+            "target": "Below 15%"
+          }
+        ]
+      },
+      "significance": {
+        "description": "No-login case creation is the right call for an emergency. It is undone at the very next step by a location requirement the customer cannot satisfy.",
+        "importance": "medium"
+      }
+    },
+    {
+      "nodeId": "app-location-entry-fails",
+      "name": "App cannot capture the location",
+      "nodeType": "touchpoint",
+      "durationMs": 240000,
+      "laneContent": {
+        "description": "The app asks for a postcode or offers to use GPS. Abroad there is no postcode for the location, and the signal is too weak for a GPS fix. Both options fail, and the app offers no third way. The case cannot be raised.",
+        "channels": [
+          {
+            "channel": "app",
+            "category": "digital",
+            "serviceModel": "self_service",
+            "interaction": "automated",
+            "ownership": "partner",
+            "name": "Assistance provider app location capture",
+            "usageContext": "Offers postcode entry or GPS. Neither works at a European roadside on weak signal, and no alternative format is accepted."
+          }
+        ],
+        "barriers": [
+          {
+            "type": "technology",
+            "description": "Location capture offers exactly two methods and both depend on conditions a roadside breakdown routinely breaks — a postcode that only exists in the home country, and a GPS fix that needs signal.",
+            "severity": 5
+          },
+          {
+            "type": "process",
+            "description": "A home-market assumption embedded in an app sold on overseas cover. Postcode entry is meaningless in the country where the cover is being claimed.",
+            "severity": 5
+          },
+          {
+            "type": "resource",
+            "description": "No fallback. When both methods fail the app has nothing else to offer and no route back to a human, so the customer is dropped entirely.",
+            "severity": 5
+          }
+        ],
+        "accessibilityProfile": {
+          "visual": 2,
+          "auditory": 4,
+          "motor": 2,
+          "cognitive": {
+            "overallScore": 1,
+            "decisionComplexity": "complex",
+            "informationDensity": "moderate",
+            "timePressure": "critical",
+            "priorKnowledgeRequired": "How to describe a location abroad in a format the app will accept, when it accepts only two and neither is available",
+            "supportAvailable": "None. No alternative format, no fallback, and no route from the failure back to a person."
+          },
+          "emotional": 1
+        },
+        "designOpportunities": [
+          "Accept any location format the customer can produce — coordinates, what3words, a shared pin, a description",
+          "Never present postcode entry as an option outside the country it exists in",
+          "Offer a route back to a human at the point of failure, carrying whatever has been entered",
+          "Degrade gracefully to a coarse location and refine it later, rather than blocking on precision"
+        ],
+        "frontstage": "A location step offering postcode entry or GPS, with no third option and no way past it.",
+        "backstage": "Dispatch requires a resolvable location before a case can be created. The postcode path assumes a domestic incident; the GPS path assumes usable signal. Neither assumption holds here.",
+        "support-systems": [
+          "Provider mobile app",
+          "Geocoding service",
+          "Device GPS"
+        ],
+        "data-required": [
+          "A resolvable location, in one of exactly two accepted formats"
+        ],
+        "roles-involved": [
+          "Provider digital product",
+          "Dispatch operations"
+        ],
+        "kpis": [
+          {
+            "metric": "Location capture success rate in-app",
+            "target": "Above 95%"
+          },
+          {
+            "metric": "In-app location success on overseas cases",
+            "target": "Currently unmeasured — this failure mode is invisible to the provider"
+          }
+        ]
+      },
+      "significance": {
+        "description": "The deflection's cost lands here. The customer has given up a working call for a channel that cannot proceed, and the app has no way to hand them back.",
+        "importance": "critical"
+      }
     }
   ],
   "edges": [
@@ -547,6 +1065,62 @@
         "description": "Own insurer refuses — no travel notification on file"
       },
       "label": "Refused"
+    },
+    {
+      "from": "recall-bundled-cover",
+      "to": "open-benefits-app",
+      "edgeType": "conditional",
+      "condition": {
+        "description": "Customer decides the bundled cover may apply and tries it"
+      },
+      "label": "Try the benefit"
+    },
+    {
+      "from": "open-benefits-app",
+      "to": "view-cover-summary",
+      "edgeType": "default"
+    },
+    {
+      "from": "view-cover-summary",
+      "to": "choose-contact-route",
+      "edgeType": "default"
+    },
+    {
+      "from": "choose-contact-route",
+      "to": "call-overseas-number",
+      "edgeType": "conditional",
+      "condition": {
+        "description": "Customer judges a phone call faster than installing an app"
+      },
+      "label": "Call"
+    },
+    {
+      "from": "choose-contact-route",
+      "to": "install-provider-app",
+      "edgeType": "conditional",
+      "condition": {
+        "description": "Customer takes the app route offered alongside the phone numbers"
+      },
+      "label": "Use the app"
+    },
+    {
+      "from": "call-overseas-number",
+      "to": "agent-deflects-to-app",
+      "edgeType": "default"
+    },
+    {
+      "from": "agent-deflects-to-app",
+      "to": "install-provider-app",
+      "edgeType": "escalation",
+      "condition": {
+        "description": "Agent moves the customer to a digital channel mid-call, without creating a case first"
+      },
+      "label": "Deflected to app"
+    },
+    {
+      "from": "install-provider-app",
+      "to": "app-location-entry-fails",
+      "edgeType": "default"
     }
   ],
   "paths": [],

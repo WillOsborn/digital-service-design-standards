@@ -236,6 +236,69 @@ For reference: node `description` and barrier `description` allow 500; `usageCon
 
 ---
 
-## Task 3 — Phase 3
+## Task 3 — Phase 3, reaching the service (complete)
+
+7 nodes, 8 edges. **14 nodes / 14 edges / 3 phases.** First use of `branch` and `escalation`.
+No dangling edges, no orphan phase refs. Quality still 80 (paths and SLA outstanding).
+
+Notably smoother than Tasks 1–2: no new silent-acceptance traps, because the shapes are now
+known. That is itself the point — the cost of those traps is entirely front-loaded onto anyone
+authoring for the first time, and none of it is discoverable from the schema alone.
+
+### 3.1 Prediction 3 confirmed — no way to mark a channel as unsignposted
+
+The provider's website is a real, working route to help that was never surfaced to the
+customer. Authored on `view-cover-summary` with `ownership: partner`, and there is **no field
+that distinguishes "this channel exists" from "the customer can find it"**. The note had to go
+in `usageContext`, in prose, where nothing can query or count it.
+
+This matters for analysis, not just tidiness: a channel-mix report counts this website as an
+available digital channel. In reality it is invisible at the only moment it would be used, so
+every channel-mix figure for this step is wrong in the same direction.
+
+**Prediction 3: confirmed.**
+
+### 3.2 `branch` and `decision` are indistinguishable in structure
+
+`choose-contact-route` is a `branch` — the service presents two routes simultaneously.
+`recall-bundled-cover` is a `decision` — the customer weighs something internally. Both are
+authored identically: a node with two or more outgoing `conditional` edges carrying
+`condition.description`. **The only difference is the `nodeType` string.**
+
+Nothing marks the branch's options as *concurrently offered* rather than *mutually exclusive
+outcomes*, and nothing records that a branch is service-initiated while a decision is
+customer-initiated. Renderers and analysers therefore cannot treat them differently except by
+reading the type label and assuming intent.
+
+Mild, but real: a service map's most useful question is often "where does the service offer a
+choice, and where does it force one?" The vocabulary exists; the structure to support it does
+not. **Candidate backlog item, low priority.**
+
+### 3.3 The deflection is the most expensive node in the map, and it is invisible to metrics
+
+`agent-deflects-to-app` → `install-provider-app` is an `escalation` edge. Authoring it made
+the cost explicit: the call ends **without a case being created**, so when the app fails the
+customer restarts from nothing — new call, new menu, identity confirmed again.
+
+The KPI authored on that node is telling. Deflection is measured by *average handling time*,
+which the deflection improves. The cost lands two nodes later, on a different channel, as a
+repeat contact — and nothing connects the two. A service optimising the metric would do this
+more.
+
+Not a schema gap. A genuine service-design finding that the mapping exercise surfaced, which is
+what a Mission is for.
+
+### 3.4 Prediction scoreboard
+
+| # | Prediction | Status after Task 3 |
+|---|---|---|
+| 1 | Ambient / always-available channels | **evidence gathering** — 2 instances |
+| 2 | `ownership` degrees of remove | **evidence gathering** — 1 instance |
+| 3 | Channel exists but is not signposted | **CONFIRMED** |
+| 6 | Precondition from a different journey | **CONFIRMED** |
+
+---
+
+## Task 4 — Phase 4
 
 *(in progress)*

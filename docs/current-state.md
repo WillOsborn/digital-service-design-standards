@@ -6,8 +6,8 @@
 
 **Last updated:** 2026-08-06 (second session that day)
 **Active schema version:** v2.0 (Actor / Mission / Experience)
-**Branch:** `main` — **2 commits ahead of `origin/main` and not pushed.** Will was asked and chose not to push at session end. The next session inherits an unpushed branch; push is safe whenever wanted (`git push`).
-**Concurrency check:** local `main` was **ahead of `origin/main` by exactly 2 commits** at session end, both made this session. At session start run `git status -sb` — if the gap is anything other than 2, or local commits exist that you did not make, suspect a concurrent session and read `git reflog` before acting. (This check deliberately names no SHA: a SHA recorded here goes stale the moment the next commit lands, including this file's own.)
+**Branch:** `main` — carries **unpushed local commits** from the 2026-08-06 sessions. Pushing is safe whenever wanted (`git push`); nothing depends on it staying local.
+**Concurrency check:** local `main` was cleanly **ahead of** `origin/main` at session end — never diverged. At session start run `git status -sb`: *ahead* is expected, but **`behind` or `diverged`, or commits you did not make, means suspect a concurrent session** — read `git reflog` before acting. (This check deliberately names neither a SHA nor a commit count: both go stale the moment the next commit lands, including this file's own.)
 
 **Branches:** `main` only, local and remote. `feature/mission-visualiser` was merged and deleted on 2026-08-06; its history lives on in `main`.
 
@@ -15,7 +15,7 @@
 
 ## Status
 
-**v2.0 is complete and green across every workstream except WS8.** Schemas, all four example sets, validators, quality scoring, converter, all 17 `.claude/skills/`, the standards docs, and — as of this session's commits — the WS7 Claude Manager org skills. Verification: 12/12 examples validate at 85–100 quality, 94 validator tests, 16 layout tests, 45 renderer tests, all exit 0. One pre-existing failure in `run-all-tests.js` affects **v1.x only** — see *Verification baseline* below.
+**v2.0 is complete and green across every workstream except WS8.** Schemas, all four example sets, validators, quality scoring, converter, all 17 `.claude/skills/`, the standards docs, and the WS7 Claude Manager org skills. Verification: 12/12 examples validate at 85–100 quality, 94 validator tests, 16 layout tests, 83 renderer tests, all exit 0. One pre-existing failure in `run-all-tests.js` affects **v1.x only** — see *Verification baseline* below.
 
 **Mission visualiser — complete, merged, and now reviewed by Will.** The deterministic Node CLI renders a v2.0 Mission as a self-contained two-mode HTML visualisation. Tasks 1–4 landed the layout module, renderer CLI, Explore mode, and Playwright-driven fixes. **Task 6 is done** — `.claude/skills/mission-renderer/SKILL.md` is a thin wrapper around the CLI. **Task 5 is now done too** (2026-08-06): the retail mission was published as an artifact in Explore mode, Will reviewed it, and one round of iteration landed.
 
@@ -67,7 +67,7 @@ needs a decision on target version).
 
 ## In flight / uncommitted
 
-None. Working tree clean. Two commits sit unpushed on `main` — see Branch above.
+None. Working tree clean. Unpushed commits sit on `main` — see Branch above.
 
 ---
 

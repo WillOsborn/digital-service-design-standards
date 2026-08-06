@@ -123,7 +123,15 @@ None. Single working tree on `main`.
 - **`.claude/` is gitignored.** All 17 skills, `PROJECT_CONTEXT.md`, `VERSIONING_WORKFLOW.md`, and the `/start-session`, `/end-session`, `/backlog` commands are **local-only** — absent from a fresh clone or a second machine, and unprotected by git. Work landing there is invisible to every commit. Say so when it happens.
 - **`BACKLOG.md` and `backlog.json` are also gitignored** — same caveat. The CLI is `node tools-internal/backlog.js` (not `tools/backlog.js`).
 - **`backlog.json` is the source of truth; `BACKLOG.md` is generated.** `add` and `park` write only to the JSON — you must run `node tools-internal/backlog.js sync` or the Markdown silently keeps showing stale contents. `sync` regenerates the file's header from a template in `backlog.js`, so hand-edits to the top of `BACKLOG.md` are discarded — fix that template instead.
-- **Sub-agents have Write and Bash denied** in this project. Write files in the main session; sub-agents are read-only research.
+- **Sub-agents work — Write, Edit and Bash all verified 2026-08-06.** An earlier note in this
+  file claimed they were denied; **that was wrong.** `.claude/settings.local.json` has an
+  **empty `deny` list**, and a probe sub-agent successfully wrote a file, edited it, ran an
+  allowlisted `node` command *and* ran `git status`, which is not allowlisted at all. The
+  original note appears to have described a permission-prompt artefact — `Write` is absent
+  from the allow list, so in a stricter mode it would need approval a sub-agent cannot give —
+  rather than any configured restriction. **Caveat:** verified in one session's permission
+  mode. It is not proof that sub-agents work under every mode. Re-probe rather than assume if
+  it matters.
 - **ajv is compiled once at module load** in the validator. Do not instantiate Ajv per call.
 - Schema enum values are easy to get wrong — see §5 of the v2.0 handoff doc before authoring example JSON.
 - **The channel object does not restrict `additionalProperties`.** A v1.1-shaped key such as

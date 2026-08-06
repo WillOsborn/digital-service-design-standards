@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 >
-> **Sub-agents in this project have Write and Bash denied.** Files must be written in the main session. Sub-agents are read-only research only. Plan accordingly — this plan is executed inline, not delegated.
+> **Execute this plan inline, not via sub-agents** — but not for permission reasons. Sub-agents *do* have Write, Edit and Bash here (verified 2026-08-06; an earlier claim that they were denied was wrong). The reason is structural: Tasks 2–6 all edit **the same JSON file**, so parallel agents would collide. Splitting into per-phase fragments and merging costs more than the six sequential edits it saves.
 
 **Goal:** Author a v2.0 example set for roadside breakdown assistance that exercises the ~half of the Mission schema no existing example touches, and record where the schema fails.
 

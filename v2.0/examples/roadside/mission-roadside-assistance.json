@@ -160,6 +160,19 @@
         "install-provider-app",
         "app-location-entry-fails"
       ]
+    },
+    {
+      "phaseId": "phase-establish-location",
+      "name": "Establishing Location",
+      "goal": "Get a location the service can dispatch to, by any means that works",
+      "nodeRefs": [
+        "call-back-reenter-ivr",
+        "safety-check",
+        "identity-verification",
+        "sms-location-link-fails",
+        "research-supported-location-formats",
+        "share-location-third-party"
+      ]
     }
   ],
   "nodes": [
@@ -1027,6 +1040,402 @@
         "description": "The deflection's cost lands here. The customer has given up a working call for a channel that cannot proceed, and the app has no way to hand them back.",
         "importance": "critical"
       }
+    },
+    {
+      "nodeId": "call-back-reenter-ivr",
+      "name": "Call back and re-enter the menu",
+      "nodeType": "loop_start",
+      "durationMs": 240000,
+      "laneContent": {
+        "description": "With the app unable to proceed, the customer calls the number again — new call, menus again, agent again. Nothing from the previous call or the app attempt carries over. This node opens the location-capture loop: the service will now try several methods in turn, all within this one call.",
+        "channels": [
+          {
+            "channel": "phone",
+            "category": "telecom",
+            "serviceModel": "managed",
+            "interaction": "human",
+            "ownership": "partner",
+            "name": "Bank-specific overseas assistance line",
+            "usageContext": "Second call. The interactive menu must be navigated again and identity re-established from scratch."
+          }
+        ],
+        "barriers": [
+          {
+            "type": "technology",
+            "description": "No state persists across the deflection. The earlier call created no case and the app attempt left no record, so the customer starts from zero for the second time.",
+            "severity": 5
+          },
+          {
+            "type": "process",
+            "description": "The interactive menu is presented again to a customer the service has already spoken to minutes earlier about the same incident.",
+            "severity": 3
+          }
+        ],
+        "designOpportunities": [
+          "Recognise a repeat caller within a short window and route straight to a person",
+          "Persist any partial case from an abandoned app attempt and attach it to the next contact",
+          "Create the case at first contact, so a failed deflection costs the customer nothing"
+        ],
+        "frontstage": "Interactive menu, hold, then an agent with no knowledge of the previous contact.",
+        "backstage": "No linkage between the abandoned call, the app session, and this new call. Each is an independent contact in the provider's systems.",
+        "support-systems": [
+          "Partner telephony and IVR",
+          "Provider case management system"
+        ],
+        "data-required": [
+          "Nothing carried forward — the customer supplies everything again"
+        ],
+        "roles-involved": [
+          "Contact centre agent",
+          "Contact centre operations"
+        ],
+        "kpis": [
+          {
+            "metric": "Repeat contacts within 30 minutes for the same incident",
+            "target": "Below 5%"
+          },
+          {
+            "metric": "Contacts where prior context is recognised and reused",
+            "target": "Above 80%"
+          }
+        ]
+      },
+      "significance": {
+        "description": "Opens the location loop. Also the point where the deflection's cost becomes concrete and measurable — a second full contact for one incident, caused entirely by the service's own advice.",
+        "importance": "critical"
+      }
+    },
+    {
+      "nodeId": "safety-check",
+      "name": "Agent checks everyone is safe",
+      "nodeType": "touchpoint",
+      "durationMs": 30000,
+      "laneContent": {
+        "description": "The agent's first question is whether the customer is in a safe location. This comes before identity, entitlement, or any commercial consideration, and it is the clearest example of the service being well designed.",
+        "channels": [
+          {
+            "channel": "phone",
+            "category": "telecom",
+            "serviceModel": "managed",
+            "interaction": "human",
+            "ownership": "partner",
+            "name": "Bank-specific overseas assistance line",
+            "usageContext": "Agent opens with a safety check before anything administrative"
+          }
+        ],
+        "designOpportunities": [
+          "Keep this first, and protect it from any future attempt to front-load identity or entitlement",
+          "Mirror the same check in the app, which currently asks about location before safety"
+        ],
+        "frontstage": "Agent asking directly whether the customer and passengers are somewhere safe.",
+        "backstage": "Safety triage is scripted ahead of case administration. A negative answer escalates to emergency services rather than continuing the assistance flow.",
+        "support-systems": [
+          "Agent scripting and guidance",
+          "Emergency services escalation protocol"
+        ],
+        "data-required": [
+          "Whether occupants are in a safe position",
+          "Whether emergency services are required"
+        ],
+        "roles-involved": [
+          "Contact centre agent"
+        ],
+        "kpis": [
+          {
+            "metric": "Contacts where safety is confirmed before administrative questions",
+            "target": "100%"
+          }
+        ]
+      },
+      "significance": {
+        "description": "The service at its best. Worth recording alongside the failures — a well-sequenced human step that the digital channel does not replicate.",
+        "importance": "high"
+      }
+    },
+    {
+      "nodeId": "identity-verification",
+      "name": "Confirm account and identity",
+      "nodeType": "touchpoint",
+      "durationMs": 120000,
+      "laneContent": {
+        "description": "The agent confirms the customer's name, address and account details to establish entitlement under the bank's benefit. Being the second call, this is the second time it has been done for one incident.",
+        "channels": [
+          {
+            "channel": "phone",
+            "category": "telecom",
+            "serviceModel": "managed",
+            "interaction": "human",
+            "ownership": "partner",
+            "name": "Bank-specific overseas assistance line",
+            "usageContext": "Verbal confirmation of name, address and account details to establish entitlement"
+          }
+        ],
+        "barriers": [
+          {
+            "type": "process",
+            "description": "Identity is verified again because the previous contact left no record. The customer supplies from memory, at the roadside, details already given minutes earlier.",
+            "severity": 4
+          },
+          {
+            "type": "policy",
+            "description": "Full identity verification is required before dispatch on a case where entitlement was already established by the inbound number dialled.",
+            "severity": 3
+          }
+        ],
+        "accessibilityProfile": {
+          "visual": 4,
+          "auditory": 2,
+          "motor": 4,
+          "cognitive": {
+            "overallScore": 2,
+            "decisionComplexity": "simple",
+            "informationDensity": "moderate",
+            "timePressure": "high",
+            "priorKnowledgeRequired": "Account details recalled from memory, without access to paperwork or a banking app on a low battery",
+            "supportAvailable": "Agent will prompt and accept partial answers, but the details must come from the customer"
+          },
+          "emotional": 2
+        },
+        "designOpportunities": [
+          "Treat the partner-specific inbound number as sufficient for entitlement, and verify identity after dispatch",
+          "Send a verification link rather than requiring recall at the roadside",
+          "Never verify twice for one incident"
+        ],
+        "frontstage": "Agent asking for name, address and account details.",
+        "backstage": "Entitlement checked against the partner register shared by the bank. The bank sees no record of this check.",
+        "support-systems": [
+          "Provider case management system",
+          "Partner entitlement register"
+        ],
+        "data-required": [
+          "Customer name and address",
+          "Account or membership reference",
+          "Entitlement status under the partner benefit"
+        ],
+        "roles-involved": [
+          "Contact centre agent",
+          "Partnerships and benefits management"
+        ],
+        "kpis": [
+          {
+            "metric": "Time spent on identity verification per case",
+            "target": "Under 60 seconds"
+          },
+          {
+            "metric": "Cases requiring verification more than once",
+            "target": "0%"
+          }
+        ]
+      },
+      "significance": {
+        "description": "Administrative work performed before the service knows where the customer is — the ordering the app got right and the phone route gets wrong.",
+        "importance": "medium"
+      }
+    },
+    {
+      "nodeId": "sms-location-link-fails",
+      "name": "SMS location link also fails",
+      "nodeType": "touchpoint",
+      "durationMs": 180000,
+      "laneContent": {
+        "description": "The agent sends an SMS containing a link that captures the device's location when opened. The message arrives, but the signal is still too weak for a fix. A second location method fails, this time on a different channel from the first.",
+        "channels": [
+          {
+            "channel": "sms",
+            "category": "telecom",
+            "serviceModel": "managed",
+            "interaction": "automated",
+            "ownership": "partner",
+            "name": "Location-capture SMS link",
+            "usageContext": "Agent-triggered link that reports device location back to the case. Delivered successfully; the location fix itself failed."
+          }
+        ],
+        "barriers": [
+          {
+            "type": "technology",
+            "description": "The second location method depends on the same underlying capability as the first — a usable position fix on a device with weak signal. Offering it after GPS failed adds a channel but not a genuine alternative.",
+            "severity": 5
+          },
+          {
+            "type": "process",
+            "description": "No method offered so far accepts a location the customer could supply by other means. Every route requires the device to determine its own position.",
+            "severity": 4
+          }
+        ],
+        "designOpportunities": [
+          "Offer methods that fail independently, rather than three routes to the same GPS fix",
+          "Accept a location relayed from a second device, which the customer very often has",
+          "Let the customer describe a location in words and geocode it agent-side"
+        ],
+        "frontstage": "An SMS with a link; a page that attempts to read the device location and cannot.",
+        "backstage": "Link generation tied to the open case. On success the coordinates attach automatically; on failure there is no fallback path and the agent must improvise.",
+        "support-systems": [
+          "SMS gateway",
+          "Location-capture web service",
+          "Provider case management system"
+        ],
+        "data-required": [
+          "Customer mobile number",
+          "A device position fix — which is exactly what is unavailable"
+        ],
+        "roles-involved": [
+          "Contact centre agent",
+          "Provider digital product"
+        ],
+        "kpis": [
+          {
+            "metric": "SMS location link success rate",
+            "target": "Above 90%"
+          },
+          {
+            "metric": "Cases requiring a third location method",
+            "target": "Below 2%"
+          }
+        ]
+      },
+      "significance": {
+        "description": "The second of three attempts at one task. Notable because it looks like a fallback but shares the dependency that broke the first attempt.",
+        "importance": "high"
+      }
+    },
+    {
+      "nodeId": "research-supported-location-formats",
+      "name": "Customer researches what the service accepts",
+      "nodeType": "touchpoint",
+      "durationMs": 120000,
+      "laneContent": {
+        "description": "The vehicle owner suggests a third-party location service. Before offering it, the customer runs a search to check the assistance provider supports that format — then proposes it to the agent. The customer researches the service's own capabilities, using a channel the service has no relationship with.",
+        "channels": [
+          {
+            "channel": "website",
+            "category": "digital",
+            "serviceModel": "self_service",
+            "interaction": "automated",
+            "ownership": "third_party",
+            "name": "Public search engine",
+            "usageContext": "SCHEMA LIMITATION: a channel wholly outside the service, used to establish what the service supports. Nobody in the chain owns or knows of it. See prediction 5."
+          }
+        ],
+        "barriers": [
+          {
+            "type": "communications",
+            "description": "The service never states which location formats it accepts. The customer has to discover a supported capability by searching the public internet, mid-call, while the agent waits.",
+            "severity": 4
+          },
+          {
+            "type": "knowledge",
+            "description": "The agent did not offer this method. The capability existed and went unmentioned until the customer raised it, so the resolution depended on the customer knowing to ask.",
+            "severity": 5
+          }
+        ],
+        "designOpportunities": [
+          "State plainly which location formats are accepted, in the app, on the call, and in the SMS",
+          "Have agents offer alternative formats as soon as the primary method fails",
+          "Treat 'what does this service accept?' as a question the service should answer, not the customer research"
+        ],
+        "frontstage": "None provided by the service. The customer uses a search engine and a family member's suggestion.",
+        "backstage": "The provider does support this format. Nothing surfaces that fact to the customer or prompts the agent to offer it.",
+        "support-systems": [
+          "None owned by the service",
+          "Public search engine",
+          "A second device belonging to another person"
+        ],
+        "data-required": [
+          "Knowledge of which location formats the provider accepts — held by the provider, discovered by the customer"
+        ],
+        "roles-involved": [
+          "None — the customer performs this unaided"
+        ],
+        "kpis": [
+          {
+            "metric": "Cases where the customer proposes the method that resolves location",
+            "target": "0% — the service should offer it first"
+          },
+          {
+            "metric": "Agent awareness of supported location formats",
+            "target": "100%"
+          }
+        ]
+      },
+      "significance": {
+        "description": "The service's capability was known to the internet and not to its own agent. The customer bridged that gap using a channel nobody in the delivery chain owns.",
+        "importance": "critical"
+      }
+    },
+    {
+      "nodeId": "share-location-third-party",
+      "name": "Location relayed from a second device",
+      "nodeType": "loop_end",
+      "durationMs": 120000,
+      "laneContent": {
+        "description": "The vehicle owner obtains a precise location from a third-party service on his own phone, and the customer reads it aloud to the agent. The third method succeeds — on a different person's device, via a service the provider does not own, spoken over the phone. The location loop closes and the case can proceed.",
+        "channels": [
+          {
+            "channel": "app",
+            "category": "digital",
+            "serviceModel": "self_service",
+            "interaction": "automated",
+            "ownership": "third_party",
+            "name": "Third-party precise-location service",
+            "usageContext": "SCHEMA LIMITATION: supplied on the vehicle owner's device, not the caller's. Nothing records that a channel was used by a different person. See prediction 5."
+          },
+          {
+            "channel": "phone",
+            "category": "telecom",
+            "serviceModel": "managed",
+            "interaction": "human",
+            "ownership": "partner",
+            "name": "Bank-specific overseas assistance line",
+            "usageContext": "The location is read aloud and typed in by the agent — a verbal relay between two digital systems"
+          }
+        ],
+        "barriers": [
+          {
+            "type": "technology",
+            "description": "Two digital systems exchange a precise location by being read aloud and retyped, because no direct route exists between them. Accurate here, but a transcription error would send recovery to the wrong place.",
+            "severity": 3
+          },
+          {
+            "type": "resource",
+            "description": "Resolution depended on a second person being present with a charged phone and better signal. A customer alone at the roadside would still be stuck.",
+            "severity": 4
+          }
+        ],
+        "designOpportunities": [
+          "Accept third-party location formats directly in the app and on the web link",
+          "Allow a location to be submitted from any device against a case reference",
+          "Confirm a relayed location back to the customer to catch transcription errors"
+        ],
+        "frontstage": "Agent accepting a spoken location reference and confirming it back.",
+        "backstage": "Agent enters the reference into the case, which resolves it to coordinates for dispatch. The provider does support the format — it simply never offered it.",
+        "support-systems": [
+          "Third-party location service",
+          "Provider case management system",
+          "Geocoding service"
+        ],
+        "data-required": [
+          "A precise location reference in a supported format",
+          "A second device with signal — unacknowledged by the service as a dependency"
+        ],
+        "roles-involved": [
+          "Contact centre agent",
+          "Dispatch operations"
+        ],
+        "kpis": [
+          {
+            "metric": "Total time from first contact to location established",
+            "target": "Under 5 minutes"
+          },
+          {
+            "metric": "Location methods attempted per case",
+            "target": "1"
+          }
+        ]
+      },
+      "significance": {
+        "description": "Closes a loop of three attempts across three channels. The method that worked was proposed by the customer, ran on someone else's phone, and belonged to a company with no relationship to anyone in the delivery chain.",
+        "importance": "critical"
+      }
     }
   ],
   "edges": [
@@ -1120,6 +1529,53 @@
     {
       "from": "install-provider-app",
       "to": "app-location-entry-fails",
+      "edgeType": "default"
+    },
+    {
+      "from": "app-location-entry-fails",
+      "to": "call-back-reenter-ivr",
+      "edgeType": "escalation",
+      "condition": {
+        "description": "Digital route cannot proceed; customer returns to the phone with nothing carried over"
+      },
+      "label": "Back to phone"
+    },
+    {
+      "from": "call-back-reenter-ivr",
+      "to": "safety-check",
+      "edgeType": "default"
+    },
+    {
+      "from": "safety-check",
+      "to": "identity-verification",
+      "edgeType": "default"
+    },
+    {
+      "from": "identity-verification",
+      "to": "sms-location-link-fails",
+      "edgeType": "default"
+    },
+    {
+      "from": "sms-location-link-fails",
+      "to": "research-supported-location-formats",
+      "edgeType": "error",
+      "condition": {
+        "description": "Second location method fails — device still cannot obtain a position fix"
+      },
+      "label": "Location capture failed"
+    },
+    {
+      "from": "sms-location-link-fails",
+      "to": "call-back-reenter-ivr",
+      "edgeType": "loop_back",
+      "condition": {
+        "description": "Designed retry cycle — on failure, return to the top of the location loop and try another method"
+      },
+      "label": "Try another method"
+    },
+    {
+      "from": "research-supported-location-formats",
+      "to": "share-location-third-party",
       "edgeType": "default"
     }
   ],

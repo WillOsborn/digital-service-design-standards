@@ -130,6 +130,11 @@ Filed properly in Task 10; parked here so none is lost.
    between correct rendering and schema validation. Already worked around in the renderer
    rather than fixed. Includes normalising the 13 `design-opps` uses in existing examples.
 6. **`usageContext` 200-char cap is too tight to explain a channel's role** — §2.3.
+7. **⚠️ Channels cannot be attributed to an actor** — §4.2. `node.actorRef` allows one actor
+   per node; channel entries have none. Services involving carers, family, translators or
+   anyone acting on another's behalf cannot be modelled. Unpredicted; likely a v2.1 item.
+8. **`branch` and `decision` are structurally identical** — §3.2. Only the type string differs;
+   nothing marks a branch's options as concurrently offered or service-initiated. Low priority.
 
 ---
 
@@ -299,6 +304,88 @@ what a Mission is for.
 
 ---
 
-## Task 4 — Phase 4
+## Task 4 — Phase 4, establishing location (complete)
+
+6 nodes, 7 edges. **20 nodes / 21 edges / 4 phases.** First use of `loop_start`, `loop_end`,
+`error` and `loop_back`. Still missing: `handoff`, `wait`, `end` (phases 5–6) and `timeout`
+(Task 7).
+
+### 4.1 Prediction 5 confirmed — channels outside the service, twice
+
+Two entries in this phase belong to organisations with **no relationship to anyone in the
+delivery chain**, and both were load-bearing:
+
+- **A public search engine**, used by the customer to establish which location formats the
+  assistance provider accepts — because the service never says.
+- **A third-party precise-location service**, which is what finally resolved the location.
+
+`ownership: third_party` is the only available value. It is the same value applied to the
+provider's own contracted recovery firm and hire supplier. The schema cannot separate
+*"a company we pay to deliver part of this service"* from *"public infrastructure we have
+never heard of and do not control"*.
+
+**Prediction 5: confirmed.** It also strengthens prediction 2 — `third_party` is now carrying
+three genuinely different relationships (competitor, subcontractor, public infrastructure).
+
+### 4.2 ⚠️ UNPREDICTED GAP — a channel cannot be attributed to a person
+
+**Not among the seven predictions. Found only by authoring.**
+
+The location that resolved the case came from **the vehicle owner's phone**, not the caller's.
+The vehicle owner searched, obtained the reference, and the cover holder read it aloud to the
+agent. Two people, two devices, three channels, one node.
+
+The schema has `node.actorRef` — a node can be attributed to one actor. But:
+
+- A node has **one** `actorRef`, and this node genuinely involves two people.
+- **Channel entries have no actor attribution at all.** There is no way to say "this channel
+  was used by the vehicle owner" and "this one by the cover holder" within the same node.
+
+So the fact that the service was rescued by a device belonging to someone it has never
+contacted — the person who, per the Actors, holds no case reference and cannot authenticate —
+**cannot be expressed in the Mission at all.** It survives only as prose in `usageContext`.
+
+This matters beyond this example. Any service where a carer, family member, translator,
+colleague or agent acts on someone's behalf has this shape, and the schema flattens all of it
+to a single actor per node.
+
+**Candidate backlog item — high value, and a genuine v2.1 candidate rather than a fix.**
+
+### 4.3 The three location methods were not three fallbacks
+
+Authoring this made a service-design point sharp that the narrative had blurred. The three
+methods attempted were app GPS, an SMS location link, and a third-party reference. The first
+two **share a dependency**: both need the device to determine its own position. So the
+"fallback" was not a fallback — it was the same failure wearing a different channel.
+
+Only the third method failed independently, and it was the one the service did not offer.
+
+Recorded as a `barrier` of type `technology` on `sms-location-link-fails`. A useful general
+principle for the standards: **a fallback that shares the primary's dependency is not a
+fallback.**
+
+### 4.4 One well-designed step, recorded deliberately
+
+`safety-check` — the agent asks whether everyone is safe **before** identity, entitlement, or
+location. It is the clearest thing the service does well, and the app does not replicate it
+(the app asks for location first and never asks about safety at all).
+
+Logged because a map made only of failures is a bad map, and because the contrast between
+channels is itself the finding.
+
+### 4.5 Prediction scoreboard
+
+| # | Prediction | Status after Task 4 |
+|---|---|---|
+| 1 | Ambient / always-available channels | **evidence gathering** — 2 instances |
+| 2 | `ownership` degrees of remove | **strengthening** — `third_party` now spans 3 distinct relationships |
+| 3 | Channel exists but is not signposted | **CONFIRMED** |
+| 5 | Third-party channels outside the service | **CONFIRMED** |
+| 6 | Precondition from a different journey | **CONFIRMED** |
+| — | **Channel cannot be attributed to a person** | **UNPREDICTED — CONFIRMED** |
+
+---
+
+## Task 5 — Phase 5
 
 *(in progress)*

@@ -4,7 +4,10 @@
 **Backlog item:** BACK-021
 **Status:** designed, awaiting implementation plan
 **Schema version:** v2.0 (Actor / Mission / Experience)
-**Source material:** `research/roadside-assistance/2026-08-06-source-notes.md`
+**Source material:** `research/private/roadside-assistance/2026-08-06-source-notes.md`
+— **gitignored and local-only.** It contains personal detail and is deliberately excluded
+from the repository, so a fresh clone will not have it. This spec must therefore carry enough
+detail to stand alone.
 
 > The source notes are the evidence base and take precedence. If this design and the notes
 > disagree, the notes are right. Do not edit the notes to match a later design decision.
@@ -52,11 +55,17 @@ The source case is a consented first-hand account. The other four example sets u
 convention: **Actors are pseudonymised**, the bank and the assistance provider are described
 generically in artifact content, and no real account or policy detail appears in the JSON.
 
-**Open decision for Will:** the *source notes* are tracked in git under his real name and
-contain personal circumstances — the bank, family members, a live insurance dispute, travel
-abroad. `PROJECT_CONTEXT.md` records the intent to make this repository public after review.
-Before publication, the notes must either be pseudonymised, moved to an ignored path, or
-consciously accepted as public. **Flagged, not decided.**
+**Resolved:** the source notes were moved to `research/private/`, which is gitignored, and
+removed from tracking. They contain personal circumstances — the bank, family members, a live
+insurance dispute, travel abroad — and `PROJECT_CONTEXT.md` records the intent to make this
+repository public after review.
+
+**Still outstanding:** the notes were committed before the move (`2aca628`, `4bf5300`), so
+**they remain in git history**. Removing them from the working tree does not remove them from
+the repository. Scrubbing history requires a rewrite, which this project's git discipline
+forbids by default — so it needs an explicit decision from Will before publication, not a
+routine cleanup. Until then the repository is private and exposure is limited to those who
+already have access.
 
 ---
 

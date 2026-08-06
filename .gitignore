@@ -13,6 +13,9 @@ backlog.json
 # Client examples (not for public release)
 v1.1/examples/Energy/
 
+# Research notes containing personal or client detail (not for public release)
+research/private/
+
 # Patterns system (not ready yet)
 patterns/
 

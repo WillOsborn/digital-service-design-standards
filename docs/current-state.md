@@ -7,7 +7,9 @@
 **Last updated:** 2026-08-06
 **Active schema version:** v2.0 (Actor / Mission / Experience)
 **Branch:** `feature/mission-visualiser` (no upstream tracking branch — never pushed; first push needs `git push -u origin feature/mission-visualiser`)
-**HEAD at handoff:** 8353237 — the commit that adds this file lands one ahead, so a fresh `/start-session` should expect to be exactly one commit past this SHA. Anything more is a concurrent session.
+**HEAD at handoff:** the tip of `feature/mission-visualiser` is the **last commit touching this file** — the 2026-08-06 session ended with `docs: sync handoff to final session state`. If `git log -1` shows anything newer that you did not make, suspect a concurrent session and read `git reflog` before acting.
+
+**Session of 2026-08-06 added, in order:** `6fb5b9a` WS7 Claude Manager · `96e5133` v2.0 plan docs · `074a69f` v1.2 research · `8353237` v2.0 exploration · `be634ef` current-state.md · `9f1ba9e` known-failure record · this commit.
 
 ---
 

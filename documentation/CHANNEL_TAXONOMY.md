@@ -89,7 +89,8 @@ Owned by digital teams. Lowest cost to serve at scale.
 
 ### Telecom Channels
 
-Typically owned by contact centres. Medium cost to serve.
+Typically *staffed* by contact centres, whoever owns the underlying technology.
+Medium cost to serve.
 
 | Type | Description |
 |------|-------------|
@@ -115,9 +116,20 @@ Categories provide high-level grouping useful for ownership analysis and cost-to
 
 | Category | Definition | Typical Owner | Cost Profile |
 |----------|------------|---------------|--------------|
-| `digital` | Apps, websites, online platforms (connected or offline) | Digital team | Lowest - highly scalable |
-| `telecom` | Phone calls and SMS via telephone networks | Contact centre | Medium - often human involvement |
+| `digital` | Apps, websites, online platforms, and asynchronous messaging (connected or offline) | Digital team | Lowest - highly scalable |
+| `telecom` | Real-time conversation at a distance - voice, SMS, and video calls | Contact centre | Medium - often human involvement |
 | `physical` | Locations, staff presence, or tangible materials | Branch/Ops | Highest - property, staff, logistics |
+
+**Categorise by cost to serve, not by who builds the technology.** These can
+diverge. A video call runs on software the digital team owns, but the person on
+the other end is usually sitting in the contact centre - so its cost profile is
+telecom, not digital, and `video_call` is categorised `telecom`. Ask "what does
+one more of these cost us?" rather than "which team maintains it?"
+
+The dividing line between `digital` and `telecom` is **synchronous human
+attention**, not the underlying transport. Email and chat are `digital` because
+they queue and batch; a voice or video call occupies one person for its whole
+duration whether it travels over a telephone network or the internet.
 
 ### When to Use Categories
 

@@ -115,7 +115,7 @@
         "channels": [
           {
             "channel": "video-call",
-            "category": "digital",
+            "category": "telecom",
             "serviceModel": "managed",
             "name": "Teams / Zoom",
             "usageContext": "Primary kick-off channel for most enterprise clients"
@@ -200,7 +200,7 @@
         "channels": [
           {
             "channel": "video-call",
-            "category": "digital",
+            "category": "telecom",
             "serviceModel": "managed",
             "name": "Teams / Zoom",
             "usageContext": "30-day relationship check-in"
@@ -244,7 +244,7 @@
         "channels": [
           {
             "channel": "video-call",
-            "category": "digital",
+            "category": "telecom",
             "serviceModel": "managed",
             "name": "Joint CS/Sales call with client champion",
             "usageContext": "Adoption intervention — uncover blockers and agree recovery plan"
@@ -264,7 +264,7 @@
         "channels": [
           {
             "channel": "video-call",
-            "category": "digital",
+            "category": "telecom",
             "serviceModel": "managed",
             "name": "Teams / Zoom",
             "usageContext": "60-day value realisation check-in"
@@ -293,7 +293,7 @@
           },
           {
             "channel": "video-call",
-            "category": "digital",
+            "category": "telecom",
             "serviceModel": "managed",
             "name": "Video QBR (standard accounts)",
             "usageContext": "90-day review for Tier 2-3 accounts"

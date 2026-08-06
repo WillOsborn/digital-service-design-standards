@@ -136,7 +136,7 @@
         "channels": [
           {
             "channel": "video-call",
-            "category": "digital",
+            "category": "telecom",
             "serviceModel": "managed",
             "name": "Video conference (Teams/Zoom)",
             "usageContext": "Remote vendor demonstrations and follow-up Q&A"

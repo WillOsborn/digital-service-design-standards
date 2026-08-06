@@ -120,7 +120,7 @@
         },
         {
           "channel": "video_call",
-          "category": "digital",
+          "category": "telecom",
           "serviceModel": "managed",
           "preference": "preferred",
           "usageContext": "Collaboration, updates, and strategic discussions"

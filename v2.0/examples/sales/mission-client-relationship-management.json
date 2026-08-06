@@ -44,7 +44,7 @@
         "description": "Sales rep creates and populates the client account record in Salesforce: contacts, contract value, renewal date, account tier, and initial health score",
         "channels": [
           {
-            "channel": "salesforce",
+            "channel": "app",
             "category": "digital",
             "serviceModel": "self_service",
             "name": "Salesforce CRM",
@@ -85,7 +85,7 @@
             "usageContext": "Coordinating kick-off logistics with client and internal team"
           },
           {
-            "channel": "linkedin",
+            "channel": "social_media",
             "category": "digital",
             "serviceModel": "self_service",
             "name": "LinkedIn",
@@ -114,14 +114,14 @@
         "description": "90-minute session: introductions, review contract scope and success metrics, agree communication cadence, identify internal champions",
         "channels": [
           {
-            "channel": "video-call",
+            "channel": "video_call",
             "category": "telecom",
             "serviceModel": "managed",
             "name": "Teams / Zoom",
             "usageContext": "Primary kick-off channel for most enterprise clients"
           },
           {
-            "channel": "in-person",
+            "channel": "in_person",
             "category": "physical",
             "serviceModel": "managed",
             "name": "On-site meeting (strategic accounts)",
@@ -171,7 +171,7 @@
             "usageContext": "Relationship check-ins and escalation comms during implementation"
           },
           {
-            "channel": "slack",
+            "channel": "messaging_app",
             "category": "digital",
             "serviceModel": "managed",
             "name": "Shared Slack channel (enterprise clients)",
@@ -199,7 +199,7 @@
         "description": "Sales rep-led call at 30 days. Goal: early value realisation check, uncover any adoption concerns, reinforce relationship",
         "channels": [
           {
-            "channel": "video-call",
+            "channel": "video_call",
             "category": "telecom",
             "serviceModel": "managed",
             "name": "Teams / Zoom",
@@ -243,7 +243,7 @@
         "description": "For low-adoption accounts: CS and sales jointly identify root cause (product fit, onboarding quality, internal champions) and agree an intervention plan",
         "channels": [
           {
-            "channel": "video-call",
+            "channel": "video_call",
             "category": "telecom",
             "serviceModel": "managed",
             "name": "Joint CS/Sales call with client champion",
@@ -263,7 +263,7 @@
         "description": "Mid-point check. Focus shifts from adoption to value realisation — can client articulate a business outcome from the product?",
         "channels": [
           {
-            "channel": "video-call",
+            "channel": "video_call",
             "category": "telecom",
             "serviceModel": "managed",
             "name": "Teams / Zoom",
@@ -285,14 +285,14 @@
         "description": "Formal quarterly review: achievement against success metrics, roadmap alignment, expansion opportunity, and renewal intent signal",
         "channels": [
           {
-            "channel": "in-person",
+            "channel": "in_person",
             "category": "physical",
             "serviceModel": "managed",
             "name": "On-site QBR (strategic accounts)",
             "usageContext": "90-day Quarterly Business Review for Tier 1 accounts"
           },
           {
-            "channel": "video-call",
+            "channel": "video_call",
             "category": "telecom",
             "serviceModel": "managed",
             "name": "Video QBR (standard accounts)",

@@ -69,7 +69,7 @@
       "laneContent": {
         "description": "Consumer researches how energy switching works, including renter rights and landlord permission requirements",
         "channels": [
-          { "channel": "web", "category": "digital", "serviceModel": "self_service", "name": "MoneySavingExpert and guides", "usageContext": "Research switching guides and forums" }
+          { "channel": "website", "category": "digital", "serviceModel": "self_service", "name": "MoneySavingExpert and guides", "usageContext": "Research switching guides and forums" }
         ],
         "barriers": [
           { "type": "knowledge", "description": "Unclear information about rental property rules for switching — whether landlord approval is needed", "severity": 3 }
@@ -85,7 +85,7 @@
       "laneContent": {
         "description": "Consumer uses comparison websites to find deals, filtering for key criteria like no exit fees and competitive pricing",
         "channels": [
-          { "channel": "web", "category": "digital", "serviceModel": "self_service", "name": "Price comparison sites", "usageContext": "Compare tariffs across providers" }
+          { "channel": "website", "category": "digital", "serviceModel": "self_service", "name": "Price comparison sites", "usageContext": "Compare tariffs across providers" }
         ],
         "barriers": [
           { "type": "knowledge", "description": "Confusing tariff structures make like-for-like comparison difficult across providers", "severity": 3 }
@@ -149,7 +149,7 @@
       "laneContent": {
         "description": "Consumer navigates to chosen provider's website from comparison site and begins the switch process",
         "channels": [
-          { "channel": "web", "category": "digital", "serviceModel": "self_service", "name": "Provider website", "usageContext": "Start switch process" }
+          { "channel": "website", "category": "digital", "serviceModel": "self_service", "name": "Provider website", "usageContext": "Start switch process" }
         ],
         "frontstage": "Switch landing page with postcode entry, address lookup",
         "backstage": "Website validates postcode and retrieves address options"
@@ -163,7 +163,7 @@
       "laneContent": {
         "description": "Consumer enters personal information, property details, current meter readings, and selects tariff and payment method",
         "channels": [
-          { "channel": "web", "category": "digital", "serviceModel": "self_service", "name": "Provider signup form", "usageContext": "Enter registration details" }
+          { "channel": "website", "category": "digital", "serviceModel": "self_service", "name": "Provider signup form", "usageContext": "Enter registration details" }
         ],
         "barriers": [
           { "type": "policy", "description": "Phone number is a required field even for consumers who prefer digital-only contact", "severity": 2 },
@@ -186,7 +186,7 @@
       "laneContent": {
         "description": "Consumer completes online identity verification using driving licence or other ID",
         "channels": [
-          { "channel": "web", "category": "digital", "serviceModel": "self_service", "name": "ID verification", "usageContext": "Verify identity online" }
+          { "channel": "website", "category": "digital", "serviceModel": "self_service", "name": "ID verification", "usageContext": "Verify identity online" }
         ],
         "backstage": "System calls Identity Verification API to validate details"
       }
@@ -199,7 +199,7 @@
       "laneContent": {
         "description": "Application is submitted and credit check is performed automatically",
         "channels": [
-          { "channel": "web", "category": "digital", "serviceModel": "self_service", "name": "Provider application", "usageContext": "Submit for credit assessment" }
+          { "channel": "website", "category": "digital", "serviceModel": "self_service", "name": "Provider application", "usageContext": "Submit for credit assessment" }
         ],
         "barriers": [
           { "type": "knowledge", "description": "No transparency about credit check criteria or how thin credit files are assessed", "severity": 3 }
@@ -224,7 +224,7 @@
       "laneContent": {
         "description": "Consumer sets up Direct Debit payment and establishes bill-splitting arrangements with housemates",
         "channels": [
-          { "channel": "web", "category": "digital", "serviceModel": "self_service", "name": "Provider payment setup", "usageContext": "Enter Direct Debit details" },
+          { "channel": "website", "category": "digital", "serviceModel": "self_service", "name": "Provider payment setup", "usageContext": "Enter Direct Debit details" },
           { "channel": "app", "category": "digital", "serviceModel": "self_service", "name": "Banking app", "usageContext": "Set up shared pot or payment splitting" }
         ],
         "designOpportunities": ["Offer built-in bill-splitting with automated collection from housemates", "Integrate with popular payment splitting apps"],

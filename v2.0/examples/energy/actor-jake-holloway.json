@@ -81,7 +81,7 @@
       ],
       "channels": [
         { "channel": "app", "category": "digital", "serviceModel": "self_service", "preference": "preferred", "usageContext": "Primary channel for account management, meter readings, and usage tracking" },
-        { "channel": "web", "category": "digital", "serviceModel": "self_service", "preference": "preferred", "usageContext": "Initial research and price comparison" },
+        { "channel": "website", "category": "digital", "serviceModel": "self_service", "preference": "preferred", "usageContext": "Initial research and price comparison" },
         { "channel": "chat", "category": "digital", "serviceModel": "both", "preference": "preferred", "usageContext": "Queries and problem resolution without phone calls" },
         { "channel": "email", "category": "digital", "serviceModel": "managed", "preference": "acceptable", "usageContext": "Confirmations, bills, and non-urgent queries" },
         { "channel": "phone", "category": "telecom", "serviceModel": "managed", "preference": "avoided", "usageContext": "Last resort for issues that cannot be resolved digitally" }

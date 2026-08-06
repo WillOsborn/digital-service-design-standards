@@ -44,14 +44,14 @@
         "description": "IT Director works with clinical leads, compliance officer, and operations to document functional, technical, and regulatory requirements",
         "channels": [
           {
-            "channel": "internal-workshops",
+            "channel": "in_person",
             "category": "physical",
             "serviceModel": "managed",
             "name": "Stakeholder workshops",
             "usageContext": "Requirements gathering with clinical and operational stakeholders"
           },
           {
-            "channel": "shared-documents",
+            "channel": "website",
             "category": "digital",
             "serviceModel": "self_service",
             "name": "Requirements specification document (SharePoint)",
@@ -85,14 +85,14 @@
         "description": "Issue a Request for Information to known vendors and run independent market research to identify candidate solutions",
         "channels": [
           {
-            "channel": "find-a-tender",
+            "channel": "website",
             "category": "digital",
             "serviceModel": "self_service",
             "name": "Find a Tender Service (FTS)",
             "usageContext": "Issuing public RFI for above-threshold procurements"
           },
           {
-            "channel": "g-cloud",
+            "channel": "website",
             "category": "digital",
             "serviceModel": "self_service",
             "name": "G-Cloud / NHS Procurement frameworks",
@@ -135,14 +135,14 @@
         "description": "Shortlisted vendors present their solutions. Sessions include clinical workflow demonstrations, technical Q&A, and security discussions",
         "channels": [
           {
-            "channel": "video-call",
+            "channel": "video_call",
             "category": "telecom",
             "serviceModel": "managed",
             "name": "Video conference (Teams/Zoom)",
             "usageContext": "Remote vendor demonstrations and follow-up Q&A"
           },
           {
-            "channel": "on-site-visit",
+            "channel": "in_person",
             "category": "physical",
             "serviceModel": "managed",
             "name": "Vendor premises or reference site visit",
@@ -181,7 +181,7 @@
         "description": "IT security officer and data protection lead conduct a formal DSP Toolkit and cyber security assessment of preferred vendor(s)",
         "channels": [
           {
-            "channel": "structured-questionnaire",
+            "channel": "website",
             "category": "digital",
             "serviceModel": "self_service",
             "name": "DSP Toolkit assessment portal",
@@ -229,7 +229,7 @@
         "description": "Calls with 2-3 NHS organisations already using the preferred vendor — focusing on implementation experience, support quality, and real-world DSP compliance",
         "channels": [
           {
-            "channel": "phone-call",
+            "channel": "phone",
             "category": "telecom",
             "serviceModel": "managed",
             "name": "Reference calls (peer NHS organisations)",
@@ -258,7 +258,7 @@
         "description": "IT Director synthesises evaluation findings into a board-ready business case: ROI, risk register, implementation timeline, and total cost of ownership",
         "channels": [
           {
-            "channel": "presentation",
+            "channel": "in_person",
             "category": "physical",
             "serviceModel": "managed",
             "name": "Board presentation (PowerPoint/slides)",
@@ -287,7 +287,7 @@
         "description": "Business case submitted to board agenda. IT Director presents recommendation and answers questions",
         "channels": [
           {
-            "channel": "board-meeting",
+            "channel": "in_person",
             "category": "physical",
             "serviceModel": "managed",
             "name": "Board or Executive Committee meeting",
@@ -329,7 +329,7 @@
         "description": "Legal and procurement teams negotiate contract terms: SLAs, data processing agreement, exit provisions, and implementation milestones",
         "channels": [
           {
-            "channel": "legal-portal",
+            "channel": "website",
             "category": "digital",
             "serviceModel": "managed",
             "name": "Contract management platform",
@@ -357,7 +357,7 @@
         "description": "Project formally begins. Governance structure established, project charter signed, and delivery plan agreed",
         "channels": [
           {
-            "channel": "kickoff-meeting",
+            "channel": "in_person",
             "category": "physical",
             "serviceModel": "managed",
             "name": "Project kickoff workshop",

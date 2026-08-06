@@ -6,10 +6,10 @@
 
 **Last updated:** 2026-08-06
 **Active schema version:** v2.0 (Actor / Mission / Experience)
-**Branch:** `feature/mission-visualiser` — tracking `origin/feature/mission-visualiser`, pushed and in sync as of 2026-08-06. Not yet merged to `main`; no PR opened.
-**Concurrency check:** local and `origin/feature/mission-visualiser` were **in sync** at session end. At session start run `git status -sb` — if the branch has diverged, or local commits exist that you did not make, suspect a concurrent session and read `git reflog` before acting. (This check deliberately names no SHA: a SHA recorded here goes stale the moment the next commit lands, including this file's own.)
+**Branch:** `main` — the mission visualiser work was fast-forwarded in and pushed on 2026-08-06. `origin/main` now carries all of v2.0 (it previously sat at v1.1 only, 28 commits behind).
+**Concurrency check:** local `main` and `origin/main` were **in sync** at session end. At session start run `git status -sb` — if the branch has diverged, or local commits exist that you did not make, suspect a concurrent session and read `git reflog` before acting. (This check deliberately names no SHA: a SHA recorded here goes stale the moment the next commit lands, including this file's own.)
 
-**Session of 2026-08-06:** everything from `b8c510d` onward — `git log b8c510d..` shows it.
+**Stale branch:** `feature/mission-visualiser` still exists locally and on `origin`, fully merged into `main`. Safe to delete whenever — kept only pending Will's say-so.
 
 ---
 
@@ -17,7 +17,11 @@
 
 **v2.0 is complete and green across every workstream except WS8.** Schemas, all four example sets, validators, quality scoring, converter, all 17 `.claude/skills/`, the standards docs, and — as of this session's commits — the WS7 Claude Manager org skills. Verification: 12/12 examples validate at 85–100 quality, 94 validator tests, 16 layout tests, 45 renderer tests, all exit 0. One pre-existing failure in `run-all-tests.js` affects **v1.x only** — see *Verification baseline* below.
 
-**Mission visualiser** (this branch) — the deterministic Node CLI that renders a v2.0 Mission as a self-contained two-mode HTML visualisation. Plan Tasks 1–4 have landed: layout module, renderer CLI with static SVG + themes + Overview mode, Explore mode (inspect panel, lane filters, barrier heat), and Playwright-driven visual fixes including occupancy-aware loop-back routing. **Task 6 is outstanding** — `.claude/skills/mission-renderer/SKILL.md` still describes hand-authored SVG and contains no reference to `tools/renderers/render-mission.js`.
+**Mission visualiser — complete and merged.** The deterministic Node CLI renders a v2.0 Mission as a self-contained two-mode HTML visualisation. Tasks 1–4 landed the layout module, renderer CLI (static SVG, both themes, Overview), Explore mode (inspect panel, lane filters, barrier heat), and Playwright-driven fixes including occupancy-aware loop-back routing. **Task 6 is done** — `.claude/skills/mission-renderer/SKILL.md` is now a thin wrapper that runs `tools/renderers/render-mission.js` and publishes the fragment as an artifact, with `Bash`/`Artifact` added to its `allowed-tools` (the old version lacked them and could not have run the CLI).
+
+Two plan steps remain permanently open, deliberately:
+- **Task 5** (publish artifact + user iteration) — blocks on Will's feedback on a published artifact, which has not happened. Do this whenever a real mission needs sharing.
+- **Task 6 Step 4** (commit the skill) — impossible; `.claude/` is gitignored, so the rewrite is local-only. Annotated in the plan rather than ticked.
 
 **WS8 Figma Plugin** (`tools-internal/figma-plugin/`) is untouched — still v1.1-only generation. It is the last unstarted v2.0 workstream.
 
@@ -25,9 +29,9 @@
 
 ## Immediate next action
 
-**Task 6 of the mission visualiser plan:** rewrite `.claude/skills/mission-renderer/SKILL.md` as a thin wrapper around the CLI — run `node tools/renderers/render-mission.js` on a Mission JSON, publish the resulting fragment as an artifact — replacing the current hand-authored-SVG instructions. This is the last task standing between the visualiser and being usable through the skill rather than by hand.
+**WS8 Figma Plugin** — the last unstarted v2.0 workstream, and now the only substantial one left. `tools-internal/figma-plugin/` still generates v1.1 artifacts only. **Read `ui.html` and `README.md` first** to understand what exists before changing anything; add v2.0 Actor/Mission/Experience export alongside v1.1 rather than replacing it. Note the plugin runs in a sandboxed iframe — output is JSON the user copies out.
 
-After that, the branch is ready to merge and **WS8 Figma Plugin** is the remaining v2.0 work. Read `tools-internal/figma-plugin/ui.html` and `README.md` first.
+Smaller options if you want something lighter: fix `run-all-tests.js` (BACK-017, needs a decision on target version), or run Task 5 by publishing a mission artifact for real feedback.
 
 ---
 
@@ -45,10 +49,9 @@ None. Single working tree on `feature/mission-visualiser`.
 
 ## Active plans
 
-- `docs/superpowers/plans/2026-07-23-mission-visualiser.md` — **Tasks 1–4 landed, Task 6 outstanding.**
-  ⚠️ The plan's checkboxes are all unticked (0 of 29) despite Tasks 1–4 being committed. They were never ticked during implementation. Treat the commit log as the source of truth for what's done, and tick them when next in the file.
+- `docs/superpowers/plans/2026-07-23-mission-visualiser.md` — **complete and merged.** 24 of 29 steps ticked; the 5 remaining are Task 5 (awaits Will's artifact feedback) and Task 6 Step 4 (impossible — gitignored). Checkbox state now matches the commit log.
   Spec: `docs/superpowers/specs/2026-07-23-mission-visualiser-design.md`
-- `docs/superpowers/plans/2026-05-04-v2.0-implementation.md` — the v2.0 build. WS1–WS7, WS9, WS10 done. **WS8 remains.**
+- `docs/superpowers/plans/2026-05-04-v2.0-implementation.md` — the v2.0 build. WS1–WS7, WS9, WS10 done. **WS8 remains** — the only substantial v2.0 work left.
 - `docs/superpowers/plans/2026-05-04-v2.0-handoff.md` — a prior session handoff, superseded by this file for *state*. Still the reference for **schema enum gotchas (§5)** and known issues — read §5 before authoring example JSON.
 
 ---

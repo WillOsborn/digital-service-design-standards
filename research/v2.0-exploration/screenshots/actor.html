@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Actor — Jake Holloway</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+         margin: 0; background: #f1f5f9; color: #0f172a; }
+  .container { max-width: 1280px; margin: 24px auto; background: white; border-radius: 12px;
+               box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08); overflow: hidden; }
+
+  /* Hero */
+  .hero { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 60%, #a855f7 100%);
+          color: white; padding: 32px 40px; display: grid; grid-template-columns: 110px 1fr 280px;
+          gap: 28px; align-items: center; }
+  .avatar { width: 110px; height: 110px; border-radius: 50%; background: rgba(255,255,255,0.18);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 44px; font-weight: 700; letter-spacing: -0.02em;
+            border: 3px solid rgba(255,255,255,0.35); }
+  .hero-info .badge { display: inline-block; background: rgba(255,255,255,0.18); color: white;
+                      padding: 3px 10px; border-radius: 4px; font-size: 11px; font-weight: 700;
+                      letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 8px; }
+  .hero-info h1 { margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.02em; }
+  .hero-info .sub { font-size: 14px; opacity: 0.85; margin-top: 4px; }
+  .hero-info .summary { margin-top: 14px; font-size: 14px; line-height: 1.55; opacity: 0.95;
+                        max-width: 680px; }
+  .quote { background: rgba(255,255,255,0.12); border-left: 3px solid white; padding: 16px 18px;
+           border-radius: 6px; font-size: 13px; line-height: 1.55; font-style: italic;
+           backdrop-filter: blur(2px); }
+
+  /* Sections */
+  .section { padding: 28px 40px; border-bottom: 1px solid #e2e8f0; }
+  .section h2 { margin: 0 0 18px; font-size: 11px; font-weight: 800; color: #6366f1;
+                text-transform: uppercase; letter-spacing: 0.12em; }
+  .section h2 .layer { color: #94a3b8; font-weight: 600; margin-left: 8px; }
+
+  /* Traits grid */
+  .traits-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+  .trait-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; }
+  .trait-card h3 { margin: 0 0 10px; font-size: 12px; font-weight: 700; color: #334155;
+                   text-transform: uppercase; letter-spacing: 0.05em; }
+  .trait-card ul { margin: 0; padding: 0; list-style: none; }
+  .trait-card li { display: flex; align-items: flex-start; gap: 8px; font-size: 13px;
+                   color: #475569; line-height: 1.45; padding: 6px 0;
+                   border-top: 1px solid #e2e8f0; }
+  .trait-card li:first-child { border-top: none; padding-top: 0; }
+  .trait-card .tag { display: inline-block; background: #e0e7ff; color: #4338ca;
+                     font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 3px;
+                     text-transform: uppercase; letter-spacing: 0.04em; flex-shrink: 0; }
+  .trait-card.frustrations .tag { background: #fee2e2; color: #991b1b; }
+  .trait-card.motivations .tag { background: #dcfce7; color: #166534; }
+  .severity { display: inline-block; background: #f59e0b; color: white;
+              font-size: 9px; font-weight: 700; padding: 2px 5px; border-radius: 3px;
+              flex-shrink: 0; min-width: 18px; text-align: center; }
+  .severity.high { background: #ef4444; }
+
+  /* Channels strip */
+  .channels { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .channel { padding: 10px 14px; border-radius: 6px; font-size: 12px;
+             border: 1px solid #e2e8f0; }
+  .channel .name { font-weight: 700; color: #0f172a; }
+  .channel .pref { font-size: 10px; color: #64748b; text-transform: uppercase;
+                   letter-spacing: 0.04em; margin-top: 2px; }
+  .channel.preferred { background: #ecfdf5; border-color: #86efac; }
+  .channel.preferred .pref { color: #16a34a; }
+  .channel.acceptable { background: #fefce8; border-color: #fde68a; }
+  .channel.acceptable .pref { color: #b45309; }
+  .channel.avoided { background: #fef2f2; border-color: #fecaca; opacity: 0.8; }
+  .channel.avoided .pref { color: #dc2626; }
+  .channel.avoided .name { text-decoration: line-through; }
+
+  /* Context */
+  .context-card { background: linear-gradient(180deg, #f0f9ff, #f8fafc);
+                  border: 1px solid #bae6fd; border-radius: 10px; padding: 18px 22px; }
+  .context-card .label { font-size: 11px; color: #0369a1; font-weight: 700;
+                         text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+  .context-card h3 { margin: 0 0 6px; font-size: 18px; color: #0f172a; }
+  .context-card .desc { font-size: 13px; color: #475569; line-height: 1.55; }
+  .context-meta { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 14px;
+                  padding-top: 14px; border-top: 1px solid #bae6fd; }
+  .context-meta .item { font-size: 12px; }
+  .context-meta .item .k { color: #0369a1; font-weight: 700; font-size: 10px;
+                           text-transform: uppercase; letter-spacing: 0.05em; }
+  .context-meta .item .v { color: #0f172a; margin-top: 2px; }
+
+  /* Emergence */
+  .emergence { background: linear-gradient(180deg, #fefce8, #fff7ed);
+               border: 1px solid #fbbf24; border-radius: 10px; padding: 22px; }
+  .emergence-header { font-size: 13px; color: #92400e; line-height: 1.55; margin-bottom: 16px;
+                      font-weight: 600; }
+  .emergence-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .emergence-col h3 { margin: 0 0 10px; font-size: 11px; font-weight: 800;
+                      text-transform: uppercase; letter-spacing: 0.06em; }
+  .emergence-col.pain h3 { color: #b91c1c; }
+  .emergence-col.opp h3 { color: #047857; }
+  .emergence-col ul { margin: 0; padding: 0; list-style: none; }
+  .emergence-col li { background: white; border-radius: 6px; padding: 10px 12px; margin-bottom: 8px;
+                      font-size: 12px; color: #334155; line-height: 1.5;
+                      display: flex; gap: 8px; align-items: flex-start; }
+  .emergence-col li .icon { flex-shrink: 0; }
+  .emergence-col.pain li { border-left: 3px solid #ef4444; }
+  .emergence-col.opp li { border-left: 3px solid #10b981; }
+
+  footer { padding: 14px 40px; background: #f8fafc; font-size: 11px; color: #64748b; }
+  footer code { background: #e2e8f0; padding: 2px 5px; border-radius: 3px; font-size: 10px;
+                color: #475569; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="avatar">JH</div>
+    <div class="hero-info">
+      <span class="badge">Actor · Human</span>
+      <h1>Jake Holloway</h1>
+      <div class="sub">22 · Junior Developer · Manchester, UK · Recent BSc Computer Science</div>
+      <div class="summary">A 22-year-old graduate living in a shared house in Manchester, comfortable with technology and keen to manage finances smartly while navigating adult responsibilities for the first time. As a junior developer, he expects seamless digital experiences and avoids phone calls.</div>
+    </div>
+    <div class="quote">
+      "I've done all the research and found us a better deal, but getting everyone to actually sit down and agree is like herding cats. And I really don't want to be the one chasing people for money every month."
+    </div>
+  </div>
+
+  <!-- LAYER 1: TRAITS -->
+  <div class="section">
+    <h2>Traits <span class="layer">— who Jake is, independent of any service</span></h2>
+
+    <div class="traits-grid">
+      <div class="trait-card">
+        <h3>Needs</h3>
+        <ul>
+          <li><span class="tag">autonomy</span>Feel in control of his finances and adult responsibilities</li>
+          <li><span class="tag">recognition</span>Be seen as reliable and capable by his housemates</li>
+          <li><span class="tag">security</span>Avoid unexpected costs or nasty surprises</li>
+          <li><span class="tag">mastery</span>Learn how things work so he can handle them confidently</li>
+        </ul>
+      </div>
+
+      <div class="trait-card frustrations">
+        <h3>Frustrations</h3>
+        <ul>
+          <li><span class="severity">3</span>Feels overwhelmed by 'adulting' tasks he was never taught</li>
+          <li><span class="severity high">4</span>Dislikes phone calls; prefers to sort things out digitally</li>
+          <li><span class="severity">3</span>Frustrated when processes seem unnecessarily complicated</li>
+        </ul>
+      </div>
+
+      <div class="trait-card motivations">
+        <h3>Motivations</h3>
+        <ul>
+          <li><span class="tag">achievement</span>Prove he can handle adult responsibilities independently</li>
+          <li><span class="tag">extrinsic</span>Getting a good deal and saving money</li>
+          <li><span class="tag">social</span>Fairness and doing right by his housemates</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="traits-grid" style="margin-top: 18px;">
+      <div class="trait-card">
+        <h3>Technology · Advanced</h3>
+        <ul>
+          <li>Highly comfortable as a developer. Uses apps for banking, fitness, everything. <strong>Expects seamless digital experiences.</strong></li>
+          <li>📱 Smartphone · 💻 Laptop</li>
+        </ul>
+      </div>
+
+      <div class="trait-card">
+        <h3>Decision-Making</h3>
+        <ul>
+          <li><strong>Style:</strong> Analytical but efficient — wants enough info to feel confident, but won't over-research</li>
+          <li><strong>Risk tolerance:</strong> Moderate</li>
+          <li><strong>Pattern:</strong> Research-then-act · Path of least resistance</li>
+        </ul>
+      </div>
+
+      <div class="trait-card">
+        <h3>Influences</h3>
+        <ul>
+          <li><strong>Peer recommendations</strong> from friends and fellow young professionals</li>
+          <li><strong>Online reviews:</strong> Reddit, Trustpilot, comparison sites</li>
+          <li>Money-saving influencers (e.g. MoneySavingExpert)</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 style="margin: 24px 0 8px; font-size: 12px; color: #334155; text-transform: uppercase; letter-spacing: 0.05em;">Communication preferences</h3>
+    <div class="channels">
+      <div class="channel preferred"><div class="name">📱 App</div><div class="pref">★ Preferred</div></div>
+      <div class="channel preferred"><div class="name">💬 Chat</div><div class="pref">★ Preferred</div></div>
+      <div class="channel preferred"><div class="name">✉️ Email</div><div class="pref">★ Preferred</div></div>
+      <div class="channel acceptable"><div class="name">📩 SMS</div><div class="pref">Acceptable</div></div>
+      <div class="channel avoided"><div class="name">📞 Phone</div><div class="pref">Avoided</div></div>
+      <div class="channel avoided"><div class="name">🤝 In-person</div><div class="pref">Avoided</div></div>
+    </div>
+  </div>
+
+  <!-- LAYER 2: CONTEXT -->
+  <div class="section">
+    <h2>Context <span class="layer">— the role he's playing in this service</span></h2>
+
+    <div class="context-card">
+      <div class="label">Context · Consumer</div>
+      <h3>Energy Provider Switcher (Shared House)</h3>
+      <div class="desc">A consumer responsible for finding, selecting, and setting up a new energy provider for a shared rental property — coordinating with multiple housemates on decisions and bill-splitting.</div>
+
+      <div class="context-meta">
+        <div class="item"><div class="k">Household</div><div class="v">4 people · Assured Shorthold Tenancy</div></div>
+        <div class="item"><div class="k">Current situation</div><div class="v">Inherited standard variable tariff from previous tenants</div></div>
+        <div class="item"><div class="k">Decision factors</div><div class="v">Cost · App quality · No exit fees · Bill-splitting</div></div>
+        <div class="item"><div class="k">Top role frustration</div><div class="v">Coordinating 4 people with different priorities — severity 4</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAYER 3: EMERGENCE -->
+  <div class="section">
+    <h2>Emergence <span class="layer">— what happens when traits collide with context</span></h2>
+
+    <div class="emergence">
+      <div class="emergence-header">
+        Jake approaches this task with a mix of determination and mild anxiety. He wants to prove he can handle adult responsibilities and is motivated by getting a good deal, but he's nervous about the social dynamics of money and the unfamiliar territory of energy contracts. <strong>The collision of his efficient digital style with messy group decision-making produces specific, predictable pain points.</strong>
+      </div>
+
+      <div class="emergence-grid">
+        <div class="emergence-col pain">
+          <h3>Pain points (emergent)</h3>
+          <ul>
+            <li><span class="icon">⚡</span><div><strong>Sev 4 ·</strong> Efficient research-then-act collides with needing consensus from three other people<br/><em style="color:#94a3b8;font-size:11px">↳ traits × context</em></div></li>
+            <li><span class="icon">⚡</span><div><strong>Sev 4 ·</strong> Social awkwardness of chasing housemates for money conflicts with desire to be seen as capable, not naggy</div></li>
+            <li><span class="icon">⚡</span><div><strong>Sev 3 ·</strong> Phone-avoidance creates friction when providers require calls</div></li>
+            <li><span class="icon">⚡</span><div><strong>Sev 3 ·</strong> Anxiety about being personally liable for the full bill undermines security</div></li>
+            <li><span class="icon">⚡</span><div><strong>Sev 3 ·</strong> Expectation of intuitive digital UX is frustrated by dated provider websites</div></li>
+          </ul>
+        </div>
+
+        <div class="emergence-col opp">
+          <h3>Opportunities (for design)</h3>
+          <ul>
+            <li><span class="icon">💡</span>Step-by-step switching guide specifically for renters and shared houses</li>
+            <li><span class="icon">💡</span>Built-in bill-splitting with automated payment collection from housemates</li>
+            <li><span class="icon">💡</span>Fully digital account management including webchat for all support</li>
+            <li><span class="icon">💡</span>Shareable comparison summaries Jake can send to housemates for quick approval</li>
+            <li><span class="icon">💡</span>Transparent, simple tariffs that are easy to compare</li>
+            <li><span class="icon">💡</span>Flexible contracts with no exit fees to match typical tenancy lengths</li>
+            <li><span class="icon">💡</span>Proactive notifications that reduce the admin burden on the account holder</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <strong>actor-jake-holloway</strong> · v2.0.0 · Type: Human · Anonymisation: fictional composite ·
+    Participates in: <code>mission-energy-supplier-switch</code> ·
+    Generates: <code>exp-jake-energy-switch</code>
+  </footer>
+
+</div>
+
+</body>
+</html>

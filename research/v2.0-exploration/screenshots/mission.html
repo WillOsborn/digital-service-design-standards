@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Mission — Energy Supplier Switch</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+         margin: 0; background: #f1f5f9; color: #0f172a; }
+  .container { max-width: 1500px; margin: 24px auto; background: white; border-radius: 12px;
+               box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08); overflow: hidden; }
+  header { background: #0f172a; color: white; padding: 20px 28px; }
+  header h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+  header .meta { font-size: 13px; opacity: 0.65; margin-top: 4px; }
+  header .badge { display: inline-block; background: rgba(34, 197, 94, 0.18); color: #4ade80;
+                  padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;
+                  margin-right: 8px; vertical-align: middle; }
+  .legend { padding: 12px 28px; background: #f8fafc; border-bottom: 1px solid #e2e8f0;
+            display: flex; gap: 18px; flex-wrap: wrap; align-items: center; }
+  .legend-item { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #475569; }
+  .swatch { width: 14px; height: 14px; border-radius: 3px; display: inline-block; }
+  .swatch.diamond { transform: rotate(45deg); width: 10px; height: 10px; }
+  .swatch.circle { border-radius: 50%; }
+  .swatch.dashed { background: none !important; border: 1.5px dashed #9ca3af; }
+  .phases { display: grid; grid-template-columns: repeat(6, 1fr); background: #e2e8f0;
+            border-bottom: 1px solid #cbd5e1; }
+  .phase-header { padding: 10px 8px; text-align: center; font-size: 11px; font-weight: 700;
+                  color: #334155; text-transform: uppercase; letter-spacing: 0.05em;
+                  border-right: 1px solid #cbd5e1; }
+  .phase-header:last-child { border-right: none; }
+  .phase-header .goal { display: block; font-weight: 400; text-transform: none; letter-spacing: 0;
+                        color: #64748b; margin-top: 2px; font-size: 10px; }
+  svg { display: block; background:
+        linear-gradient(90deg, white 16.66%, #f8fafc 16.66%, #f8fafc 33.33%, white 33.33%,
+                        white 50%, #f8fafc 50%, #f8fafc 66.66%, white 66.66%,
+                        white 83.33%, #f8fafc 83.33%); }
+  footer { padding: 14px 28px; background: #f8fafc; border-top: 1px solid #e2e8f0;
+           font-size: 11px; color: #64748b; }
+  footer code { background: #e2e8f0; padding: 2px 5px; border-radius: 3px; font-size: 10px;
+                color: #475569; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <h1>
+      <span class="badge">Mission</span>
+      Energy Supplier Switch — Shared Rental Property
+    </h1>
+    <div class="meta">19 nodes · 19 edges · 4 phases · As-is · Trigger: rate increase notification · Completion: first bill received</div>
+  </header>
+
+  <div class="legend">
+    <div class="legend-item"><span class="swatch circle" style="background:#22c55e"></span>start</div>
+    <div class="legend-item"><span class="swatch" style="background:#3b82f6"></span>touchpoint</div>
+    <div class="legend-item"><span class="swatch diamond" style="background:#f59e0b"></span>decision</div>
+    <div class="legend-item"><span class="swatch circle" style="background:#f97316"></span>signal</div>
+    <div class="legend-item"><span class="swatch dashed"></span>wait</div>
+    <div class="legend-item"><span class="swatch circle" style="background:#ef4444"></span>end</div>
+    <div class="legend-item" style="margin-left:auto; color:#94a3b8;"><span style="border-top:1.5px dashed #64748b; width:24px; display:inline-block; vertical-align:middle"></span> conditional / loop</div>
+  </div>
+
+  <div class="phases">
+    <div class="phase-header">Trigger</div>
+    <div class="phase-header">Research &amp; Compare<span class="goal">Find a deal & get buy-in</span></div>
+    <div class="phase-header">Registration<span class="goal">Sign up with chosen provider</span></div>
+    <div class="phase-header">Verification &amp; Setup<span class="goal">Pass credit check & configure</span></div>
+    <div class="phase-header">Welcome &amp; Onboarding<span class="goal">Complete switch transition</span></div>
+    <div class="phase-header">Complete</div>
+  </div>
+
+  <svg viewBox="0 0 1500 720" width="1500" height="720" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b" />
+      </marker>
+      <marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b" />
+      </marker>
+    </defs>
+
+    <!-- Edges drawn first so nodes overlay them -->
+    <!-- Path: start → realise-need → research-options → compare-tariffs → get-agreement → decide-to-switch -->
+    <line x1="125" y1="360" x2="220" y2="80" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+    <line x1="375" y1="80" x2="375" y2="180" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+    <line x1="375" y1="180" x2="375" y2="280" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+    <line x1="375" y1="280" x2="375" y2="380" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+    <line x1="375" y1="380" x2="375" y2="480" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+
+    <!-- Decision branches: proceed → start-switch (next column) -->
+    <line x1="475" y1="480" x2="610" y2="80" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#arrow-amber)" />
+    <text x="540" y="270" font-size="10" fill="#b45309" font-weight="600">Proceed</text>
+
+    <!-- Loop back: decide-to-switch → compare-tariffs (curved out to right within column) -->
+    <path d="M 475 500 Q 580 500 580 280 Q 580 270 480 270" fill="none" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#arrow-amber)" />
+    <text x="555" y="395" font-size="10" fill="#b45309" font-weight="600" transform="rotate(-90, 555, 395)">Reconsider</text>
+
+    <!-- Registration column: start-switch → enter-details → verify-identity -->
+    <line x1="625" y1="80" x2="625" y2="180" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+    <line x1="625" y1="180" x2="625" y2="280" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+
+    <!-- verify-identity (col 2 row 2) → credit-check (col 3 row 0) -->
+    <line x1="700" y1="280" x2="855" y2="80" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+
+    <!-- Verification column: credit-check → credit-result → setup-payment → configure-account -->
+    <line x1="875" y1="80" x2="875" y2="180" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+    <line x1="875" y1="180" x2="875" y2="280" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#arrow-amber)" />
+    <text x="890" y="232" font-size="10" fill="#b45309" font-weight="600">Approved</text>
+    <line x1="875" y1="280" x2="875" y2="380" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+
+    <!-- configure-account (col 3 row 3) → welcome-email (col 4 row 0) -->
+    <line x1="950" y1="380" x2="1105" y2="80" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+
+    <!-- Onboarding column -->
+    <line x1="1125" y1="80" x2="1125" y2="180" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+    <line x1="1125" y1="180" x2="1125" y2="280" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+    <line x1="1125" y1="280" x2="1125" y2="380" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+    <line x1="1125" y1="380" x2="1125" y2="480" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+
+    <!-- ongoing-management → end -->
+    <line x1="1200" y1="480" x2="1335" y2="360" stroke="#64748b" stroke-width="1.5" marker-end="url(#arrow)" />
+
+    <!-- ============ NODES ============ -->
+
+    <!-- start (col 0, centered) -->
+    <g>
+      <circle cx="125" cy="360" r="26" fill="#22c55e" stroke="#15803d" stroke-width="2" />
+      <text x="125" y="365" text-anchor="middle" font-size="12" fill="white" font-weight="700">START</text>
+    </g>
+
+    <!-- ===== Research column (col 1, x=375) ===== -->
+    <g><!-- realise-need (signal) -->
+      <circle cx="375" cy="80" r="30" fill="#f97316" stroke="#c2410c" stroke-width="2" />
+      <text x="375" y="74" text-anchor="middle" font-size="9" fill="white" font-weight="600">SIGNAL</text>
+      <text x="375" y="90" text-anchor="middle" font-size="9" fill="white">Rate ↑</text>
+      <text x="375" y="135" text-anchor="middle" font-size="11" fill="#0f172a" font-weight="600">Realise need to switch</text>
+      <text x="375" y="150" text-anchor="middle" font-size="10" fill="#64748b">5 min</text>
+    </g>
+
+    <g><!-- research-options (touchpoint) -->
+      <rect x="295" y="158" width="160" height="44" rx="8" fill="#3b82f6" stroke="#1d4ed8" stroke-width="1.5" />
+      <text x="375" y="178" text-anchor="middle" font-size="11" fill="white" font-weight="600">Research switching</text>
+      <text x="375" y="192" text-anchor="middle" font-size="10" fill="#dbeafe">30 min · web</text>
+    </g>
+
+    <g><!-- compare-tariffs (touchpoint) — significance: critical -->
+      <rect x="295" y="258" width="160" height="44" rx="8" fill="#3b82f6" stroke="#dc2626" stroke-width="2.5" />
+      <text x="375" y="278" text-anchor="middle" font-size="11" fill="white" font-weight="600">Compare tariffs</text>
+      <text x="375" y="292" text-anchor="middle" font-size="10" fill="#dbeafe">45 min · web ★</text>
+    </g>
+
+    <g><!-- get-agreement (touchpoint) — significance: critical, gate -->
+      <rect x="295" y="358" width="160" height="44" rx="8" fill="#3b82f6" stroke="#dc2626" stroke-width="2.5" />
+      <text x="375" y="378" text-anchor="middle" font-size="11" fill="white" font-weight="600">Get housemate agreement</text>
+      <text x="375" y="392" text-anchor="middle" font-size="10" fill="#dbeafe">3 days · WhatsApp ★</text>
+    </g>
+
+    <g><!-- decide-to-switch (decision) -->
+      <polygon points="375,448 480,500 375,552 270,500" fill="#f59e0b" stroke="#b45309" stroke-width="2" />
+      <text x="375" y="497" text-anchor="middle" font-size="10" fill="white" font-weight="700">DECISION</text>
+      <text x="375" y="510" text-anchor="middle" font-size="10" fill="white">proceed?</text>
+    </g>
+
+    <!-- ===== Registration column (col 2, x=625) ===== -->
+    <g><!-- start-switch -->
+      <rect x="545" y="58" width="160" height="44" rx="8" fill="#3b82f6" stroke="#1d4ed8" stroke-width="1.5" />
+      <text x="625" y="78" text-anchor="middle" font-size="11" fill="white" font-weight="600">Start switch on website</text>
+      <text x="625" y="92" text-anchor="middle" font-size="10" fill="#dbeafe">2 min · web</text>
+    </g>
+
+    <g><!-- enter-details — significance: high -->
+      <rect x="545" y="158" width="160" height="44" rx="8" fill="#3b82f6" stroke="#dc2626" stroke-width="2.5" />
+      <text x="625" y="178" text-anchor="middle" font-size="11" fill="white" font-weight="600">Enter personal details</text>
+      <text x="625" y="192" text-anchor="middle" font-size="10" fill="#dbeafe">10 min · web ★</text>
+    </g>
+
+    <g><!-- verify-identity -->
+      <rect x="545" y="258" width="160" height="44" rx="8" fill="#3b82f6" stroke="#1d4ed8" stroke-width="1.5" />
+      <text x="625" y="278" text-anchor="middle" font-size="11" fill="white" font-weight="600">Verify identity</text>
+      <text x="625" y="292" text-anchor="middle" font-size="10" fill="#dbeafe">3 min · web</text>
+    </g>
+
+    <!-- ===== Verification column (col 3, x=875) ===== -->
+    <g><!-- credit-check -->
+      <rect x="795" y="58" width="160" height="44" rx="8" fill="#3b82f6" stroke="#1d4ed8" stroke-width="1.5" />
+      <text x="875" y="78" text-anchor="middle" font-size="11" fill="white" font-weight="600">Credit check</text>
+      <text x="875" y="92" text-anchor="middle" font-size="10" fill="#dbeafe">30 sec · automated</text>
+    </g>
+
+    <g><!-- credit-result (decision) -->
+      <polygon points="875,148 980,200 875,252 770,200" fill="#f59e0b" stroke="#b45309" stroke-width="2" />
+      <text x="875" y="197" text-anchor="middle" font-size="10" fill="white" font-weight="700">DECISION</text>
+      <text x="875" y="210" text-anchor="middle" font-size="10" fill="white">credit OK?</text>
+    </g>
+
+    <g><!-- setup-payment — significance: high -->
+      <rect x="795" y="258" width="160" height="44" rx="8" fill="#3b82f6" stroke="#dc2626" stroke-width="2.5" />
+      <text x="875" y="278" text-anchor="middle" font-size="11" fill="white" font-weight="600">Set up Direct Debit</text>
+      <text x="875" y="292" text-anchor="middle" font-size="10" fill="#dbeafe">5 min · web + Monzo ★</text>
+    </g>
+
+    <g><!-- configure-account -->
+      <rect x="795" y="358" width="160" height="44" rx="8" fill="#3b82f6" stroke="#1d4ed8" stroke-width="1.5" />
+      <text x="875" y="378" text-anchor="middle" font-size="11" fill="white" font-weight="600">Configure account</text>
+      <text x="875" y="392" text-anchor="middle" font-size="10" fill="#dbeafe">5 min · app</text>
+    </g>
+
+    <!-- ===== Onboarding column (col 4, x=1125) ===== -->
+    <g><!-- welcome-email (signal) -->
+      <circle cx="1125" cy="80" r="30" fill="#f97316" stroke="#c2410c" stroke-width="2" />
+      <text x="1125" y="75" text-anchor="middle" font-size="9" fill="white" font-weight="600">SIGNAL</text>
+      <text x="1125" y="89" text-anchor="middle" font-size="9" fill="white">Welcome</text>
+      <text x="1125" y="135" text-anchor="middle" font-size="11" fill="#0f172a" font-weight="600">Welcome comms</text>
+      <text x="1125" y="150" text-anchor="middle" font-size="10" fill="#64748b">1 day · email + app</text>
+    </g>
+
+    <g><!-- cooling-off (wait) -->
+      <rect x="1045" y="158" width="160" height="44" rx="6" fill="white" stroke="#64748b" stroke-width="1.5" stroke-dasharray="6,3" />
+      <text x="1125" y="178" text-anchor="middle" font-size="11" fill="#475569" font-weight="600">Cooling off period</text>
+      <text x="1125" y="192" text-anchor="middle" font-size="10" fill="#94a3b8">⏱ 14 days</text>
+    </g>
+
+    <g><!-- switch-day — significance: high -->
+      <rect x="1045" y="258" width="160" height="44" rx="8" fill="#3b82f6" stroke="#dc2626" stroke-width="2.5" />
+      <text x="1125" y="278" text-anchor="middle" font-size="11" fill="white" font-weight="600">Switch day · meter reads</text>
+      <text x="1125" y="292" text-anchor="middle" font-size="10" fill="#dbeafe">10 min · app ★</text>
+    </g>
+
+    <g><!-- first-bill — significance: critical -->
+      <rect x="1045" y="358" width="160" height="44" rx="8" fill="#3b82f6" stroke="#dc2626" stroke-width="2.5" />
+      <text x="1125" y="378" text-anchor="middle" font-size="11" fill="white" font-weight="600">First bill received</text>
+      <text x="1125" y="392" text-anchor="middle" font-size="10" fill="#dbeafe">5 min · app ★</text>
+    </g>
+
+    <g><!-- ongoing-management -->
+      <rect x="1045" y="458" width="160" height="44" rx="8" fill="#3b82f6" stroke="#1d4ed8" stroke-width="1.5" />
+      <text x="1125" y="478" text-anchor="middle" font-size="11" fill="white" font-weight="600">Ongoing routine</text>
+      <text x="1125" y="492" text-anchor="middle" font-size="10" fill="#dbeafe">7 days · app</text>
+    </g>
+
+    <!-- ===== End column (col 5, x=1375) ===== -->
+    <g>
+      <circle cx="1375" cy="360" r="29" fill="none" stroke="#ef4444" stroke-width="3" />
+      <circle cx="1375" cy="360" r="22" fill="#ef4444" stroke="#ef4444" stroke-width="1" />
+      <text x="1375" y="365" text-anchor="middle" font-size="12" fill="white" font-weight="700">END</text>
+    </g>
+
+    <!-- Highlight: Happy path label -->
+    <rect x="1240" y="630" width="220" height="44" rx="6" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5" />
+    <text x="1350" y="650" text-anchor="middle" font-size="11" fill="#92400e" font-weight="700">Happy path · 70% frequency</text>
+    <text x="1350" y="665" text-anchor="middle" font-size="10" fill="#a16207">Avg duration: 3–4 weeks</text>
+
+    <!-- Critical moments key -->
+    <rect x="40" y="630" width="240" height="44" rx="6" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5" />
+    <text x="160" y="650" text-anchor="middle" font-size="11" fill="#991b1b" font-weight="700">★ = moments that matter</text>
+    <text x="160" y="665" text-anchor="middle" font-size="10" fill="#b91c1c">High / critical significance nodes</text>
+  </svg>
+
+  <footer>
+    <strong>mission-energy-supplier-switch</strong> · v2.0.0 ·
+    Lanes: <code>description</code> <code>channels</code> <code>barriers</code> <code>design-opps</code> <code>accessibility</code> <code>frontstage</code> <code>backstage</code> <code>housemate-coordination</code>
+    · Actors: 1 (Jake Holloway, primary account holder)
+    · <em>This is the persona-agnostic service graph — multiple actors can flow through to generate Experience artifacts.</em>
+  </footer>
+
+</div>
+
+</body>
+</html>

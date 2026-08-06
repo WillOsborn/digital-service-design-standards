@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Experience — Jake Holloway · Energy Switch</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+         margin: 0; background: #f1f5f9; color: #0f172a; }
+  .container { width: 1960px; margin: 24px auto; background: white; border-radius: 12px;
+               box-shadow: 0 4px 24px rgba(15, 23, 42, 0.08); overflow: hidden; }
+  header { background: linear-gradient(135deg, #1e293b, #0f172a); color: white; padding: 24px 32px;
+           display: flex; justify-content: space-between; align-items: center; }
+  .header-left h1 { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+  .header-left .badge { display: inline-block; background: rgba(168, 85, 247, 0.22); color: #d8b4fe;
+                        padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;
+                        margin-right: 8px; vertical-align: middle; }
+  .header-left .meta { font-size: 13px; opacity: 0.7; margin-top: 6px; }
+  .header-right { text-align: right; }
+  .header-right .outcome { font-size: 12px; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.06em; }
+  .header-right .sentiment { font-size: 28px; font-weight: 700; margin-top: 2px; color: #4ade80; }
+  .header-right .would-repeat { font-size: 12px; opacity: 0.85; margin-top: 4px; }
+
+  /* Phase bands */
+  .phase-band { display: grid;
+    grid-template-columns: 180px repeat(5, 220px) repeat(3, 220px) repeat(4, 220px) repeat(5, 220px);
+    background: #f8fafc; border-bottom: 1px solid #e2e8f0; }
+  .lane-corner { padding: 8px 12px; font-size: 11px; color: #64748b; font-weight: 600;
+                 background: #e2e8f0; border-right: 1px solid #cbd5e1; }
+  .phase { padding: 10px 12px; font-size: 11px; font-weight: 700; text-transform: uppercase;
+           letter-spacing: 0.06em; text-align: center; color: white; }
+  .phase.p1 { background: #f59e0b; grid-column: span 5; }
+  .phase.p2 { background: #6366f1; grid-column: span 3; }
+  .phase.p3 { background: #06b6d4; grid-column: span 4; }
+  .phase.p4 { background: #22c55e; grid-column: span 5; }
+
+  /* Node header row */
+  .node-row { display: grid;
+    grid-template-columns: 180px repeat(17, 220px);
+    background: #f8fafc; border-bottom: 2px solid #cbd5e1; }
+  .lane-label { padding: 12px; font-size: 12px; font-weight: 700; color: #334155;
+                background: #e2e8f0; border-right: 1px solid #cbd5e1;
+                display: flex; align-items: center; }
+  .node-cell { padding: 8px 10px; border-right: 1px solid #e2e8f0; font-size: 11px;
+               color: #475569; }
+  .node-cell .node-name { font-weight: 700; color: #0f172a; font-size: 12px; line-height: 1.3; }
+  .node-cell .node-step { font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.04em; }
+  .node-cell.moment { background: #fef3c7; }
+  .node-cell.moment-critical { background: #fee2e2; }
+
+  /* Lane rows */
+  .lane-row { display: grid; grid-template-columns: 180px repeat(17, 220px);
+              border-bottom: 1px solid #e2e8f0; min-height: 70px; }
+  .lane-row .lane-label { background: #f8fafc; }
+  .cell { padding: 8px 10px; border-right: 1px solid #e2e8f0; font-size: 11px;
+          color: #334155; line-height: 1.45; }
+  .cell ul { margin: 0; padding-left: 14px; }
+  .cell ul li { margin-bottom: 2px; }
+  .cell.thoughts { font-style: italic; color: #475569; }
+  .cell.barrier { background: #fef2f2; }
+  .cell.barrier .severity { display: inline-block; font-size: 9px; font-weight: 700;
+                            padding: 1px 5px; border-radius: 3px; vertical-align: middle;
+                            background: #dc2626; color: white; margin-right: 4px; }
+  .cell.opp { background: #ecfdf5; color: #065f46; }
+
+  /* Emotion sparkline */
+  .emotion-row { display: grid; grid-template-columns: 180px 1fr;
+                 border-bottom: 1px solid #e2e8f0; min-height: 110px; }
+  .emotion-svg { background: white; }
+
+  footer { padding: 16px 32px; background: #f8fafc; border-top: 1px solid #e2e8f0;
+           font-size: 12px; color: #475569; }
+  footer .reflection { font-style: italic; max-width: 1100px; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <div class="header-left">
+      <h1>
+        <span class="badge">Experience</span>
+        Jake Holloway — Energy Supplier Switch
+      </h1>
+      <div class="meta">
+        Path type: observed · Total duration: 3 weeks · 19 steps ·
+        Mission: <strong>energy-supplier-switch</strong> · Actor: <strong>Jake Holloway</strong> (Energy Switcher Shared House)
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="outcome">Outcome</div>
+      <div class="sentiment">+2 ✓</div>
+      <div class="would-repeat">Successful · would repeat</div>
+    </div>
+  </header>
+
+  <!-- Phase bands -->
+  <div class="phase-band">
+    <div class="lane-corner">PHASE</div>
+    <div class="phase p1">Research &amp; Compare</div>
+    <div class="phase p2">Registration</div>
+    <div class="phase p3">Verification &amp; Setup</div>
+    <div class="phase p4">Welcome &amp; Onboarding</div>
+  </div>
+
+  <!-- Node header row -->
+  <div class="node-row">
+    <div class="lane-label">STEP</div>
+    <div class="node-cell"><div class="node-step">Step 1 · signal</div><div class="node-name">Realise need to switch</div></div>
+    <div class="node-cell"><div class="node-step">Step 2 · touchpoint</div><div class="node-name">Research switching process</div></div>
+    <div class="node-cell moment-critical"><div class="node-step">Step 3 ★ critical</div><div class="node-name">Compare tariffs</div></div>
+    <div class="node-cell moment-critical"><div class="node-step">Step 4 ★ critical</div><div class="node-name">Get housemate agreement</div></div>
+    <div class="node-cell"><div class="node-step">Step 5 · decision</div><div class="node-name">Decide to proceed</div></div>
+    <div class="node-cell"><div class="node-step">Step 6 · touchpoint</div><div class="node-name">Start switch on website</div></div>
+    <div class="node-cell moment"><div class="node-step">Step 7 ★ high</div><div class="node-name">Enter personal details</div></div>
+    <div class="node-cell"><div class="node-step">Step 8 · touchpoint</div><div class="node-name">Verify identity</div></div>
+    <div class="node-cell moment-critical"><div class="node-step">Step 9 ★ critical</div><div class="node-name">Credit check</div></div>
+    <div class="node-cell moment-critical"><div class="node-step">Step 10 ★ critical</div><div class="node-name">Credit result</div></div>
+    <div class="node-cell moment"><div class="node-step">Step 11 ★ high</div><div class="node-name">Set up Direct Debit</div></div>
+    <div class="node-cell"><div class="node-step">Step 12 · touchpoint</div><div class="node-name">Configure account</div></div>
+    <div class="node-cell"><div class="node-step">Step 13 · signal</div><div class="node-name">Welcome comms</div></div>
+    <div class="node-cell"><div class="node-step">Step 14 · wait</div><div class="node-name">Cooling off (14 days)</div></div>
+    <div class="node-cell"><div class="node-step">Step 15 · touchpoint</div><div class="node-name">Switch day · meter reads</div></div>
+    <div class="node-cell moment-critical"><div class="node-step">Step 16 ★ critical</div><div class="node-name">First bill received</div></div>
+    <div class="node-cell"><div class="node-step">Step 17 · touchpoint</div><div class="node-name">Establish ongoing routine</div></div>
+  </div>
+
+  <!-- Actions lane -->
+  <div class="lane-row">
+    <div class="lane-label">Actions</div>
+    <div class="cell"><ul><li>Receives email re: rate increase</li><li>Checks Reddit + MSE</li></ul></div>
+    <div class="cell"><ul><li>Googles "how to switch energy"</li><li>Reads MSE renter guides</li><li>Checks landlord rules</li></ul></div>
+    <div class="cell"><ul><li>Uses comparison websites</li><li>Filters: no exit fees</li><li>Screenshots top options</li></ul></div>
+    <div class="cell"><ul><li>Posts comparison in WhatsApp</li><li>Chases responses for days</li><li>Calls quick house meeting</li></ul></div>
+    <div class="cell"><ul><li>Confirms PowerGrid choice</li></ul></div>
+    <div class="cell"><ul><li>Navigates to PowerGrid site</li><li>Enters postcode</li></ul></div>
+    <div class="cell"><ul><li>Enters name, email, phone</li><li>Property + meter readings</li><li>Selects tariff &amp; payment</li></ul></div>
+    <div class="cell"><ul><li>Online ID check</li><li>Driving licence details</li></ul></div>
+    <div class="cell"><ul><li>Submits application</li><li>Sees credit-check message</li></ul></div>
+    <div class="cell"><ul><li>Receives "passed" confirmation</li></ul></div>
+    <div class="cell"><ul><li>Bank details for DD</li><li>Sets up Monzo shared pot</li><li>Invites housemates</li></ul></div>
+    <div class="cell"><ul><li>Downloads PowerGrid app</li><li>Email + app push only</li><li>Paperless on</li></ul></div>
+    <div class="cell"><ul><li>Reads welcome email</li><li>Forwards dates to WhatsApp</li></ul></div>
+    <div class="cell"><ul><li>Waits, checks app occasionally</li></ul></div>
+    <div class="cell"><ul><li>Photos of meter readings</li><li>Submits via app</li></ul></div>
+    <div class="cell"><ul><li>Reviews charges + tariff</li><li>Sends shares to WhatsApp</li><li>Checks Monzo pot funds</li></ul></div>
+    <div class="cell"><ul><li>Sets monthly Monzo reminder</li><li>Enables usage alerts</li></ul></div>
+  </div>
+
+  <!-- Thoughts lane -->
+  <div class="lane-row">
+    <div class="lane-label">Thoughts</div>
+    <div class="cell thoughts">"This is more than my mates pay — should look into switching, isn't that what adults do?"</div>
+    <div class="cell thoughts">"More complicated than I expected. Do I need to tell the landlord? At least it's all online."</div>
+    <div class="cell thoughts">"PowerGrid looks good — modern app, no exit fees, competitive. I'll put together a comparison."</div>
+    <div class="cell thoughts">"Why is it so hard to get everyone to respond? Tom's read the messages but not replied."</div>
+    <div class="cell thoughts">"Finally agreed. PowerGrid it is. Get this done before anyone changes their mind."</div>
+    <div class="cell thoughts">"Good, all online. Website looks decent — let's see how easy this actually is."</div>
+    <div class="cell thoughts">"Wait, I have to give a phone number? And being account holder means I'm responsible for the whole bill…"</div>
+    <div class="cell thoughts">"Standard KYC. At least I don't have to post documents. Smooth so far."</div>
+    <div class="cell thoughts">"Credit check? I've only had a card a year. What if I fail? Embarrassing to tell the others."</div>
+    <div class="cell thoughts">"Yes! Passed. I can actually do this adult stuff."</div>
+    <div class="cell thoughts">"DD from my account, then collect via Monzo — same as Netflix. I'll set a chase reminder."</div>
+    <div class="cell thoughts">"Finally, a decent app. Push for bills, email for important stuff, no phone calls. Perfect."</div>
+    <div class="cell thoughts">"Clear timeline of what happens next. 3 weeks to switch."</div>
+    <div class="cell thoughts">"Good to know I could've cancelled. Now it's definitely happening."</div>
+    <div class="cell thoughts">"Meter time. App makes it easy — just take a photo. Done."</div>
+    <div class="cell thoughts">"First bill matches the tariff. We're actually saving money!"</div>
+    <div class="cell thoughts">"Manageable. Monthly check, eye on usage. I've got this adulting thing sorted."</div>
+  </div>
+
+  <!-- Emotion lane (sparkline) -->
+  <div class="emotion-row">
+    <div class="lane-label">Emotion</div>
+    <svg class="emotion-svg" viewBox="0 0 3740 110" width="100%" height="110" preserveAspectRatio="none">
+      <!-- baseline -->
+      <line x1="0" y1="55" x2="3740" y2="55" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3,3" />
+      <text x="6" y="20" font-size="10" fill="#94a3b8" font-family="system-ui">+2</text>
+      <text x="6" y="59" font-size="10" fill="#94a3b8" font-family="system-ui">0</text>
+      <text x="6" y="100" font-size="10" fill="#94a3b8" font-family="system-ui">−2</text>
+
+      <!-- emotion line: each node centred at x = 110 + i*220, y mapped from intensity -->
+      <!-- intensities: -1, 0, 1, -1, 1, 1, 0, 1, -1, 2, 1, 2, 1, 0, 1, 2, 2 -->
+      <polyline points="
+        110,75   330,55   550,35   770,75
+        990,35  1210,35 1430,55  1650,35
+       1870,75  2090,15 2310,35  2530,15
+       2750,35  2970,55 3190,35  3410,15
+       3630,15"
+        fill="none" stroke="#6366f1" stroke-width="2.5" stroke-linejoin="round" />
+
+      <!-- Dots with sentiment color -->
+      <g font-family="system-ui" font-size="10" font-weight="600">
+        <circle cx="110" cy="75" r="6" fill="#fb923c"/><text x="110" y="93" text-anchor="middle" fill="#7c2d12">concerned</text>
+        <circle cx="330" cy="55" r="6" fill="#94a3b8"/><text x="330" y="73" text-anchor="middle" fill="#475569">cautious</text>
+        <circle cx="550" cy="35" r="6" fill="#22c55e"/><text x="550" y="28" text-anchor="middle" fill="#166534">engaged</text>
+        <circle cx="770" cy="75" r="7" fill="#ef4444"/><text x="770" y="93" text-anchor="middle" fill="#7f1d1d" font-weight="700">frustrated ★</text>
+        <circle cx="990" cy="35" r="6" fill="#22c55e"/><text x="990" y="28" text-anchor="middle" fill="#166534">relieved</text>
+        <circle cx="1210" cy="35" r="6" fill="#22c55e"/><text x="1210" y="28" text-anchor="middle" fill="#166534">optimistic</text>
+        <circle cx="1430" cy="55" r="6" fill="#fb923c"/><text x="1430" y="73" text-anchor="middle" fill="#7c2d12">anxious</text>
+        <circle cx="1650" cy="35" r="6" fill="#22c55e"/><text x="1650" y="28" text-anchor="middle" fill="#166534">satisfied</text>
+        <circle cx="1870" cy="75" r="7" fill="#ef4444"/><text x="1870" y="93" text-anchor="middle" fill="#7f1d1d" font-weight="700">anxious ★</text>
+        <circle cx="2090" cy="15" r="8" fill="#16a34a"/><text x="2090" y="105" text-anchor="middle" fill="#14532d" font-weight="700">elated ★</text>
+        <circle cx="2310" cy="35" r="6" fill="#22c55e"/><text x="2310" y="28" text-anchor="middle" fill="#166534">practical</text>
+        <circle cx="2530" cy="15" r="7" fill="#16a34a"/><text x="2530" y="105" text-anchor="middle" fill="#14532d">pleased</text>
+        <circle cx="2750" cy="35" r="6" fill="#22c55e"/><text x="2750" y="28" text-anchor="middle" fill="#166534">reassured</text>
+        <circle cx="2970" cy="55" r="6" fill="#94a3b8"/><text x="2970" y="73" text-anchor="middle" fill="#475569">patient</text>
+        <circle cx="3190" cy="35" r="6" fill="#22c55e"/><text x="3190" y="28" text-anchor="middle" fill="#166534">accomplished</text>
+        <circle cx="3410" cy="15" r="8" fill="#16a34a"/><text x="3410" y="105" text-anchor="middle" fill="#14532d" font-weight="700">validated ★</text>
+        <circle cx="3630" cy="15" r="7" fill="#16a34a"/><text x="3630" y="28" text-anchor="middle" fill="#14532d">confident</text>
+      </g>
+    </svg>
+  </div>
+
+  <!-- Barriers lane -->
+  <div class="lane-row">
+    <div class="lane-label">Barriers</div>
+    <div class="cell"></div>
+    <div class="cell barrier"><span class="severity">3</span><strong>Knowledge:</strong> rental switching rules unclear</div>
+    <div class="cell barrier"><span class="severity">3</span><strong>Knowledge:</strong> tariff structures hard to compare like-for-like</div>
+    <div class="cell barrier"><span class="severity" style="background:#991b1b">4</span><strong>Process:</strong> coordinating 4 people with different priorities</div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell barrier"><span class="severity">2</span>Phone required<br/><span class="severity" style="background:#991b1b">4</span><strong>Knowledge:</strong> account-holder liability unclear</div>
+    <div class="cell"></div>
+    <div class="cell barrier"><span class="severity">3</span><strong>Knowledge:</strong> credit-check criteria opaque for thin files</div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell barrier"><span class="severity">3</span><strong>Process:</strong> ongoing chase burden of collecting from housemates</div>
+  </div>
+
+  <!-- Opportunities lane -->
+  <div class="lane-row">
+    <div class="lane-label">Opportunities</div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell opp">Shareable comparison cards for messaging apps</div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell opp">In-app bill-splitting · auto-collect from housemates</div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell opp">Show savings vs. previous provider in app</div>
+    <div class="cell"></div>
+  </div>
+
+  <footer>
+    <div class="reflection">
+      <strong>Reflection:</strong> Jake successfully navigated his first energy switch. The hardest part wasn't the provider process — which was largely smooth and digital — but the coordination overhead of getting housemates aligned and establishing fair payment routines. The experience would have been significantly improved by built-in bill-splitting and clearer guidance for shared households.
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>

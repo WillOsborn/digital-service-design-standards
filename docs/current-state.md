@@ -43,7 +43,7 @@ None. Working tree clean.
 
 ## Open worktrees
 
-None. Single working tree on `feature/mission-visualiser`.
+None. Single working tree on `main`.
 
 ---
 

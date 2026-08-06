@@ -6,8 +6,8 @@
 
 **Last updated:** 2026-08-06 (second session that day)
 **Active schema version:** v2.0 (Actor / Mission / Experience)
-**Branch:** `main` — carries **unpushed local commits** from the 2026-08-06 sessions. Pushing is safe whenever wanted (`git push`); nothing depends on it staying local.
-**Concurrency check:** local `main` was cleanly **ahead of** `origin/main` at session end — never diverged. At session start run `git status -sb`: *ahead* is expected, but **`behind` or `diverged`, or commits you did not make, means suspect a concurrent session** — read `git reflog` before acting. (This check deliberately names neither a SHA nor a commit count: both go stale the moment the next commit lands, including this file's own.)
+**Branch:** `main` — **pushed and in sync with `origin/main`** at session end. All 2026-08-06 work is backed up on the remote.
+**Concurrency check:** local `main` and `origin/main` were **in sync** at session end. At session start run `git status -sb` — if the branch shows `behind`, `diverged`, or local commits you did not make, suspect a concurrent session and read `git reflog` before acting. (This check deliberately names neither a SHA nor a commit count: both go stale the moment the next commit lands, including this file's own.)
 
 **Branches:** `main` only, local and remote. `feature/mission-visualiser` was merged and deleted on 2026-08-06; its history lives on in `main`.
 
@@ -67,7 +67,7 @@ needs a decision on target version).
 
 ## In flight / uncommitted
 
-None. Working tree clean. Unpushed commits sit on `main` — see Branch above.
+None. Working tree clean, and `main` is pushed and in sync with `origin/main`.
 
 ---
 

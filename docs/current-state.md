@@ -57,6 +57,7 @@ None. Single working tree on `feature/mission-visualiser`.
 
 - **`.claude/` is gitignored.** All 17 skills, `PROJECT_CONTEXT.md`, `VERSIONING_WORKFLOW.md`, and the `/start-session`, `/end-session`, `/backlog` commands are **local-only** — absent from a fresh clone or a second machine, and unprotected by git. Work landing there is invisible to every commit. Say so when it happens.
 - **`BACKLOG.md` and `backlog.json` are also gitignored** — same caveat. The CLI is `node tools-internal/backlog.js` (not `tools/backlog.js`).
+- **`backlog.json` is the source of truth; `BACKLOG.md` is generated.** `add` and `park` write only to the JSON — you must run `node tools-internal/backlog.js sync` or the Markdown silently keeps showing stale contents. `sync` regenerates the file's header from a template in `backlog.js`, so hand-edits to the top of `BACKLOG.md` are discarded — fix that template instead.
 - **Sub-agents have Write and Bash denied** in this project. Write files in the main session; sub-agents are read-only research.
 - **ajv is compiled once at module load** in the validator. Do not instantiate Ajv per call.
 - Schema enum values are easy to get wrong — see §5 of the v2.0 handoff doc before authoring example JSON.

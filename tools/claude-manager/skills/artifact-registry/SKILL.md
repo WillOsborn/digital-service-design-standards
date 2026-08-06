@@ -1,6 +1,6 @@
 ---
 name: artifact-registry
-description: Indexes, searches, and tracks relationships between DSDS artifacts. Use for finding artifacts, checking duplicates, understanding coverage, and managing the artifact collection. Triggers on "find persona", "search artifacts", "what do we have", "refresh registry", "show relationships", "check for duplicates".
+description: Indexes, searches, and tracks relationships between DSDS artifacts. Use for finding artifacts, checking duplicates, understanding coverage, and managing the artifact collection. Triggers on "find persona", "find actor", "search artifacts", "what do we have", "refresh registry", "show relationships", "check for duplicates".
 allowed-tools: Read, Write, Glob, Grep
 ---
 
@@ -8,21 +8,36 @@ allowed-tools: Read, Write, Glob, Grep
 
 ## Overview
 
-This skill maintains an index of all DSDS artifacts, enabling search, duplicate detection, relationship tracking, and coverage analysis. It generates and updates `.dsds-index.json` in the artifacts folder.
+This skill maintains an index of all DSDS artifacts, enabling search, duplicate detection, relationship tracking, and coverage analysis. Supports both **v2.0** (Actor/Mission/Experience) and **v1.1** (Persona/Role/Pairing/Journey) artifacts, auto-detected by the `$type` field.
 
 ## When to Use
 
-- User asks "what personas do we have?"
+- User asks "what actors/personas do we have?"
 - User wants to "find" or "search" artifacts
 - Before creating a new artifact (check for duplicates)
-- User asks about relationships ("which journeys use Sarah?")
+- User asks about relationships ("which experiences reference Sarah?")
 - User wants to "refresh" or "regenerate" the index
-- Coverage questions ("which personas don't have journeys?")
+- Coverage questions ("which actors don't have experiences?")
 
 ## Key Files
 
 - `[artifacts_path]/.dsds-index.json` - Generated index
 - `.dsds-config.json` - Org config (for paths and custom fields)
+
+## Auto-Detection
+
+Read each artifact's `$type` field to determine version and type:
+
+| `$type` value | Version | Type |
+|---------------|---------|------|
+| `Actor` | v2.0 | Actor |
+| `Mission` | v2.0 | Mission |
+| `Experience` | v2.0 | Experience |
+| `ConsumerPersona`, `StaffPersona`, etc. | v1.1 | Persona |
+| `RoleCard` | v1.1 | Role |
+| `Pairing` | v1.1 | Pairing |
+| `Journey` | v1.1 | Journey |
+| missing | v1.1 | (infer from filename/structure) |
 
 ## Index Structure
 
@@ -30,70 +45,125 @@ This skill maintains an index of all DSDS artifacts, enabling search, duplicate 
 {
   "_meta": {
     "generated": "2026-01-15T14:30:00Z",
-    "generator": "artifact-registry skill v1.0",
+    "generator": "artifact-registry skill v2.0",
     "config_path": "../.dsds-config.json",
     "artifacts_path": ".",
-    "artifact_count": 47
+    "artifact_count": 52,
+    "schema_versions": ["2.0", "1.1"]
   },
 
   "summary": {
-    "personas": 12,
-    "roles": 8,
-    "pairings": 6,
-    "journeys": 21
+    "v2.0": {
+      "actors": 4,
+      "missions": 4,
+      "experiences": 4
+    },
+    "v1.1": {
+      "personas": 12,
+      "roles": 8,
+      "pairings": 6,
+      "journeys": 21
+    },
+    "total": 59
   },
 
   "artifacts": {
-    "personas": [
+    "actors": [
       {
-        "id": "persona-sarah-martinez",
-        "path": "personas/persona-sarah-martinez.json",
+        "id": "actor-sarah-martinez",
+        "path": "actors/actor-sarah-martinez.json",
+        "type": "Actor",
+        "schema_version": "2.0",
         "name": "Sarah Martinez",
-        "description": "32-year-old working mom...",
-        "completeness_score": 85,
+        "description": "Retail customer, time-constrained working parent",
+        "quality_score": 92,
         "status": "approved",
         "custom_fields": {
-          "customer_segment": "Premium",
-          "department": "Retail"
+          "customer_segment": "Premium"
         },
         "last_modified": "2026-01-10T09:00:00Z"
       }
     ],
+    "missions": [
+      {
+        "id": "mission-retail-purchase",
+        "path": "missions/mission-retail-purchase.json",
+        "type": "Mission",
+        "schema_version": "2.0",
+        "name": "Purchase clothing online",
+        "quality_score": 88,
+        "node_count": 8,
+        "last_modified": "2026-01-10T09:00:00Z"
+      }
+    ],
+    "experiences": [
+      {
+        "id": "experience-sarah-retail",
+        "path": "experiences/experience-sarah-retail.json",
+        "type": "Experience",
+        "schema_version": "2.0",
+        "name": "Sarah: Online Clothing Purchase",
+        "actor_ref": "actor-sarah-martinez",
+        "mission_ref": "mission-retail-purchase",
+        "quality_score": 85,
+        "last_modified": "2026-01-10T09:00:00Z"
+      }
+    ],
+    "personas": [...],
     "roles": [...],
     "pairings": [...],
     "journeys": [...]
   },
 
   "relationships": {
-    "persona_to_pairings": {
-      "persona-sarah-martinez": ["pairing-sarah-working-mom"]
+    "v2.0": {
+      "actor_to_experiences": {
+        "actor-sarah-martinez": ["experience-sarah-retail"]
+      },
+      "mission_to_experiences": {
+        "mission-retail-purchase": ["experience-sarah-retail"]
+      },
+      "actor_to_missions": {
+        "actor-sarah-martinez": ["mission-retail-purchase"]
+      }
     },
-    "persona_to_journeys": {
-      "persona-sarah-martinez": ["journey-clothes-shopping"]
-    },
-    "role_to_pairings": {
-      "role-working-mom-consumer": ["pairing-sarah-working-mom"]
-    },
-    "pairing_to_journeys": {}
+    "v1.1": {
+      "persona_to_pairings": {
+        "persona-sarah-martinez": ["pairing-sarah-working-mom"]
+      },
+      "persona_to_journeys": {
+        "persona-sarah-martinez": ["journey-clothes-shopping"]
+      },
+      "role_to_pairings": {
+        "role-working-mom-consumer": ["pairing-sarah-working-mom"]
+      },
+      "pairing_to_journeys": {}
+    }
   },
 
   "coverage": {
-    "personas_with_journeys": ["persona-sarah-martinez"],
-    "personas_without_journeys": ["persona-marcus-thompson"],
-    "roles_with_pairings": ["role-working-mom-consumer"],
-    "roles_without_pairings": ["role-it-administrator"],
-    "orphaned_pairings": []
+    "v2.0": {
+      "actors_with_experiences": ["actor-sarah-martinez"],
+      "actors_without_experiences": ["actor-marcus-chen"],
+      "missions_with_experiences": ["mission-retail-purchase"],
+      "missions_without_experiences": [],
+      "actors_with_missions": ["actor-sarah-martinez"],
+      "actors_without_missions": ["actor-marcus-chen"]
+    },
+    "v1.1": {
+      "personas_with_journeys": ["persona-sarah-martinez"],
+      "personas_without_journeys": ["persona-first-time-buyer"],
+      "roles_with_pairings": ["role-working-mom-consumer"],
+      "roles_without_pairings": ["role-it-administrator"],
+      "orphaned_pairings": []
+    }
   },
 
   "custom_field_values": {
     "customer_segment": {
-      "Premium": ["persona-sarah-martinez"],
+      "Premium": ["actor-sarah-martinez"],
       "Standard": [],
       "Basic": []
-    },
-    "department": {
-      "Retail": ["persona-sarah-martinez"],
-      "IT": ["persona-marcus-thompson"]
     }
   }
 }
@@ -103,286 +173,242 @@ This skill maintains an index of all DSDS artifacts, enabling search, duplicate 
 
 ### Operation: Refresh/Generate Index
 
-Scan all artifacts and build index:
+Scan all artifacts and build index. Check config for paths:
 
 ```bash
-# Find artifacts path from config
-cat .dsds-config.json | grep artifacts_path
+# Read config for paths
+cat .dsds-config.json
+```
 
-# Scan all artifacts
-ls artifacts/personas/*.json
-ls artifacts/roles/*.json
-ls artifacts/pairings/*.json
-ls artifacts/journeys/*.json
+For v2.0 orgs, scan:
+```
+actors/*.json
+missions/*.json
+experiences/*.json
+```
+
+For v1.1 or mixed orgs, also scan:
+```
+personas/*.json
+roles/*.json
+pairings/*.json
+journeys/*.json
 ```
 
 For each artifact:
 1. Read the file
-2. Extract key fields (id, name, description)
-3. Check for references (personaRef, roleRefs)
-4. Calculate completeness score (use completeness-checker logic)
-5. Extract custom field values
-6. Record last modified time
+2. Check `$type` field to determine version and artifact type
+3. Extract key fields (id, name, description)
+4. For v2.0: check `actorRef`, `missionRef` references
+5. For v1.1: check `personaRef`, `roleRefs` references
+6. Calculate quality score (use validate-v2.0.js for v2.0, completeness-checker logic for v1.1)
+7. Extract custom field values
+8. Record last modified time
 
-Build relationships by scanning references:
+Build v2.0 relationships:
+- Experiences reference actors (`actorRef`) and missions (`missionRef`)
+- Build reverse maps: actor→experiences, mission→experiences
+
+Build v1.1 relationships:
 - Pairings reference personas and roles
-- Journeys reference personas (and optionally roles)
+- Journeys reference personas
 
-Identify coverage gaps:
-- Personas not referenced by any journey
-- Roles not referenced by any pairing
+Identify coverage gaps (v2.0):
+- Actors not referenced by any Experience
+- Missions not referenced by any Experience
 
 Save to `[artifacts_path]/.dsds-index.json`.
 
 ### Operation: Search Artifacts
 
 ```
-User: Find personas related to retail
+User: Find actors related to retail
 
 Claude: Searching artifacts for "retail"...
 
 Found 3 matches:
 
-**Personas:**
-1. persona-sarah-martinez
+**Actors (v2.0):**
+1. actor-sarah-martinez
    - Name: Sarah Martinez
-   - Match: customer_segment = "Retail"
+   - Match: customer_segment = "Premium (Retail)"
 
-2. persona-first-time-buyer
-   - Name: Alex Chen
-   - Match: description contains "retail"
+**Experiences (v2.0):**
+2. experience-sarah-retail
+   - Name: Sarah: Online Clothing Purchase
+   - Match: title contains "retail"
 
-**Journeys:**
+**Journeys (v1.1):**
 3. journey-retail-returns
    - Name: Retail Returns Journey
    - Match: title contains "retail"
-
-Would you like to see details on any of these?
 ```
 
-Search across:
-- `id` field
-- `name` field
-- `description` field
-- Custom field values
-- Tags (if present)
+Search across all artifact types — both v2.0 and v1.1.
 
 ### Operation: Check for Duplicates
 
-Before creating a new artifact:
+Before creating a new Actor or Persona:
 
 ```
-User: Create a persona for a working parent
+User: Create an actor for a busy parent
 
-Claude: Let me check for similar existing personas...
+Claude: Let me check for similar existing actors and personas...
 
-Found potentially related personas:
+Found potentially related artifacts:
 
-1. **persona-sarah-martinez** (85% match)
-   - Working mother, time-constrained
-   - Used in: 1 pairing, 1 journey
+**v2.0 Actors:**
+1. actor-sarah-martinez (85% match)
+   - Time-constrained working parent
+   - Has 1 Experience
 
-2. **persona-busy-professional** (60% match)
-   - Time-constrained professional
-   - Used in: 0 journeys
+**v1.1 Personas:**
+2. persona-sarah-martinez (90% match)
+   - Working mother
+   - 1 Journey (could be converted to Experience)
 
 Options:
-1. Create new distinct persona
-2. Use existing (persona-sarah-martinez)
-3. Adapt existing for new context
+1. Create new distinct Actor
+2. Use existing actor-sarah-martinez
+3. Convert persona-sarah-martinez to v2.0 Actor
 4. See more details first
 ```
 
-Duplicate detection based on:
-- Similar names
-- Similar descriptions
-- Overlapping needs/frustrations
-- Same custom field values
-
 ### Operation: Show Relationships
 
+**v2.0 artifact:**
 ```
-User: What uses Sarah Martinez?
+User: What references Sarah Martinez actor?
 
-Claude: **persona-sarah-martinez** is referenced by:
+Claude: actor-sarah-martinez is referenced by:
 
-**Pairings (1):**
-- pairing-sarah-working-mom
-  - Pairs with: role-working-mom-consumer
-  - Emergent barriers: 3
+Experiences (1):
+- experience-sarah-retail
+  - Mission: mission-retail-purchase
+  - Quality: 85/100
+  - Steps: 8 in 4 phases
 
-**Journeys (1):**
-- journey-clothes-shopping
-  - Phases: 8
-  - Steps: 24
-  - Barriers: 12
+Not yet connected to any other missions.
 
-**Not yet connected to:**
-- Any other roles (only one pairing)
-
-Visualization:
+Graph:
 ┌─────────────────────┐
-│ persona-sarah-      │
+│ actor-sarah-        │
 │ martinez            │
 └─────────┬───────────┘
-          │
+          │ actorRef
           ▼
 ┌─────────────────────┐     ┌─────────────────────┐
-│ pairing-sarah-      │────▶│ journey-clothes-    │
-│ working-mom         │     │ shopping            │
-└─────────┬───────────┘     └─────────────────────┘
-          │
-          ▼
-┌─────────────────────┐
-│ role-working-mom-   │
-│ consumer            │
-└─────────────────────┘
+│ experience-sarah-   │────▶│ mission-retail-      │
+│ retail              │     │ purchase             │
+└─────────────────────┘     └─────────────────────┘
 ```
+
+**v1.1 artifact** — show v1.1 relationship graph (persona→pairing→journey).
 
 ### Operation: Coverage Report
 
 ```
-User: What personas don't have journeys?
+User: What actors don't have experiences?
 
-Claude: **Coverage Analysis**
+Claude: v2.0 Coverage Analysis
 
-Personas WITH journeys (connected):
-- persona-sarah-martinez → journey-clothes-shopping
+Actors WITH Experiences (connected):
+- actor-sarah-martinez → experience-sarah-retail (mission: retail-purchase)
+- actor-david-chen → experience-david-healthcare
 
-Personas WITHOUT journeys (gaps):
-- persona-marcus-thompson
-- persona-first-time-buyer
+Actors WITHOUT Experiences (gaps):
+- actor-jake-holloway (Mission exists: mission-energy-switch)
+- actor-new-customer (No mission yet)
 
-Roles WITHOUT pairings:
-- role-it-administrator
+Recommendations:
+1. Generate Experience for actor-jake-holloway — mission exists, ready to walk through
+2. Create Mission for actor-new-customer first, then generate Experience
 
-**Recommendations:**
-1. Create a journey for Marcus Thompson
-2. Create a pairing for IT Administrator role
-3. Consider if First-Time Buyer needs a dedicated journey
-
-Would you like to create any of these?
+Also show v1.1 gaps if present.
 ```
 
 ### Operation: Filter by Custom Field
 
+Works the same for v2.0 actors/missions/experiences as for v1.1 artifacts.
+
+### Operation: Version Split Report
+
 ```
-User: Show all Premium customer personas
+User: What's the v1.1 vs v2.0 breakdown?
 
-Claude: **Personas where customer_segment = "Premium":**
+Claude: Schema Version Split
 
-1. persona-sarah-martinez
-   - Sarah Martinez
-   - Department: Retail
-   - Journeys: 1
+v2.0 (Actor/Mission/Experience): 12 artifacts
+  - Actors: 4
+  - Missions: 4
+  - Experiences: 4
 
-2. persona-vip-client
-   - Robert Chen
-   - Department: Wealth
-   - Journeys: 2
+v1.1 (Persona/Role/Pairing/Journey): 47 artifacts
+  - Personas: 12
+  - Roles: 8
+  - Pairings: 6
+  - Journeys: 21
 
-**Summary:** 2 personas in Premium segment
+Conversion candidates (v1.1 artifacts with v2.0 equivalents):
+- persona-sarah-martinez → actor-sarah-martinez (v2.0 Actor exists)
+- journey-clothes-shopping → (no Experience yet)
+
+Unconverted v1.1 only: 35 artifacts
+Ready for conversion: 2 personas with no v2.0 Actor yet
 ```
 
 ## Output Formats
 
-### List Format
+### Summary Table
 ```
-**Personas (12 total):**
-1. persona-sarah-martinez - Sarah Martinez (85%)
-2. persona-marcus-thompson - Marcus Thompson (72%)
-...
-```
-
-### Table Format
-```
-| ID | Name | Completeness | Journeys | Status |
-|----|------|--------------|----------|--------|
-| persona-sarah-martinez | Sarah Martinez | 85% | 1 | approved |
-| persona-marcus-thompson | Marcus Thompson | 72% | 0 | draft |
+| Type | Version | Count | Avg Quality | Connected |
+|------|---------|-------|-------------|-----------|
+| Actors | v2.0 | 4 | 90% | 3 (75%) |
+| Missions | v2.0 | 4 | 88% | 4 (100%) |
+| Experiences | v2.0 | 4 | 87% | 4 (100%) |
+| Personas | v1.1 | 12 | 78% | 10 (83%) |
+| Journeys | v1.1 | 21 | 75% | 21 (100%) |
 ```
 
-### Detail Format
+### Detail Format (v2.0 Actor)
 ```
-**persona-sarah-martinez**
+actor-sarah-martinez
 
 Name: Sarah Martinez
-Description: 32-year-old working mom...
-Completeness: 85%
+Type: Actor (v2.0)
+Description: Retail customer, time-constrained working parent
+Quality: 92/100
 Status: approved
 
 Custom fields:
 - customer_segment: Premium
-- department: Retail
 
 Referenced by:
-- Pairings: 1
-- Journeys: 1
+- Experiences: 1 (experience-sarah-retail)
+- Via missions: mission-retail-purchase
 
-File: personas/persona-sarah-martinez.json
+File: actors/actor-sarah-martinez.json
 Last modified: 2026-01-10
-```
-
-## Example Session
-
-```
-User: What personas do we have?
-
-Claude: Let me check the registry.
-
-[Reads .dsds-index.json or regenerates if stale]
-
-**Artifact Registry Summary**
-
-| Type | Count | With Journeys | Completeness Avg |
-|------|-------|---------------|------------------|
-| Personas | 12 | 8 | 78% |
-| Roles | 8 | 6 (pairings) | 72% |
-| Pairings | 6 | - | 80% |
-| Journeys | 21 | - | 75% |
-
-**Personas:**
-1. persona-sarah-martinez - Sarah Martinez (Premium, Retail)
-2. persona-marcus-thompson - Marcus Thompson (Standard, IT)
-3. persona-first-time-buyer - Alex Chen (Basic, Retail)
-...
-
-Would you like to:
-- See details on a specific persona?
-- Filter by custom field?
-- Check coverage gaps?
-- Search for something specific?
 ```
 
 ## Staleness Detection
 
-The index may be stale if:
-- Files have been modified since `_meta.generated`
-- New files exist that aren't in the index
-- Files in the index no longer exist
-
-```
-⚠️ Index may be stale (generated 3 days ago)
-
-Changes detected:
-- New: persona-new-customer.json
-- Modified: journey-clothes-shopping.json
-- Deleted: role-old-draft.json
-
-Regenerate index? (recommended)
-```
+Same as before — warn if index is older than artifact files or if files were added/removed.
 
 ## Quality Checklist
 
 Index should include:
 
-- [ ] All artifacts in artifacts folder
-- [ ] Accurate relationship mapping
-- [ ] Completeness scores calculated
+- [ ] All v2.0 artifacts (actors, missions, experiences)
+- [ ] All v1.1 artifacts (personas, roles, pairings, journeys)
+- [ ] `$type` captured for each artifact
+- [ ] Schema version recorded for each artifact
+- [ ] Accurate v2.0 relationship mapping (actorRef/missionRef)
+- [ ] Accurate v1.1 relationship mapping (personaRef/roleRefs)
+- [ ] Quality scores calculated
 - [ ] Custom field values extracted
-- [ ] Coverage gaps identified
-- [ ] Last modified timestamps
-- [ ] Valid JSON structure
+- [ ] Coverage gaps identified for both versions
+- [ ] Version split summary
 
 ## Related Skills
 

@@ -1,21 +1,22 @@
 ---
 name: bulk-operations
-description: Performs operations across multiple DSDS artifacts - adding fields, updating values, renaming references, migrating schemas. Use when making consistent changes across the collection. Triggers on "add field to all", "update all personas", "rename", "migrate", "bulk update", "change everywhere".
-allowed-tools: Read, Write, Glob, Grep, Edit, Bash(node tools/validators/*:*), AskUserQuestion
+description: Performs operations across multiple DSDS artifacts - adding fields, updating values, renaming references, migrating schemas. Use when making consistent changes across the collection. Triggers on "add field to all", "update all personas", "rename", "migrate", "bulk update", "change everywhere", "convert to v2.0", "migrate to v2.0", "batch validate".
+allowed-tools: Read, Write, Glob, Grep, Edit, Bash(node tools/validators/*:*, node tools/converters/*:*), AskUserQuestion
 ---
 
 # Bulk Operations Skill
 
 ## Overview
 
-This skill performs consistent changes across multiple DSDS artifacts. It handles adding custom fields, updating values, renaming references, and migrating between schema versions.
+This skill performs consistent changes across multiple DSDS artifacts. Handles adding custom fields, updating values, renaming references, migrating between schema versions, and batch validation. Supports both **v2.0** (Actor/Mission/Experience) and **v1.1** (Persona/Role/Pairing/Journey).
 
 ## When to Use
 
-- User wants to "add a field to all personas"
-- User needs to "rename" a persona/role reference across artifacts
+- User wants to "add a field to all actors/personas"
+- User needs to "rename" an artifact reference across files
 - User wants to "update" a value consistently
-- Schema migration between versions
+- Schema migration — v1.1 to v2.0
+- Batch validation of a collection
 - Applying new org requirements to existing artifacts
 
 ## Safety Principles
@@ -27,260 +28,239 @@ This skill performs consistent changes across multiple DSDS artifacts. It handle
 
 ## Operations
 
-### Operation 1: Add Custom Field
+### Operation 1: Batch Validate
 
-Add a new field to all artifacts of a type.
+Validate all v2.0 artifacts using `validate-v2.0.js`, or all v1.1 artifacts using `validate-v1.1.js`.
 
 ```
-User: Add customer_segment to all personas
+User: Validate all our v2.0 artifacts
 
-Claude: I'll add 'customer_segment' to all personas.
+Claude: Running batch validation on v2.0 artifacts.
+
+node tools/validators/validate-v2.0.js [artifacts_path] --check-refs
+
+Results:
+
+✅ actor-sarah-martinez (92/100)
+✅ mission-retail-purchase (88/100)
+✅ experience-sarah-retail (85/100)
+⚠️ actor-new-customer (64/100) — missing researchSources, sparse traits
+❌ experience-draft (validation failed) — invalid actorRef (target not found)
+
+Summary: 3 passed, 1 warning, 1 failed
+
+Would you like to:
+1. See full details for the warning/failure?
+2. Fix issues interactively?
+3. Export report?
+```
+
+**CLI commands by version:**
+
+```bash
+# Validate v2.0 artifacts
+node tools/validators/validate-v2.0.js [path/] --check-refs
+
+# Validate single v2.0 file
+node tools/validators/validate-v2.0.js [file.json] --schema-dir v2.0/schemas/
+
+# Validate v1.1 artifacts
+node tools/validators/validate-v1.1.js [path/]
+```
+
+### Operation 2: Migrate v1.1 → v2.0
+
+Convert v1.1 Persona/Role/Pairing/Journey artifacts to v2.0 Actor/Mission/Experience.
+
+```
+User: Migrate all our personas to v2.0 actors
+
+Claude: I'll convert v1.1 personas to v2.0 actors using the converter tool.
+
+First, let me assess what we have:
+
+Found 12 personas:
+- persona-sarah-martinez — has 1 journey (can also create Experience stub)
+- persona-marcus-thompson — no journey
+- persona-first-time-buyer — no journey
+... (9 more)
+
+Migration notes:
+- The converter maps Persona → Actor fields automatically
+- Needs/frustrations/behaviours → traits/contexts
+- Goals → retained in context
+- Demographics → context entries
+- Research sources → provenance
+
+Would you like to:
+1. Convert all personas to actors (batch)
+2. Convert selected personas only
+3. Convert persona + its journey together (creates Actor + Experience)
+
+⚠️ This creates NEW files — it does not overwrite originals.
+Recommend: commit current state to git first.
+
+How should new files be named?
+Default: actor-[persona-name].json
+```
+
+**Single artifact conversion:**
+```bash
+node tools/converters/convert-v1.1-to-v2.0.js \
+  personas/persona-sarah-martinez.json \
+  --output actors/actor-sarah-martinez.json
+```
+
+**Batch conversion:**
+```bash
+node tools/converters/convert-v1.1-to-v2.0.js \
+  personas/ \
+  --output actors/ \
+  --batch
+```
+
+Show preview of first conversion before applying batch:
+```
+Preview: persona-sarah-martinez → actor-sarah-martinez
+
+Key mappings:
+- identity.name → identity.name ✓
+- core_attributes.goals → contexts[].description ✓
+- core_attributes.frustrations → traits[type=frustration] ✓
+- demographics → contexts[type=situational] ✓
+- provenance.researchSources → provenance.researchSources ✓
+
+Fields needing manual review:
+- traits.behavioural: Converter will create stubs — review after conversion
+- provenance.generationMethod: Will be set to "ai_assisted" — update if human_created
+
+Apply to all 12 personas?
+```
+
+After batch:
+```
+Migration complete:
+
+✅ 12 personas converted to actors
+New files in: actors/
+
+Next steps:
+1. Review auto-generated traits — convertor creates stubs
+2. Validate: node tools/validators/validate-v2.0.js actors/
+3. Create Missions for your service journeys
+4. Generate Experiences to walk actors through missions
+5. Keep original v1.1 personas until fully migrated
+```
+
+### Operation 3: Add Custom Field
+
+Add a new field to all artifacts of a type. Works for both v2.0 and v1.1 types.
+
+```
+User: Add customer_segment to all actors
+
+Claude: I'll add 'customer_segment' to all actors.
 
 First, let me check what we're working with:
-- Found 12 personas
-- 3 already have customer_segment
-- 9 need it added
+- Found 4 actors
+- 2 already have customer_segment
+- 2 need it added
 
 How should I handle the value?
 
 [AskUserQuestion]
 Options:
-1. Prompt me for each persona's value
+1. Prompt me for each actor's value
 2. Use a default value for all (I'll specify)
 3. Leave empty (null) for manual completion later
 ```
 
-**Process:**
-1. Read org config for field definition
-2. Find all artifacts of the type
-3. Check which already have the field
-4. Apply value based on user choice
-5. Validate each updated artifact
-6. Update registry index
+### Operation 4: Update Field Value
+
+Change a field value across multiple artifacts. Same pattern for v2.0 and v1.1.
+
+### Operation 5: Rename Reference
+
+Rename an artifact ID and update all references.
+
+For v2.0, this updates `actorRef` and `missionRef` in Experience files, as well as the source artifact's `id`.
 
 ```
-Applying changes...
+User: Rename actor-sarah-martinez to actor-sarah-m
 
-✅ persona-sarah-martinez: Set customer_segment = "Premium"
-✅ persona-marcus-thompson: Set customer_segment = "Standard"
-✅ persona-first-time-buyer: Set customer_segment = "Basic"
-...
-
-9 personas updated, 3 already had field.
-All validations passed.
-
-Registry index updated.
-```
-
-### Operation 2: Update Field Value
-
-Change a field value across multiple artifacts.
-
-```
-User: Change all "customer_segment: Basic" to "customer_segment: Essential"
-
-Claude: I'll update customer_segment from "Basic" to "Essential".
-
-Searching for artifacts with customer_segment = "Basic"...
-
-Found 4 matches:
-1. persona-first-time-buyer
-2. persona-casual-browser
-3. persona-price-sensitive
-4. persona-student-user
-
-Preview:
-- customer_segment: "Basic" → "Essential"
-
-Apply these changes?
-```
-
-### Operation 3: Rename Reference
-
-Rename a persona or role ID and update all references.
-
-```
-User: Rename persona-sarah-martinez to persona-sarah-m
-
-Claude: I'll rename 'persona-sarah-martinez' to 'persona-sarah-m'.
+Claude: I'll rename 'actor-sarah-martinez' to 'actor-sarah-m'.
 
 This will update:
 
-**Source file:**
-- personas/persona-sarah-martinez.json
-  - id: "persona-sarah-martinez" → "persona-sarah-m"
-  - filename: persona-sarah-martinez.json → persona-sarah-m.json
+Source file:
+- actors/actor-sarah-martinez.json
+  - id: "actor-sarah-martinez" → "actor-sarah-m"
+  - filename: actor-sarah-martinez.json → actor-sarah-m.json
 
-**References to update:**
-- pairings/pairing-sarah-working-mom.json
-  - personaRef: "persona-sarah-martinez" → "persona-sarah-m"
+References to update (v2.0):
+- experiences/experience-sarah-retail.json
+  - actorRef: "actor-sarah-martinez" → "actor-sarah-m"
 
-- journeys/journey-clothes-shopping.json
-  - personaRef: "persona-sarah-martinez" → "persona-sarah-m"
+Total changes: 2 files
 
-**Total changes:** 3 files
-
-⚠️ This is a significant change. Recommended: commit current state to git first.
+⚠️ Significant change. Recommend committing first.
 
 Proceed?
 ```
 
-**Process:**
-1. Find the source artifact
-2. Search for all references (personaRef, roleRefs)
-3. Preview all changes
-4. Rename source file
-5. Update source artifact ID
-6. Update all references
-7. Validate all changed files
-8. Update registry index
+### Operation 6: Add Field to Specific Artifacts
 
-### Operation 4: Add Field to Specific Artifacts
+Filter which artifacts to update — same as before, extended to v2.0 types.
 
-Filter which artifacts to update.
+### Operation 7: Remove Field
+
+Remove a field from artifacts — same pattern, works across v2.0 and v1.1.
+
+### Operation 8: Schema Migration (v1.1 → v2.0 in place)
+
+For orgs that want to upgrade existing artifacts:
 
 ```
-User: Add "priority: high" to all journeys in the onboarding category
+User: Migrate all artifacts from 1.1 to 2.0
 
-Claude: I'll add priority = "high" to onboarding journeys.
+Claude: I'll migrate artifacts from schema version v1.1 to v2.0.
 
-Found journeys in onboarding category:
-1. journey-new-user-onboarding
-2. journey-account-setup
-3. journey-first-purchase
+Note: v1.1 and v2.0 use different artifact types:
+- Persona → Actor (structural remapping)
+- Journey → Experience (structural remapping)
+- Role, Pairing → no direct equivalent in v2.0
 
-Preview:
-Each will have added to extensions.custom:
-{
-  "priority": "high"
-}
+I recommend:
+1. Convert Personas → Actors
+2. Convert Journeys → Experiences (if you have matching missions)
+3. Create Missions for your services (no v1.1 equivalent)
+4. Review and discard Roles/Pairings or archive them
 
-Apply to these 3 journeys?
+Shall I start with Personas → Actors?
+
+Using: node tools/converters/convert-v1.1-to-v2.0.js
 ```
 
-### Operation 5: Remove Field
+### Operation 9: Batch Status Update
 
-Remove a field from artifacts.
-
-```
-User: Remove the deprecated "legacy_id" field from all personas
-
-Claude: I'll remove 'legacy_id' from all personas.
-
-Found 8 personas with legacy_id field:
-1. persona-sarah-martinez (legacy_id: "OLD-001")
-2. persona-marcus-thompson (legacy_id: "OLD-002")
-...
-
-This will delete the field entirely. Data will be lost.
-
-Proceed? (Consider backing up first)
-```
-
-### Operation 6: Schema Migration
-
-Migrate artifacts between schema versions.
-
-```
-User: Migrate all artifacts from 1.0 to 1.1
-
-Claude: I'll migrate artifacts from schema version 1.0 to 1.1.
-
-Scanning for 1.0 artifacts...
-
-Found 15 artifacts on schema version 1.0:
-- 5 personas
-- 4 roles
-- 2 pairings
-- 4 journeys
-
-**Migration changes for 1.0 → 1.1:**
-
-Personas:
-- Add schemaVersion: "1.1"
-- Rename demographics.age_range → demographics.ageRange (if present)
-
-Roles:
-- Add schemaVersion: "1.1"
-- Rename role_based_needs → roleBasedNeeds
-
-[Shows preview for first artifact of each type]
-
-Apply migrations?
-```
-
-### Operation 7: Batch Status Update
-
-Update workflow status across artifacts.
-
-```
-User: Mark all draft personas as approved
-
-Claude: I'll update status from "draft" to "approved" for all personas.
-
-Found 4 personas with status = "draft":
-1. persona-new-customer
-2. persona-enterprise-buyer
-3. persona-mobile-first-user
-4. persona-accessibility-focused
-
-Update all to status = "approved"?
-
-Note: If workflow.require_approval is true in config, this bypasses review.
-```
+Update workflow status across artifacts — works for any artifact type.
 
 ## Confirmation Patterns
 
-### For Low-Risk Changes
-```
-Update 3 files? [Y/n]
-```
-
-### For Medium-Risk Changes
-```
-This will modify 12 files.
-
-Changes preview:
-[abbreviated preview]
-
-Type "yes" to proceed, or "preview all" to see full details:
-```
-
-### For High-Risk Changes
-```
-⚠️ HIGH-RISK OPERATION
-
-This will:
-- Rename 1 file
-- Modify 5 files with references
-- Update the registry index
-
-This cannot be automatically undone.
-
-Recommendations:
-1. Run: git add . && git commit -m "Before bulk rename"
-2. Or manually backup the artifacts folder
-
-Type "I understand" to proceed:
-```
+Same as before — Low/Medium/High risk tiers with appropriate prompts.
 
 ## Progress Reporting
 
-For large batches:
 ```
-Processing 50 personas...
+Processing 4 actors...
 
-[====================] 100% (50/50)
+✅ actor-sarah-martinez: customer_segment = "Premium"
+✅ actor-david-chen: customer_segment = "Standard"
+⚠️ actor-jake-holloway: Warning - field added but actor has no researchSources
+✅ actor-maria-rodriguez: customer_segment = "Enterprise"
 
-✅ 48 successful
-⚠️ 2 warnings (validation passed with notes)
-❌ 0 failures
-
-Details:
-- persona-legacy-user: Warning - missing optional field 'description'
-- persona-old-format: Warning - very short description (< 20 chars)
-
-All changes applied. Registry updated.
+4 actors updated. All validations passed (1 warning).
+Registry index updated.
 ```
 
 ## Rollback Guidance
@@ -289,79 +269,67 @@ After changes:
 ```
 Changes complete.
 
-To undo these changes:
-- If using git: git checkout -- artifacts/
-- If not: restore from backup
+To undo:
+- git checkout -- actors/  (v2.0 artifacts)
+- git checkout -- personas/  (v1.1 artifacts)
+- Or restore from backup
 
 Changed files:
-- artifacts/personas/persona-sarah-martinez.json
-- artifacts/pairings/pairing-sarah-working-mom.json
-- artifacts/journeys/journey-clothes-shopping.json
+- actors/actor-sarah-martinez.json
+- experiences/experience-sarah-retail.json
 ```
 
-## Example Session
+## Example Session: Batch Migration
 
 ```
-User: Add department field to all personas
+User: Convert all our personas to v2.0 actors
 
-Claude: I'll add 'department' to all personas.
+Claude: I'll convert your v1.1 personas to v2.0 actors.
 
-First, let me check the org config for this field...
+Found 12 personas. Let me show a preview first.
 
-[Reads .dsds-config.json]
+[Runs converter on first file]
 
-'department' is defined as:
-- Type: string
-- Description: "Owning department"
-- Currently: optional for personas
+Preview: persona-sarah-martinez
 
-Found 12 personas:
-- 4 already have department
-- 8 need it added
+Persona (v1.1):
+- Name: Sarah Martinez
+- Goals: 3
+- Frustrations: 4
 
-How should I set the value for the 8 without it?
+→ Actor (v2.0):
+- identity.name: "Sarah Martinez"
+- traits: 7 (3 behavioural stubs from goals, 4 emotional from frustrations)
+- contexts: 2 (from demographics + core_attributes)
+- provenance.generationMethod: "ai_assisted" (review)
 
-[AskUserQuestion]
-1. Prompt for each
-2. Use default "Unassigned"
-3. Leave empty
+Looks good. Apply to all 12?
 
-User: Prompt for each
+User: Yes
 
-Claude: I'll ask for each. Let's go through them:
+Claude: Converting...
 
-**persona-marcus-thompson** (Marcus Thompson - IT Support Manager)
-What department?
+✅ persona-sarah-martinez → actor-sarah-martinez
+✅ persona-marcus-thompson → actor-marcus-thompson
+... (10 more)
 
-User: IT
+12 personas converted. New files in: actors/
 
-Claude: ✅ Set department = "IT"
+Next: validate them
+node tools/validators/validate-v2.0.js actors/ --check-refs
 
-**persona-first-time-buyer** (Alex Chen - First-time retail customer)
-What department?
-
-User: Retail
-
-Claude: ✅ Set department = "Retail"
-
-[Continues through all 8]
-
-All done:
-- 8 personas updated
-- All validations passed
-- Registry index updated
-
-Would you like to make 'department' required for future personas?
-(Currently optional in config)
+Run validation now?
 ```
 
 ## Quality Checklist
 
 Before completing bulk operation:
 
-- [ ] All affected artifacts identified
+- [ ] All affected artifacts identified (v2.0 and v1.1 correctly separated)
 - [ ] Preview shown to user
 - [ ] Backup/commit recommended for risky changes
+- [ ] Correct validator used: `validate-v2.0.js` for v2.0, `validate-v1.1.js` for v1.1
+- [ ] Correct converter used: `convert-v1.1-to-v2.0.js` for migrations
 - [ ] Each artifact validated after change
 - [ ] Registry index updated
 - [ ] Summary of changes provided

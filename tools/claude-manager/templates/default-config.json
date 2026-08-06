@@ -1,12 +1,38 @@
 {
   "$schema": "https://schemas.digitalservice.design/dsds-config/v1",
-  "_comment": "DSDS Organisation Configuration - Full example with common custom fields",
+  "_comment": "DSDS Organisation Configuration — Full example with common custom fields",
 
   "org_name": "Example Organisation",
-  "base_schema_version": "1.1.0",
+  "schema_versions": ["2.0", "1.1"],
+  "base_schema_version": "2.0.0",
   "artifacts_path": "./artifacts",
 
+  "v2.0_paths": {
+    "actors": "actors/",
+    "missions": "missions/",
+    "experiences": "experiences/"
+  },
+
+  "v1.1_paths": {
+    "personas": "personas/",
+    "roles": "roles/",
+    "pairings": "pairings/",
+    "journeys": "journeys/"
+  },
+
   "custom_fields": {
+    "actor": {
+      "required": ["customer_segment"],
+      "optional": ["department", "crm_id"]
+    },
+    "mission": {
+      "required": ["product_area"],
+      "optional": ["squad_owner"]
+    },
+    "experience": {
+      "required": ["product_area"],
+      "optional": ["squad_owner", "last_validated"]
+    },
     "persona": {
       "required": ["customer_segment"],
       "optional": ["department", "crm_id", "cost_centre"]
@@ -38,7 +64,7 @@
     "crm_id": {
       "type": "string",
       "pattern": "^CRM-[0-9]+$",
-      "description": "Link to CRM record for this persona"
+      "description": "Link to CRM record for this actor/persona"
     },
     "cost_centre": {
       "type": "string",
@@ -51,7 +77,7 @@
     },
     "squad_owner": {
       "type": "string",
-      "description": "Squad or team responsible for this journey"
+      "description": "Squad or team responsible for this artifact"
     },
     "last_validated": {
       "type": "date",
@@ -75,6 +101,8 @@
   },
 
   "categories": {
+    "actors": ["consumer", "employee", "business", "partner"],
+    "missions": ["onboarding", "purchase", "service", "support", "offboarding"],
     "personas": ["consumer", "employee", "business", "partner"],
     "roles": ["consumer", "employee", "business"],
     "journeys": ["onboarding", "purchase", "service", "support", "offboarding"]

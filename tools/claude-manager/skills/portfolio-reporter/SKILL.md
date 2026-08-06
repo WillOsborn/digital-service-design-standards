@@ -1,14 +1,14 @@
 ---
 name: portfolio-reporter
 description: Generates reports on the DSDS artifact portfolio - coverage analysis, quality summaries, barrier aggregation, and health metrics. Use for governance, planning, and status updates. Triggers on "portfolio report", "coverage report", "quality summary", "health check", "what's our status", "artifact stats".
-allowed-tools: Read, Glob, Write
+allowed-tools: Read, Glob, Write, Bash(node tools/validators/*:*)
 ---
 
 # Portfolio Reporter Skill
 
 ## Overview
 
-This skill generates reports across the entire DSDS artifact collection. It provides coverage analysis, quality summaries, barrier aggregation, and overall health metrics for governance and planning.
+This skill generates reports across the entire DSDS artifact collection. Supports **v2.0** (Actor/Mission/Experience), **v1.1** (Persona/Role/Pairing/Journey), and **mixed portfolios**. Uses `validate-v2.0.js` quality scoring for v2.0 artifacts (100-point rubric) and completeness-checker logic for v1.1.
 
 ## When to Use
 
@@ -23,13 +23,50 @@ This skill generates reports across the entire DSDS artifact collection. It prov
 
 ### 1. Portfolio Summary
 
-High-level overview of what exists:
+High-level overview of what exists. Auto-detects which versions are present.
+
+**v2.0-only org:**
 
 ```
 # DSDS Portfolio Summary
 Generated: 2026-01-15
 
+## Schema Version: v2.0 (Actor/Mission/Experience)
+
 ## Artifact Counts
+| Type | Count | Avg Quality (/100) | With Experiences |
+|------|-------|-------------------|-----------------|
+| Actors | 4 | 90 | 3 (75%) |
+| Missions | 4 | 88 | 4 (100%) |
+| Experiences | 4 | 86 | — |
+
+## Health Score: A (88/100)
+
+Strengths:
+- All missions have at least one Experience
+- High average quality across all types
+
+Gaps:
+- 1 Actor without an Experience (actor-jake-holloway)
+- Actor quality range: 64–96 (review low-scoring actor)
+```
+
+**Mixed org (v1.1 + v2.0):**
+
+```
+# DSDS Portfolio Summary
+Generated: 2026-01-15
+
+## Schema Versions: v1.1 + v2.0 (mixed portfolio)
+
+## v2.0 Artifacts
+| Type | Count | Avg Quality (/100) |
+|------|-------|-------------------|
+| Actors | 4 | 90 |
+| Missions | 4 | 88 |
+| Experiences | 4 | 86 |
+
+## v1.1 Artifacts
 | Type | Count | Avg Completeness | With Relationships |
 |------|-------|------------------|-------------------|
 | Personas | 12 | 78% | 10 (83%) |
@@ -37,227 +74,190 @@ Generated: 2026-01-15
 | Pairings | 6 | 80% | 6 (100%) |
 | Journeys | 21 | 75% | 21 (100%) |
 
-## Health Score: B (76%)
-
-**Strengths:**
-- Good journey coverage
-- All pairings connected
-
-**Gaps:**
-- 2 personas without journeys
-- 2 roles without pairings
-- Average completeness below 80%
+## Migration Progress
+- v1.1 artifacts with v2.0 equivalents: 4/12 personas
+- v1.1 personas not yet converted: 8
 ```
 
 ### 2. Coverage Report
 
-Which artifacts are connected vs orphaned:
+Which artifacts are connected vs orphaned.
+
+**v2.0 coverage:**
 
 ```
-# Coverage Report
+# v2.0 Coverage Report
 Generated: 2026-01-15
 
-## Persona Coverage
+## Actor → Experience Coverage
 
-✅ **Personas WITH journeys (10):**
-| Persona | Journeys | Pairings |
-|---------|----------|----------|
-| persona-sarah-martinez | 1 | 1 |
-| persona-marcus-thompson | 2 | 1 |
-...
+✅ Actors WITH Experiences (3):
+| Actor | Experiences | Via Missions |
+|-------|-------------|-------------|
+| actor-sarah-martinez | 1 | mission-retail-purchase |
+| actor-david-chen | 1 | mission-healthcare-appointment |
+| actor-maria-rodriguez | 1 | mission-sales-pipeline |
 
-⚠️ **Personas WITHOUT journeys (2):**
-| Persona | Name | Created | Notes |
-|---------|------|---------|-------|
-| persona-first-time-buyer | Alex Chen | 2026-01-05 | No journeys yet |
-| persona-enterprise-client | BigCorp PM | 2026-01-10 | Draft status |
+⚠️ Actors WITHOUT Experiences (1):
+| Actor | Name | Mission Available? |
+|-------|------|-------------------|
+| actor-jake-holloway | Jake Holloway | Yes — mission-energy-switch exists |
 
-## Role Coverage
+## Mission → Experience Coverage
 
-✅ **Roles WITH pairings (6):**
-...
-
-⚠️ **Roles WITHOUT pairings (2):**
-| Role | Name | Notes |
-|------|------|-------|
-| role-it-administrator | IT Administrator | New, needs pairing |
-| role-support-caller | Support Caller | Consider if needed |
+✅ All 4 missions have Experiences.
 
 ## Recommendations
-1. Create journey for persona-first-time-buyer (high priority - created 10 days ago)
-2. Create pairing for role-it-administrator
-3. Review if role-support-caller is needed
+1. Generate Experience for actor-jake-holloway through mission-energy-switch
+   (Mission exists — use /experience-generator)
 ```
 
 ### 3. Quality Report
 
-Completeness and quality scores:
+**v2.0 quality (100-point rubric from `v2.0-quality-scoring.js`):**
 
 ```
-# Quality Report
+# v2.0 Quality Report
 Generated: 2026-01-15
 
-## Overall Quality: B (76%)
+## Overall Portfolio Quality: 88/100
 
-## By Artifact Type
-
-### Personas (78% average)
+## Actors (avg: 90/100)
 | Grade | Count | Artifacts |
 |-------|-------|-----------|
-| A (90%+) | 3 | sarah-martinez, marcus-thompson, vip-client |
-| B (75-89%) | 5 | first-time-buyer, enterprise-client, ... |
-| C (60-74%) | 3 | draft-persona-1, draft-persona-2, ... |
-| D (<60%) | 1 | incomplete-persona |
+| A (90+) | 3 | sarah-martinez (96), david-chen (92), maria-rodriguez (90) |
+| B (75–89) | 0 | — |
+| C (60–74) | 1 | jake-holloway (64) |
 
-### Journeys (75% average)
-...
+### Common Actor Quality Issues
+- Missing researchSources (2 actors) — reduces provenance score
+- Sparse behavioural traits (1 actor) — fewer than 3 traits
 
-## Common Quality Issues
+## Missions (avg: 88/100)
+| Grade | Count | Artifacts |
+|-------|-------|-----------|
+| A (90+) | 2 | retail-purchase (92), healthcare-appointment (91) |
+| B (75–89) | 2 | sales-pipeline (85), energy-switch (83) |
 
-1. **Missing research sources** (15 artifacts)
-   - Affects credibility and traceability
-   - Consider adding research links
+### Common Mission Quality Issues
+- No failure/edge-case paths defined (2 missions)
+- Missing conditional edges (1 mission)
 
-2. **Brief descriptions** (8 artifacts)
-   - Under 50 characters
-   - Add context for usability
+## Experiences (avg: 86/100)
+| Grade | Count | Artifacts |
+|-------|-------|-----------|
+| A (90+) | 1 | sarah-retail (91) |
+| B (75–89) | 3 | david-healthcare (88), maria-sales (85), jake-energy (79) |
 
-3. **Empty opportunity fields** (12 journey steps)
-   - Barriers noted but no improvements
-   - Review for opportunity documentation
+### Common Experience Quality Issues
+- Missing needAtStep lane (1 experience)
+- momentThatMatters not marked (2 experiences)
+- Empty outcome.recommendations (2 experiences)
 
-## Lowest Quality Artifacts (need attention)
-| Artifact | Score | Key Issues |
-|----------|-------|------------|
-| persona-incomplete | 45% | Missing needs, frustrations |
-| journey-draft-v1 | 52% | No emotions, sparse thoughts |
+## Lowest Quality (need attention)
+| Artifact | Type | Score | Key Issues |
+|----------|------|-------|------------|
+| actor-jake-holloway | Actor | 64 | sparse traits, no researchSources |
 ```
 
-### 4. Barrier Analysis Report
+**v1.1 quality** — same format, percentages instead of /100.
 
-Aggregated view of barriers across journeys:
+### 4. Cross-Artifact Consistency Report
+
+**v2.0 specific** — checks that actorRefs/missionRefs are valid and that barrier classifications are consistent.
+
+```
+# v2.0 Cross-Artifact Consistency Report
+Generated: 2026-01-15
+
+## Reference Integrity
+✅ All actorRefs resolve to existing actors
+✅ All missionRefs resolve to existing missions
+✅ nodeSequence steps reference valid mission nodeIds
+
+## Mission ↔ Experience Alignment
+✅ experience-sarah-retail covers all required mission-retail-purchase nodes
+⚠️ experience-jake-energy skips 2 mission nodes (no steps for them)
+   Skipped: node-id-05 (payment), node-id-07 (confirmation)
+
+## Barrier Classification Consistency
+✅ Structural barriers in Experiences match Mission node descriptions
+⚠️ experience-maria-sales has emergent barriers without emergesFrom field set
+   (3 barriers in steps 4–6 should reference Actor traits)
+
+## Recommendations
+1. Add steps for nodes 05 and 07 in experience-jake-energy
+2. Set emergesFrom on emergent barriers in experience-maria-sales
+```
+
+Run via:
+```bash
+node tools/validators/validate-v2.0.js [path/] --check-refs
+```
+
+### 5. Barrier Analysis Report
+
+**v2.0** — distinguishes structural barriers (from Mission nodes) vs emergent (from Actor traits via `emergesFrom`).
 
 ```
 # Barrier Analysis Report
 Generated: 2026-01-15
 
-## Summary
-- Total barriers: 87 across 21 journeys
-- Average per journey: 4.1
-- Average severity: 2.8
+## v2.0 Experience Barriers (all 4 experiences)
 
-## By Type
-| Type | Count | Avg Severity | Top Journeys |
-|------|-------|--------------|--------------|
-| knowledge | 24 (28%) | 3.1 | onboarding, purchase |
-| process | 18 (21%) | 2.9 | support, returns |
-| resource | 15 (17%) | 3.4 | all time-constrained |
-| technology | 12 (14%) | 2.5 | mobile journeys |
-| communications | 8 (9%) | 2.3 | status updates |
-| policy | 5 (6%) | 3.2 | returns, cancellation |
-| cultural | 3 (3%) | 2.0 | help-seeking |
-| governance | 1 (1%) | 4.0 | escalation |
-| vision | 1 (1%) | 3.0 | product gaps |
+Total barriers: 34
+- Structural (Mission-level): 18 (53%)
+- Emergent (Actor trait-driven): 16 (47%)
 
-## Systemic Issues (appear in 3+ journeys)
+## By Type (structural)
+| Type | Count | Avg Severity |
+|------|-------|-------------|
+| process | 8 | 3.2 |
+| technology | 5 | 2.8 |
+| knowledge | 3 | 3.5 |
+| communications | 2 | 2.5 |
 
-🔴 **1. Sizing/Fit Uncertainty**
-- Type: knowledge
-- Appears in: 5 journeys
-- Avg severity: 3.8
-- Pattern: Customers can't determine fit/sizing before purchase
-- Recommendation: Size recommendation system
+## Top Emergent Barrier Actors
+| Actor | Emergent Barriers | Top Trait Trigger |
+|-------|-------------------|-------------------|
+| actor-sarah-martinez | 5 | time-constrained |
+| actor-jake-holloway | 4 | low-digital-confidence |
 
-🔴 **2. Status Visibility**
-- Type: communications
-- Appears in: 4 journeys
-- Avg severity: 2.5
-- Pattern: Unclear what's happening during wait periods
-- Recommendation: Real-time status updates
+## Cross-Actor Hotspots
+Steps with barriers in 3+ experiences:
+1. Payment/Checkout — 4 experiences
+2. Account Creation — 3 experiences
+3. Confirmation/Status — 3 experiences
 
-🟠 **3. Return Process Complexity**
-- Type: process
-- Appears in: 3 journeys
-- Avg severity: 3.0
-- Pattern: Too many steps to initiate returns
-- Recommendation: One-click return initiation
-
-## Highest Severity Barriers
-| Journey | Step | Type | Severity | Description |
-|---------|------|------|----------|-------------|
-| journey-returns | Packages Item | process | 5 | No pickup option |
-| journey-complaint | Escalation | governance | 4 | No clear owner |
+## Recommendations
+1. Payment friction is systemic — affects all customer types
+2. Onboarding barriers cluster around digital confidence — consider guided flows
 ```
 
-### 5. Custom Field Report
+### 6. v2.0 Quality Scoring Breakdown
 
-Analysis by org-specific fields:
-
-```
-# Custom Field Report
-Generated: 2026-01-15
-
-## customer_segment Distribution
-
-| Segment | Personas | Journeys | Avg Quality |
-|---------|----------|----------|-------------|
-| Premium | 4 | 8 | 82% |
-| Standard | 5 | 10 | 76% |
-| Basic | 2 | 2 | 68% |
-| Enterprise | 1 | 1 | 85% |
-
-**Insight:** Basic segment is under-represented and lower quality.
-
-## department Distribution
-
-| Department | Personas | Roles | Journeys |
-|------------|----------|-------|----------|
-| Retail | 6 | 4 | 12 |
-| IT | 2 | 2 | 4 |
-| Finance | 2 | 1 | 3 |
-| Support | 2 | 1 | 2 |
-
-**Insight:** Retail well-covered. Finance and Support may need more artifacts.
-
-## Compliance
-
-✅ **100% compliant** with required custom fields:
-- All personas have customer_segment
-- All journeys have product_area
-
-⚠️ **Optional field adoption:**
-- crm_id: 60% of personas (7/12)
-- squad_owner: 40% of journeys (8/21)
-```
-
-### 6. Freshness Report
-
-When artifacts were last updated:
+Show how the 100-point rubric breaks down for each artifact type.
 
 ```
-# Freshness Report
-Generated: 2026-01-15
+# Actor Quality Rubric (reference)
+Presence (40pts): name, description, traits (3+), contexts (2+), provenance
+Depth (35pts): trait elaboration, context richness, research source count
+Coherence (25pts): trait-context alignment, provenance completeness
 
-## Recently Updated (last 30 days)
-| Artifact | Last Modified | Modified By |
-|----------|---------------|-------------|
-| journey-new-onboarding | 2026-01-14 | - |
-| persona-sarah-martinez | 2026-01-10 | - |
+# Mission Quality Rubric (reference)
+Structure (40pts): nodes (3+), edges, startNodeId, endNodeIds
+Richness (35pts): node descriptions, edge types, failure/timeout paths
+Completeness (25pts): serviceModel set, provenance, outcomes
 
-## Potentially Stale (90+ days)
-| Artifact | Last Modified | Age | Recommendation |
-|----------|---------------|-----|----------------|
-| persona-legacy-user | 2025-10-01 | 106 days | Review or archive |
-| journey-old-checkout | 2025-09-15 | 122 days | Validate still accurate |
-
-## Never Validated
-These artifacts have no last_validated date in custom fields:
-- journey-mobile-purchase
-- journey-support-call
-- persona-enterprise-client
-
-Consider scheduling validation sessions.
+# Experience Quality Rubric (reference)
+Coverage (40pts): steps, phases, actorRef, missionRef, lanes
+Depth (35pts): emotions, barriers (structural+emergent), needAtStep
+Outcomes (25pts): momentThatMatters, outcome.netSentiment, recommendations
 ```
+
+### 7. Freshness Report
+
+Same as before — shows recently updated vs stale artifacts across both versions.
 
 ## Report Generation
 
@@ -265,9 +265,12 @@ Consider scheduling validation sessions.
 
 1. **Read registry index** (or regenerate if stale)
 2. **Read org config** for context
-3. **Calculate metrics** based on report type
-4. **Generate markdown report**
-5. **Optionally save to reports/ folder**
+3. **Determine which versions** are present (v2.0, v1.1, or both)
+4. **Calculate metrics** based on report type
+   - v2.0: Use `validate-v2.0.js` for quality scores
+   - v1.1: Use completeness-checker logic
+5. **Generate markdown report**
+6. **Optionally save to reports/ folder**
 
 ### Output Options
 
@@ -288,10 +291,11 @@ AskUserQuestion:
 ```
 reports/
 ├── portfolio-summary-2026-01-15.md
-├── coverage-report-2026-01-15.md
-├── quality-report-2026-01-15.md
+├── v2.0-coverage-report-2026-01-15.md
+├── v2.0-quality-report-2026-01-15.md
+├── v2.0-consistency-report-2026-01-15.md
 ├── barrier-analysis-2026-01-15.md
-└── custom-fields-2026-01-15.md
+└── migration-progress-2026-01-15.md
 ```
 
 ## Example Session
@@ -301,53 +305,60 @@ User: Give me a portfolio status report
 
 Claude: I'll generate a portfolio summary.
 
-[Reads registry index]
+[Reads registry index — detects mixed v1.1/v2.0 portfolio]
 
-# DSDS Portfolio Summary
-Generated: 2026-01-15 14:30
+# DSDS Portfolio Summary — 2026-01-15
 
-## Overview
-| Type | Count | Connected | Quality |
-|------|-------|-----------|---------|
-| Personas | 12 | 10 (83%) | 78% |
-| Roles | 8 | 6 (75%) | 72% |
-| Pairings | 6 | 6 (100%) | 80% |
-| Journeys | 21 | 21 (100%) | 75% |
+## Schema Versions: Mixed (v1.1 + v2.0)
 
-## Health Score: B (76%)
+## v2.0 (Actor/Mission/Experience)
+| Type | Count | Avg Quality |
+|------|-------|-------------|
+| Actors | 4 | 90/100 |
+| Missions | 4 | 88/100 |
+| Experiences | 4 | 86/100 |
 
-**Good:**
-- Strong journey coverage
-- All pairings properly connected
-- Recent activity (8 updates this month)
+## v1.1 (Persona/Role/Pairing/Journey)
+| Type | Count | Avg Quality |
+|------|-------|-------------|
+| Personas | 12 | 78% |
+| Journeys | 21 | 75% |
 
-**Needs attention:**
-- 2 personas without journeys
-- 2 roles without pairings
-- 4 artifacts below 60% quality
+## Health Score: B+ (82/100 v2.0 / 76% v1.1)
 
-## Quick Actions
-1. Create journey for persona-first-time-buyer
-2. Improve quality of persona-incomplete (45%)
-3. Review stale artifacts (2 over 90 days old)
+v2.0 Strengths:
+- High quality actors and missions
+- All missions have Experiences
 
-Would you like a deeper dive on any of these areas?
-- Coverage details
-- Quality breakdown
-- Barrier analysis
-- Custom field distribution
+v2.0 Gaps:
+- 1 Actor without Experience (jake-holloway)
+- 3 Experiences missing momentThatMatters
+
+Migration status:
+- 4/12 personas converted to v2.0 actors
+- 8 personas remaining
+
+Would you like a deeper dive on:
+- v2.0 quality breakdown
+- Cross-artifact consistency
+- Migration planning
+- Barrier hotspots
 ```
 
 ## Quality Checklist
 
 Reports should include:
 
+- [ ] Schema version detection (v2.0, v1.1, or mixed)
 - [ ] Clear generation timestamp
 - [ ] Summary metrics at top
-- [ ] Detailed breakdowns
+- [ ] Correct quality scale: /100 for v2.0, % for v1.1
+- [ ] v2.0 coverage (actor→experience, mission→experience)
+- [ ] Cross-artifact consistency for v2.0 (actorRef/missionRef/nodeSequence)
+- [ ] Structural vs emergent barrier distinction for v2.0
+- [ ] Migration progress if mixed portfolio
 - [ ] Visual indicators (✅ ⚠️ 🔴)
 - [ ] Actionable recommendations
-- [ ] Comparison context (averages, targets)
 - [ ] Next steps or drill-down options
 
 ## Related Skills

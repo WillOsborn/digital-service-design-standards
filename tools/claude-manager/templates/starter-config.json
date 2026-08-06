@@ -1,25 +1,28 @@
 {
   "$schema": "https://schemas.digitalservice.design/dsds-config/v1",
-  "_comment": "DSDS Organisation Configuration - Copy this to .dsds-config.json in your project root",
+  "_comment": "DSDS Organisation Configuration — Copy this to .dsds-config.json in your project root",
 
   "org_name": "Your Organisation",
-  "base_schema_version": "1.1.0",
+  "schema_versions": ["2.0"],
+  "base_schema_version": "2.0.0",
   "artifacts_path": "./artifacts",
 
+  "v2.0_paths": {
+    "actors": "actors/",
+    "missions": "missions/",
+    "experiences": "experiences/"
+  },
+
   "custom_fields": {
-    "persona": {
+    "actor": {
       "required": [],
       "optional": []
     },
-    "role": {
+    "mission": {
       "required": [],
       "optional": []
     },
-    "pairing": {
-      "required": [],
-      "optional": []
-    },
-    "journey": {
+    "experience": {
       "required": [],
       "optional": []
     }

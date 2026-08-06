@@ -8,7 +8,7 @@ allowed-tools: Read, Write, Glob, AskUserQuestion
 
 ## Overview
 
-This skill creates and manages the `.dsds-config.json` file that defines organisation-specific requirements for DSDS artifacts. It guides users through configuration options and ensures the config file is valid.
+This skill creates and manages the `.dsds-config.json` file that defines organisation-specific requirements for DSDS artifacts. Supports both **v1.1** (Persona/Role/Pairing/Journey) and **v2.0** (Actor/Mission/Experience) schemas.
 
 ## When to Use
 
@@ -17,6 +17,7 @@ This skill creates and manages the `.dsds-config.json` file that defines organis
 - User needs to "configure" or "update settings"
 - Initial setup of Claude Manager
 - Changing validation or workflow settings
+- Migrating config from v1.1 to v2.0
 
 ## Key Files
 
@@ -47,6 +48,8 @@ AskUserQuestion:
       description: "Add required or optional fields to artifact types"
     - label: "Update settings"
       description: "Change validation, workflow, or other settings"
+    - label: "Update to v2.0"
+      description: "Add v2.0 schema support (Actor/Mission/Experience) alongside v1.1"
     - label: "View current config"
       description: "See what's currently configured"
 ```
@@ -59,15 +62,33 @@ Guide through setup:
 Let's set up your DSDS configuration.
 
 1. What's your organisation name?
-2. Where will you store artifacts? (default: ./artifacts)
-3. Do you need any custom fields on your artifacts?
+2. Which schema version(s) will you use?
+   - v2.0 only (Actor/Mission/Experience — recommended for new orgs)
+   - v1.1 only (Persona/Role/Pairing/Journey — legacy)
+   - Both (migration period)
+3. Where will you store artifacts? (default: ./artifacts)
+4. Do you need any custom fields on your artifacts?
+```
+
+**Schema version selection:**
+
+```
+AskUserQuestion:
+  question: "Which DSDS schema version will you use?"
+  options:
+    - label: "v2.0 (Actor/Mission/Experience)"
+      description: "Recommended for new projects — richer provenance, behavioural traits, mission graphs"
+    - label: "v1.1 (Persona/Role/Pairing/Journey)"
+      description: "Existing format — choose if you have existing v1.1 artifacts"
+    - label: "Both (migration period)"
+      description: "Support both during migration — recommended when converting existing orgs"
 ```
 
 **Custom Field Setup:**
 
 ```
 AskUserQuestion:
-  question: "Do you want to require custom fields on personas?"
+  question: "Do you want to require custom fields on your artifacts?"
   options:
     - label: "Yes, define now"
       description: "I'll ask what fields you need"
@@ -94,34 +115,40 @@ AskUserQuestion:
 
 ### Step 3b: Add Custom Fields
 
-If modifying existing config:
-
-```
-Which artifact type needs custom fields?
-
-Current custom fields:
-- Personas: [list or "none"]
-- Roles: [list or "none"]
-- Pairings: [list or "none"]
-- Journeys: [list or "none"]
-```
+If modifying existing config — ask which artifact version the field applies to:
 
 ```
 AskUserQuestion:
   question: "Which artifact type should have the new field?"
   multiSelect: true
   options:
-    - label: "Personas"
+    - label: "Actors (v2.0)"
+      description: "Add field to Actor requirements"
+    - label: "Missions (v2.0)"
+      description: "Add field to Mission requirements"
+    - label: "Experiences (v2.0)"
+      description: "Add field to Experience requirements"
+    - label: "Personas (v1.1)"
       description: "Add field to persona requirements"
-    - label: "Roles"
+    - label: "Roles (v1.1)"
       description: "Add field to role requirements"
-    - label: "Pairings"
+    - label: "Pairings (v1.1)"
       description: "Add field to pairing requirements"
-    - label: "Journeys"
+    - label: "Journeys (v1.1)"
       description: "Add field to journey requirements"
 ```
 
-### Step 3c: Update Settings
+### Step 3c: Update to v2.0
+
+Add v2.0 schema support to an existing v1.1 config:
+
+1. Show current config
+2. Add `schema_versions: ["1.1", "2.0"]`
+3. Add `v2.0_paths` for actors/missions/experiences directories
+4. Add v2.0 artifact types to `custom_fields`
+5. Keep all existing v1.1 settings
+
+### Step 3d: Update Settings
 
 Show current settings and offer changes:
 
@@ -142,21 +169,35 @@ Which would you like to change?
 
 ### Step 4: Generate Config File
 
-Build the config JSON:
+Build the config JSON. For v2.0 or mixed orgs:
 
 ```json
 {
   "$schema": "https://schemas.digitalservice.design/dsds-config/v1",
   "org_name": "[from user]",
-  "base_schema_version": "1.1.0",
+  "schema_versions": ["2.0"],
+  "base_schema_version": "2.0.0",
   "artifacts_path": "[from user]",
 
+  "v2.0_paths": {
+    "actors": "actors/",
+    "missions": "missions/",
+    "experiences": "experiences/"
+  },
+
   "custom_fields": {
-    "persona": {
-      "required": ["[gathered fields]"],
-      "optional": ["[gathered fields]"]
+    "actor": {
+      "required": [],
+      "optional": []
     },
-    // ... other types
+    "mission": {
+      "required": [],
+      "optional": []
+    },
+    "experience": {
+      "required": [],
+      "optional": []
+    }
   },
 
   "custom_field_definitions": {
@@ -180,17 +221,51 @@ Build the config JSON:
 }
 ```
 
+For mixed (v1.1 + v2.0) orgs, include both:
+
+```json
+{
+  "schema_versions": ["1.1", "2.0"],
+  "base_schema_version": "2.0.0",
+
+  "v1.1_paths": {
+    "personas": "personas/",
+    "roles": "roles/",
+    "pairings": "pairings/",
+    "journeys": "journeys/"
+  },
+
+  "v2.0_paths": {
+    "actors": "actors/",
+    "missions": "missions/",
+    "experiences": "experiences/"
+  },
+
+  "custom_fields": {
+    "actor": { "required": [], "optional": [] },
+    "mission": { "required": [], "optional": [] },
+    "experience": { "required": [], "optional": [] },
+    "persona": { "required": [], "optional": [] },
+    "role": { "required": [], "optional": [] },
+    "pairing": { "required": [], "optional": [] },
+    "journey": { "required": [], "optional": [] }
+  }
+}
+```
+
 ### Step 5: Save and Confirm
 
 ```
 Here's your configuration:
 
 **Organisation:** [name]
+**Schema version:** v2.0 (Actor/Mission/Experience)
 **Artifacts path:** [path]
 
 **Custom fields:**
-- Personas require: [list]
-- Roles require: [list]
+- Actors require: [list]
+- Missions require: [list]
+- Experiences require: [list]
 
 **Settings:**
 - Strict mode: Off
@@ -211,6 +286,12 @@ Next steps:
 2. Start creating artifacts with the builder skills
 3. Custom fields will be prompted during creation
 
+For v2.0 artifacts:
+- Use /actor-builder to create Actors
+- Use /mission-builder to create Missions
+- Use /experience-generator to create Experiences
+- Validate with: node tools/validators/validate-v2.0.js [path]
+
 Would you like me to:
 - Create the artifacts folder structure?
 - Create your first artifact?
@@ -224,18 +305,28 @@ Would you like me to:
 | Field | Type | Description |
 |-------|------|-------------|
 | `org_name` | string | Organisation name |
-| `base_schema_version` | string | DSDS version (e.g., "1.1.0") |
+| `base_schema_version` | string | DSDS version ("1.1.0" or "2.0.0") |
 | `artifacts_path` | string | Path to artifacts folder |
 
 ### Optional Fields
 
 | Field | Type | Description |
 |-------|------|-------------|
+| `schema_versions` | array | Supported versions, e.g. `["1.1", "2.0"]` |
+| `v2.0_paths` | object | Paths for actors/missions/experiences |
+| `v1.1_paths` | object | Paths for personas/roles/pairings/journeys |
 | `custom_fields` | object | Required/optional fields per artifact type |
 | `custom_field_definitions` | object | Validation rules for custom fields |
 | `validation` | object | Validation settings |
 | `workflow` | object | Approval workflow settings |
 | `categories` | object | Folder categories for nested structure |
+
+### Artifact Types by Version
+
+| Version | Artifact Types |
+|---------|---------------|
+| v2.0 | `actor`, `mission`, `experience` |
+| v1.1 | `persona`, `role`, `pairing`, `journey` |
 
 ### Custom Field Types
 
@@ -263,52 +354,42 @@ What's your organisation name?
 
 User: Acme Financial Services
 
+Claude: Which schema version will you use?
+- v2.0 (Actor/Mission/Experience) — recommended
+- v1.1 (Persona/Role/Pairing/Journey) — legacy
+- Both (migration period)
+
+User: v2.0
+
 Claude: And where would you like to store your artifacts?
 (Default is ./artifacts)
 
 User: Use the default
 
-Claude: Do you need custom fields on your artifacts? For example, linking to CRM records or tagging by department?
+Claude: Do you need custom fields on your actors, missions, or experiences?
 
-[Uses AskUserQuestion]
-
-User: Yes, define now
-
-Claude: Let's start with personas. What custom fields do you need?
-
-User: customer_segment (required) and crm_id (optional)
+User: Yes — actors need customer_segment (required) and crm_id (optional)
 
 Claude: For customer_segment, is it free text or a list of options?
 
 User: Options: Retail, SME, Corporate, Wealth
 
-Claude: Got it. And crm_id?
+[Builds config and shows preview]
 
-User: Free text but should match pattern CRM-12345
-
-Claude: Here's the config I've built:
-
-**Acme Financial Services**
-
-Personas require:
-- customer_segment: Retail | SME | Corporate | Wealth
-
-Personas optional:
-- crm_id: Pattern CRM-[0-9]+
-
-[Shows full config preview]
-
-Save this?
+Save this configuration?
 
 User: Yes
 
-Claude: [Saves .dsds-config.json]
+Claude: Configuration saved to .dsds-config.json
 
-Configuration saved. Your artifacts folder structure is ready at ./artifacts.
+You're set up for v2.0 (Actor/Mission/Experience). Your artifact directories:
+- ./artifacts/actors/
+- ./artifacts/missions/
+- ./artifacts/experiences/
 
-When you create personas, I'll prompt for customer_segment (required) and offer crm_id (optional).
+When you create actors, I'll prompt for customer_segment (required) and offer crm_id (optional).
 
-Would you like to create your first persona?
+Would you like to create your first Actor?
 ```
 
 ## Validation
@@ -316,8 +397,9 @@ Would you like to create your first persona?
 Before saving, check:
 
 - [ ] `org_name` is not empty
-- [ ] `base_schema_version` is valid (e.g., "1.1.0")
+- [ ] `base_schema_version` is valid ("1.1.0" or "2.0.0")
 - [ ] `artifacts_path` is a valid path
+- [ ] v2.0 artifact types used if `base_schema_version` is "2.0.0"
 - [ ] Required fields don't duplicate optional fields
 - [ ] Enum types have at least 2 values
 - [ ] Pattern types have valid regex

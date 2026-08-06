@@ -41,7 +41,7 @@
   - `warnings`: `string[]`
   - Also exports `topoDepth(nodes, edges, warnings)` and constants `COL_WIDTH`, `ROW_HEIGHT`, `BAND_TOP`, `PAD_X`.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Create `tools/renderers/test-mission-layout.js`:
 
@@ -168,12 +168,12 @@ console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed ? 1 : 0);
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `node tools/renderers/test-mission-layout.js`
 Expected: FAIL with `Cannot find module './mission-layout'`
 
-- [ ] **Step 3: Write the implementation**
+- [x] **Step 3: Write the implementation**
 
 Create `tools/renderers/mission-layout.js`:
 
@@ -322,12 +322,12 @@ function computeLayout(mission) {
 module.exports = { computeLayout, topoDepth, COL_WIDTH, ROW_HEIGHT, BAND_TOP, PAD_X };
 ```
 
-- [ ] **Step 4: Run test to verify it passes**
+- [x] **Step 4: Run test to verify it passes**
 
 Run: `node tools/renderers/test-mission-layout.js`
 Expected: all PASS, `0 failed`, exit 0.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add tools/renderers/mission-layout.js tools/renderers/test-mission-layout.js
@@ -352,7 +352,7 @@ git commit -m "feat(v2.0): mission layout module — phase columns, topo orderin
   - CLI: `node tools/renderers/render-mission.js <mission.json> [-o out.html] [--standalone] [--mode overview|explore]`.
 - Task 3 will append controls markup, a detail panel, and a client `<script>`; Task 2's CSS already includes all styles (including panel/controls styles that have no markup yet — that is intentional).
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Create `tools/renderers/test-render-mission.js`:
 
@@ -457,12 +457,12 @@ console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed ? 1 : 0);
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `node tools/renderers/test-render-mission.js`
 Expected: FAIL with `Cannot find module './render-mission'`
 
-- [ ] **Step 3: Write the implementation**
+- [x] **Step 3: Write the implementation**
 
 Create `tools/renderers/render-mission.js`. This is the complete Task 2 version — Overview-complete, no client JS yet (Task 3 adds it at the markers noted in comments):
 
@@ -860,13 +860,13 @@ if (require.main === module) {
 }
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 Run: `node tools/renderers/test-render-mission.js`
 Expected: all PASS, exit 0.
 Also re-run: `node tools/renderers/test-mission-layout.js` — still all PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add tools/renderers/render-mission.js tools/renderers/test-render-mission.js
@@ -885,7 +885,7 @@ git commit -m "feat(v2.0): mission renderer CLI — static SVG, themes, Overview
 - Consumes: Task 2's `renderMission` internals; the CSS already contains all styles for what this task adds (`.mv-mode`, `.mv-panel`, `.mv-filters`, `.heat-on`, `.mv-explore-only`).
 - Produces: fragment now includes `<div class="mv-controls">` populated with mode buttons / heat checkbox (`id="mv-heat-cb"`) / lane-filter `details` (`id="mv-lane-cbs"` container), `<aside class="mv-panel" id="mv-panel" hidden>`, a `<script type="application/json" id="mv-data">` blob (the full mission JSON, `<` escaped as `\u003c`), and an inline client script. No API changes.
 
-- [ ] **Step 1: Append the failing test section**
+- [x] **Step 1: Append the failing test section**
 
 Append to `tools/renderers/test-render-mission.js`, immediately BEFORE the final `console.log`/`process.exit` lines:
 
@@ -917,12 +917,12 @@ section('Explore mode interactivity scaffolding');
 }
 ```
 
-- [ ] **Step 2: Run test to verify the new section fails**
+- [x] **Step 2: Run test to verify the new section fails**
 
 Run: `node tools/renderers/test-render-mission.js`
 Expected: earlier sections PASS; new section FAILs (`mode toggle buttons present`, etc.), exit 1.
 
-- [ ] **Step 3: Implement the three insertions**
+- [x] **Step 3: Implement the three insertions**
 
 In `tools/renderers/render-mission.js`:
 
@@ -1109,13 +1109,13 @@ In `tools/renderers/render-mission.js`:
 
 Implementation note: `${JSON.stringify(mission)...}` is a template-literal interpolation — the script block must be appended inside the `fragment` template literal, after `.mv-app`'s closing `</div>`. In the standalone wrapper nothing changes (the fragment already carries the scripts).
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 Run: `node tools/renderers/test-render-mission.js`
 Expected: all sections PASS, exit 0.
 Run: `node tools/renderers/test-mission-layout.js` — still PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add tools/renderers/render-mission.js tools/renderers/test-render-mission.js
@@ -1136,7 +1136,7 @@ git commit -m "feat(v2.0): mission renderer Explore mode — inspect panel, lane
 
 This task is a loop, not a straight line — expect to iterate. The Playwright MCP tools are deferred: load them first with ToolSearch (`select:mcp__plugin_playwright_playwright__browser_navigate,mcp__plugin_playwright_playwright__browser_take_screenshot,mcp__plugin_playwright_playwright__browser_click,mcp__plugin_playwright_playwright__browser_evaluate,mcp__plugin_playwright_playwright__browser_snapshot`).
 
-- [ ] **Step 1: Generate standalone outputs for all four missions**
+- [x] **Step 1: Generate standalone outputs for all four missions**
 
 From the repo root, with `$SCRATCH` = the session scratchpad directory:
 
@@ -1149,7 +1149,7 @@ done
 
 Expected: four files written, node/edge counts echoed, no warnings for the four examples.
 
-- [ ] **Step 2: Screenshot each mission, light theme, Overview mode**
+- [x] **Step 2: Screenshot each mission, light theme, Overview mode**
 
 For each file: `browser_navigate` to `file://$SCRATCH/<name>.html`, then `browser_take_screenshot` (full page). Check against the spec's acceptance list:
 - every node visible; every edge drawn and attached to sensible anchor points
@@ -1158,7 +1158,7 @@ For each file: `browser_navigate` to `file://$SCRATCH/<name>.html`, then `browse
 - loop-back arcs route above the rows without crossing node labels
 - phase band names/goals legible; alternating bands visible
 
-- [ ] **Step 3: Verify Explore interactions on the energy mission**
+- [x] **Step 3: Verify Explore interactions on the energy mission**
 
 On `mission-energy-supplier-switch.html`:
 1. `browser_click` the "Explore" button; `browser_snapshot` to confirm heat/lane controls appear.
@@ -1167,15 +1167,15 @@ On `mission-energy-supplier-switch.html`:
 4. Open "Lanes", untick "Barriers"; confirm the open panel re-renders without the Barriers section.
 5. Click "Overview"; confirm panel closes and controls hide.
 
-- [ ] **Step 4: Dark theme check**
+- [x] **Step 4: Dark theme check**
 
 On the energy mission: `browser_evaluate` → `document.documentElement.setAttribute('data-theme','dark')`, screenshot Overview and Explore-with-heat. Check text contrast, edge visibility, band alternation.
 
-- [ ] **Step 5: Fix issues and re-verify**
+- [x] **Step 5: Fix issues and re-verify**
 
 For each defect found: fix in the renderer/layout source, re-run both test files (`node tools/renderers/test-mission-layout.js && node tools/renderers/test-render-mission.js` — must stay green), regenerate the affected HTML, re-screenshot. Known likely candidates: same-column vertical edges passing through intermediate nodes (acceptable if rare; fix by nudging via a small horizontal bow in `edgeSvg` if it harms legibility), condition-label collisions at dense columns, retail (25-node) height.
 
-- [ ] **Step 6: Commit fixes**
+- [x] **Step 6: Commit fixes**
 
 ```bash
 git add tools/renderers/
@@ -1228,7 +1228,7 @@ git commit -m "feat(v2.0): mission renderer refinements from user review"
 - Consumes: the CLI contract from Task 3 (`render-mission.js <mission.json> [-o out] [--standalone] [--mode]`).
 - Produces: the skill that future sessions use to render missions.
 
-- [ ] **Step 1: Replace the skill content**
+- [x] **Step 1: Replace the skill content**
 
 Replace the entire content of `.claude/skills/mission-renderer/SKILL.md` with:
 
@@ -1304,20 +1304,27 @@ Layout: columns = phases (in `phases[]` order) with synthetic first/last columns
 - **Renderer bugs** — tests live at `tools/renderers/test-mission-layout.js` and `tools/renderers/test-render-mission.js`; run both before changing the renderer.
 ```
 
-- [ ] **Step 2: Verify the skill references real files**
+- [x] **Step 2: Verify the skill references real files**
 
 Run: `ls tools/renderers/render-mission.js tools/renderers/test-mission-layout.js tools/renderers/test-render-mission.js tools/validators/validate-v2.0.js`
 Expected: all four paths exist.
 
-- [ ] **Step 3: Smoke-test the documented command**
+- [x] **Step 3: Smoke-test the documented command**
 
 Run the exact command from the skill against the healthcare mission into the scratchpad; expected: file written, `15 nodes`, no warnings.
 
-- [ ] **Step 4: Commit**
+- [ ] **Step 4: Commit** — ⚠️ **NOT APPLICABLE. This step cannot be done as written.**
+
+`.claude/` is gitignored (`.gitignore:4`), so `.claude/skills/mission-renderer/SKILL.md`
+cannot be committed — `git add` silently does nothing and `git status` stays clean. The
+rewrite is local-only and absent from a fresh clone.
+
+The tracked half of this work (`tools/renderers/`) is already committed. If the skill file
+is lost, regenerate it from Task 6 Step 1 above; the CLI it wraps is unaffected.
 
 ```bash
-git add .claude/skills/mission-renderer/SKILL.md
-git commit -m "docs(v2.0): rewrite mission-renderer skill — deterministic CLI, two modes, real schema fields"
+# Does not work — retained to document why:
+# git add .claude/skills/mission-renderer/SKILL.md
 ```
 
 ---

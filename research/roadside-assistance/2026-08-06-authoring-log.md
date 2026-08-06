@@ -145,6 +145,9 @@ Filed properly in Task 10; parked here so none is lost.
     path; on a single observed case that means inventing a statistic. Allow "unknown", or
     exempt `observed` paths.
 13. **Node names must be outcome-neutral** — §7.3. Standards guidance, not a code change.
+14. **⚠️⚠️ Quality score is reported for invalid artifacts** — §8.1. An Experience with 49
+    validation errors scored 100/100, printed directly above the FAIL. Suppress or label the
+    score when validation fails. **Highest-value item in this list.**
 9. **⚠️ `handoff` nodes have no payload field** — §5.4. No way to declare what transfers and
    what does not. This service's central failure is an entitlement that did not travel with a
    job, and it is expressible only as prose. Would make "find every handoff where entitlements
@@ -698,6 +701,85 @@ All six `edgeType` values are now exercised.
 
 ---
 
-## Task 8 — Experience
+## Task 8 — Experience (complete)
+
+38 experience nodes covering the full observed path. **All four artifacts now validate:
+2 Actors at 100, Experience at 100, Mission at 95.**
+
+### 8.1 ⚠️ The quality scorer reported 100/100 on an artifact with 49 validation errors
+
+The single most alarming finding of the exercise. The first validation run printed:
+
+```
+Validating: exp-adam-roadside-recovery.json
+  Type:    Experience
+  Quality: 100/100
+  Errors (49):
+    - /nodes/0/laneContent/actions: must be array
+    ...
+  FAIL
+```
+
+**Quality scoring and schema validation run independently.** The scorer checks whether fields
+are *present*, never whether they are *valid*. So an artifact where 38 `actions` fields hold the
+wrong type, 8 `cognitiveLoad` objects are plain strings, and two fields breach their length
+caps still scores full marks.
+
+Why it matters: quality score is the number that gets read. It appears in the validator's
+own output above the errors, it is what `/end-session` reports, and it is the figure quoted
+when judging whether an example is finished. **A perfect score sitting directly above a FAIL
+is actively misleading** — and if anyone ever scores artifacts without validating them, garbage
+scores 100.
+
+**Candidate backlog item — high value.** Either suppress the score when validation fails, or
+label it (`Quality: 100/100 (INVALID — score unreliable)`), or have the scorer type-check.
+
+### 8.2 A third `additionalProperties: true` object, and the same trap
+
+`laneContent` on Experience nodes is also open. My wrong-typed `actions` strings and
+`cognitiveLoad` strings were caught **only because those keys happen to be declared** with
+types. Had I invented a plausible key — `feelings`, `friction`, `notes` — it would have passed
+silently, exactly as `accessibility.considerations` did in Task 1 and `accessibility` did in
+Task 2.
+
+Three schemas, three open objects, same failure mode. This is now the most-repeated finding of
+the whole exercise.
+
+### 8.3 Two parallel cognitive fields, different owners — a good design
+
+`Mission.node.laneContent.accessibilityProfile.cognitive` holds the **service-level** cognitive
+demand; `Experience.node.laneContent.cognitiveLoad` holds **this actor's experience** of it.
+Same sub-fields, deliberately separated.
+
+Worth recording as a thing the schema gets right: it is the clearest expression anywhere of the
+Mission/Experience split — the service has a property, the actor has an experience of it, and
+they are allowed to differ. Both are `additionalProperties: false`, unlike their parents.
+
+### 8.4 What the Experience could carry that the Mission could not
+
+The Experience absorbed several things the Mission had no room for:
+
+- **The absent decision-maker as lived friction** — `hire-car-offered` carries a `governance`
+  barrier with `emergesFrom` describing the relay through his brother. The Mission could only
+  state the structural fact.
+- **Why the deflection was accepted** — "They'd know best." A trait (deference to the service's
+  own advice) meeting a policy (channel deflection). Only expressible actor-side.
+- **The unenforceable entitlement** — at `dropoff-location-decided`, he half-remembers a term
+  he cannot prove, on a nearly flat phone, with family waiting. Compliance was rational. The
+  Mission records the divergence; only the Experience explains why nobody contested it.
+
+This is the artifact split working as intended, and worth saying plainly given how much of this
+log is complaint.
+
+### 8.5 Length caps, again
+
+- `path.totalDuration`: **50 chars** (same as `paths[].averageDuration`)
+- `outcome.reflection`: 500
+- `actions[]` items: 200 each
+- `laneContent.thoughts`: no cap encountered
+
+---
+
+## Task 9 — Render and verify visually
 
 *(in progress)*

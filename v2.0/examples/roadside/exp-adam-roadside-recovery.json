@@ -1,0 +1,949 @@
+{
+  "$context": "https://schemas.digitalservice.design/v2.0",
+  "$type": "Experience",
+  "id": "exp-adam-roadside-recovery",
+  "version": "2.0.0",
+  "title": "Adam's roadside recovery — remembering a benefit, then fighting to be found",
+  "summary": "Adam holds roadside cover through a bundled bank benefit and remembers it only because he browsed the benefits list a fortnight earlier for something unrelated. Once he calls, the service works hard — but two of its three location methods fail, and the one that succeeds comes from his brother's phone via a company nobody in the chain owns. The service arrives on time and does what it promised; getting it to know where to come is the whole story.",
+  "references": {
+    "actorRef": "actor-adam-rees",
+    "contextRef": "ctx-roadside-cover-holder",
+    "missionRef": "mission-roadside-assistance"
+  },
+  "path": {
+    "pathType": "observed",
+    "nodeSequence": [
+      "hold-premium-account",
+      "benefits-surface-visible",
+      "discover-cover-incidentally",
+      "vehicle-breaks-down",
+      "establish-safety",
+      "owner-insurer-refuses",
+      "recall-bundled-cover",
+      "open-benefits-app",
+      "view-cover-summary",
+      "choose-contact-route",
+      "call-overseas-number",
+      "agent-deflects-to-app",
+      "install-provider-app",
+      "app-location-entry-fails",
+      "call-back-reenter-ivr",
+      "safety-check",
+      "identity-verification",
+      "sms-location-link-fails",
+      "research-supported-location-formats",
+      "share-location-third-party",
+      "case-created",
+      "await-recovery",
+      "handoff-to-recovery-partner",
+      "partner-sms-tracking-link",
+      "track-case-online",
+      "partner-confirms-by-phone",
+      "engineer-arrives",
+      "dropoff-location-decided",
+      "transport-to-partner-garage",
+      "complete-garage-paperwork",
+      "arrange-onward-travel",
+      "request-case-update",
+      "hire-car-offered",
+      "family-finds-repairer",
+      "confirm-repairer-and-hire-car",
+      "handoff-to-hire-supplier",
+      "handoff-to-messaging-channel",
+      "receive-updates-via-messaging"
+    ],
+    "totalDuration": "~30 hours to repairing garage"
+  },
+  "nodes": [
+    {
+      "nodeRef": "hold-premium-account",
+      "laneContent": {
+        "actions": [
+          "Holds the premium account and pays for it monthly, largely for benefits he uses occasionally"
+        ],
+        "thoughts": "The account earns its keep through the things I actually claim. I couldn't list everything it includes.",
+        "emotions": {
+          "state": "neutral",
+          "intensity": 0,
+          "model": "simple"
+        },
+        "needAtStep": "To be getting value from something he pays for every month"
+      }
+    },
+    {
+      "nodeRef": "benefits-surface-visible",
+      "laneContent": {
+        "actions": [
+          "Sees the full benefits list whenever he opens the app for any single benefit"
+        ],
+        "thoughts": "There's more in here than I remember signing up for.",
+        "emotions": {
+          "state": "mildly curious",
+          "intensity": 1,
+          "model": "simple"
+        },
+        "opportunities": [
+          "Surface the benefit most relevant to what the customer is about to do, rather than a flat list"
+        ]
+      }
+    },
+    {
+      "nodeRef": "discover-cover-incidentally",
+      "laneContent": {
+        "actions": [
+          "Opens the app for half-price cinema tickets, browses the rest of the list out of curiosity, notices roadside assistance covers any vehicle he travels in across Europe"
+        ],
+        "thoughts": "Roadside cover, and it follows me rather than a car. Worth remembering.",
+        "emotions": {
+          "state": "pleased",
+          "intensity": 1,
+          "model": "simple"
+        },
+        "needAtStep": "To know what he is entitled to before he needs it",
+        "barriers": [
+          {
+            "type": "communications",
+            "description": "Nothing prompted this. He learned what he was covered for by accident, a fortnight before he needed it, while doing something entirely unrelated.",
+            "severity": 4,
+            "emergesFrom": "His habit of browsing sideways in apps, colliding with a service that leaves awareness to chance",
+            "workarounds": "None — pure luck of timing"
+          }
+        ],
+        "opportunities": [
+          "Treat incidental browsing as the primary awareness mechanism it evidently is",
+          "Refresh awareness before known travel, using data the bank already holds"
+        ]
+      },
+      "momentThatMatters": {
+        "moment": "Noticing the roadside cover exists and follows the person",
+        "importance": "critical",
+        "emotionalIntensity": 1
+      }
+    },
+    {
+      "nodeRef": "vehicle-breaks-down",
+      "laneContent": {
+        "actions": [
+          "Travelling as a passenger in his brother's car when it stops and cannot continue"
+        ],
+        "thoughts": "That's the day gone. Where even are we?",
+        "emotions": {
+          "state": "dismayed",
+          "intensity": -1,
+          "model": "simple"
+        },
+        "needAtStep": "To understand how bad this is and what happens next",
+        "painAtStep": "Stranded on an unfamiliar road abroad with family, and no immediate sense of who to call",
+        "cognitiveLoad": {
+          "overallScore": 4,
+          "decisionComplexity": "complex",
+          "informationDensity": "high",
+          "timePressure": "high"
+        }
+      }
+    },
+    {
+      "nodeRef": "establish-safety",
+      "laneContent": {
+        "actions": [
+          "Helps get everyone safe; part of the group leaves in his father's car to continue the trip while he stays with his brother"
+        ],
+        "thoughts": "Get the others moving, then sort the car. At least we're not all stuck.",
+        "emotions": {
+          "state": "focused",
+          "intensity": 0,
+          "model": "simple"
+        },
+        "needAtStep": "To make sure nobody is in danger before dealing with anything administrative"
+      }
+    },
+    {
+      "nodeRef": "owner-insurer-refuses",
+      "laneContent": {
+        "actions": [
+          "Listens as his brother calls his own motor insurer and is refused for not notifying them of overseas travel"
+        ],
+        "thoughts": "He bought cover for these exact dates. How is that not enough?",
+        "emotions": {
+          "state": "indignant",
+          "intensity": -2,
+          "model": "simple"
+        },
+        "painAtStep": "Watching careful preparation count for nothing on a procedural technicality, with no fallback in sight",
+        "barriers": [
+          {
+            "type": "policy",
+            "description": "The obvious route refuses on a technicality. At this point they have no cover they know of and no plan, several hours from anywhere familiar.",
+            "severity": 5,
+            "emergesFrom": "A different provider's policy condition colliding with a family who believed they had prepared properly",
+            "workarounds": "None available through that provider"
+          }
+        ],
+        "cognitiveLoad": {
+          "overallScore": 4,
+          "decisionComplexity": "complex",
+          "informationDensity": "high",
+          "timePressure": "high"
+        }
+      },
+      "momentThatMatters": {
+        "moment": "The insurer saying no",
+        "importance": "critical",
+        "emotionalIntensity": -2
+      }
+    },
+    {
+      "nodeRef": "recall-bundled-cover",
+      "laneContent": {
+        "actions": [
+          "Remembers the bank benefit, works out it should apply to his brother's car abroad, and suggests trying it"
+        ],
+        "thoughts": "Hang on — mine covers any car I'm in, anywhere in Europe. That's this.",
+        "emotions": {
+          "state": "hopeful",
+          "intensity": 1,
+          "model": "simple"
+        },
+        "needAtStep": "To find any route to help now that the obvious one has closed",
+        "opportunities": [
+          "Prompt customers to check bundled benefits at the moment another provider refuses"
+        ]
+      },
+      "momentThatMatters": {
+        "moment": "Realising his own bank benefit might rescue the situation",
+        "importance": "critical",
+        "emotionalIntensity": 2
+      }
+    },
+    {
+      "nodeRef": "open-benefits-app",
+      "laneContent": {
+        "actions": [
+          "Opens the benefits app at the roadside and finds the roadside assistance section"
+        ],
+        "thoughts": "Please load. Please still be in here.",
+        "emotions": {
+          "state": "tense",
+          "intensity": -1,
+          "model": "simple"
+        },
+        "cognitiveLoad": {
+          "overallScore": 3,
+          "decisionComplexity": "moderate",
+          "informationDensity": "moderate",
+          "timePressure": "moderate"
+        }
+      }
+    },
+    {
+      "nodeRef": "view-cover-summary",
+      "laneContent": {
+        "actions": [
+          "Reads the cover summary and confirms it applies to any vehicle he is travelling in, across Europe. Notes the contact options."
+        ],
+        "thoughts": "Any vehicle, UK and Europe. That's exactly our situation.",
+        "emotions": {
+          "state": "relieved",
+          "intensity": 1,
+          "model": "simple"
+        },
+        "needAtStep": "To be certain the cover applies before committing to it, having just watched a refusal",
+        "barriers": [
+          {
+            "type": "knowledge",
+            "description": "He reads a summary written for browsing as a decision aid in an emergency, and has to work out for himself whether cover that follows a person extends to someone else's car abroad.",
+            "severity": 3,
+            "emergesFrom": "Content designed for idle reading, encountered under time pressure at a roadside",
+            "workarounds": "Read it twice to be sure"
+          }
+        ]
+      }
+    },
+    {
+      "nodeRef": "choose-contact-route",
+      "laneContent": {
+        "actions": [
+          "Sees the app and the two phone numbers offered together, and picks the overseas number"
+        ],
+        "thoughts": "Downloading an app out here will take forever. A person will be quicker.",
+        "emotions": {
+          "state": "decisive",
+          "intensity": 0,
+          "model": "simple"
+        },
+        "needAtStep": "To pick the fastest route to a human who can send help",
+        "opportunities": [
+          "Recommend a route based on signal and case type rather than presenting a flat choice"
+        ]
+      }
+    },
+    {
+      "nodeRef": "call-overseas-number",
+      "laneContent": {
+        "actions": [
+          "Calls the overseas number and reaches an agent who already knows which bank's benefit applies"
+        ],
+        "thoughts": "Good — they know who I am and what I'm covered for. This is going to be fine.",
+        "emotions": {
+          "state": "reassured",
+          "intensity": 1,
+          "model": "simple"
+        },
+        "needAtStep": "To reach someone who can take control of the situation"
+      }
+    },
+    {
+      "nodeRef": "agent-deflects-to-app",
+      "laneContent": {
+        "actions": [
+          "Is told it would be easier to use the app or the website; ends the working call and installs the app"
+        ],
+        "thoughts": "They'd know best. If the app's quicker, fine.",
+        "emotions": {
+          "state": "compliant",
+          "intensity": 0,
+          "model": "simple"
+        },
+        "painAtStep": "Gives up a working, answered call on the service's own advice, with no case created and nothing recorded",
+        "barriers": [
+          {
+            "type": "process",
+            "description": "He trusts the service's recommendation and abandons the one channel that was working. Nothing is retained from the call, so the deflection costs him everything he has done so far.",
+            "severity": 5,
+            "emergesFrom": "His deference to the service's own advice, colliding with a deflection policy that carries no state across the switch",
+            "workarounds": "None — he had no way to know the app could not do the job"
+          }
+        ]
+      },
+      "momentThatMatters": {
+        "moment": "Being told the app would be easier",
+        "importance": "critical",
+        "emotionalIntensity": 0
+      }
+    },
+    {
+      "nodeRef": "install-provider-app",
+      "laneContent": {
+        "actions": [
+          "Downloads and opens the provider app at the roadside; finds he can raise a case without an account"
+        ],
+        "thoughts": "No login needed. Sensible — someone's thought about this.",
+        "emotions": {
+          "state": "mildly impressed",
+          "intensity": 1,
+          "model": "simple"
+        },
+        "cognitiveLoad": {
+          "overallScore": 3,
+          "decisionComplexity": "moderate",
+          "informationDensity": "moderate",
+          "timePressure": "moderate"
+        }
+      }
+    },
+    {
+      "nodeRef": "app-location-entry-fails",
+      "laneContent": {
+        "actions": [
+          "Is asked for a postcode, which does not exist here, or GPS, which cannot get a fix on this signal. Neither works; the app offers nothing else."
+        ],
+        "thoughts": "A postcode? We're not even in the UK. And there's no signal for GPS. There's no other option — it just stops.",
+        "emotions": {
+          "state": "frustrated",
+          "intensity": -2,
+          "model": "simple"
+        },
+        "needAtStep": "To tell the service where he is, by any means it will accept",
+        "painAtStep": "The recommended channel is unusable, offers no alternative, and no route back to a person — and he has already given up the call",
+        "barriers": [
+          {
+            "type": "technology",
+            "description": "Both location methods depend on something unavailable at a European roadside on weak signal. The app has no third option and no way to hand him back to a human.",
+            "severity": 5,
+            "emergesFrom": "His digital-first confidence colliding with an app built on home-market assumptions, in the one situation it was sold to handle",
+            "workarounds": "None available in the app — he has to abandon it entirely"
+          },
+          {
+            "type": "process",
+            "description": "Being asked for a postcode in a country that does not use them, by an app whose selling point is overseas cover.",
+            "severity": 5,
+            "emergesFrom": "A domestic product assumption meeting a customer using it exactly as advertised",
+            "workarounds": "None"
+          }
+        ],
+        "cognitiveLoad": {
+          "overallScore": 5,
+          "decisionComplexity": "complex",
+          "informationDensity": "overwhelming",
+          "timePressure": "critical"
+        }
+      },
+      "momentThatMatters": {
+        "moment": "The app asking for a postcode he cannot possibly supply",
+        "importance": "critical",
+        "emotionalIntensity": -2
+      }
+    },
+    {
+      "nodeRef": "call-back-reenter-ivr",
+      "laneContent": {
+        "actions": [
+          "Calls back, navigates the menu again, waits again, and reaches a different agent with no knowledge of the earlier call"
+        ],
+        "thoughts": "I was already talking to someone about this fifteen minutes ago. Now I'm starting from scratch.",
+        "emotions": {
+          "state": "exasperated",
+          "intensity": -2,
+          "model": "simple"
+        },
+        "painAtStep": "A second full contact for one incident, caused entirely by following the service's own advice",
+        "barriers": [
+          {
+            "type": "technology",
+            "description": "Nothing carried over. The abandoned call left no case, the app attempt left no record, and he begins again from nothing while standing at the roadside on a draining battery.",
+            "severity": 5,
+            "emergesFrom": "His low tolerance for repeating himself, colliding with three systems that share no state",
+            "workarounds": "Repeat everything from memory"
+          }
+        ],
+        "cognitiveLoad": {
+          "overallScore": 4,
+          "decisionComplexity": "complex",
+          "informationDensity": "high",
+          "timePressure": "high"
+        }
+      }
+    },
+    {
+      "nodeRef": "safety-check",
+      "laneContent": {
+        "actions": [
+          "Is asked first whether everyone is in a safe place"
+        ],
+        "thoughts": "Right — they're asking the right thing first. That's a good sign.",
+        "emotions": {
+          "state": "steadied",
+          "intensity": 1,
+          "model": "simple"
+        },
+        "needAtStep": "To feel the service has grasped that this is a roadside situation, not an admin task"
+      }
+    },
+    {
+      "nodeRef": "identity-verification",
+      "laneContent": {
+        "actions": [
+          "Confirms name, address and account details from memory, for the second time in twenty minutes"
+        ],
+        "thoughts": "I gave you all this on the last call. My battery's going.",
+        "emotions": {
+          "state": "impatient",
+          "intensity": -1,
+          "model": "simple"
+        },
+        "painAtStep": "Recalling account details at the roadside, on a dying phone, having already supplied them once",
+        "cognitiveLoad": {
+          "overallScore": 4,
+          "decisionComplexity": "complex",
+          "informationDensity": "high",
+          "timePressure": "high"
+        }
+      }
+    },
+    {
+      "nodeRef": "sms-location-link-fails",
+      "laneContent": {
+        "actions": [
+          "Receives the location-capture SMS, opens the link, and watches it fail to get a fix"
+        ],
+        "thoughts": "Same problem as the app. It's the signal, not the method.",
+        "emotions": {
+          "state": "deflated",
+          "intensity": -2,
+          "model": "simple"
+        },
+        "painAtStep": "A third attempt at the same task, failing for the same underlying reason as the first",
+        "barriers": [
+          {
+            "type": "technology",
+            "description": "Presented as an alternative, but it needs the same position fix that already failed twice. A different channel, the same dependency, the same outcome.",
+            "severity": 5,
+            "emergesFrom": "Weak signal defeating every method that asks the device to locate itself",
+            "workarounds": "None offered by the service"
+          }
+        ]
+      }
+    },
+    {
+      "nodeRef": "research-supported-location-formats",
+      "laneContent": {
+        "actions": [
+          "His brother suggests a precise-location service; Adam searches to check the provider accepts it before offering it to the agent"
+        ],
+        "thoughts": "If they take this format we're sorted. Let me check before I suggest it.",
+        "emotions": {
+          "state": "determined",
+          "intensity": 0,
+          "model": "simple"
+        },
+        "needAtStep": "To find a way of describing where he is that the service will actually accept",
+        "barriers": [
+          {
+            "type": "knowledge",
+            "description": "He has to search the public internet, mid-call, to discover a capability the service has and never mentions. The agent did not offer it.",
+            "severity": 5,
+            "emergesFrom": "His habit of verifying before proposing, compensating for a service that never states what it accepts",
+            "workarounds": "Search engine, on the little battery left"
+          }
+        ],
+        "opportunities": [
+          "State plainly which location formats are accepted — in the app, on the call, and in the SMS",
+          "Have agents offer alternative formats the moment the first method fails"
+        ]
+      }
+    },
+    {
+      "nodeRef": "share-location-third-party",
+      "laneContent": {
+        "actions": [
+          "His brother reads the location reference off his own phone; Adam repeats it to the agent, who enters it and confirms it back"
+        ],
+        "thoughts": "Finally. It took three goes, my brother's phone and a company none of them work with.",
+        "emotions": {
+          "state": "relieved",
+          "intensity": 2,
+          "model": "simple"
+        },
+        "needAtStep": "To be findable, so help can actually be sent",
+        "barriers": [
+          {
+            "type": "resource",
+            "description": "The thing that rescued the case was a second person with a charged phone and better signal. Alone, he would still have been stuck.",
+            "severity": 4,
+            "emergesFrom": "A service that assumes one customer with one working device, meeting a situation where neither held",
+            "workarounds": "Borrow someone else's phone and read the answer aloud"
+          }
+        ]
+      },
+      "momentThatMatters": {
+        "moment": "The location finally transmitting, from someone else's phone",
+        "importance": "critical",
+        "emotionalIntensity": 2
+      }
+    },
+    {
+      "nodeRef": "case-created",
+      "laneContent": {
+        "actions": [
+          "Is told the case is raised, recovery will be 60 to 90 minutes, and they will be in touch if anything changes"
+        ],
+        "thoughts": "An hour and a half. We can manage that. Someone's coming.",
+        "emotions": {
+          "state": "settled",
+          "intensity": 1,
+          "model": "simple"
+        },
+        "needAtStep": "To know that help is definitely coming and roughly when"
+      }
+    },
+    {
+      "nodeRef": "await-recovery",
+      "laneContent": {
+        "actions": [
+          "Waits at the roadside with his brother, watching the battery and the traffic"
+        ],
+        "thoughts": "No news either way. I'll assume that means it's on track.",
+        "emotions": {
+          "state": "uneasy but patient",
+          "intensity": 0,
+          "model": "simple"
+        },
+        "painAtStep": "No case reference and no way to check progress — silence could mean on track or forgotten",
+        "cognitiveLoad": {
+          "overallScore": 1,
+          "decisionComplexity": "none",
+          "informationDensity": "minimal",
+          "timePressure": "low"
+        }
+      }
+    },
+    {
+      "nodeRef": "handoff-to-recovery-partner",
+      "laneContent": {
+        "actions": [
+          "Unaware that the case has been passed to a local recovery firm"
+        ],
+        "thoughts": "Nothing to go on. I don't know who's actually coming.",
+        "emotions": {
+          "state": "in the dark",
+          "intensity": -1,
+          "model": "simple"
+        }
+      }
+    },
+    {
+      "nodeRef": "partner-sms-tracking-link",
+      "laneContent": {
+        "actions": [
+          "Receives an unexpected SMS from a local garage he has never heard of, containing a link"
+        ],
+        "thoughts": "Who's this? Is this legitimate, or is it a scam? It must be them.",
+        "emotions": {
+          "state": "wary",
+          "intensity": 0,
+          "model": "simple"
+        },
+        "barriers": [
+          {
+            "type": "communications",
+            "description": "An unannounced message from an unknown company abroad with a link in it. Genuine, but with every hallmark customers are told to distrust.",
+            "severity": 3,
+            "emergesFrom": "A handoff nobody told him about, surfacing as a cold contact from a stranger",
+            "workarounds": "Assume it is legitimate because the timing fits"
+          }
+        ]
+      }
+    },
+    {
+      "nodeRef": "track-case-online",
+      "laneContent": {
+        "actions": [
+          "Opens the tracking site and watches the case move to accepted, then en route with an ETA"
+        ],
+        "thoughts": "That's better. I can see it happening now.",
+        "emotions": {
+          "state": "reassured",
+          "intensity": 2,
+          "model": "simple"
+        },
+        "needAtStep": "To see progress rather than take it on trust",
+        "opportunities": [
+          "Offer this at the point the case is raised, not an hour into the wait"
+        ]
+      }
+    },
+    {
+      "nodeRef": "partner-confirms-by-phone",
+      "laneContent": {
+        "actions": [
+          "Takes a call from the recovery firm confirming they are on their way"
+        ],
+        "thoughts": "Third message from the same people. I'd already seen it online — but it's good to hear a voice.",
+        "emotions": {
+          "state": "reassured",
+          "intensity": 1,
+          "model": "simple"
+        }
+      }
+    },
+    {
+      "nodeRef": "engineer-arrives",
+      "laneContent": {
+        "actions": [
+          "Meets the engineer, who assesses the car and loads it"
+        ],
+        "thoughts": "On time, like they said. That part worked exactly as it should.",
+        "emotions": {
+          "state": "relieved",
+          "intensity": 2,
+          "model": "simple"
+        }
+      },
+      "momentThatMatters": {
+        "moment": "Recovery arriving within the promised window",
+        "importance": "high",
+        "emotionalIntensity": 2
+      }
+    },
+    {
+      "nodeRef": "dropoff-location-decided",
+      "laneContent": {
+        "actions": [
+          "Says where they need to be taken; is told the vehicle must go to the recovery firm's own garage instead. Accepts it."
+        ],
+        "thoughts": "I'm fairly sure the cover says anywhere we need. But I'm not arguing at the roadside with the family waiting.",
+        "emotions": {
+          "state": "resigned",
+          "intensity": -1,
+          "model": "simple"
+        },
+        "painAtStep": "Receives less than his cover entitles him to, with no way to check the terms or challenge it in the moment",
+        "barriers": [
+          {
+            "type": "knowledge",
+            "description": "He half-remembers an entitlement he cannot prove, from a summary read hours ago on a phone now nearly flat. The engineer states the opposite with confidence and does not know the cover terms either.",
+            "severity": 5,
+            "emergesFrom": "An entitlement that lives in the bank's app colliding with a subcontractor who was sent a job, not a policy",
+            "workarounds": "Comply, and raise it later if it matters"
+          },
+          {
+            "type": "policy",
+            "description": "Challenging means delaying recovery while standing at the roadside with family. Compliance is the only sensible choice, which makes the entitlement unenforceable in practice.",
+            "severity": 4,
+            "emergesFrom": "His pragmatism under pressure meeting an entitlement with no enforcement route",
+            "workarounds": "None worth the delay"
+          }
+        ]
+      },
+      "momentThatMatters": {
+        "moment": "Being told the car must go to their garage, not where he asked",
+        "importance": "high",
+        "emotionalIntensity": -1
+      }
+    },
+    {
+      "nodeRef": "transport-to-partner-garage",
+      "laneContent": {
+        "actions": [
+          "Travels roughly thirty minutes to the recovery firm's garage with his brother and the car"
+        ],
+        "thoughts": "Further from where we were going, not closer. But at least the car's moving.",
+        "emotions": {
+          "state": "flat",
+          "intensity": 0,
+          "model": "simple"
+        }
+      }
+    },
+    {
+      "nodeRef": "complete-garage-paperwork",
+      "laneContent": {
+        "actions": [
+          "Empties the car of what they need and completes intake paperwork, including having licences copied"
+        ],
+        "thoughts": "Third time I've given these details today, and now on paper, to a company I'd never heard of this morning.",
+        "emotions": {
+          "state": "weary",
+          "intensity": -1,
+          "model": "simple"
+        },
+        "painAtStep": "The same information collected a third time, by a third organisation, on paper, in another language",
+        "barriers": [
+          {
+            "type": "governance",
+            "description": "Identity documents copied by a company two steps removed from his bank, under arrangements he cannot see and did not agree to directly.",
+            "severity": 4,
+            "emergesFrom": "A chain of handoffs where each party collects afresh because none shares a record",
+            "workarounds": "Hand them over — there is no alternative if he wants the car repaired"
+          }
+        ],
+        "cognitiveLoad": {
+          "overallScore": 3,
+          "decisionComplexity": "moderate",
+          "informationDensity": "moderate",
+          "timePressure": "moderate"
+        }
+      }
+    },
+    {
+      "nodeRef": "arrange-onward-travel",
+      "laneContent": {
+        "actions": [
+          "Arranges for his father to collect them from the garage"
+        ],
+        "thoughts": "We'll sort our own lift. Nobody mentioned anything about getting us onward.",
+        "emotions": {
+          "state": "self-reliant",
+          "intensity": 0,
+          "model": "simple"
+        },
+        "painAtStep": "Onward travel and emergency accommodation were both covered and neither was offered, so neither was used",
+        "barriers": [
+          {
+            "type": "communications",
+            "description": "Entitlements he was paying for went unused because nothing surfaced them at the point they applied. He learned about them later, in passing.",
+            "severity": 4,
+            "emergesFrom": "A cover summary read once at the start, meeting a case where the relevant entitlement arrives hours later",
+            "workarounds": "Family collection"
+          }
+        ],
+        "opportunities": [
+          "Offer onward travel automatically when recovery leaves a customer somewhere they did not choose"
+        ]
+      }
+    },
+    {
+      "nodeRef": "request-case-update",
+      "laneContent": {
+        "actions": [
+          "Telephones the next day for an update, because no other route exists"
+        ],
+        "thoughts": "Nothing's come through overnight. I'll have to ring them again.",
+        "emotions": {
+          "state": "resigned",
+          "intensity": -1,
+          "model": "simple"
+        },
+        "painAtStep": "Has to chase for news of his own case; the tracking site he was given has quietly stopped showing anything",
+        "barriers": [
+          {
+            "type": "communications",
+            "description": "Every self-service route has expired or covered only the leg that has finished. Staying informed costs him a phone call each time.",
+            "severity": 4,
+            "emergesFrom": "His preference for asynchronous channels meeting a service that only updates on request, by phone",
+            "workarounds": "Call, and call again"
+          }
+        ]
+      }
+    },
+    {
+      "nodeRef": "hire-car-offered",
+      "laneContent": {
+        "actions": [
+          "Is told a hire car is included; says he will have to check with his brother, whose car it is"
+        ],
+        "thoughts": "It's not my call. And they can't ask him — they don't even know he exists.",
+        "emotions": {
+          "state": "awkward",
+          "intensity": -1,
+          "model": "simple"
+        },
+        "painAtStep": "Acting as a relay for decisions he has no authority to make, for a service that cannot contact the person who does",
+        "barriers": [
+          {
+            "type": "governance",
+            "description": "He holds the cover; his brother owns the car. Every question has to make a round trip through him, and the actual decision-maker is invisible to the service.",
+            "severity": 4,
+            "emergesFrom": "Cover that follows a person, colliding with an asset owned by someone else",
+            "workarounds": "Relay everything by hand"
+          }
+        ]
+      }
+    },
+    {
+      "nodeRef": "family-finds-repairer",
+      "laneContent": {
+        "actions": [
+          "Hears that his family have walked into a village garage and been pointed to another nearby that can do the repair"
+        ],
+        "thoughts": "We found one in an afternoon by asking. I've no idea whether they were close to finding one themselves.",
+        "emotions": {
+          "state": "quietly pleased",
+          "intensity": 1,
+          "model": "simple"
+        },
+        "barriers": [
+          {
+            "type": "communications",
+            "description": "Nobody told him the service was already working this, or how long it might take, so duplicating the effort was entirely rational.",
+            "severity": 3,
+            "emergesFrom": "A service that does not report its own progress, meeting a family inclined to solve things locally",
+            "workarounds": "Do it themselves and tell the service afterwards"
+          }
+        ]
+      }
+    },
+    {
+      "nodeRef": "confirm-repairer-and-hire-car",
+      "laneContent": {
+        "actions": [
+          "Calls back with the garage details and confirms the hire car; gives occupant numbers and driver, and is offered flexible drop-off including leaving the return location open"
+        ],
+        "thoughts": "They took the garage we found without any fuss, and they're happy to leave the drop-off open. That's genuinely helpful.",
+        "emotions": {
+          "state": "appreciative",
+          "intensity": 1,
+          "model": "simple"
+        },
+        "needAtStep": "To get the car booked in and the family mobile again",
+        "opportunities": [
+          "Keep this flexibility — accepting a customer-found garage and an undecided drop-off is the best the service does"
+        ]
+      }
+    },
+    {
+      "nodeRef": "handoff-to-hire-supplier",
+      "laneContent": {
+        "actions": [
+          "Is told the hire request has been submitted to their supplier"
+        ],
+        "thoughts": "Another company in the chain. I still can't talk to any of them directly.",
+        "emotions": {
+          "state": "neutral",
+          "intensity": 0,
+          "model": "simple"
+        }
+      }
+    },
+    {
+      "nodeRef": "handoff-to-messaging-channel",
+      "laneContent": {
+        "actions": [
+          "Receives an SMS with a link, opens it, and joins a messaging conversation with the provider"
+        ],
+        "thoughts": "This is what I wanted from the start. Why wasn't this offered yesterday?",
+        "emotions": {
+          "state": "relieved and mildly irritated",
+          "intensity": 1,
+          "model": "simple"
+        },
+        "needAtStep": "A way to ask questions and get updates without making a phone call",
+        "painAtStep": "The lowest-effort channel in the whole service arrives after two days and three phone calls",
+        "opportunities": [
+          "Offer the messaging channel at first contact, not after two days of phone calls"
+        ]
+      },
+      "momentThatMatters": {
+        "moment": "Being handed a channel that finally costs him nothing to use",
+        "importance": "high",
+        "emotionalIntensity": 2
+      }
+    },
+    {
+      "nodeRef": "receive-updates-via-messaging",
+      "laneContent": {
+        "actions": [
+          "Gets case updates by message from then on, without needing to call"
+        ],
+        "thoughts": "Car's with a garage, everyone's safe, and I can just ask when I want to know something. We got there.",
+        "emotions": {
+          "state": "satisfied",
+          "intensity": 1,
+          "model": "simple"
+        },
+        "needAtStep": "To stay informed without effort while the repair runs its course"
+      }
+    }
+  ],
+  "outcome": {
+    "success": true,
+    "endNode": "receive-updates-via-messaging",
+    "reflection": "The service did what it promised: recovery arrived inside the window, the car is with a garage that can repair it, and everyone got where they were going. What took the effort was being found — two of three location methods failed, and the one that worked came from his brother's phone. He gave up a working call on the service's own advice and paid for it with a second call and a second identity check.",
+    "netSentiment": 1,
+    "wouldRepeat": true
+  },
+  "provenance": {
+    "source": "user_research",
+    "confidence": 0.9,
+    "evidence": "First-hand account given in interview while the case was still open. Emotional states and internal reasoning are the customer's own, reported directly rather than inferred.",
+    "researchSources": [
+      {
+        "source": "First-hand account of a live roadside breakdown case (notes held privately, outside version control)",
+        "type": "interview",
+        "date": "2026-08-06",
+        "confidence": "high"
+      }
+    ],
+    "generationMethod": "human_created"
+  },
+  "governance": {
+    "dataClassification": "public",
+    "containsPii": false,
+    "anonymisationMethod": "fictional_composite",
+    "legalBasis": "Not applicable — fictional composite for a published example set, derived from a consented first-hand account with name, bank, provider, country and dates removed.",
+    "dataOwner": "Digital Service Design Working"
+  },
+  "meta": {
+    "created": "2026-08-06",
+    "updated": "2026-08-06",
+    "createdBy": "Digital Service Design Team",
+    "organisation": "Digital Service Design Working",
+    "tags": [
+      "roadside-assistance",
+      "channel-switching",
+      "observed",
+      "overseas",
+      "location-failure"
+    ]
+  }
+}

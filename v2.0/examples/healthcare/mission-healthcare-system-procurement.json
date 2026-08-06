@@ -230,7 +230,7 @@
         "channels": [
           {
             "channel": "phone-call",
-            "category": "physical",
+            "category": "telecom",
             "serviceModel": "managed",
             "name": "Reference calls (peer NHS organisations)",
             "usageContext": "Structured reference conversations with IT Directors at reference sites"

@@ -1,0 +1,328 @@
+{
+  "$context": "https://schemas.digitalservice.design/v2.0",
+  "$type": "Actor",
+  "id": "actor-daniel-rees",
+  "version": "2.0.0",
+  "name": "Daniel Rees",
+  "summary": "A 37-year-old owner of the vehicle that broke down. He bought motor insurance specifically for the trip, with the correct dates, and was still refused assistance for not having notified the insurer of overseas travel. Every subsequent decision about his car was made through his brother, because the assistance service that took over never contacted him at any point.",
+  "actorType": "human",
+  "quote": "It's my car, my insurance, my decision about what happens to it — and I spent two days hearing all of it second-hand from my brother.",
+  "traits": {
+    "demographics": {
+      "age": 37,
+      "location": "United Kingdom",
+      "education": "Degree educated",
+      "background": "Owns and maintains the family car and handles its insurance and servicing himself. Travels abroad by car with his family most years and prepares for it carefully, buying cover for specific trip dates rather than relying on annual policies."
+    },
+    "needs": [
+      {
+        "need": "Retain control over decisions about an asset he owns",
+        "type": "autonomy"
+      },
+      {
+        "need": "Know his family is safe and the trip can continue",
+        "type": "security"
+      },
+      {
+        "need": "Have the preparation he did actually count for something",
+        "type": "recognition"
+      },
+      {
+        "need": "Understand what is happening to his car and when he gets it back",
+        "type": "security"
+      }
+    ],
+    "frustrations": [
+      {
+        "frustration": "Being refused on a technicality after having bought cover for exactly these dates",
+        "severity": 5
+      },
+      {
+        "frustration": "Learning what is happening to his own car through someone else",
+        "severity": 4
+      },
+      {
+        "frustration": "Being asked to decide things without being able to ask the questions himself",
+        "severity": 4
+      },
+      {
+        "frustration": "Waiting on a service that has no reason to contact him and no record that he exists",
+        "severity": 3
+      }
+    ],
+    "motivations": [
+      {
+        "motivation": "Wants to be a competent provider who has prepared properly",
+        "type": "achievement"
+      },
+      {
+        "motivation": "Values keeping the family holiday intact despite the setback",
+        "type": "social"
+      },
+      {
+        "motivation": "Motivated to resolve things himself rather than depend on others",
+        "type": "intrinsic"
+      }
+    ],
+    "technology": {
+      "comfort": "intermediate",
+      "description": "Competent with everyday apps and online accounts but not an early adopter. Would readily have used a tracking app or portal for his own vehicle had one been offered to him — none was, because the case was not in his name.",
+      "preferredDevices": [
+        "smartphone"
+      ]
+    },
+    "communication": {
+      "preferred": [
+        "phone",
+        "in_person"
+      ],
+      "acceptable": [
+        "email",
+        "messaging_app"
+      ],
+      "avoided": [],
+      "style": "Direct and practical. Prefers to speak to someone who can actually answer, and dislikes relaying questions through an intermediary."
+    },
+    "influences": [
+      {
+        "source": "His own preparation",
+        "description": "Believes that having bought the right cover for the right dates should be sufficient, and is disproportionately frustrated when it is not"
+      },
+      {
+        "source": "Local knowledge",
+        "description": "Trusts asking people nearby over waiting for a remote service — went into the village and found a repairer while the assistance provider was still searching"
+      },
+      {
+        "source": "Family consensus",
+        "description": "Defers to whoever is best placed to act in the moment, even when the decision is formally his"
+      }
+    ],
+    "decisionMaking": {
+      "style": "Prepared and deliberate in advance, but pragmatic under pressure — will accept a workable option quickly rather than hold out for the entitled one",
+      "riskTolerance": "cautious"
+    },
+    "accessibility": {
+      "dimensions": [
+        {
+          "dimension": "situational",
+          "description": "Cut off from the service handling his own asset. Holds no case reference, is not a party to the contract, and cannot authenticate against a case opened in his brother's name.",
+          "impact": "significant"
+        }
+      ]
+    },
+    "behaviouralPatterns": [
+      {
+        "pattern": "Prepares thoroughly, then is undone by a clause",
+        "context": "Bought trip-specific cover with correct dates and was refused for not separately notifying the insurer of travel"
+      },
+      {
+        "pattern": "Solves it locally",
+        "context": "Walked into a village garage and found a repairer through it, resolving in an afternoon a task the assistance provider had open"
+      },
+      {
+        "pattern": "Defers the channel, keeps the decision",
+        "context": "Content for his brother to make the calls, but expects to be the one who decides what happens to the car"
+      }
+    ]
+  },
+  "contexts": [
+    {
+      "contextId": "ctx-roadside-vehicle-owner",
+      "title": "Vehicle Owner Without Cover (Overseas Breakdown)",
+      "contextType": "Consumer",
+      "description": "Daniel owns the broken-down vehicle but holds no roadside cover that applies. His own motor insurer refused, so recovery proceeds under his brother's bundled bank benefit — a policy he is not party to. He retains decision authority over the car and is the person a hire car would be issued to, yet the assistance service has no contact record for him and never speaks to him directly.",
+      "needs": [
+        {
+          "need": "Get the car recovered and repaired without cover of his own to fall back on",
+          "priority": "primary",
+          "timeframe": "immediate"
+        },
+        {
+          "need": "Keep authority over what happens to his vehicle and where it goes",
+          "priority": "primary",
+          "timeframe": "immediate"
+        },
+        {
+          "need": "Restore the family's ability to travel for the rest of the trip",
+          "priority": "primary",
+          "timeframe": "short_term"
+        },
+        {
+          "need": "Find out where the car is and when it will be fixed",
+          "priority": "secondary",
+          "timeframe": "short_term"
+        }
+      ],
+      "frustrations": [
+        {
+          "frustration": "Refused by his own insurer despite holding cover bought for exactly these dates, for want of a separate notification",
+          "severity": 5,
+          "frequency": "rare"
+        },
+        {
+          "frustration": "Cannot speak to the service handling his car — the case belongs to someone else",
+          "severity": 4,
+          "frequency": "rare"
+        },
+        {
+          "frustration": "Asked to decide on a hire car through a relay, unable to ask the supplier anything directly",
+          "severity": 4,
+          "frequency": "rare"
+        },
+        {
+          "frustration": "No tracking, no case reference, no notifications — nothing addressed to him at all",
+          "severity": 3,
+          "frequency": "rare"
+        }
+      ],
+      "channels": [
+        {
+          "channel": "phone",
+          "category": "telecom",
+          "serviceModel": "managed",
+          "preference": "preferred",
+          "usageContext": "Used to call his own insurer, who refused. Never used to contact the assistance provider, who has no record of him."
+        },
+        {
+          "channel": "in_person",
+          "category": "physical",
+          "serviceModel": "managed",
+          "preference": "preferred",
+          "usageContext": "Walked into a village garage with family and found a repairer that way — the only channel that produced a result for him directly"
+        },
+        {
+          "channel": "app",
+          "category": "digital",
+          "serviceModel": "self_service",
+          "preference": "acceptable",
+          "usageContext": "Supplied the location from his own phone using a third-party service when his brother's failed. Otherwise had no app access to the case."
+        }
+      ],
+      "details": {
+        "coverStatus": "None applicable — own motor insurer refused; recovery proceeds under a family member's bundled bank benefit",
+        "relationshipToVehicle": "Owner. Holds decision authority over the car and would be the named hire car driver.",
+        "contactWithService": "None. The assistance provider never contacted him at any point in the case.",
+        "refusalReason": "Had not separately notified his insurer of overseas travel, despite holding cover purchased for the specific trip dates"
+      },
+      "momentsThatMatter": [
+        {
+          "moment": "His own insurer refusing, despite the dates being right",
+          "importance": "critical",
+          "emotionalIntensity": -2
+        },
+        {
+          "moment": "Learning a family member's bank benefit might cover the vehicle he owns",
+          "importance": "critical",
+          "emotionalIntensity": 1
+        },
+        {
+          "moment": "Supplying the location from his own phone after two service methods failed",
+          "importance": "high",
+          "emotionalIntensity": 1
+        },
+        {
+          "moment": "Finding a repairer himself, in a village, in an afternoon",
+          "importance": "high",
+          "emotionalIntensity": 2
+        },
+        {
+          "moment": "Being asked about a hire car through his brother rather than directly",
+          "importance": "medium",
+          "emotionalIntensity": -1
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "target": "actor-adam-rees",
+      "type": "served_by",
+      "description": "Brother, and holder of the cover being used. The sole channel between Daniel and the service — every question and decision about the vehicle passes through him.",
+      "strength": "strong"
+    }
+  ],
+  "emergence": [
+    {
+      "contextRef": "ctx-roadside-vehicle-owner",
+      "goalsAsExperienced": [
+        {
+          "goal": "Get his car recovered under someone else's policy without losing any say in what happens to it",
+          "source": "collision",
+          "priority": "primary"
+        },
+        {
+          "goal": "Stop being the last person to find out about his own vehicle",
+          "source": "collision",
+          "priority": "primary"
+        },
+        {
+          "goal": "Salvage the remainder of the family trip",
+          "source": "context",
+          "priority": "secondary"
+        }
+      ],
+      "painPoints": [
+        {
+          "painPoint": "Careful preparation counts for nothing — cover bought for the exact trip dates is refused for a missing notification, and the fallback belongs to someone else entirely",
+          "severity": 5,
+          "emergesFrom": "A low risk tolerance and thorough preparation colliding with a policy condition that preparation did not cover"
+        },
+        {
+          "painPoint": "Owns the asset but is invisible to the service acting on it — no case reference, no tracking, no authentication route, no contact of any kind",
+          "severity": 4,
+          "emergesFrom": "Cover that follows a person rather than a vehicle, meeting an owner who is not that person"
+        },
+        {
+          "painPoint": "Prefers to speak directly to someone who can answer, and is instead confined to relaying questions through his brother",
+          "severity": 4,
+          "emergesFrom": "A direct communication style colliding with a service that has no contract with him"
+        },
+        {
+          "painPoint": "Solved the repairer problem himself in an afternoon while the service still had it open, without ever being told it was in hand",
+          "severity": 2,
+          "emergesFrom": "Trust in local knowledge meeting a remote service that did not communicate its own progress"
+        }
+      ],
+      "opportunities": [
+        "Let the beneficiary nominate a second contact on the case, so the asset owner can be reached directly",
+        "Issue a read-only case reference to the vehicle owner, even where the policy is held by someone else",
+        "Tell the customer which tasks the service already has in hand, so they do not duplicate them",
+        "Check for adjacent cover before refusing, rather than leaving the customer to remember a bundled benefit unaided"
+      ]
+    }
+  ],
+  "governance": {
+    "dataClassification": "public",
+    "containsPii": false,
+    "anonymisationMethod": "fictional_composite",
+    "legalBasis": "Not applicable — fictional composite for a published example set, derived from a consented first-hand account with name, bank, provider, country and dates removed.",
+    "dataOwner": "Digital Service Design Working"
+  },
+  "provenance": {
+    "source": "user_research",
+    "confidence": 0.75,
+    "evidence": "Reported second-hand via the cover holder, who was present throughout. Daniel's own account was not taken directly, so his internal states are inferred from observed behaviour rather than stated.",
+    "researchSources": [
+      {
+        "source": "First-hand account of a live roadside breakdown case (notes held privately, outside version control)",
+        "type": "interview",
+        "date": "2026-08-06",
+        "confidence": "medium"
+      }
+    ],
+    "generationMethod": "human_created"
+  },
+  "meta": {
+    "created": "2026-08-06",
+    "updated": "2026-08-06",
+    "createdBy": "Digital Service Design Team",
+    "organisation": "Digital Service Design Working",
+    "tags": [
+      "roadside-assistance",
+      "vehicle-owner",
+      "no-cover",
+      "absent-decision-maker",
+      "overseas"
+    ]
+  }
+}

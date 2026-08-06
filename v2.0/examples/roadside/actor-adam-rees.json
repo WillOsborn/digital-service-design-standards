@@ -1,0 +1,365 @@
+{
+  "$context": "https://schemas.digitalservice.design/v2.0",
+  "$type": "Actor",
+  "id": "actor-adam-rees",
+  "version": "2.0.0",
+  "name": "Adam Rees",
+  "summary": "A 34-year-old digital professional who holds a paid premium bank account for its bundled benefits. Comfortable with apps and generally prefers them to phone calls, but under pressure he reaches for whichever channel he judges fastest. He discovered his roadside cover by browsing the benefits list while claiming something unrelated, and that incidental knowledge is the only reason he thought to use it.",
+  "actorType": "human",
+  "quote": "I only knew we had the cover because I'd been in the app for cinema tickets a fortnight earlier and had a nose around. If I hadn't, we'd have been stood at the roadside with no idea it existed.",
+  "traits": {
+    "demographics": {
+      "age": 34,
+      "location": "United Kingdom",
+      "education": "Degree educated",
+      "background": "Works in a digital role and runs most of his life through apps. Holds a paid premium current account chosen partly for its bundled benefits, which he treats as perks to use rather than policies to study. Travels in Europe a few times a year, usually as a passenger."
+    },
+    "needs": [
+      {
+        "need": "Get a bad situation resolved quickly without becoming the bottleneck",
+        "type": "autonomy"
+      },
+      {
+        "need": "Feel that the people with him are safe and looked after",
+        "type": "security"
+      },
+      {
+        "need": "Extract real value from benefits he is already paying for",
+        "type": "efficiency"
+      },
+      {
+        "need": "Know what is happening next, rather than waiting in silence",
+        "type": "security"
+      }
+    ],
+    "frustrations": [
+      {
+        "frustration": "Being asked for information he cannot possibly have in the situation he is in",
+        "severity": 5
+      },
+      {
+        "frustration": "Having to repeat himself to a service that already holds the answer",
+        "severity": 4
+      },
+      {
+        "frustration": "Being pushed towards a digital channel that then fails, having given up a working one",
+        "severity": 5
+      },
+      {
+        "frustration": "Not knowing what a benefit actually covers until he is trying to claim on it",
+        "severity": 3
+      }
+    ],
+    "motivations": [
+      {
+        "motivation": "Wants to be the person who solves the problem when something goes wrong",
+        "type": "achievement"
+      },
+      {
+        "motivation": "Values getting his money's worth from things he already pays for",
+        "type": "extrinsic"
+      },
+      {
+        "motivation": "Motivated by keeping family calm and the day salvageable",
+        "type": "social"
+      }
+    ],
+    "technology": {
+      "comfort": "advanced",
+      "description": "Manages banking, travel and household admin through apps and expects them to work. Comfortable installing something new on the spot. That confidence is exactly why an app failing under pressure lands so badly — he has no fallback narrative for it beyond 'this is broken'.",
+      "preferredDevices": [
+        "smartphone",
+        "laptop"
+      ]
+    },
+    "communication": {
+      "preferred": [
+        "app",
+        "messaging_app",
+        "email"
+      ],
+      "acceptable": [
+        "sms",
+        "website"
+      ],
+      "avoided": [
+        "phone"
+      ],
+      "style": "Efficient and factual. Will give a clear account of a situation once and expects it to be recorded. Becomes noticeably terser when asked for the same detail twice."
+    },
+    "influences": [
+      {
+        "source": "Family present at the time",
+        "description": "Takes practical suggestions from whoever is standing next to him — including the suggestion that solved the location problem"
+      },
+      {
+        "source": "Search engines",
+        "description": "Will look something up mid-conversation rather than ask the person he is speaking to, including checking what a service supports before proposing it"
+      },
+      {
+        "source": "The benefits app itself",
+        "description": "Browses the bundled benefits list opportunistically when he is in the app for something unrelated"
+      }
+    ],
+    "decisionMaking": {
+      "style": "Fast and pragmatic under pressure — picks the option that looks quickest rather than the option that is best documented, and revises immediately when it fails",
+      "riskTolerance": "moderate"
+    },
+    "accessibility": {
+      "dimensions": [
+        {
+          "dimension": "situational",
+          "description": "No permanent access needs, but the roadside imposes temporary ones: weak mobile signal, no address or postcode to give, standing outdoors in traffic, and limited phone battery shared across the group.",
+          "impact": "significant"
+        },
+        {
+          "dimension": "emotional",
+          "description": "Operating under stress with family present and a day already disrupted, which narrows patience for repeated questions and for channels that fail.",
+          "impact": "moderate"
+        }
+      ]
+    },
+    "behaviouralPatterns": [
+      {
+        "pattern": "Channel abandonment after first failure",
+        "context": "Once a channel fails him he does not return to it. He never reopened the assistance app after its location entry failed, even once the case was running and the app might have helped."
+      },
+      {
+        "pattern": "Incidental discovery",
+        "context": "Learns what he is entitled to by browsing sideways while using something else, not by reading documentation or responding to reminders"
+      },
+      {
+        "pattern": "Verifies before proposing",
+        "context": "Checks that a service supports something before suggesting it, rather than asking the agent whether it is possible"
+      }
+    ]
+  },
+  "contexts": [
+    {
+      "contextId": "ctx-roadside-cover-holder",
+      "title": "Roadside Cover Holder (Passenger, Overseas)",
+      "contextType": "Consumer",
+      "description": "Adam holds roadside assistance as a bundled benefit of his paid premium bank account. The cover follows him rather than a vehicle — it applies to any car he is travelling in, at home or in Europe. In this context he is a passenger in a family member's car abroad, so he holds the entitlement and makes the calls, but he does not own the vehicle and cannot authorise decisions about it.",
+      "needs": [
+        {
+          "need": "Get help to a roadside location he cannot name or pinpoint",
+          "priority": "primary",
+          "timeframe": "immediate"
+        },
+        {
+          "need": "Establish quickly whether the cover actually applies to this situation",
+          "priority": "primary",
+          "timeframe": "immediate"
+        },
+        {
+          "need": "Keep the vehicle owner informed and able to make decisions he cannot make himself",
+          "priority": "secondary",
+          "timeframe": "short_term"
+        },
+        {
+          "need": "Get everyone onward to where they were going",
+          "priority": "secondary",
+          "timeframe": "short_term"
+        }
+      ],
+      "frustrations": [
+        {
+          "frustration": "Asked for a postcode when abroad, where no such thing exists for the location",
+          "severity": 5,
+          "frequency": "rare"
+        },
+        {
+          "frustration": "Poor mobile signal defeating every location method the service offers",
+          "severity": 5,
+          "frequency": "rare"
+        },
+        {
+          "frustration": "Steered off a working phone call onto an app that then could not do the job",
+          "severity": 5,
+          "frequency": "rare"
+        },
+        {
+          "frustration": "Re-entering the phone menu and re-confirming identity after the app failed, with nothing carried over",
+          "severity": 4,
+          "frequency": "rare"
+        },
+        {
+          "frustration": "Holding the entitlement but not the authority to decide what happens to the car",
+          "severity": 3,
+          "frequency": "occasional"
+        }
+      ],
+      "channels": [
+        {
+          "channel": "app",
+          "category": "digital",
+          "serviceModel": "self_service",
+          "preference": "preferred",
+          "usageContext": "Manages the bank account and its bundled benefits day to day; browses the benefits list opportunistically when visiting for something else"
+        },
+        {
+          "channel": "phone",
+          "category": "telecom",
+          "serviceModel": "managed",
+          "preference": "acceptable",
+          "usageContext": "Avoided normally, but chosen first here because it looked like the fastest route to a person who could dispatch help"
+        },
+        {
+          "channel": "messaging_app",
+          "category": "digital",
+          "serviceModel": "both",
+          "preference": "preferred",
+          "usageContext": "Strongly preferred for ongoing case updates once offered — removes the need to call and wait, and leaves a readable history"
+        },
+        {
+          "channel": "sms",
+          "category": "telecom",
+          "serviceModel": "self_service",
+          "preference": "acceptable",
+          "usageContext": "Receives links and notifications, though the location-capture link failed on poor signal"
+        },
+        {
+          "channel": "website",
+          "category": "digital",
+          "serviceModel": "self_service",
+          "preference": "acceptable",
+          "usageContext": "Used a search engine to verify what location formats the assistance provider accepted, and a partner tracking site while it remained live"
+        }
+      ],
+      "details": {
+        "coverSource": "Bundled benefit of a paid premium bank account, managed through a separate benefits app",
+        "coverScope": "Follows the person, not the vehicle — any car he is travelling in, at home or in Europe",
+        "relationshipToVehicle": "Passenger. Does not own the car and cannot authorise decisions about it.",
+        "awarenessOrigin": "Browsed the benefits list a fortnight earlier while claiming an unrelated benefit"
+      },
+      "momentsThatMatter": [
+        {
+          "moment": "Realising the bundled cover exists and might apply",
+          "importance": "critical",
+          "emotionalIntensity": 1
+        },
+        {
+          "moment": "The app asking for a postcode he cannot supply",
+          "importance": "critical",
+          "emotionalIntensity": -2
+        },
+        {
+          "moment": "The location finally transmitting from someone else's phone",
+          "importance": "critical",
+          "emotionalIntensity": 2
+        },
+        {
+          "moment": "Being told recovery would come within 60-90 minutes",
+          "importance": "high",
+          "emotionalIntensity": 1
+        },
+        {
+          "moment": "Being told the car must go to the recovery firm's garage, not where he asked",
+          "importance": "high",
+          "emotionalIntensity": -1
+        },
+        {
+          "moment": "Getting a messaging channel that removes the need to call",
+          "importance": "high",
+          "emotionalIntensity": 2
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "target": "actor-daniel-rees",
+      "type": "serves",
+      "description": "Brother and owner of the broken-down vehicle. Adam holds the cover and makes every contact; Daniel holds the decisions. The service speaks only to Adam.",
+      "strength": "strong"
+    }
+  ],
+  "emergence": [
+    {
+      "contextRef": "ctx-roadside-cover-holder",
+      "goalsAsExperienced": [
+        {
+          "goal": "Get a competent human dispatched to a place he cannot name, as fast as possible",
+          "source": "collision",
+          "priority": "primary"
+        },
+        {
+          "goal": "Establish that the cover applies before committing to it, having already watched a different insurer refuse",
+          "source": "collision",
+          "priority": "primary"
+        },
+        {
+          "goal": "Stay across the case without having to phone for every update",
+          "source": "traits",
+          "priority": "secondary"
+        },
+        {
+          "goal": "Relay decisions to the vehicle owner accurately, despite the service never speaking to him",
+          "source": "context",
+          "priority": "secondary"
+        }
+      ],
+      "painPoints": [
+        {
+          "painPoint": "An app-first instinct meets a service whose app cannot function without a postcode or GPS, neither of which exists at a European roadside with weak signal",
+          "severity": 5,
+          "emergesFrom": "His preference for digital channels colliding with a location-dependent service and a situation that defeats location capture"
+        },
+        {
+          "painPoint": "Steered off a working phone call onto the app, then having to start the call over — new queue, new menu, identity confirmed again, nothing carried across",
+          "severity": 5,
+          "emergesFrom": "The service optimising for channel deflection while holding no state across a failed deflection"
+        },
+        {
+          "painPoint": "Holds the entitlement but not the authority — every decision about the car has to be relayed to someone the service never contacts",
+          "severity": 3,
+          "emergesFrom": "Cover that follows the person meeting an asset owned by somebody else"
+        },
+        {
+          "painPoint": "Would not have known the cover existed at all but for an unrelated visit to the benefits app a fortnight earlier",
+          "severity": 4,
+          "emergesFrom": "Awareness that depends on incidental browsing rather than on any channel the service controls"
+        }
+      ],
+      "opportunities": [
+        "Accept a location in whatever form the customer can actually produce, including third-party formats read from someone else's device",
+        "Carry case state across a channel switch, so a failed deflection does not cost the customer a second identity check",
+        "Surface the entitlement at the moment of need rather than relying on it having been noticed earlier",
+        "Offer a messaging channel at first contact, not only after two phone calls"
+      ]
+    }
+  ],
+  "governance": {
+    "dataClassification": "public",
+    "containsPii": false,
+    "anonymisationMethod": "fictional_composite",
+    "legalBasis": "Not applicable — fictional composite for a published example set, derived from a consented first-hand account with name, bank, provider, country and dates removed.",
+    "dataOwner": "Digital Service Design Working"
+  },
+  "provenance": {
+    "source": "user_research",
+    "confidence": 0.9,
+    "researchSources": [
+      {
+        "source": "First-hand account of a live roadside breakdown case (notes held privately, outside version control)",
+        "type": "interview",
+        "date": "2026-08-06",
+        "confidence": "high"
+      }
+    ],
+    "generationMethod": "human_created"
+  },
+  "meta": {
+    "created": "2026-08-06",
+    "updated": "2026-08-06",
+    "createdBy": "Digital Service Design Team",
+    "organisation": "Digital Service Design Working",
+    "tags": [
+      "roadside-assistance",
+      "bundled-benefits",
+      "channel-switching",
+      "overseas",
+      "cover-holder"
+    ]
+  }
+}

@@ -191,6 +191,20 @@
         "complete-garage-paperwork",
         "arrange-onward-travel"
       ]
+    },
+    {
+      "phaseId": "phase-case-management",
+      "name": "Onward Case Management",
+      "goal": "Get the vehicle to a garage that can repair it, and keep the customer informed",
+      "nodeRefs": [
+        "request-case-update",
+        "hire-car-offered",
+        "family-finds-repairer",
+        "confirm-repairer-and-hire-car",
+        "handoff-to-hire-supplier",
+        "handoff-to-messaging-channel",
+        "receive-updates-via-messaging"
+      ]
     }
   ],
   "nodes": [
@@ -2149,6 +2163,432 @@
         "description": "Real entitlements went unused because nothing surfaced them at the moment they applied. The cover was better than the experience of it.",
         "importance": "high"
       }
+    },
+    {
+      "nodeId": "request-case-update",
+      "name": "Customer calls for an update",
+      "nodeType": "touchpoint",
+      "durationMs": 600000,
+      "laneContent": {
+        "description": "The next day the customer telephones for an update, because no other route exists. The provider is searching for a garage able to do the repair, after which the vehicle will be transported there. The customer had to initiate this — nothing had been sent.",
+        "channels": [
+          {
+            "channel": "phone",
+            "category": "telecom",
+            "serviceModel": "managed",
+            "interaction": "human",
+            "ownership": "partner",
+            "name": "Bank-specific assistance line",
+            "usageContext": "Customer-initiated update call. Still the only route to case status once the partner's tracking site has expired."
+          }
+        ],
+        "barriers": [
+          {
+            "type": "communications",
+            "description": "No proactive updates. Progress is only knowable by asking, so the customer bears the cost of staying informed about their own case.",
+            "severity": 4
+          },
+          {
+            "type": "technology",
+            "description": "Every self-service route has now expired or was never offered. The partner's tracking covered only recovery, and the provider's own app tracking stops at collection.",
+            "severity": 4
+          }
+        ],
+        "designOpportunities": [
+          "Push status changes rather than waiting to be asked",
+          "Provide one case view that survives every handoff and covers the whole case",
+          "Offer a low-effort update channel at the moment the case is raised, not two calls later"
+        ],
+        "frontstage": "A phone call, an agent, a verbal update.",
+        "backstage": "Provider is sourcing a repairing garage in the local network and arranging onward transport of the vehicle. None of this progress is surfaced to the customer.",
+        "support-systems": [
+          "Provider case management system",
+          "Repair network directory",
+          "Partner telephony"
+        ],
+        "data-required": [
+          "Case reference or identifying details",
+          "Current case status"
+        ],
+        "roles-involved": [
+          "Contact centre agent",
+          "Case management",
+          "Repair network management"
+        ],
+        "kpis": [
+          {
+            "metric": "Customer-initiated update calls per case",
+            "target": "Below 1"
+          },
+          {
+            "metric": "Status changes communicated proactively",
+            "target": "Above 90%"
+          }
+        ]
+      },
+      "significance": {
+        "description": "The customer chases because there is nothing else. Every self-service route offered so far has either expired or covered a leg that has finished.",
+        "importance": "high"
+      }
+    },
+    {
+      "nodeId": "hire-car-offered",
+      "name": "Hire vehicle offered",
+      "nodeType": "decision",
+      "laneContent": {
+        "description": "The agent mentions a hire vehicle is included. The cover holder cannot accept — the vehicle is his brother's and the hire car would be for him — so the decision leaves the conversation and travels to someone the service has never spoken to.",
+        "channels": [
+          {
+            "channel": "phone",
+            "category": "telecom",
+            "serviceModel": "managed",
+            "interaction": "human",
+            "ownership": "partner",
+            "name": "Bank-specific assistance line",
+            "usageContext": "Hire vehicle raised mid-call; the decision belongs to a person who is not party to the conversation"
+          }
+        ],
+        "barriers": [
+          {
+            "type": "governance",
+            "description": "The decision-maker is not a party to the case. The service can only ever speak to the cover holder, so every question about the vehicle takes a round trip through someone acting as a relay.",
+            "severity": 4
+          },
+          {
+            "type": "communications",
+            "description": "The entitlement surfaces only when an agent happens to mention it, on a call the customer initiated for another reason. Had the customer not called, it may never have come up.",
+            "severity": 4
+          }
+        ],
+        "designOpportunities": [
+          "Let the cover holder nominate the vehicle owner as a named party on the case",
+          "Surface entitlements by case stage rather than at an agent's discretion",
+          "Allow decisions to be confirmed by the entitled party directly, on their own device"
+        ],
+        "frontstage": "Agent mentioning a hire vehicle is included and asking whether it is wanted.",
+        "backstage": "Hire entitlement held in the provider's policy systems. No concept of a third party with decision rights over the vehicle.",
+        "support-systems": [
+          "Provider case management system",
+          "Hire vehicle supplier integration"
+        ],
+        "data-required": [
+          "Hire entitlement and duration",
+          "Named driver — who is not the person on the call"
+        ],
+        "roles-involved": [
+          "Contact centre agent",
+          "Case management"
+        ],
+        "kpis": [
+          {
+            "metric": "Cases where the entitled decision-maker is reachable by the service",
+            "target": "Above 90% — currently no mechanism exists"
+          },
+          {
+            "metric": "Hire entitlement take-up versus eligibility",
+            "target": "Tracked — currently unmeasured"
+          }
+        ]
+      },
+      "significance": {
+        "description": "The clearest expression of the beneficiary-is-not-the-owner split. A decision the service needs must be relayed through someone with no authority to make it.",
+        "importance": "critical"
+      }
+    },
+    {
+      "nodeId": "family-finds-repairer",
+      "name": "Family finds a repairer themselves",
+      "nodeType": "touchpoint",
+      "laneContent": {
+        "description": "While the provider is still searching, the family walk into a garage in the village. It is about to close for a holiday, but they are pointed to a related garage nearby that can do the work. The customer solves the service's open task, off-channel, in an afternoon. NO CHANNEL ENTRY: no service channel was involved at any point in this step, which is precisely the finding.",
+        "barriers": [
+          {
+            "type": "communications",
+            "description": "The customer was never told the provider had this task in hand or how long it might take, so duplicating the work was entirely rational.",
+            "severity": 4
+          },
+          {
+            "type": "process",
+            "description": "The customer's own local enquiry beat the provider's network search. Local knowledge and physical presence outperformed a remote directory, and the service has no way to absorb that.",
+            "severity": 3
+          }
+        ],
+        "designOpportunities": [
+          "Tell the customer which tasks the service is actively working, so they do not duplicate them",
+          "Allow a customer-sourced repairer to be accepted into the case without restarting the process",
+          "Give an expected timeframe for network sourcing, so waiting is an informed choice"
+        ],
+        "frontstage": "None. The customer walks into a garage unaided.",
+        "backstage": "Provider continues searching its own repair network, unaware the task has been solved.",
+        "support-systems": [
+          "None owned by the service"
+        ],
+        "data-required": [
+          "Local knowledge, held by strangers in a village"
+        ],
+        "roles-involved": [
+          "None — performed entirely by the customer and family"
+        ],
+        "kpis": [
+          {
+            "metric": "Tasks the service owns that customers complete themselves",
+            "target": "0 — currently invisible and unmeasured"
+          },
+          {
+            "metric": "Time to source a repairing garage",
+            "target": "Under 4 hours"
+          }
+        ]
+      },
+      "significance": {
+        "description": "A node the service owns, silently taken over by the customer, with no channel involved at all. The map can show the work happening; it cannot show that the service was doing it too.",
+        "importance": "critical"
+      }
+    },
+    {
+      "nodeId": "confirm-repairer-and-hire-car",
+      "name": "Confirm the repairer and specify the hire vehicle",
+      "nodeType": "touchpoint",
+      "durationMs": 900000,
+      "laneContent": {
+        "description": "A second call: the customer reports the garage the family found, and confirms the hire vehicle is wanted. The agent takes the details — how many people, who will drive, five days initially — and asks where it should be dropped off, offering several options. The customer says it depends on the repair, and the agent leaves it open.",
+        "channels": [
+          {
+            "channel": "phone",
+            "category": "telecom",
+            "serviceModel": "managed",
+            "interaction": "human",
+            "ownership": "partner",
+            "name": "Bank-specific assistance line",
+            "usageContext": "Second update call: customer reports the repairer, and hire vehicle requirements are captured in detail"
+          }
+        ],
+        "designOpportunities": [
+          "Accept a customer-found repairer without treating it as an exception",
+          "Let hire vehicle details be submitted digitally rather than dictated by phone",
+          "Keep leaving open what can be left open — this was handled well"
+        ],
+        "frontstage": "Agent capturing hire requirements and offering flexible drop-off options, including leaving the return location undecided.",
+        "backstage": "Agent completes a form and submits it to the hire supplier. Repairer details are added to the case and onward transport is arranged with the original recovery firm.",
+        "support-systems": [
+          "Provider case management system",
+          "Hire supplier submission form",
+          "Repair network records"
+        ],
+        "data-required": [
+          "Repairing garage details, supplied by the customer",
+          "Number of occupants and named driver",
+          "Hire duration and drop-off preference"
+        ],
+        "roles-involved": [
+          "Contact centre agent",
+          "Case management",
+          "Hire supplier"
+        ],
+        "kpis": [
+          {
+            "metric": "Hire requests submitted without a follow-up call",
+            "target": "Above 90%"
+          },
+          {
+            "metric": "Customer-sourced repairers accepted into the case",
+            "target": "100% where suitable"
+          }
+        ]
+      },
+      "significance": {
+        "description": "The service at its most accommodating — flexible on drop-off, willing to leave a decision open pending information nobody has yet. Worth recording as a strength.",
+        "importance": "high"
+      }
+    },
+    {
+      "nodeId": "handoff-to-hire-supplier",
+      "name": "Handoff to the hire vehicle supplier",
+      "nodeType": "handoff",
+      "laneContent": {
+        "description": "The agent submits the hire request to a supplier — a different company again from the recovery firm and the garage. A third organisation now holds part of the case, and the customer has no direct route to any of them.",
+        "channels": [
+          {
+            "channel": "website",
+            "category": "digital",
+            "serviceModel": "managed",
+            "interaction": "human",
+            "ownership": "third_party",
+            "name": "Hire supplier submission",
+            "usageContext": "SCHEMA LIMITATION: the provider's supplier, contracted for us — the same 'third_party' as an unrelated competitor. See prediction 2."
+          }
+        ],
+        "barriers": [
+          {
+            "type": "governance",
+            "description": "A third organisation joins the case with no direct customer relationship. Questions about the hire vehicle must route back through the provider, adding a hop to every exchange.",
+            "severity": 3
+          },
+          {
+            "type": "process",
+            "description": "Recovery firm, repairing garage and hire supplier are three separate parties with no shared view. Coordination between them is entirely the provider's manual work.",
+            "severity": 4
+          }
+        ],
+        "designOpportunities": [
+          "Give the customer a direct route to the hire supplier for hire questions",
+          "Share one case view across every party rather than coordinating by relay",
+          "Confirm the submission to the customer so they know it has happened"
+        ],
+        "frontstage": "Nothing visible — the customer is told it has been submitted.",
+        "backstage": "Form submitted to the hire supplier's own process. No integration and no shared status; the provider must chase for progress like anyone else.",
+        "support-systems": [
+          "Hire supplier submission form",
+          "Provider case management system"
+        ],
+        "data-required": [
+          "Named driver and occupant count",
+          "Hire duration and drop-off preference",
+          "Delivery location"
+        ],
+        "roles-involved": [
+          "Contact centre agent",
+          "Hire supplier"
+        ],
+        "kpis": [
+          {
+            "metric": "Hire requests fulfilled without provider chasing",
+            "target": "Above 80%"
+          }
+        ]
+      },
+      "significance": {
+        "description": "The third organisation to take on part of this case. Each handoff adds a party the customer cannot reach and the provider must coordinate by hand.",
+        "importance": "medium"
+      }
+    },
+    {
+      "nodeId": "handoff-to-messaging-channel",
+      "name": "Handoff to a messaging channel",
+      "nodeType": "handoff",
+      "laneContent": {
+        "description": "The agent sends an SMS with a link that opens a messaging conversation with the provider, so the customer can ask questions and get updates without calling. It works — and it is offered only after two calls and a full day of the customer having no other route.",
+        "channels": [
+          {
+            "channel": "sms",
+            "category": "telecom",
+            "serviceModel": "self_service",
+            "interaction": "automated",
+            "ownership": "partner",
+            "name": "Messaging channel invitation",
+            "usageContext": "SMS containing a link that opens a messaging conversation with the provider"
+          },
+          {
+            "channel": "messaging_app",
+            "category": "digital",
+            "serviceModel": "both",
+            "interaction": "ai_assisted",
+            "ownership": "third_party",
+            "name": "Messaging conversation with the provider",
+            "usageContext": "SCHEMA LIMITATION: opens automated, but ran as human here — international cases route to people. Authored as designed; observed value lost. See prediction 7."
+          }
+        ],
+        "barriers": [
+          {
+            "type": "communications",
+            "description": "The lowest-effort channel in the whole service is offered last, after two phone calls and a day of silence. Nothing prevents it being offered when the case is first raised.",
+            "severity": 4
+          },
+          {
+            "type": "technology",
+            "description": "The channel runs on a third-party messaging platform the provider does not own, so the case record and the conversation live in different places under different terms.",
+            "severity": 2
+          }
+        ],
+        "designOpportunities": [
+          "Offer the messaging channel at first contact, not after two calls",
+          "Route AI to the simple, high-volume asks — status updates and information gathering — and people to complex cases, as the service already does implicitly",
+          "Keep the conversation attached to the case, so nothing is lost between platforms"
+        ],
+        "frontstage": "An SMS with a link; a messaging conversation that opens with an automated greeting and then a person.",
+        "backstage": "Provider's messaging platform integrates with the case. Case complexity determines whether the conversation is handled by automation or routed to an agent — international recoveries route to a human.",
+        "support-systems": [
+          "SMS gateway",
+          "Third-party messaging platform",
+          "Provider case management system",
+          "Automated response and triage layer"
+        ],
+        "data-required": [
+          "Customer mobile number",
+          "Case reference",
+          "Case complexity classification, which decides AI versus human handling"
+        ],
+        "roles-involved": [
+          "Contact centre agent",
+          "Case management",
+          "Automated triage"
+        ],
+        "kpis": [
+          {
+            "metric": "Cases offered a messaging channel at first contact",
+            "target": "100% — currently offered late or not at all"
+          },
+          {
+            "metric": "Update requests handled without a phone call",
+            "target": "Above 80%"
+          }
+        ]
+      },
+      "significance": {
+        "description": "The best channel in the service, offered last. Also the only place AI appears anywhere in this case — and it was displaced by a human because the case is international.",
+        "importance": "critical"
+      }
+    },
+    {
+      "nodeId": "receive-updates-via-messaging",
+      "name": "Case continues by messaging",
+      "nodeType": "end",
+      "laneContent": {
+        "description": "The customer joins the conversation and gets updates there from then on, without needing to call. The vehicle is with a garage that can repair it and everyone is safely onward — the end of this mission's scope. The wider case, repair and hire vehicle return, continues beyond it.",
+        "channels": [
+          {
+            "channel": "messaging_app",
+            "category": "digital",
+            "serviceModel": "both",
+            "interaction": "ai_assisted",
+            "ownership": "third_party",
+            "name": "Messaging conversation with the provider",
+            "usageContext": "Ongoing case updates on request. Low effort, asynchronous, and leaves the customer a readable history."
+          }
+        ],
+        "designOpportunities": [
+          "Make this the default update channel for every case from the outset",
+          "Push milestones into the conversation rather than waiting to be asked"
+        ],
+        "frontstage": "An ongoing messaging conversation the customer can use at any time.",
+        "backstage": "Case remains open. Repair, hire vehicle collection and return, and vehicle repatriation all continue past the boundary of this mission.",
+        "support-systems": [
+          "Third-party messaging platform",
+          "Provider case management system"
+        ],
+        "data-required": [
+          "Case reference",
+          "Ongoing case status"
+        ],
+        "roles-involved": [
+          "Contact centre agent",
+          "Case management"
+        ],
+        "kpis": [
+          {
+            "metric": "Customer effort to obtain a case update",
+            "target": "One message, no call"
+          },
+          {
+            "metric": "Satisfaction with case communication after messaging is enabled",
+            "target": "Above 80%"
+          }
+        ]
+      },
+      "significance": {
+        "description": "The case ends this mission in a good place, reached late and by a route that could have been offered on day one. The vehicle is recoverable, everyone is safe, and the customer finally has a channel that costs them almost nothing.",
+        "importance": "critical"
+      }
     }
   ],
   "edges": [
@@ -2349,6 +2789,46 @@
     {
       "from": "complete-garage-paperwork",
       "to": "arrange-onward-travel",
+      "edgeType": "default"
+    },
+    {
+      "from": "arrange-onward-travel",
+      "to": "request-case-update",
+      "edgeType": "default",
+      "label": "Next day"
+    },
+    {
+      "from": "request-case-update",
+      "to": "hire-car-offered",
+      "edgeType": "default"
+    },
+    {
+      "from": "hire-car-offered",
+      "to": "family-finds-repairer",
+      "edgeType": "conditional",
+      "condition": {
+        "description": "Decision must be relayed to the vehicle owner; meanwhile the family search locally"
+      },
+      "label": "Relayed to owner"
+    },
+    {
+      "from": "family-finds-repairer",
+      "to": "confirm-repairer-and-hire-car",
+      "edgeType": "default"
+    },
+    {
+      "from": "confirm-repairer-and-hire-car",
+      "to": "handoff-to-hire-supplier",
+      "edgeType": "default"
+    },
+    {
+      "from": "handoff-to-hire-supplier",
+      "to": "handoff-to-messaging-channel",
+      "edgeType": "default"
+    },
+    {
+      "from": "handoff-to-messaging-channel",
+      "to": "receive-updates-via-messaging",
       "edgeType": "default"
     }
   ],

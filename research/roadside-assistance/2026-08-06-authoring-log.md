@@ -499,6 +499,91 @@ prediction 1 still to land.
 
 ---
 
-## Task 6 — Phase 6
+## Task 6 — Phase 6, onward case management (complete)
 
-*(in progress)*
+7 nodes, 7 edges. **38 nodes / 39 edges / 6 phases** — exactly the plan's figure. Quality 90.
+
+**All ten `nodeType` values are now used**, which no existing mission achieves. `interaction`
+uses all three values; `ownership` uses all three. Only `timeout` remains, and it is Task 7's.
+
+### 6.1 Prediction 7 confirmed — and it forced the one deliberate falsehood
+
+The messaging channel is `ai_assisted` **as designed** and was `human` **as delivered**,
+because international cases route to a person. `interaction` holds one value per channel entry.
+Paths are a separate structure entirely, so there is no way to vary a channel attribute by
+path.
+
+Per the spec, authored as `ai_assisted` — matching the service's design — with the loss noted.
+**This is the only place in 38 nodes where the artifact knowingly states something that did not
+happen.**
+
+The underlying gap is broader than the field. The AI/human split here is **conditional on case
+attributes**: simple cases get automation, complex ones get people. That is a triage rule, and
+the schema has no vocabulary for a channel whose behaviour depends on the case rather than the
+step. The two jobs AI would have taken on a simpler case — status updates and information
+gathering — are the same two that consumed three phone calls in this one.
+
+**Prediction 7: confirmed.**
+
+### 6.2 A node with no channel at all is expressible, and says something
+
+`family-finds-repairer` deliberately carries **no `channels` array**. No service channel was
+involved: the family walked into a village garage while the provider was still searching its
+own network.
+
+Absence works here, but it is ambiguous — a reader cannot tell "no channel was involved" from
+"nobody filled this in". I stated it explicitly in the `description` because there is no other
+way. A lane value meaning *deliberately none* would remove the ambiguity, and would let an
+analyser count the steps where customers act entirely outside the service.
+
+Worth pairing with the more interesting half: **the map can show the customer doing this work,
+but cannot show that the service was doing it simultaneously.** Two parties working the same
+task in parallel, unaware of each other, is a common service failure and there is no way to
+draw it.
+
+### 6.3 The 200-character `usageContext` cap bit again, on the same kind of content
+
+Third occurrence, and every one has been a `SCHEMA LIMITATION:` note. The pattern is now
+unambiguous: the field is sized for "when and why this channel is used", and any attempt to
+record *why the model is wrong* exceeds it. Compressing the `ai_assisted` note cost real
+nuance — the surviving text no longer says the channel answers simple queries itself.
+
+This is a small mechanical cap with a real consequence: **the artifact cannot carry its own
+critique at channel level.** Reinforces log item 6.
+
+### 6.4 Vocabulary coverage achieved
+
+| Dimension | Result |
+|---|---|
+| `nodeType` | **10 of 10** — first mission in the repo to use every value |
+| `edgeType` | 5 of 6 — `timeout` outstanding, Task 7 |
+| `interaction` | **3 of 3** — `human`, `automated`, `ai_assisted` |
+| `ownership` | **3 of 3** — `own`, `partner`, `third_party` |
+
+Both previously-unused channel fields now carry real data. The BACK-021 objective is met.
+
+### 6.5 Prediction scoreboard
+
+| # | Prediction | Status after Task 6 |
+|---|---|---|
+| 1 | Ambient / always-available channels | **CONFIRMED** — 3 instances, 2 distinct shapes |
+| 2 | `ownership` degrees of remove | **CONFIRMED** — one value, four relationships |
+| 3 | Channel exists but is not signposted | **CONFIRMED** |
+| 4 | Channel expires mid-case | **CONFIRMED** |
+| 5 | Third-party channels outside the service | **CONFIRMED** |
+| 6 | Precondition from a different journey | **CONFIRMED** |
+| 7 | `interaction` fixed per channel | **CONFIRMED** |
+| — | Channel cannot be attributed to a person | **UNPREDICTED — CONFIRMED** |
+| — | `handoff` has no payload | **UNPREDICTED — CONFIRMED** |
+| — | No way to mark "deliberately no channel" | **UNPREDICTED — CONFIRMED** |
+
+**Seven of seven confirmed, plus three unpredicted gaps.** The falsification threshold was five
+of seven; the reading of the schema held. That is worth stating carefully rather than
+triumphantly — the predictions were made *after* a detailed interview, so they were informed
+guesses about a service already understood in depth, not blind ones.
+
+---
+
+## Task 7 — Paths
+
+*(pending — checkpoint with Will first)*

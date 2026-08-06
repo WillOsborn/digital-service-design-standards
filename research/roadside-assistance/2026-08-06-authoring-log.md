@@ -865,6 +865,54 @@ command. Moved to the scratchpad and deleted.
 
 ---
 
-## Task 10 — Findings, backlog, full gate
+## Task 10 — Findings, backlog, full gate (complete)
 
-*(in progress)*
+### 10.1 Gate
+
+```
+test-v2.0-validator.js   exit 0 — 98 passed
+test-mission-layout.js   exit 0 — 16 passed
+test-render-mission.js   exit 0 — 83 passed
+test-converter.js        exit 0 — 87 passed
+validate-v2.0.js v2.0/examples/ --check-refs
+                         exit 0 — 16/16, quality 85–100
+```
+
+`run-all-tests.js` still exits 1 — pre-existing v1.x path failure, BACK-017, untouched.
+
+**The validator suite went 94 → 98, and that is not a regression.**
+`test-v2.0-validator.js:371–384` walks `v2.0/examples/` with `readdirSync` and generates one
+assertion per file, so adding four artifacts added four tests. Worth flagging because
+`docs/current-state.md` pins the number 94 as a baseline: **it is data-dependent and will drift
+again on the next example.** The handoff should state the rule, not the figure.
+
+Other four example sets unchanged at 85–100, as required — this work only added files.
+
+### 10.2 Backlog
+
+**12 new items filed**, taking the backlog from 29 at session start to 42. BACK-021 closed.
+
+**BACK-020 rewritten with the evidence it was waiting for.** It had an empty description; it
+now carries all three ambient instances in their two distinct shapes, plus the argument that
+**expiring channels are the same missing idea** — a channel's availability window. That is the
+whole reason BACK-021 was sequenced ahead of it, and the reason BACK-027 stays deferred behind
+it.
+
+Note the backlog CLI has `add --description` but no way to edit an existing item's description,
+so BACK-020 had to be updated by editing `backlog.json` directly (backed up to scratchpad
+first, since it is gitignored and has no git safety net). **Minor CLI gap, not filed** — it
+would be the 13th item and is trivial to work around.
+
+### 10.3 Final tally
+
+| | |
+|---|---|
+| Predictions confirmed | **7 of 7** (threshold was 5) |
+| Unpredicted schema gaps | **4** |
+| Tooling defects | **7** |
+| Backlog items filed | 12 |
+| Artifacts | 2 Actors (100), Mission (95), Experience (100) |
+
+The four unpredicted gaps are the more valuable output. They could only be found by authoring,
+which is the argument for having built this rather than reasoning about the schema in the
+abstract — and the argument Will made when he pushed back on doing BACK-027 first.

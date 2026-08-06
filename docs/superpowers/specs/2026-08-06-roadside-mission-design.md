@@ -127,9 +127,18 @@ that sentence is the only evidence for it, and it is enough to justify one `time
 designed path requires inventing any further behaviour beyond that stated promise, drop it
 and report `timeout` as still unexercised.
 
-**Channel fields:** `interaction` gets `human` (agents, engineer) and `automated` (IVR, SMS
-link, tracking site). **`ai_assisted` will be conspicuously empty** — worth reporting rather
-than filling in. `ownership` is exercised throughout, and expected to strain (§7).
+**Channel fields:** `interaction` gets **all three values** — `human` (agents, engineer),
+`automated` (IVR, SMS link, tracking site), and `ai_assisted` (the messaging channel, which
+opens automated and handles simple queries itself).
+
+The `ai_assisted` case is the most informative in the set, because it is **designed but not
+delivered**: the channel is AI-capable, and case complexity — an international recovery —
+routed it to a human instead. So the same channel carries `ai_assisted` on the designed path
+and `human` on the observed one. The schema cannot express that (§7, prediction 7), which
+makes this the one place where authoring is forced to state something false. **Author it as
+`ai_assisted`, matching the service's design, and record the loss.**
+
+`ownership` is exercised throughout, and expected to strain (§7).
 
 ---
 
@@ -163,8 +172,11 @@ Full evidence in §9 of the source notes.
 | 4 | No way to express a channel that **expires mid-case** |
 | 5 | No way to model **third-party channels outside the service** that it nonetheless depends on |
 | 6 | No way to express a **precondition established by a different journey** |
+| 7 | **`interaction` is fixed per channel and cannot vary between designed and observed paths** — the messaging channel is `ai_assisted` by design but ran as `human` because the case was international |
 
-**If fewer than four hold, the reading of the schema was wrong and the write-up must say so.**
+**If fewer than five of the seven hold, the reading of the schema was wrong and the write-up
+must say so.** (The bar was four of six when six were listed; it rises with the count so that
+adding a prediction cannot quietly weaken the test.)
 Findings feed BACK-020 directly, and are the reason BACK-027 was deferred until after it.
 
 ---

@@ -125,9 +125,117 @@ Filed properly in Task 10; parked here so none is lost.
    than 100 partly because of this, and the compliance metadata is genuinely useful.
 4. **Document the quality-scoring rubric where authors will see it** — §1.5. Valid-but-75 is
    a trap for anyone authoring by validation alone.
+5. **⚠️ Reconcile lane IDs with `laneContent` property names** — §2.1. `design-opps` vs
+   `designOpportunities`, `accessibility` vs `accessibilityProfile`. Authors currently choose
+   between correct rendering and schema validation. Already worked around in the renderer
+   rather than fixed. Includes normalising the 13 `design-opps` uses in existing examples.
+6. **`usageContext` 200-char cap is too tight to explain a channel's role** — §2.3.
 
 ---
 
-## Task 2 — Mission scaffold
+## Task 2 — Mission scaffold (complete)
+
+Envelope, 11 lanes, phases 1–2 (7 nodes, 6 edges). Validates, quality **80/100** — expected at
+this stage, since paths (10 pts) and SLA (10 pts) do not land until Tasks 5 and 7.
+
+### 2.1 ⚠️ Lane IDs and `laneContent` property names do not match
+
+**The most serious finding so far, and it is pre-existing.**
+
+The schema documents `lanes[].id` as *"Lane identifier used as the key in node laneContent"*.
+But `laneContent` defines its typed properties under **different names**:
+
+| Declared lane `id` | Typed `laneContent` property | Match? |
+|---|---|---|
+| `description` | `description` | yes |
+| `channels` | `channels` | yes |
+| `barriers` | `barriers` | yes |
+| `design-opps` | `designOpportunities` | **no** |
+| `accessibility` | `accessibilityProfile` | **no** |
+
+So for two of the five core lanes, following the schema's own documented rule produces a key
+that **is not schema-validated at all** — `laneContent` sets `additionalProperties: true`, so
+the content is accepted and silently unchecked.
+
+**The existing examples do both.** Across the four missions: `designOpportunities` 25 uses,
+`design-opps` 13 uses; `accessibilityProfile` 4 uses, `accessibility` 0. Two spellings of one
+lane, in one example set.
+
+**It was already known and patched in the wrong place.** `tools/renderers/render-mission.js`
+lines 704–709 carry a comment naming it explicitly — *"an authoring mismatch between the two,
+e.g. a lane id of 'design-opps' next to node content keyed 'designOpportunities'"* — and the
+renderer falls back to a humanised heading so nothing is dropped visually. A previous session
+found this, worked around it at the render layer, and never fixed the source.
+
+**Consequence for an author:** you must choose between correct rendering and schema
+validation, and cannot have both.
+
+- Lane-id key (`design-opps`) → renders in declared order with the declared label, **unvalidated**
+- Typed key (`designOpportunities`) → **validated**, renders via the fallback path with a guessed type
+
+**Decision taken here:** use the **typed property names**, because validation matters more than
+heading order, and they are the majority usage. Recorded so the choice is not mistaken for
+carelessness later.
+
+**Candidate backlog item — high value.** Either rename the typed properties to match the lane
+ids, or rename the declared lane ids, or make `laneContent` accept both. Whatever the fix, it
+should also normalise the 13 `design-opps` uses in the existing examples.
+
+### 2.2 The `additionalProperties` trap fired a second time, on a different schema
+
+Same failure as §1.1, now in the Mission. I wrote `accessibility: { considerations: [...],
+wcagRelevant: false }`. It validated. The real `accessibilityProfile` is a **ratings object** —
+`{visual, auditory, motor, cognitive:{...}, emotional}`, integers 1–5 — nothing like what I
+wrote. Every word would have been silently discarded.
+
+Twice in two tasks, in two different schemas, by someone actively watching for it.
+
+Note one exception: `accessibilityProfile.cognitive` **does** set `additionalProperties: false`.
+So the schema is strict exactly one level down and permissive everywhere above it, which is
+arguably worse than being uniformly permissive — it creates a false impression of rigour.
+
+### 2.3 `usageContext` caps at 200 characters — the schema constrains its own critique
+
+Two channel entries failed for exceeding it. This matters beyond the mechanics: the plan's
+approach is to record schema limitations **in the data**, and `usageContext` is the only field
+available on a channel entry. At 200 characters it cannot hold an explanation of what the
+schema cannot express, so the notes have to be compressed to near-telegraphic form and the
+real reasoning pushed here.
+
+For reference: node `description` and barrier `description` allow 500; `usageContext` and
+`priorKnowledgeRequired`/`supportAvailable` allow 200; `designOpportunities[]` allows 300.
+
+### 2.4 Evidence accumulating on the predictions
+
+- **Prediction 1 (ambient channels)** — two instances authored already: the benefits app home
+  screen and the concierge number on the card. Both had to be modelled as steps in a sequence
+  they do not belong to. The card entry is the starker of the two: a number printed on a
+  physical object in the customer's wallet, reachable at any point in any journey, forced into
+  a position between "hold an account" and "notice the benefit".
+- **Prediction 2 (`ownership` degrees of remove)** — first evidence. The vehicle owner's own
+  insurer, an organisation with **no relationship to the bank whatsoever**, gets `third_party` —
+  the same value that will shortly be applied to the assistance partner's own recovery firm and
+  hire supplier. The field cannot separate a competitor from a subcontractor.
+- **Prediction 6 (precondition from another journey)** — confirmed in authoring. The incidental
+  discovery happened weeks earlier during an unrelated benefit claim; the graph can only place
+  it immediately before the trigger, inventing both proximity and causation.
+
+| # | Prediction | Status after Task 2 |
+|---|---|---|
+| 1 | Ambient / always-available channels | **evidence gathering** — 2 instances |
+| 2 | `ownership` degrees of remove | **evidence gathering** — 1 instance |
+| 6 | Precondition from a different journey | **confirmed** |
+
+### 2.5 Smaller notes
+
+- `phaseId` must match `^phase-[a-z0-9_-]+$` — the `phase-` prefix is mandatory, unlike lane ids.
+- Mission scoring: required fields 20, node count/type variety 15, edge connectivity 15, lanes
+  declared and populated 15, blueprint depth 15, **paths with frequency 10**, **SLA on key
+  nodes 10**. A complete mission with no `paths` and no `sla` tops out at 80.
+- `governance` is not in the other four missions either — same gap as the Actors (§1.6).
+
+---
+
+## Task 3 — Phase 3
 
 *(in progress)*

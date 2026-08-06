@@ -1,0 +1,588 @@
+{
+  "$context": "https://schemas.digitalservice.design/v2.0",
+  "$type": "Mission",
+  "id": "mission-roadside-assistance",
+  "version": "2.0.0",
+  "title": "Roadside Breakdown Assistance — Bundled Bank Benefit, Overseas",
+  "goal": "A customer whose vehicle has broken down overseas reaches assistance through a benefit bundled with their bank account, establishes their location, and gets the vehicle recovered to a garage able to repair it, with everyone safely onward",
+  "summary": "A service mission mapped from the vantage point of the bank that bundles roadside assistance into a paid premium account. The bank owns the relationship and the benefits app; the assistance provider is a contracted partner; recovery, repair and hire vehicles are delivered by parties further removed still. The graph is deliberately drawn around a case that switches channels repeatedly — app to phone, phone back to app, app to phone again, then SMS, a third-party location service, a partner tracking site, and finally a messaging channel — because channel switching is where this service's design is actually tested.",
+  "scope": {
+    "trigger": "A vehicle the customer is travelling in breaks down, away from home and outside their own country",
+    "completion": "Vehicle delivered to a garage able to repair it, with all occupants safely onward",
+    "timeframe": "Roughly 24-48 hours from breakdown to vehicle delivered to a repairing garage; the wider case (repair, hire vehicle, vehicle return) runs for longer",
+    "asIs": true,
+    "successCriteria": [
+      {
+        "metric": "Time from first contact to location established",
+        "target": "Under 5 minutes"
+      },
+      {
+        "metric": "Proportion of cases where location is captured on the first method offered",
+        "target": "Above 90%"
+      },
+      {
+        "metric": "Time from location established to recovery arriving",
+        "target": "Within the quoted window on 90% of cases"
+      },
+      {
+        "metric": "Proportion of customers who know the benefit exists before they need it",
+        "target": "Above 60%"
+      },
+      {
+        "metric": "Contacts required per case after dispatch",
+        "target": "Fewer than 2 customer-initiated calls"
+      }
+    ]
+  },
+  "actors": [
+    {
+      "actorRef": "actor-adam-rees",
+      "contextRef": "ctx-roadside-cover-holder",
+      "role": "cover holder and primary contact"
+    },
+    {
+      "actorRef": "actor-daniel-rees",
+      "contextRef": "ctx-roadside-vehicle-owner",
+      "role": "vehicle owner and decision-maker, never contacted by the service"
+    }
+  ],
+  "lanes": [
+    {
+      "id": "description",
+      "label": "Description",
+      "type": "text",
+      "scope": "service",
+      "description": "What happens at this touchpoint from the service perspective"
+    },
+    {
+      "id": "channels",
+      "label": "Channels",
+      "type": "channel",
+      "scope": "service",
+      "description": "Touchpoints and channels available"
+    },
+    {
+      "id": "barriers",
+      "label": "Service Barriers",
+      "type": "barrier",
+      "scope": "both",
+      "description": "Structural barriers (service-level) and persona-specific barriers (experience-level)"
+    },
+    {
+      "id": "design-opps",
+      "label": "Design Opportunities",
+      "type": "list",
+      "scope": "both",
+      "description": "Improvement opportunities"
+    },
+    {
+      "id": "accessibility",
+      "label": "Accessibility",
+      "type": "accessibility",
+      "scope": "service",
+      "description": "Accessibility profile per touchpoint"
+    },
+    {
+      "id": "frontstage",
+      "label": "Frontstage",
+      "type": "text",
+      "scope": "service",
+      "description": "Visible service elements the customer interacts with"
+    },
+    {
+      "id": "backstage",
+      "label": "Backstage",
+      "type": "text",
+      "scope": "service",
+      "description": "Behind-the-scenes processes and systems that enable this step"
+    },
+    {
+      "id": "support-systems",
+      "label": "Support Systems",
+      "type": "list",
+      "scope": "service",
+      "description": "Tools, platforms, and infrastructure supporting this touchpoint"
+    },
+    {
+      "id": "data-required",
+      "label": "Data Required",
+      "type": "list",
+      "scope": "service",
+      "description": "Data and information needed to deliver this step"
+    },
+    {
+      "id": "roles-involved",
+      "label": "Roles Involved",
+      "type": "list",
+      "scope": "service",
+      "description": "Teams or roles that support this touchpoint"
+    },
+    {
+      "id": "kpis",
+      "label": "KPIs",
+      "type": "metric",
+      "scope": "service",
+      "description": "Key performance indicators for this touchpoint"
+    }
+  ],
+  "phases": [
+    {
+      "phaseId": "phase-cover-in-place",
+      "name": "Cover in Place",
+      "goal": "The customer holds the benefit and knows it exists before they ever need it",
+      "nodeRefs": [
+        "hold-premium-account",
+        "benefits-surface-visible",
+        "discover-cover-incidentally"
+      ]
+    },
+    {
+      "phaseId": "phase-breakdown",
+      "name": "Breakdown & First Recourse",
+      "goal": "Everyone is safe and the customer works out who to call",
+      "nodeRefs": [
+        "vehicle-breaks-down",
+        "establish-safety",
+        "owner-insurer-refuses",
+        "recall-bundled-cover"
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "nodeId": "hold-premium-account",
+      "name": "Hold a premium account with bundled benefits",
+      "nodeType": "start",
+      "laneContent": {
+        "description": "The customer holds a paid premium current account. Roadside assistance is one of several bundled benefits, alongside things like cinema tickets and travel cover. The cover follows the person rather than a vehicle — it applies to any car they travel in, at home or abroad.",
+        "channels": [
+          {
+            "channel": "app",
+            "category": "digital",
+            "serviceModel": "self_service",
+            "interaction": "automated",
+            "ownership": "own",
+            "name": "Bank benefits app",
+            "usageContext": "Separate from the main banking app; the customer's route to every bundled benefit"
+          },
+          {
+            "channel": "email",
+            "category": "digital",
+            "serviceModel": "self_service",
+            "interaction": "automated",
+            "ownership": "own",
+            "name": "Benefit reminder emails",
+            "usageContext": "Periodic reminders of what the account includes"
+          }
+        ],
+        "frontstage": "Benefits presented at account opening; a benefits app listing everything included; occasional reminder emails.",
+        "backstage": "Bank contracts with an assistance provider to deliver the benefit. Eligibility is tied to account tier and checked at the point of claim, not continuously.",
+        "support-systems": [
+          "Core banking platform",
+          "Benefits management platform",
+          "Partner contract and entitlement register",
+          "Email marketing platform"
+        ],
+        "data-required": [
+          "Account tier and status",
+          "Customer identity and address",
+          "Entitlement record shared with the assistance partner"
+        ],
+        "roles-involved": [
+          "Retail banking product",
+          "Partnerships and benefits management",
+          "Marketing and lifecycle communications"
+        ],
+        "kpis": [
+          {
+            "metric": "Benefit awareness among eligible customers",
+            "target": "Above 60%"
+          },
+          {
+            "metric": "Benefits app monthly active use",
+            "target": "Above 40% of premium account holders"
+          }
+        ]
+      },
+      "significance": {
+        "description": "The entitlement exists from this moment, but is worth nothing unless the customer remembers it at the roadside. Everything downstream depends on awareness built here.",
+        "importance": "critical"
+      }
+    },
+    {
+      "nodeId": "benefits-surface-visible",
+      "name": "Benefits are continuously visible",
+      "nodeType": "touchpoint",
+      "laneContent": {
+        "description": "The benefits app home screen lists everything included, so any visit for one benefit exposes the others. SCHEMA LIMITATION: this is not a step — it is an always-available surface with no position in a sequence. Modelling it as a node between account opening and discovery implies an ordering and a causation that did not exist. See prediction 1.",
+        "channels": [
+          {
+            "channel": "app",
+            "category": "digital",
+            "serviceModel": "self_service",
+            "interaction": "automated",
+            "ownership": "own",
+            "name": "Bank benefits app home screen",
+            "usageContext": "Always available; lists all bundled benefits regardless of why the customer opened it"
+          },
+          {
+            "channel": "print",
+            "category": "physical",
+            "serviceModel": "managed",
+            "interaction": "human",
+            "ownership": "own",
+            "name": "Concierge number printed on the bank card",
+            "usageContext": "SCHEMA LIMITATION: always in the wallet, reachable at any point in any journey. A standing capability, not a step. See prediction 1."
+          }
+        ],
+        "barriers": [
+          {
+            "type": "communications",
+            "description": "Awareness depends on the customer choosing to look. The surface is passive: it rewards curiosity but does nothing for a customer who visits, claims one benefit, and leaves.",
+            "severity": 3
+          }
+        ],
+        "designOpportunities": [
+          "Surface the most situationally relevant benefit rather than a flat list",
+          "Prompt awareness ahead of known travel, using data the bank already holds",
+          "Make the concierge number reachable from the app, not only from the physical card"
+        ],
+        "frontstage": "Benefits app home screen listing all included benefits; a concierge number printed on the card itself.",
+        "backstage": "Entitlement register drives what appears in the list. No triggering logic — the list is static regardless of customer circumstance.",
+        "support-systems": [
+          "Benefits management platform",
+          "Card production and design",
+          "Concierge switchboard"
+        ],
+        "data-required": [
+          "Account tier",
+          "Benefit catalogue for that tier"
+        ],
+        "roles-involved": [
+          "Benefits management",
+          "Digital product",
+          "Concierge operations"
+        ],
+        "kpis": [
+          {
+            "metric": "Benefits browsed per app visit",
+            "target": "Above 2"
+          },
+          {
+            "metric": "Customers who can name their roadside cover unprompted",
+            "target": "Above 50%"
+          }
+        ]
+      },
+      "significance": {
+        "description": "The only awareness mechanism in this service that actually worked — and it worked passively, as a side effect of a visit made for something else entirely.",
+        "importance": "high"
+      }
+    },
+    {
+      "nodeId": "discover-cover-incidentally",
+      "name": "Notice the roadside cover while claiming something else",
+      "nodeType": "signal",
+      "laneContent": {
+        "description": "The customer visits the benefits app to claim an unrelated benefit and browses the rest of the list while there, noticing roadside assistance. SCHEMA LIMITATION: this happened weeks earlier, during a different journey, with no causal link to the breakdown. The graph can only place it immediately before the trigger, which invents a proximity and a sequence that did not exist. See prediction 6.",
+        "channels": [
+          {
+            "channel": "app",
+            "category": "digital",
+            "serviceModel": "self_service",
+            "interaction": "automated",
+            "ownership": "own",
+            "name": "Bank benefits app",
+            "usageContext": "Opened to claim an unrelated benefit; roadside cover noticed incidentally while browsing"
+          }
+        ],
+        "barriers": [
+          {
+            "type": "communications",
+            "description": "Whether the customer knows about the cover at the moment of need is left to chance — it depends on having browsed recently enough to remember, for reasons unconnected to driving.",
+            "severity": 4
+          },
+          {
+            "type": "knowledge",
+            "description": "Noticing the benefit exists is not the same as knowing what it covers. The customer knew it existed but not that it followed them into any vehicle, or across Europe.",
+            "severity": 3
+          }
+        ],
+        "designOpportunities": [
+          "Treat incidental browsing as the primary awareness channel it evidently is, and design for it deliberately",
+          "Record which benefits a customer has viewed, and refresh awareness before it decays",
+          "State the two facts that decide whether someone calls: which vehicles are covered, and where"
+        ],
+        "frontstage": "Benefit list; a roadside assistance entry summarising what is included.",
+        "backstage": "No tracking of which benefits are viewed, so the bank has no signal about who is aware of what.",
+        "support-systems": [
+          "Benefits management platform",
+          "App analytics"
+        ],
+        "data-required": [
+          "Benefit catalogue",
+          "Benefit summary content"
+        ],
+        "roles-involved": [
+          "Benefits management",
+          "Content design",
+          "Digital product"
+        ],
+        "kpis": [
+          {
+            "metric": "Benefit detail views per active customer per year",
+            "target": "Above 3"
+          },
+          {
+            "metric": "Recall of roadside cover 3 months after viewing",
+            "target": "Above 40%"
+          }
+        ]
+      },
+      "significance": {
+        "description": "Without this incidental visit the customer would not have called at all, and the service would never have been used. The single most load-bearing node in the map, and entirely a matter of luck.",
+        "importance": "critical"
+      }
+    },
+    {
+      "nodeId": "vehicle-breaks-down",
+      "name": "Vehicle breaks down",
+      "nodeType": "signal",
+      "laneContent": {
+        "description": "The vehicle stops and cannot continue, on a journey away from home and outside the customer's own country. The group splits: some continue in a second vehicle, and the cover holder stays with the vehicle owner.",
+        "barriers": [
+          {
+            "type": "resource",
+            "description": "The breakdown is outside the customer's country, where local knowledge, language, and any home-market service relationship are all absent.",
+            "severity": 4
+          }
+        ],
+        "frontstage": "None — the service has no awareness that anything has happened.",
+        "backstage": "None. No telematics, no connected-vehicle signal, no proactive detection. The service learns of the incident only when the customer initiates contact.",
+        "designOpportunities": [
+          "Detect breakdowns proactively where the vehicle or a connected app can signal them",
+          "Prompt the benefit at the moment of need rather than waiting to be remembered"
+        ],
+        "roles-involved": [
+          "None at this point — the service is unaware"
+        ],
+        "kpis": [
+          {
+            "metric": "Time from breakdown to first contact with the service",
+            "target": "Under 10 minutes"
+          }
+        ]
+      },
+      "significance": {
+        "description": "The trigger. Note the service is blind here — every second until first contact is unmeasured and unmanaged.",
+        "importance": "critical"
+      }
+    },
+    {
+      "nodeId": "establish-safety",
+      "name": "Get to a safe position",
+      "nodeType": "touchpoint",
+      "laneContent": {
+        "description": "Occupants move themselves and, where possible, the vehicle to a safe position before doing anything else. Part of the group leaves in a second vehicle to continue the journey.",
+        "barriers": [
+          {
+            "type": "accessibility",
+            "description": "Everything that follows happens outdoors, at the roadside, on a shared and finite phone battery, with whatever mobile signal is available. These constraints are situational rather than permanent, and shape every channel choice from here on.",
+            "severity": 4
+          }
+        ],
+        "accessibilityProfile": {
+          "visual": 2,
+          "auditory": 2,
+          "motor": 3,
+          "cognitive": {
+            "overallScore": 2,
+            "decisionComplexity": "moderate",
+            "informationDensity": "low",
+            "timePressure": "high",
+            "priorKnowledgeRequired": "Which cover applies to this vehicle, in this country, and what the service will need in order to find you",
+            "supportAvailable": "None. This step happens before any contact with the service, so there is no guidance of any kind."
+          },
+          "emotional": 2
+        },
+        "designOpportunities": [
+          "Lead every contact with a safety check, before identity or entitlement",
+          "Design location capture for weak signal, not for ideal conditions"
+        ],
+        "frontstage": "None — this happens before contact.",
+        "backstage": "None.",
+        "roles-involved": [
+          "None at this point — the service is unaware"
+        ],
+        "kpis": [
+          {
+            "metric": "Cases where safety is confirmed within the first minute of contact",
+            "target": "100%"
+          }
+        ]
+      },
+      "significance": {
+        "description": "Establishes the situational constraints — weak signal, no address, finite battery — that go on to defeat two of the service's three location methods.",
+        "importance": "high"
+      }
+    },
+    {
+      "nodeId": "owner-insurer-refuses",
+      "name": "Vehicle owner's own insurer refuses",
+      "nodeType": "touchpoint",
+      "laneContent": {
+        "description": "The vehicle owner contacts his own motor insurer first, as the obvious route. They refuse: he had not separately notified them of overseas travel, despite holding cover purchased for the specific trip dates. This is a different organisation entirely, outside the bank's service, but it is what routes the customer to the bundled benefit.",
+        "channels": [
+          {
+            "channel": "phone",
+            "category": "telecom",
+            "serviceModel": "managed",
+            "interaction": "human",
+            "ownership": "third_party",
+            "name": "Vehicle owner's own motor insurer",
+            "usageContext": "SCHEMA LIMITATION: no relationship to the bank at all, yet 'third_party' is the same value its partner's suppliers get. See prediction 2."
+          }
+        ],
+        "barriers": [
+          {
+            "type": "policy",
+            "description": "Cover bought for the exact trip dates is refused for want of a separate travel notification. The customer's preparation was substantively correct and procedurally incomplete, and the policy treats those as the same thing.",
+            "severity": 5
+          },
+          {
+            "type": "knowledge",
+            "description": "Neither refusing insurer nor customer checks for adjacent cover. Nobody asks whether another policy in the household might apply; the customer has to remember unaided.",
+            "severity": 4
+          }
+        ],
+        "designOpportunities": [
+          "Prompt customers to check bundled benefits when a primary claim is refused",
+          "Make the bundled benefit discoverable at the moment another provider says no"
+        ],
+        "frontstage": "A refusal delivered by phone, by an organisation outside this service.",
+        "backstage": "None visible to this service. The bank and its assistance partner learn nothing about the refusal, and never will.",
+        "roles-involved": [
+          "None within this service"
+        ],
+        "kpis": [
+          {
+            "metric": "Cases reaching the bundled benefit only after another provider refused",
+            "target": "Tracked, not targeted — currently unmeasured"
+          }
+        ]
+      },
+      "significance": {
+        "description": "The bundled benefit was second choice, reached only because another provider refused. The service has no visibility of this and no way to be present at the moment it matters.",
+        "importance": "high"
+      }
+    },
+    {
+      "nodeId": "recall-bundled-cover",
+      "name": "Remember the bundled cover might apply",
+      "nodeType": "decision",
+      "laneContent": {
+        "description": "The cover holder recalls that his bank account includes roadside assistance and that it follows him rather than a vehicle, so it should apply to his brother's car abroad. He suggests trying it. This recall depends entirely on the incidental browsing weeks earlier.",
+        "barriers": [
+          {
+            "type": "knowledge",
+            "description": "The decision rests on remembering two specific facts — that the cover exists, and that it covers any vehicle anywhere in Europe. A customer who recalls only the first may not think it applies to someone else's car.",
+            "severity": 4
+          }
+        ],
+        "designOpportunities": [
+          "Make 'does this apply to my situation?' answerable in seconds, at the point of recall",
+          "Push the benefit to customers whose circumstances suggest they may need it"
+        ],
+        "frontstage": "None — this happens in the customer's head, unaided.",
+        "backstage": "None.",
+        "roles-involved": [
+          "None at this point — the service is still unaware"
+        ],
+        "kpis": [
+          {
+            "metric": "Eligible customers who consider the benefit at the point of need",
+            "target": "Above 60%"
+          }
+        ]
+      },
+      "significance": {
+        "description": "The gate for the entire service. Everything downstream is contingent on a memory formed for unrelated reasons, at a moment nobody designed.",
+        "importance": "critical"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "hold-premium-account",
+      "to": "benefits-surface-visible",
+      "edgeType": "default"
+    },
+    {
+      "from": "benefits-surface-visible",
+      "to": "discover-cover-incidentally",
+      "edgeType": "default",
+      "label": "Visits for another benefit"
+    },
+    {
+      "from": "discover-cover-incidentally",
+      "to": "vehicle-breaks-down",
+      "edgeType": "default",
+      "label": "Weeks later"
+    },
+    {
+      "from": "vehicle-breaks-down",
+      "to": "establish-safety",
+      "edgeType": "default"
+    },
+    {
+      "from": "establish-safety",
+      "to": "owner-insurer-refuses",
+      "edgeType": "default"
+    },
+    {
+      "from": "owner-insurer-refuses",
+      "to": "recall-bundled-cover",
+      "edgeType": "error",
+      "condition": {
+        "description": "Own insurer refuses — no travel notification on file"
+      },
+      "label": "Refused"
+    }
+  ],
+  "paths": [],
+  "provenance": {
+    "source": "user_research",
+    "confidence": 0.9,
+    "evidence": "Mapped from a single first-hand case, captured in interview while the case was still open. Service-level detail beyond the customer's line of sight (backstage systems, roles, KPIs) is inferred from the observed behaviour of the service rather than confirmed by the organisations involved.",
+    "researchSources": [
+      {
+        "source": "First-hand account of a live roadside breakdown case (notes held privately, outside version control)",
+        "type": "interview",
+        "date": "2026-08-06",
+        "confidence": "high"
+      }
+    ],
+    "generationMethod": "human_created"
+  },
+  "governance": {
+    "dataClassification": "public",
+    "containsPii": false,
+    "anonymisationMethod": "fictional_composite",
+    "legalBasis": "Not applicable — fictional composite for a published example set, derived from a consented first-hand account with name, bank, provider, country and dates removed.",
+    "dataOwner": "Digital Service Design Working"
+  },
+  "meta": {
+    "created": "2026-08-06",
+    "updated": "2026-08-06",
+    "createdBy": "Digital Service Design Team",
+    "organisation": "Digital Service Design Working",
+    "tags": [
+      "roadside-assistance",
+      "channel-switching",
+      "bundled-benefits",
+      "overseas",
+      "partner-delivery",
+      "back-021"
+    ]
+  }
+}

@@ -9,7 +9,7 @@
 **Branch:** `main` — the mission visualiser work was fast-forwarded in and pushed on 2026-08-06. `origin/main` now carries all of v2.0 (it previously sat at v1.1 only, 28 commits behind).
 **Concurrency check:** local `main` and `origin/main` were **in sync** at session end. At session start run `git status -sb` — if the branch has diverged, or local commits exist that you did not make, suspect a concurrent session and read `git reflog` before acting. (This check deliberately names no SHA: a SHA recorded here goes stale the moment the next commit lands, including this file's own.)
 
-**Stale branch:** `feature/mission-visualiser` still exists locally and on `origin`, fully merged into `main`. Safe to delete whenever — kept only pending Will's say-so.
+**Branches:** `main` only, local and remote. `feature/mission-visualiser` was merged and deleted on 2026-08-06; its history lives on in `main`.
 
 ---
 

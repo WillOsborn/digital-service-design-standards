@@ -7,7 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const { execFileSync } = require('child_process');
-const { renderMission, computeHeat, wrapText } = require('./render-mission');
+const { renderMission, computeHeat, wrapText, channelGlyphs, channelGlyphsSvg } = require('./render-mission');
 const { computeLayout } = require('./mission-layout');
 
 let passed = 0;
@@ -50,6 +50,189 @@ section('Helpers');
   assert(computeHeat({ laneContent: { barriers: [{ severity: 2 }] } }, laneDefs).bucket === 'low', 'sum 2 -> low');
   assert(computeHeat({ laneContent: { barriers: [{ severity: 3 }, { severity: 4 }] } }, laneDefs).bucket === 'medium', 'sum 7 -> medium');
   assert(computeHeat({ laneContent: { barriers: [{ severity: 5 }, { severity: 4 }] } }, laneDefs).bucket === 'high', 'sum 9 -> high');
+}
+
+// ---------------------------------------------------------------------------
+section('Channel glyphs — category dedup and serviceModel merge');
+// ---------------------------------------------------------------------------
+{
+  const ch = (channels) => ({ nodeId: 'n', laneContent: { channels } });
+
+  assert(channelGlyphs({ nodeId: 'n' }).length === 0, 'node with no laneContent yields no glyphs');
+  assert(channelGlyphs({ nodeId: 'n', laneContent: {} }).length === 0, 'node with no channels yields no glyphs');
+  assert(channelGlyphs(ch([])).length === 0, 'empty channels array yields no glyphs');
+
+  const one = channelGlyphs(ch([{ channel: 'app', category: 'digital', serviceModel: 'self_service' }]));
+  assert(one.length === 1, 'single channel yields one glyph', JSON.stringify(one));
+  assert(one[0].category === 'digital' && one[0].serviceModel === 'self_service',
+    'single glyph carries category and serviceModel', JSON.stringify(one[0]));
+
+  const dupes = channelGlyphs(ch([
+    { channel: 'app', category: 'digital', serviceModel: 'self_service' },
+    { channel: 'web', category: 'digital', serviceModel: 'self_service' }
+  ]));
+  assert(dupes.length === 1, 'two channels of the same category dedup to one glyph', JSON.stringify(dupes));
+
+  const mixedModel = channelGlyphs(ch([
+    { channel: 'app', category: 'digital', serviceModel: 'self_service' },
+    { channel: 'email', category: 'digital', serviceModel: 'managed' }
+  ]));
+  assert(mixedModel.length === 1 && mixedModel[0].serviceModel === 'both',
+    'same category with differing serviceModel merges to both', JSON.stringify(mixedModel));
+
+  const explicitBoth = channelGlyphs(ch([{ channel: 'phone', category: 'telecom', serviceModel: 'both' }]));
+  assert(explicitBoth[0].serviceModel === 'both', 'explicit both is preserved');
+
+  const twoCats = channelGlyphs(ch([
+    { channel: 'app', category: 'digital', serviceModel: 'self_service' },
+    { channel: 'in_person', category: 'physical', serviceModel: 'managed' }
+  ]));
+  assert(twoCats.length === 2, 'two distinct categories yield two glyphs', JSON.stringify(twoCats));
+
+  const noCat = channelGlyphs(ch([{ channel: 'mystery', serviceModel: 'managed' }]));
+  assert(noCat.length === 1 && noCat[0].category === 'unspecified',
+    'channel without a category is reported as unspecified', JSON.stringify(noCat));
+
+  // Canonical order keeps glyphs from reordering between nodes that share categories.
+  const ordered = channelGlyphs(ch([
+    { channel: 'shop', category: 'physical', serviceModel: 'managed' },
+    { channel: 'phone', category: 'telecom', serviceModel: 'managed' },
+    { channel: 'app', category: 'digital', serviceModel: 'self_service' }
+  ]));
+  assert(ordered.map((g) => g.category).join(',') === 'digital,telecom,physical',
+    'glyphs come back in canonical order regardless of authoring order',
+    ordered.map((g) => g.category).join(','));
+}
+
+// ---------------------------------------------------------------------------
+section('Channel glyph placement');
+// ---------------------------------------------------------------------------
+{
+  // Half-heights pinned independently of the implementation, so a geometry
+  // change has to be a deliberate edit here too.
+  const HALF_H_TOUCHPOINT = 28;
+  const HALF_H_DECISION = 34;
+  const HALF_W_TOUCHPOINT = 79;
+  const HALF_W_SIGNAL = 26;
+  const GAP_ABOVE = 9;
+  const GLYPH_INSET = 6;
+  const pos = { x: 300, y: 200 };
+  const transforms = (svg) => [...svg.matchAll(/translate\((-?[\d.]+),\s*(-?[\d.]+)\)/g)]
+    .map((m) => ({ x: parseFloat(m[1]), y: parseFloat(m[2]) }));
+
+  const bare = { nodeId: 'n', nodeType: 'touchpoint' };
+  assert(channelGlyphsSvg(bare, pos) === '', 'node with no channels emits no glyph markup');
+
+  const oneCh = {
+    nodeId: 'n',
+    nodeType: 'touchpoint',
+    laneContent: { channels: [{ channel: 'app', category: 'digital', serviceModel: 'self_service' }] }
+  };
+  const oneSvg = channelGlyphsSvg(oneCh, pos);
+  assert(oneSvg.includes('data-cat="digital"'), 'glyph carries its category as a data attribute', oneSvg);
+  assert(oneSvg.includes('data-model="self_service"'), 'glyph carries its serviceModel as a data attribute', oneSvg);
+
+  const oneT = transforms(oneSvg);
+  assert(oneT.length === 1, 'one channel yields one positioned glyph', JSON.stringify(oneT));
+  assert(oneT[0].y === pos.y - HALF_H_TOUCHPOINT - GAP_ABOVE,
+    'glyph sits a fixed gap above a touchpoint', JSON.stringify(oneT[0]));
+
+  // Edges arrive vertically at the node's centre line in this columnar layout,
+  // so glyphs are right-aligned to the node's edge to stay clear of them.
+  assert(oneT[0].x === pos.x + HALF_W_TOUCHPOINT - GLYPH_INSET,
+    'a lone glyph is right-aligned to the node edge', JSON.stringify(oneT[0]));
+  assert(oneT[0].x > pos.x, 'glyph clears the centre line where edges arrive', JSON.stringify(oneT[0]));
+
+  const decision = Object.assign({}, oneCh, { nodeType: 'decision' });
+  assert(transforms(channelGlyphsSvg(decision, pos))[0].y === pos.y - HALF_H_DECISION - GAP_ABOVE,
+    'glyph clears the taller decision diamond');
+
+  const twoCh = {
+    nodeId: 'n',
+    nodeType: 'touchpoint',
+    laneContent: {
+      channels: [
+        { channel: 'app', category: 'digital', serviceModel: 'self_service' },
+        { channel: 'in_person', category: 'physical', serviceModel: 'managed' }
+      ]
+    }
+  };
+  const twoT = transforms(channelGlyphsSvg(twoCh, pos));
+  assert(twoT.length === 2, 'two categories yield two positioned glyphs', JSON.stringify(twoT));
+  assert(twoT[1].x === pos.x + HALF_W_TOUCHPOINT - GLYPH_INSET,
+    'the group is right-aligned regardless of glyph count', JSON.stringify(twoT));
+  assert(twoT[0].x < twoT[1].x, 'glyphs run left to right in canonical order', JSON.stringify(twoT));
+  assert(twoT.every((g) => g.x > pos.x), 'both glyphs clear the centre line', JSON.stringify(twoT));
+  assert(twoT[0].y === twoT[1].y, 'glyphs share a baseline', JSON.stringify(twoT));
+
+  // Narrow shapes have far less room to the right; the glyph must still clear
+  // the centre line rather than sitting on top of the incoming edge.
+  const signal = {
+    nodeId: 'n',
+    nodeType: 'signal',
+    laneContent: { channels: [{ channel: 'sms', category: 'telecom', serviceModel: 'managed' }] }
+  };
+  const signalT = transforms(channelGlyphsSvg(signal, pos));
+  assert(signalT[0].x === pos.x + HALF_W_SIGNAL - GLYPH_INSET,
+    'narrow node right-aligns to its own half-width', JSON.stringify(signalT[0]));
+  assert(signalT[0].x > pos.x, 'narrow node glyph still clears the centre line', JSON.stringify(signalT[0]));
+
+  // Unknown node types fall back to the touchpoint box, as the shapes do.
+  const unknown = Object.assign({}, oneCh, { nodeType: 'not-a-real-type' });
+  assert(transforms(channelGlyphsSvg(unknown, pos))[0].y === pos.y - HALF_H_TOUCHPOINT - GAP_ABOVE,
+    'unknown node type uses the touchpoint gap');
+}
+
+// ---------------------------------------------------------------------------
+section('Channel glyphs in rendered output');
+// ---------------------------------------------------------------------------
+{
+  // Scope counts to the map itself: the stylesheet and the legend both mention
+  // the same class and data attributes, and would otherwise inflate every total.
+  const mapOnly = (html) => {
+    const start = html.indexOf('role="img"');
+    return html.slice(start, html.indexOf('</svg>', start));
+  };
+  const count = (html, re) => (html.match(re) || []).length;
+
+  const retailFull = renderMission(retail, {}).html;
+  const retailMap = mapOnly(retailFull);
+
+  // 22 of retail's 25 nodes carry channels; one of them reaches digital by both
+  // a self-service and a managed channel, giving 23 glyphs in total.
+  assert(count(retailMap, /class="mv-chan-g"/g) === 23,
+    'retail renders one glyph per distinct category per node',
+    String(count(retailMap, /class="mv-chan-g"/g)));
+  assert(count(retailMap, /data-model="both"/g) === 1,
+    'a category reached by both service models renders as both',
+    String(count(retailMap, /data-model="both"/g)));
+  assert(count(retailMap, /data-cat="physical"/g) === 4, 'retail physical channels rendered');
+  assert(count(retailMap, /class="mv-chan"/g) === 22,
+    'glyph groups appear on exactly the nodes that have channels',
+    String(count(retailMap, /class="mv-chan"/g)));
+
+  const energyMap = mapOnly(renderMission(energy, {}).html);
+  assert(count(energyMap, /class="mv-chan-g"/g) === 16, 'energy renders 16 glyphs',
+    String(count(energyMap, /class="mv-chan-g"/g)));
+
+  // Glyphs are a visual layer; the same fact must reach a screen reader.
+  assert(count(retailMap, /Channels:/g) === 22,
+    'every node with channels states them in its accessible name',
+    String(count(retailMap, /Channels:/g)));
+  assert(/aria-label="[^"]*Channels: digital \(self-service\)/.test(retailMap),
+    'accessible name spells out category and service model in plain words');
+
+  // Decision nodes legitimately have no channels — absence must stay silent.
+  const decisionStart = retailMap.indexOf('data-node="decide-to-buy"');
+  assert(!retailMap.slice(decisionStart, retailMap.indexOf('</g>', decisionStart)).includes('mv-chan'),
+    'a node without channels renders no glyph');
+
+  // The legend has to decode the shapes and the fill rule, or they are noise.
+  assert(/Digital/.test(retailFull) && /Telecom/.test(retailFull) && /Physical/.test(retailFull),
+    'legend names all three channel categories');
+  assert(/Self-service/.test(retailFull) && /Managed/.test(retailFull),
+    'legend explains the fill rule');
+  assert(/\[data-model="both"\]/.test(retailFull), 'both state is styled, not just emitted');
 }
 
 // ---------------------------------------------------------------------------

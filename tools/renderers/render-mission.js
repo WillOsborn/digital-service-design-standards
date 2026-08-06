@@ -46,6 +46,31 @@ function computeHeat(node, laneDefs) {
   return { sum, bucket };
 }
 
+// ── channels ───────────────────────────────────────────────────────────────
+
+// Canonical order, so glyphs never reorder between nodes that share categories.
+// `channel` itself is a free string in the schema, so only the enum fields are
+// mappable to a fixed glyph set.
+const CHANNEL_CATEGORIES = ['digital', 'telecom', 'physical', 'unspecified'];
+
+// One glyph per distinct category on a node. Where a category is reached by both
+// a self-service and a managed channel, the glyph reports 'both'.
+function channelGlyphs(node) {
+  const channels = ((node || {}).laneContent || {}).channels;
+  if (!Array.isArray(channels) || !channels.length) return [];
+  const byCategory = new Map();
+  for (const c of channels) {
+    if (!c) continue;
+    const category = CHANNEL_CATEGORIES.includes(c.category) ? c.category : 'unspecified';
+    const model = c.serviceModel;
+    if (!byCategory.has(category)) byCategory.set(category, model);
+    else if (byCategory.get(category) !== model) byCategory.set(category, 'both');
+  }
+  return CHANNEL_CATEGORIES
+    .filter((cat) => byCategory.has(cat))
+    .map((cat) => ({ category: cat, serviceModel: byCategory.get(cat) }));
+}
+
 // ── geometry per node type ─────────────────────────────────────────────────
 
 // half-width / half-height used as edge anchor offsets
@@ -54,6 +79,57 @@ const HALF_H = { start: 26, end: 28, signal: 26, decision: 34, touchpoint: 28, h
 // Widest half-width used by any node type — the offset a route must clear
 // to escape a column's node territory regardless of which type occupies it.
 const MAX_HALF_W = Math.max(...Object.values(HALF_W));
+
+// Channel glyphs sit just above the node shape, right-aligned to its edge.
+// Right-aligned rather than centred because edges arrive vertically at the
+// node's centre line in this columnar layout — a centred glyph sits directly
+// on the incoming edge. One formula covers every node type because HALF_W and
+// HALF_H already vary per type; unknown types fall back to the touchpoint box,
+// exactly as the shapes themselves do.
+const GLYPH_W = 12;
+const GLYPH_GAP = 4;
+const GLYPH_ABOVE = 9;
+const GLYPH_INSET = 6;
+
+// Each category is one closed shape carrying the fill rule; decoration that must
+// always be stroked (the telecom arc) is kept in a separate class.
+const GLYPH_SHAPE = {
+  digital: '<rect class="mv-chan-s" x="-5.5" y="-4" width="11" height="8" rx="1.5"></rect>',
+  telecom: '<path class="mv-chan-wave" d="M-5,-1 A5,5 0 0 1 5,-1"></path>' +
+    '<circle class="mv-chan-s" cx="0" cy="3.2" r="2.6"></circle>',
+  physical: '<path class="mv-chan-s" d="M0,-5.5 C2.9,-5.5 5,-3.4 5,-1 C5,1.9 0,5.5 0,5.5 ' +
+    'C0,5.5 -5,1.9 -5,-1 C-5,-3.4 -2.9,-5.5 0,-5.5 Z"></path>',
+  unspecified: '<rect class="mv-chan-s" x="-5" y="-1.5" width="10" height="3" rx="1.5"></rect>'
+};
+
+// The glyphs are a visual-only cue, so the same fact is spelled out in the
+// node's accessible name.
+const SERVICE_MODEL_WORDS = { self_service: 'self-service', managed: 'managed', both: 'both' };
+
+function channelAriaText(node) {
+  const glyphs = channelGlyphs(node);
+  if (!glyphs.length) return '';
+  const parts = glyphs.map((g) =>
+    `${g.category} (${SERVICE_MODEL_WORDS[g.serviceModel] || 'unspecified'})`);
+  return `. Channels: ${parts.join(', ')}`;
+}
+
+function channelGlyphsSvg(node, pos) {
+  const glyphs = channelGlyphs(node);
+  if (!glyphs.length) return '';
+  const t = node.nodeType || 'touchpoint';
+  const halfH = HALF_H[t] !== undefined ? HALF_H[t] : HALF_H.touchpoint;
+  const halfW = HALF_W[t] !== undefined ? HALF_W[t] : HALF_W.touchpoint;
+  const y = pos.y - halfH - GLYPH_ABOVE;
+  const step = GLYPH_W + GLYPH_GAP;
+  const rightX = pos.x + halfW - GLYPH_INSET;
+  const startX = rightX - (glyphs.length - 1) * step;
+  const marks = glyphs.map((g, i) =>
+    `<g class="mv-chan-g" data-cat="${esc(g.category)}" data-model="${esc(g.serviceModel || 'unspecified')}"` +
+    ` transform="translate(${startX + i * step},${y})">${GLYPH_SHAPE[g.category] || GLYPH_SHAPE.unspecified}</g>`
+  ).join('');
+  return `<g class="mv-chan" aria-hidden="true">${marks}</g>`;
+}
 
 function nodeSvg(node, pos, heat) {
   const t = node.nodeType || 'touchpoint';
@@ -99,7 +175,7 @@ function nodeSvg(node, pos, heat) {
       body = `<rect class="mv-shape mv-fill-touchpoint" x="${pos.x - 78}" y="${pos.y - 28}" width="156" height="56" rx="10"></rect>` +
         insideText('mv-label');
   }
-  return `<g class="mv-node" data-node="${esc(node.nodeId)}" data-heat="${heat.bucket}" tabindex="0" role="button" aria-label="${esc(node.name || node.nodeId)}">${halo}${body}</g>`;
+  return `<g class="mv-node" data-node="${esc(node.nodeId)}" data-heat="${heat.bucket}" tabindex="0" role="button" aria-label="${esc((node.name || node.nodeId) + channelAriaText(node))}">${halo}${body}${channelGlyphsSvg(node, pos)}</g>`;
 }
 
 // ── edges ──────────────────────────────────────────────────────────────────
@@ -337,6 +413,15 @@ const CSS = `
 .mv-channel strong { font-size:0.85rem; }
 .mv-dim { color:var(--c-dim); font-size:0.75rem; }
 
+/* Channel glyphs. Category is carried by shape and service model by fill, so the
+   marks never compete with the node-type colours or the barrier-heat overlay. */
+.mv-chan-s { fill:none; stroke:var(--c-dim); stroke-width:1.2; }
+.mv-chan-wave { fill:none; stroke:var(--c-dim); stroke-width:1.2; stroke-linecap:round; }
+.mv-chan-g[data-model="managed"] .mv-chan-s { fill:var(--c-dim); }
+.mv-chan-g[data-model="both"] .mv-chan-s { fill:var(--c-dim); fill-opacity:0.4; }
+.mv-chan-legend { width:14px; height:14px; display:inline-block; vertical-align:-2px; }
+.mv-legend-sep { width:1px; align-self:stretch; background:var(--c-border); }
+
 .mv-legend { display:flex; gap:14px; flex-wrap:wrap; padding:10px 20px;
   border-top:1px solid var(--c-border); font-size:0.72rem; color:var(--c-dim); }
 .mv-chip { display:inline-flex; align-items:center; gap:5px; }
@@ -364,6 +449,13 @@ function bandsSvg(layout) {
   }).join('\n');
 }
 
+// A legend swatch drawn with the same shape and fill rule as the map itself,
+// so the two can never disagree.
+function chanLegendMark(category, serviceModel) {
+  return `<svg class="mv-chan-legend" viewBox="-7 -7 14 14" aria-hidden="true">` +
+    `<g class="mv-chan-g" data-model="${serviceModel}">${GLYPH_SHAPE[category]}</g></svg>`;
+}
+
 const LEGEND = `
 <footer class="mv-legend">
   <span class="mv-chip"><span class="mv-sw round" style="background:var(--c-start)"></span>start</span>
@@ -376,6 +468,14 @@ const LEGEND = `
   <span class="mv-chip"><span class="mv-edge-chip"></span>step</span>
   <span class="mv-chip"><span class="mv-edge-chip dashed"></span>conditional / loop</span>
   <span class="mv-chip"><span class="mv-edge-chip error"></span>error</span>
+  <span class="mv-legend-sep" aria-hidden="true"></span>
+  <span class="mv-chip">${chanLegendMark('digital', 'self_service')}Digital</span>
+  <span class="mv-chip">${chanLegendMark('telecom', 'self_service')}Telecom</span>
+  <span class="mv-chip">${chanLegendMark('physical', 'self_service')}Physical</span>
+  <span class="mv-legend-sep" aria-hidden="true"></span>
+  <span class="mv-chip">${chanLegendMark('digital', 'self_service')}Self-service</span>
+  <span class="mv-chip">${chanLegendMark('digital', 'managed')}Managed</span>
+  <span class="mv-chip">${chanLegendMark('digital', 'both')}Both</span>
 </footer>`;
 
 function renderMission(mission, opts) {
@@ -648,7 +748,7 @@ ${fragment}
   return { html, warnings: layout.warnings };
 }
 
-module.exports = { renderMission, computeHeat, wrapText, esc };
+module.exports = { renderMission, computeHeat, wrapText, esc, channelGlyphs, channelGlyphsSvg };
 
 // ── CLI ────────────────────────────────────────────────────────────────────
 

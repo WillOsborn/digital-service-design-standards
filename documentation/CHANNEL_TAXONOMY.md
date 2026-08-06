@@ -1,14 +1,17 @@
 # Channel Taxonomy
 
-**Version:** 1.1.0
-**Last Updated:** 2026-01-15
+**Version:** 2.0.0
+**Last Updated:** 2026-08-06
+**Applies to:** v2.0 (Actor / Mission / Experience)
 **Status:** Official Reference
 
 ## Overview
 
 This document defines the official channel taxonomy used across all Digital Service Design Schemas. The taxonomy provides a flexible, multi-attribute approach with minimal required fields to lower the barrier to adoption while enabling rich analysis when needed.
 
-**Design Philosophy:** Only `type` and `serviceModel` are required. All other fields are optional, allowing teams to adopt the level of detail that works for them.
+**Design Philosophy:** Only `channel` and `serviceModel` are required. All other fields are optional, allowing teams to adopt the level of detail that works for them.
+
+> **Field naming.** v1.1 renamed `channel` to `type`; **v2.0 renamed it back to `channel`** and moved to camelCase (`usageContext`, not `usage_context`). This document describes **v2.0**. The historical sections at the end are kept as a record and deliberately still use the older names.
 
 ---
 
@@ -18,7 +21,7 @@ This document defines the official channel taxonomy used across all Digital Serv
 
 ```json
 {
-  "type": "app",
+  "channel": "app",
   "serviceModel": "self_service"
 }
 ```
@@ -27,15 +30,38 @@ This document defines the official channel taxonomy used across all Digital Serv
 
 ```json
 {
-  "type": "app",
+  "channel": "app",
   "serviceModel": "self_service",
   "category": "digital",
   "interaction": "automated",
   "name": "StyleMart App",
-  "usage_context": "Product browsing and checkout",
+  "usageContext": "Product browsing and checkout",
   "ownership": "own"
 }
 ```
+
+---
+
+## `channel` vs `name` — the most important rule
+
+**`channel` holds a *type* from the suggested list. `name` holds the specific instance.**
+
+```json
+{ "channel": "app", "name": "Salesforce CRM" }
+```
+
+Not `{ "channel": "salesforce" }`. Nothing enforces this — `channel` is a free string, so a product name will validate happily and then quietly break every channel-mix and cost-to-serve analysis, which is the main reason the field exists. One service map reached the point where 8 of its 12 channel entries were unique one-offs and grouping by channel returned nothing.
+
+Two entries may share a type and be distinguished only by `name` — that is correct, not a duplicate:
+
+```json
+"channels": [
+  { "channel": "app", "name": "StyleMart App",         "usageContext": "Payment processing" },
+  { "channel": "app", "name": "Apple Pay / Google Pay", "usageContext": "Biometric authentication" }
+]
+```
+
+If a channel genuinely is not in the list, use the nearest type and put the specific thing in `name`. Coining a new type is a last resort — see *Extending the taxonomy* below.
 
 ---
 
@@ -43,7 +69,7 @@ This document defines the official channel taxonomy used across all Digital Serv
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `type` | string | The specific channel type (see suggested types below, or use custom) |
+| `channel` | string | The channel type (see suggested types below) — **not** a product or meeting name |
 | `serviceModel` | enum | Who controls the interaction: `self_service`, `managed`, or `both` |
 
 ### Service Model Definitions
@@ -63,9 +89,8 @@ This document defines the official channel taxonomy used across all Digital Serv
 | `category` | enum | High-level grouping: `digital`, `telecom`, `physical` |
 | `interaction` | enum | Whether response is `human` or `automated` |
 | `name` | string | Specific instance name (e.g., "StyleMart App") |
-| `usage_context` | string | When and why this channel is used |
+| `usageContext` | string | When and why this channel is used |
 | `ownership` | enum | Who owns the channel: `own`, `third_party`, `partner` |
-| `custom_type` | string | Description when using non-standard types |
 
 ---
 
@@ -149,7 +174,8 @@ The `interaction` field captures whether a human responds.
 | Value | Definition | Examples |
 |-------|------------|----------|
 | `human` | A human responds or assists | Phone call with agent, in-store staff |
-| `automated` | No human involved in response | App browsing, chatbot, IVR menu |
+| `automated` | No human involved in response | App browsing, scripted chatbot, IVR menu |
+| `ai_assisted` | AI responds, or assists the human who does | LLM support agent, AI-drafted replies a human sends |
 
 ### Why Track Interaction Type
 
@@ -173,43 +199,43 @@ The `ownership` field tracks who operates the channel.
 
 ## Usage Examples
 
-### Journey Step Channels
+### Mission Node Channels
 
 ```json
 {
-  "lane_content": {
+  "laneContent": {
     "channels": [
       {
-        "type": "app",
+        "channel": "app",
         "serviceModel": "self_service",
         "category": "digital",
         "name": "StyleMart App",
-        "usage_context": "Browsing flash sale products"
+        "usageContext": "Browsing flash sale products"
       }
     ]
   }
 }
 ```
 
-### Multi-Channel Step
+### Multi-Channel Node
 
 ```json
 {
-  "lane_content": {
+  "laneContent": {
     "channels": [
       {
-        "type": "in_person",
+        "channel": "in_person",
         "serviceModel": "managed",
         "category": "physical",
         "name": "Parcel locker",
-        "usage_context": "Return drop-off"
+        "usageContext": "Return drop-off"
       },
       {
-        "type": "app",
+        "channel": "app",
         "serviceModel": "self_service",
         "category": "digital",
         "name": "StyleMart App",
-        "usage_context": "QR code for locker access"
+        "usageContext": "QR code for locker access"
       }
     ]
   }
@@ -223,25 +249,28 @@ For teams wanting quick documentation:
 ```json
 {
   "channels": [
-    { "type": "website", "serviceModel": "self_service" },
-    { "type": "phone", "serviceModel": "managed" },
-    { "type": "email", "serviceModel": "managed" }
+    { "channel": "website", "serviceModel": "self_service" },
+    { "channel": "phone", "serviceModel": "managed" },
+    { "channel": "email", "serviceModel": "managed" }
   ]
 }
 ```
 
-### With Custom Type
+### Something not in the list
+
+v2.0 has no `custom_type` field. Use the nearest type and let `name` carry the specific thing:
 
 ```json
 {
-  "type": "atm",
+  "channel": "in_person",
   "serviceModel": "self_service",
   "category": "physical",
-  "custom_type": "Automated teller machine for banking transactions",
   "name": "Branch ATM",
-  "usage_context": "Cash withdrawal and balance check"
+  "usageContext": "Cash withdrawal and balance check"
 }
 ```
+
+This keeps the ATM visible and legible while still counting as a physical, self-service touchpoint in any analysis.
 
 ---
 
@@ -269,15 +298,19 @@ website (digital) → email (digital) → video_call (telecom) → in_person (ph
 
 ## Schema Definition
 
-### Journey Channel Schema (v1.1)
+### Channel Schema (v2.0)
+
+As defined in `v2.0/schemas/mission.schema.json` and `v2.0/schemas/actor.schema.json`.
+Actor channels additionally carry `preference` (`preferred` | `acceptable` | `avoided`).
 
 ```json
 {
   "type": "object",
   "properties": {
-    "type": {
+    "channel": {
       "type": "string",
-      "description": "Channel type - use suggested types or custom"
+      "maxLength": 50,
+      "description": "Channel type - use a suggested type; put the instance in name"
     },
     "serviceModel": {
       "enum": ["self_service", "managed", "both"],
@@ -288,15 +321,15 @@ website (digital) → email (digital) → video_call (telecom) → in_person (ph
       "description": "High-level grouping for ownership and cost analysis"
     },
     "interaction": {
-      "enum": ["human", "automated"],
-      "description": "Whether a human responds"
+      "enum": ["human", "automated", "ai_assisted"],
+      "description": "Whether a human, automation, or AI responds"
     },
     "name": {
       "type": "string",
       "maxLength": 100,
       "description": "Specific instance name"
     },
-    "usage_context": {
+    "usageContext": {
       "type": "string",
       "maxLength": 200,
       "description": "When and why this channel is used"
@@ -304,20 +337,56 @@ website (digital) → email (digital) → video_call (telecom) → in_person (ph
     "ownership": {
       "enum": ["own", "third_party", "partner"],
       "description": "Who owns/operates this channel"
-    },
-    "custom_type": {
-      "type": "string",
-      "maxLength": 50,
-      "description": "Custom type description"
     }
   },
-  "required": ["type", "serviceModel"]
+  "required": ["channel", "serviceModel"]
 }
 ```
+
+> `additionalProperties` is **not** restricted on this object, so v1.1-shaped keys such as
+> `type` or `usage_context` are accepted and then **silently ignored** — the data is lost
+> without any validation error. Use the v2.0 names.
+
+---
+
+## Extending the taxonomy
+
+The suggested types are a starting point, not a closed set — `channel` is a free string and
+custom values validate. But reach for the nearest existing type first: every bespoke value
+fragments channel analysis, and a name like `board-meeting` or `salesforce` is almost always
+an instance of `in_person` or `app` wearing the wrong hat.
+
+Coin a new type only when a channel is genuinely a new *kind* of interaction rather than a new
+instance of an existing one. If you do, add it here so others use the same spelling.
+
+**Spelling:** lower `snake_case`, matching the suggested types (`video_call`, not `video-call`
+or `videoCall`). The field is unconstrained, so nothing will reject a variant — it will just
+quietly split your analysis in two.
 
 ---
 
 ## Migration from Previous Versions
+
+> The subsections below are a **historical record**. They describe earlier field names and
+> deliberately use them. For current guidance see the top of this document.
+
+### From v1.1 (to v2.0)
+
+| v1.1 Field | v2.0 Field | Notes |
+|-----------|-----------|-------|
+| `type` | `channel` | Renamed back to `channel` |
+| `usage_context` | `usageContext` | camelCase |
+| `custom_type` | *(removed)* | Use the nearest type; put the specific instance in `name` |
+| `category` | `category` | Unchanged — `digital`, `telecom`, `physical` |
+| `serviceModel` | `serviceModel` | Unchanged |
+| `interaction` | `interaction` | Adds `ai_assisted` |
+| `name`, `ownership` | unchanged | |
+
+**Watch for:** the v2.0 channel object does not restrict `additionalProperties`, so a
+leftover `type` or `usage_context` key validates and is then ignored. Converting with
+`tools/converters/convert-v1.1-to-v2.0.js` handles the renames, normalises legacy channel
+spellings, and infers `telecom` for voice and video channels that v1.1 could only record as
+`digital` or `non_digital`.
 
 ### From v1.0.2 (3-category/7-type system)
 
@@ -367,20 +436,35 @@ website (digital) → email (digital) → video_call (telecom) → in_person (ph
 
 ### DO
 
-- Start with just `type` and `serviceModel` - add detail as needed
+- Start with just `channel` and `serviceModel` - add detail as needed
 - Use descriptive `name` values for specific channel instances
-- Include `usage_context` to explain why this channel at this step
-- Use categories for cross-journey analysis
+- Include `usageContext` to explain why this channel at this step
+- Use categories for cross-mission analysis
+- Categorise by cost to serve, not by which team builds the technology
 
 ### DON'T
 
 - Force all fields if they don't add value
+- **Put a product, platform, or meeting name in `channel`** - that belongs in `name`
 - Create custom types for channels already in the suggested list
+- Mix spellings - `video_call`, never `video-call`
 - Overthink category assignment - it's for analysis, not precision
 
 ---
 
 ## Version History
+
+### Version 2.0.0 (2026-08-06)
+
+- **Retargeted to v2.0.** This document described v1.1 field names while v2.0 was the active
+  version, so its opening example was invalid for the schema it was meant to explain.
+- **Renamed:** `type` → `channel` (v2.0 reverts the v1.1 rename), `usage_context` → `usageContext`
+- **Removed:** `custom_type` — no such field in v2.0; use the nearest type plus `name`
+- **New:** the `channel` vs `name` rule, guidance on extending the taxonomy, and snake_case spelling
+- **Clarified:** categories follow **cost to serve**, not who builds the technology; the
+  `digital`/`telecom` line is **synchronous human attention**, not transport — so `video_call`
+  is telecom, while email and chat are digital
+- **Added:** `ai_assisted` to `interaction`
 
 ### Version 1.1.0 (2026-01-15)
 

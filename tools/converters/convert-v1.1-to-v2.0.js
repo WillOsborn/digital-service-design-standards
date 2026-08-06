@@ -37,9 +37,39 @@ function translateSource(source) {
   }
 }
 
-// ─── Channel-medium translation ────────────────────────────────────────────
+// ─── Channel translation ───────────────────────────────────────────────────
 
-function translateChannelCategory(medium) {
+// v1.1 and earlier data spells the same channel several ways, and `channel` is
+// a free string in v2.0, so nothing downstream would reject the variants. Map
+// them onto the taxonomy's suggested types so conversion cannot reintroduce the
+// drift cleaned up in BACK-024. Anything unrecognised passes through untouched —
+// custom channels remain fully supported.
+const CHANNEL_NAME_MAP = {
+  'web':          'website',
+  'web-portal':   'website',
+  'web portal':   'website',
+  'in-person':    'in_person',
+  'video-call':   'video_call',
+  'phone-call':   'phone',
+  'voice':        'phone',
+  'text':         'sms',
+  'social-media': 'social_media'
+};
+
+function normaliseChannelName(channel) {
+  if (!channel) return channel;
+  const key = String(channel).trim().toLowerCase();
+  return CHANNEL_NAME_MAP[key] || channel;
+}
+
+// A voice or video conversation is telecom whatever the legacy record said.
+// v1.1 only carried `medium` (digital | non_digital), which collapses phone and
+// video onto `physical` — the exact miscategorisation fixed by hand in BACK-022
+// and BACK-023. The channel itself is the more reliable signal, so it wins.
+const TELECOM_CHANNELS = new Set(['phone', 'sms', 'video_call']);
+
+function translateChannelCategory(medium, channel) {
+  if (channel && TELECOM_CHANNELS.has(normaliseChannelName(channel))) return 'telecom';
   if (!medium) return 'digital';
   switch (medium) {
     case 'non_digital': return 'physical';
@@ -174,8 +204,8 @@ function convertPersonaToActor(persona, role, pairing) {
     const rawChannels = (pairing && pairing.extendedContext && pairing.extendedContext.channels) || [];
     const channels = rawChannels.map(ch => {
       const item = {
-        channel:      ch.channel,
-        category:     translateChannelCategory(ch.medium),
+        channel:      normaliseChannelName(ch.channel),
+        category:     translateChannelCategory(ch.medium, ch.channel),
         serviceModel: ch.serviceModel,
         preference:   ch.preference_level
       };
@@ -380,8 +410,11 @@ function convertJourneyToMission(journey) {
 
       if (lc.channels && lc.channels.length) {
         laneContent.channels = lc.channels.map(ch => ({
-          channel: ch.type || ch.channel,
-          category: translateChannelCategory(ch.category || (ch.medium === 'non_digital' ? 'non_digital' : ch.category)),
+          channel: normaliseChannelName(ch.type || ch.channel),
+          category: translateChannelCategory(
+            ch.category || (ch.medium === 'non_digital' ? 'non_digital' : ch.category),
+            ch.type || ch.channel
+          ),
           serviceModel: ch.serviceModel || ch.service_model,
           ...(ch.name ? { name: ch.name } : {}),
           ...(ch.usage_context ? { usageContext: ch.usage_context } : {})

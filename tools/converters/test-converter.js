@@ -195,6 +195,51 @@ assert(hasThoughtsOrEmotions, 'experience nodes carry thoughts/emotions from jou
 const hasNeedAtStep = experience.nodes.some(n => n.needAtStep !== undefined && n.needAtStep !== null);
 assert(!hasNeedAtStep, 'needAtStep not auto-populated (requires human design work)');
 
+// ─── Test 4: channel translation ───────────────────────────────────────────
+
+console.log('\nTest group: channel category and name translation');
+
+// v1.1 carries only `medium` (digital | non_digital), which collapses voice and
+// video onto `physical`/`digital`. Conversion must infer `telecom` from the
+// channel itself, and must normalise the spelling variants — otherwise every
+// conversion reintroduces the drift cleaned up in BACK-022/023/024.
+const chPairing = JSON.parse(JSON.stringify(pairing));
+chPairing.extendedContext = chPairing.extendedContext || {};
+chPairing.extendedContext.channels = [
+  { channel: 'phone',      medium: 'non_digital', serviceModel: 'managed' },
+  { channel: 'video_call', medium: 'digital',     serviceModel: 'managed' },
+  { channel: 'sms',        medium: 'non_digital', serviceModel: 'automated' },
+  { channel: 'web',        medium: 'digital',     serviceModel: 'self_service' },
+  { channel: 'in-person',  medium: 'non_digital', serviceModel: 'managed' },
+  { channel: 'kiosk',      medium: 'non_digital', serviceModel: 'self_service' }
+];
+
+const chActor = convertPersonaToActor(persona, role, chPairing);
+const chOut   = ((chActor.contexts || [])[0] || {}).channels || [];
+const byName  = (n) => chOut.find(c => c.channel === n);
+
+assert(chOut.length === 6, 'all six channels converted');
+
+// Telecom inference — the channel beats the legacy medium
+assert(byName('phone') && byName('phone').category === 'telecom',
+  'phone with medium=non_digital becomes telecom, not physical');
+assert(byName('video_call') && byName('video_call').category === 'telecom',
+  'video_call with medium=digital becomes telecom, not digital');
+assert(byName('sms') && byName('sms').category === 'telecom',
+  'sms becomes telecom');
+
+// Name normalisation
+assert(byName('website') && byName('website').category === 'digital',
+  'web is normalised to website');
+assert(byName('in_person') && byName('in_person').category === 'physical',
+  'in-person is normalised to in_person and stays physical');
+assert(!byName('web') && !byName('in-person'),
+  'no hyphenated or short-form channel names survive conversion');
+
+// Custom channels still pass through untouched
+assert(byName('kiosk') && byName('kiosk').category === 'physical',
+  'unrecognised channel passes through unchanged (custom channels supported)');
+
 // ─── Summary ───────────────────────────────────────────────────────────────
 
 console.log('\n─────────────────────────────────────────');

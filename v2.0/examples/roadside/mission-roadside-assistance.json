@@ -273,7 +273,7 @@
       "name": "Benefits are continuously visible",
       "nodeType": "touchpoint",
       "laneContent": {
-        "description": "The benefits app home screen lists everything included, so any visit for one benefit exposes the others. SCHEMA LIMITATION: this is not a step — it is an always-available surface with no position in a sequence. Modelling it as a node between account opening and discovery implies an ordering and a causation that did not exist. See prediction 1.",
+        "description": "The benefits app home screen lists everything included, so any visit for one benefit exposes the others. This is not a step the customer takes — it is a surface that is permanently present, accruing awareness passively whenever they visit for something else entirely.",
         "channels": [
           {
             "channel": "app",
@@ -291,7 +291,7 @@
             "interaction": "human",
             "ownership": "own",
             "name": "Concierge number printed on the bank card",
-            "usageContext": "SCHEMA LIMITATION: always in the wallet, reachable at any point in any journey. A standing capability, not a step. See prediction 1."
+            "usageContext": "Always in the customer's wallet and reachable at any point in the journey — a standing capability rather than a step within it"
           }
         ],
         "barriers": [
@@ -343,7 +343,7 @@
       "name": "Notice the roadside cover while claiming something else",
       "nodeType": "signal",
       "laneContent": {
-        "description": "The customer visits the benefits app to claim an unrelated benefit and browses the rest of the list while there, noticing roadside assistance. SCHEMA LIMITATION: this happened weeks earlier, during a different journey, with no causal link to the breakdown. The graph can only place it immediately before the trigger, which invents a proximity and a sequence that did not exist. See prediction 6.",
+        "description": "The customer visits the benefits app to claim an unrelated benefit and browses the rest of the list while there, noticing roadside assistance. This happens weeks before the breakdown, during an unrelated journey — awareness is a side effect of another visit rather than a step towards using the cover.",
         "channels": [
           {
             "channel": "app",
@@ -499,7 +499,7 @@
             "interaction": "human",
             "ownership": "third_party",
             "name": "Vehicle owner's own motor insurer",
-            "usageContext": "SCHEMA LIMITATION: no relationship to the bank at all, yet 'third_party' is the same value its partner's suppliers get. See prediction 2."
+            "usageContext": "An organisation with no relationship to the bank or its assistance partner. Contacted first as the obvious route, and refused."
           }
         ],
         "barriers": [
@@ -668,7 +668,7 @@
             "interaction": "automated",
             "ownership": "partner",
             "name": "Assistance provider website",
-            "usageContext": "SCHEMA LIMITATION: a usable route that exists but is never signposted here. Nothing distinguishes an available channel from a discoverable one. See prediction 3."
+            "usageContext": "A usable route to assistance that exists but is never signposted to the customer at this step, so it is invisible at the one moment it would be used"
           }
         ],
         "barriers": [
@@ -1345,7 +1345,7 @@
             "interaction": "automated",
             "ownership": "third_party",
             "name": "Public search engine",
-            "usageContext": "SCHEMA LIMITATION: a channel wholly outside the service, used to establish what the service supports. Nobody in the chain owns or knows of it. See prediction 5."
+            "usageContext": "Used by the customer to establish which location formats the assistance provider accepts, because the service itself never says. Owned by nobody in the delivery chain."
           }
         ],
         "barriers": [
@@ -1409,7 +1409,7 @@
             "interaction": "automated",
             "ownership": "third_party",
             "name": "Third-party precise-location service",
-            "usageContext": "SCHEMA LIMITATION: supplied on the vehicle owner's device, not the caller's. Nothing records that a channel was used by a different person. See prediction 5."
+            "usageContext": "Obtained on the vehicle owner's own device rather than the caller's, then read aloud to the agent. Owned by nobody in the delivery chain."
           },
           {
             "channel": "phone",
@@ -1545,7 +1545,7 @@
             "interaction": "human",
             "ownership": "partner",
             "name": "Assistance line, available throughout",
-            "usageContext": "SCHEMA LIMITATION: reachable at any moment during the wait, not a step within it. A standing capability the graph must model as a point. See prediction 1."
+            "usageContext": "Reachable at any moment throughout the wait rather than at a particular point in it, though nothing prompts the customer that calling is an option"
           }
         ],
         "barriers": [
@@ -1627,7 +1627,7 @@
             "interaction": "human",
             "ownership": "third_party",
             "name": "Local recovery firm",
-            "usageContext": "SCHEMA LIMITATION: the provider's partner, two steps from the bank whose vantage point this is. Same value as an unrelated competitor. See prediction 2."
+            "usageContext": "The assistance provider's contracted recovery partner — two organisations removed from the bank whose benefit this is, and unknown to the customer until they make contact"
           }
         ],
         "barriers": [
@@ -1747,7 +1747,7 @@
             "interaction": "automated",
             "ownership": "third_party",
             "name": "Recovery partner case tracking site",
-            "usageContext": "SCHEMA LIMITATION: useful only between dispatch and collection, then silently dead. A channel attaches to a node; nothing expresses that it expires. See prediction 4."
+            "usageContext": "Useful only between dispatch and collection. Once the vehicle is collected it shows nothing, with no explanation that it has expired."
           }
         ],
         "barriers": [
@@ -2300,7 +2300,7 @@
       "name": "Family finds a repairer themselves",
       "nodeType": "touchpoint",
       "laneContent": {
-        "description": "While the provider is still searching, the family walk into a garage in the village. It is about to close for a holiday, but they are pointed to a related garage nearby that can do the work. The customer solves the service's open task, off-channel, in an afternoon. NO CHANNEL ENTRY: no service channel was involved at any point in this step, which is precisely the finding.",
+        "description": "While the provider is still searching, the family walk into a garage in the village. It is about to close for a holiday, but they are pointed to a related garage nearby that can do the work. The customer solves the service's open task in an afternoon, entirely off-channel — no service channel is involved at any point, and the provider does not learn the task is done.",
         "barriers": [
           {
             "type": "communications",
@@ -2415,7 +2415,7 @@
             "interaction": "human",
             "ownership": "third_party",
             "name": "Hire supplier submission",
-            "usageContext": "SCHEMA LIMITATION: the provider's supplier, contracted for us — the same 'third_party' as an unrelated competitor. See prediction 2."
+            "usageContext": "A supplier contracted by the assistance provider — a different company again from the recovery firm and the garage, with no direct route to the customer"
           }
         ],
         "barriers": [
@@ -2485,7 +2485,7 @@
             "interaction": "ai_assisted",
             "ownership": "third_party",
             "name": "Messaging conversation with the provider",
-            "usageContext": "SCHEMA LIMITATION: opens automated, but ran as human here — international cases route to people. Authored as designed; observed value lost. See prediction 7."
+            "usageContext": "Opens with an automated message and can answer simple queries itself. Staffed by a person throughout this case, because international recoveries are treated as complex."
           }
         ],
         "barriers": [

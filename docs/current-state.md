@@ -7,9 +7,9 @@
 **Last updated:** 2026-08-06
 **Active schema version:** v2.0 (Actor / Mission / Experience)
 **Branch:** `feature/mission-visualiser` — tracking `origin/feature/mission-visualiser`, pushed and in sync as of 2026-08-06. Not yet merged to `main`; no PR opened.
-**HEAD at handoff:** the tip of `feature/mission-visualiser` is the **last commit touching this file** — the 2026-08-06 session ended with `docs: sync handoff to final session state`. If `git log -1` shows anything newer that you did not make, suspect a concurrent session and read `git reflog` before acting.
+**Concurrency check:** local and `origin/feature/mission-visualiser` were **in sync** at session end. At session start run `git status -sb` — if the branch has diverged, or local commits exist that you did not make, suspect a concurrent session and read `git reflog` before acting. (This check deliberately names no SHA: a SHA recorded here goes stale the moment the next commit lands, including this file's own.)
 
-**Session of 2026-08-06 added, in order:** `6fb5b9a` WS7 Claude Manager · `96e5133` v2.0 plan docs · `074a69f` v1.2 research · `8353237` v2.0 exploration · `be634ef` current-state.md · `9f1ba9e` known-failure record · this commit.
+**Session of 2026-08-06:** everything from `b8c510d` onward — `git log b8c510d..` shows it.
 
 ---
 

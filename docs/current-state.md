@@ -4,10 +4,10 @@
 > Keep it a **snapshot**, not a history — record material completions, delete what's superseded.
 > If this file contradicts itself, the next session starts confused. Fix contradictions on sight.
 
-**Last updated:** 2026-08-06
+**Last updated:** 2026-08-06 (second session that day)
 **Active schema version:** v2.0 (Actor / Mission / Experience)
-**Branch:** `main` — the mission visualiser work was fast-forwarded in and pushed on 2026-08-06. `origin/main` now carries all of v2.0 (it previously sat at v1.1 only, 28 commits behind).
-**Concurrency check:** local `main` and `origin/main` were **in sync** at session end. At session start run `git status -sb` — if the branch has diverged, or local commits exist that you did not make, suspect a concurrent session and read `git reflog` before acting. (This check deliberately names no SHA: a SHA recorded here goes stale the moment the next commit lands, including this file's own.)
+**Branch:** `main` — **2 commits ahead of `origin/main` and not pushed.** Will was asked and chose not to push at session end. The next session inherits an unpushed branch; push is safe whenever wanted (`git push`).
+**Concurrency check:** local `main` was **ahead of `origin/main` by exactly 2 commits** at session end, both made this session. At session start run `git status -sb` — if the gap is anything other than 2, or local commits exist that you did not make, suspect a concurrent session and read `git reflog` before acting. (This check deliberately names no SHA: a SHA recorded here goes stale the moment the next commit lands, including this file's own.)
 
 **Branches:** `main` only, local and remote. `feature/mission-visualiser` was merged and deleted on 2026-08-06; its history lives on in `main`.
 
@@ -17,27 +17,57 @@
 
 **v2.0 is complete and green across every workstream except WS8.** Schemas, all four example sets, validators, quality scoring, converter, all 17 `.claude/skills/`, the standards docs, and — as of this session's commits — the WS7 Claude Manager org skills. Verification: 12/12 examples validate at 85–100 quality, 94 validator tests, 16 layout tests, 45 renderer tests, all exit 0. One pre-existing failure in `run-all-tests.js` affects **v1.x only** — see *Verification baseline* below.
 
-**Mission visualiser — complete and merged.** The deterministic Node CLI renders a v2.0 Mission as a self-contained two-mode HTML visualisation. Tasks 1–4 landed the layout module, renderer CLI (static SVG, both themes, Overview), Explore mode (inspect panel, lane filters, barrier heat), and Playwright-driven fixes including occupancy-aware loop-back routing. **Task 6 is done** — `.claude/skills/mission-renderer/SKILL.md` is now a thin wrapper that runs `tools/renderers/render-mission.js` and publishes the fragment as an artifact, with `Bash`/`Artifact` added to its `allowed-tools` (the old version lacked them and could not have run the CLI).
+**Mission visualiser — complete, merged, and now reviewed by Will.** The deterministic Node CLI renders a v2.0 Mission as a self-contained two-mode HTML visualisation. Tasks 1–4 landed the layout module, renderer CLI, Explore mode, and Playwright-driven fixes. **Task 6 is done** — `.claude/skills/mission-renderer/SKILL.md` is a thin wrapper around the CLI. **Task 5 is now done too** (2026-08-06): the retail mission was published as an artifact in Explore mode, Will reviewed it, and one round of iteration landed.
 
-Two plan steps remain permanently open, deliberately:
-- **Task 5** (publish artifact + user iteration) — blocks on Will's feedback on a published artifact, which has not happened. Do this whenever a real mission needs sharing.
-- **Task 6 Step 4** (commit the skill) — impossible; `.claude/` is gitignored, so the rewrite is local-only. Annotated in the plan rather than ticked.
+Only **Task 6 Step 4** remains permanently open — committing the skill is impossible because `.claude/` is gitignored. Annotated in the plan rather than ticked.
 
-**WS8 Figma Plugin** (`tools-internal/figma-plugin/`) is untouched — still v1.1-only generation. It is the last unstarted v2.0 workstream.
+**Channel glyphs shipped** (`f90edaa`) from Will's review. Every Mission node now shows a small monochrome glyph per distinct channel category: **shape = category** (digital / telecom / physical), **fill = serviceModel** (outline self-service, solid managed, 40% both). Monochrome deliberately — node fill already encodes `nodeType` and the overlay encodes barrier heat, so a third colour language would collide with both. Right-aligned to the node edge, **not centred**: Playwright showed centred glyphs sitting directly on the incoming edges, because edges arrive at the node's centre line in this columnar layout. Legend decodes shapes and fill rule using the same drawing code as the map; `aria-label` carries the same fact in words. Built test-first; renderer tests **45 → 83**.
+
+**WS8 Figma Plugin — deliberately deferred, design captured.** Brainstormed to the middle of Section 2 of 4, then Will chose to sequence renderers and create/edit tooling ahead of export plugins. The full design is in `docs/superpowers/specs/2026-08-06-figma-pptx-export-design.md` (BACK-018) with six open questions listed. **Do not restart that work from scratch** — read the spec first.
 
 ---
 
 ## Immediate next action
 
-**WS8 Figma Plugin** — the last unstarted v2.0 workstream, and now the only substantial one left. `tools-internal/figma-plugin/` still generates v1.1 artifacts only. **Read `ui.html` and `README.md` first** to understand what exists before changing anything; add v2.0 Actor/Mission/Experience export alongside v1.1 rather than replacing it. Note the plugin runs in a sandboxed iframe — output is JSON the user copies out.
+**BACK-021 — build a channel-switching Mission example.** Will explicitly ended the last
+session to start this one fresh, for maximum context. Someone starts online, hits a problem,
+moves to chat, then phone — switching channels throughout.
 
-Smaller options if you want something lighter: fix `run-all-tests.js` (BACK-017, needs a decision on target version), or run Task 5 by publishing a mission artifact for real feedback.
+**Why this matters more than it sounds.** Measured across all four mission examples
+(68 channel entries, 73 nodes, 77 edges), the vocabulary needed for channel switching is
+exactly the vocabulary nothing exercises:
+
+| Vocabulary | Usage across all 4 examples |
+|---|---|
+| `interaction` (human / automated / ai_assisted) | **0 of 68** |
+| `ownership` (own / third_party / partner) | **0 of 68** |
+| `category: telecom` | **0** — only digital (55) and physical (13) |
+| nodeTypes `handoff`, `branch`, `loop_start`, `loop_end` | **unused** (4 of 10) |
+| edgeTypes `error`, `timeout`, `escalation` | **unused** (3 of 6) |
+
+So this is not "another example for variety" — it is the test case that shows whether half
+the Mission schema actually works. Expect it to surface what **BACK-020** (ambient
+always-available help channels) really needs, which is why 021 should come before 020
+rather than designing that schema change speculatively.
+
+**Sequence agreed with Will:** BACK-021 → BACK-020 → then Actor/Experience renderers. The
+renderers come last deliberately: if BACK-020 changes the schema, anything already rendering
+channels has to be rebuilt.
+
+**Note there is no create/edit tooling** — authoring this Mission by hand *is* the honest
+test of that gap. Read §5 of `2026-05-04-v2.0-handoff.md` for enum gotchas before writing
+the JSON, and validate with `--check-refs` as you go.
+
+Smaller options if something lighter is wanted: **BACK-022** (healthcare `phone-call` is
+categorised `physical` but should be `telecom` — a two-minute fix that would make the
+telecom glyph appear in real data for the first time), or BACK-017 (`run-all-tests.js`,
+needs a decision on target version).
 
 ---
 
 ## In flight / uncommitted
 
-None. Working tree clean.
+None. Working tree clean. Two commits sit unpushed on `main` — see Branch above.
 
 ---
 
@@ -49,9 +79,10 @@ None. Single working tree on `main`.
 
 ## Active plans
 
-- `docs/superpowers/plans/2026-07-23-mission-visualiser.md` — **complete and merged.** 24 of 29 steps ticked; the 5 remaining are Task 5 (awaits Will's artifact feedback) and Task 6 Step 4 (impossible — gitignored). Checkbox state now matches the commit log.
+- `docs/superpowers/plans/2026-07-23-mission-visualiser.md` — **complete and merged.** 28 of 29 steps ticked. Task 5 was completed 2026-08-06 (against the retail mission rather than the energy one the plan named — annotated in place). The single remaining step is Task 6 Step 4, which is impossible: `.claude/` is gitignored.
   Spec: `docs/superpowers/specs/2026-07-23-mission-visualiser-design.md`
-- `docs/superpowers/plans/2026-05-04-v2.0-implementation.md` — the v2.0 build. WS1–WS7, WS9, WS10 done. **WS8 remains** — the only substantial v2.0 work left.
+- `docs/superpowers/specs/2026-08-06-figma-pptx-export-design.md` — **deferred design, no plan yet.** Figma + PowerPoint export for Actor/Experience. Sections 1–2 approved, 3–4 drafted only, six open questions. Read before resuming BACK-018.
+- `docs/superpowers/plans/2026-05-04-v2.0-implementation.md` — the v2.0 build. WS1–WS7, WS9, WS10 done. **WS8 (Figma Plugin) remains, now deliberately deferred** — see the spec above.
 - `docs/superpowers/plans/2026-05-04-v2.0-handoff.md` — a prior session handoff, superseded by this file for *state*. Still the reference for **schema enum gotchas (§5)** and known issues — read §5 before authoring example JSON.
 
 ---
@@ -69,16 +100,21 @@ None. Single working tree on `main`.
 
 ## Verification baseline
 
-The `/end-session` gate, as measured 2026-08-06:
+The `/end-session` gate, re-measured 2026-08-06 (second session):
 
 ```bash
 node tools/validators/test-v2.0-validator.js          # exit 0 — 94 passed, 0 failed
 node tools/renderers/test-mission-layout.js           # exit 0 — 16 passed, 0 failed
-node tools/renderers/test-render-mission.js           # exit 0 — 45 passed, 0 failed
+node tools/renderers/test-render-mission.js           # exit 0 — 83 passed, 0 failed
 node tools/validators/validate-v2.0.js v2.0/examples/ --check-refs
                                                       # exit 0 — 12/12, 85-100 quality
 node tools/validators/run-all-tests.js                # exit 1 — KNOWN FAILURE, see below
 ```
+
+`test-render-mission.js` rose 45 → 83 with the channel glyph work: 34 new tests covering
+category dedup, serviceModel merge, glyph placement and clearance, legend, and the
+accessible name. **Check exit codes directly** (`out=$(node <test> 2>&1); code=$?`) — piping
+to `tail`/`grep` reports the pipe's exit status, not `node`'s.
 
 ### ⚠️ Known failure: `run-all-tests.js` exits 1 (pre-existing, v1.x only)
 

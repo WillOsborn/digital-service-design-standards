@@ -1194,7 +1194,13 @@ git commit -m "fix(v2.0): mission renderer visual fixes from Playwright verifica
 - Consumes: the CLI (fragment mode) from Task 3.
 - Produces: a published artifact URL for the energy mission; user feedback that may loop back into Task 4-style fixes.
 
-- [ ] **Step 1: Generate the fragment**
+> **Completed 2026-08-06, with one deviation.** The task ran against the **retail**
+> mission (`mission-online-clothes-shopping.json`, 25 nodes) rather than the energy one
+> named below, because Will asked to review the renderer's current state and retail is the
+> largest and most varied example. Published in `--mode explore` rather than the default
+> Overview, to show the full capability in one pass.
+
+- [x] **Step 1: Generate the fragment**
 
 ```bash
 node tools/renderers/render-mission.js \
@@ -1202,13 +1208,17 @@ node tools/renderers/render-mission.js \
   -o "$SCRATCH/mission-energy-artifact.html"
 ```
 
-- [ ] **Step 2: Load the artifact-design skill** (required before publishing any artifact), then publish with the Artifact tool: `file_path` = the fragment, `favicon` = "🗺️", `description` = "Interactive service map of the Energy Supplier Switch mission (v2.0 schema) — Overview for stakeholders, Explore for designers."
+- [x] **Step 2: Load the artifact-design skill** (required before publishing any artifact), then publish with the Artifact tool: `file_path` = the fragment, `favicon` = "🗺️", `description` = "Interactive service map of the Energy Supplier Switch mission (v2.0 schema) — Overview for stakeholders, Explore for designers."
 
-- [ ] **Step 3: Present to the user**
+- [x] **Step 3: Present to the user**
 
 Give the user the artifact URL and a short orientation: Overview is the stakeholder view; Explore adds click-to-inspect, lane filters, and barrier heat. Ask specifically: (a) does Overview read at a glance for a stakeholder? (b) in Explore, is the panel content the right depth? (c) any layout defects on their screen? **STOP and wait for feedback.**
 
-- [ ] **Step 4: Iterate**
+> Feedback received: channels were not visible without clicking a node; ambient
+> "ask for help" is not expressible in the schema (BACK-020); the examples are too
+> digital to test channel switching (BACK-021).
+
+- [x] **Step 4: Iterate**
 
 Apply requested changes to the renderer source (tests stay green), regenerate the fragment, republish with the SAME `file_path` (same artifact URL). Repeat until the user is satisfied. Commit each accepted change:
 
@@ -1216,6 +1226,12 @@ Apply requested changes to the renderer source (tests stay green), regenerate th
 git add tools/renderers/
 git commit -m "feat(v2.0): mission renderer refinements from user review"
 ```
+
+> One round of iteration landed as `f90edaa` — channel glyphs on every node that has
+> channels (shape = category, fill = serviceModel), built test-first, renderer tests
+> 45 → 83. Republished to the same artifact URL. The other two pieces of feedback were
+> logged as BACK-020 and BACK-021 rather than built, being schema work rather than
+> renderer work.
 
 ---
 

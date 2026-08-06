@@ -90,6 +90,17 @@ These have schema-validated structure:
 | `barriers` | barrier | Structural barriers inherent to this touchpoint (not persona-specific) |
 | `accessibility` | accessibility | Touchpoint accessibility profile across visual/auditory/motor/cognitive/emotional |
 
+Each channel entry is `{ channel, category?, serviceModel, interaction?, name?, usageContext?, ownership? }`.
+**`channel` takes a channel *type*** in lower `snake_case` — `website`, `app`, `email`, `chat`,
+`social_media`, `messaging_app`, `push_notification`, `phone`, `sms`, `video_call`, `in_person`,
+`post`, `print`. It is a free string, so a product or meeting name will validate and then quietly
+fragment every channel-mix and cost-to-serve analysis. Put the specific instance in `name`:
+`{ "channel": "in_person", "name": "Board or Executive Committee meeting" }`, not
+`{ "channel": "board-meeting" }`. Two entries on one node may share a type and differ only by
+`name` — that is correct, not a duplicate.
+See [CHANNEL_TAXONOMY.md](../../documentation/CHANNEL_TAXONOMY.md) for the full taxonomy,
+including how `category` follows cost to serve rather than which team owns the technology.
+
 ### Extended lanes
 
 These use simple types and are declared explicitly. Common patterns:
@@ -423,7 +434,7 @@ To create a new Mission:
       "laneContent": {
         "description": "Citizen navigates to the council benefit portal",
         "channels": [
-          { "channel": "web portal", "category": "digital", "serviceModel": "self_service" }
+          { "channel": "website", "category": "digital", "serviceModel": "self_service", "name": "Council benefit portal" }
         ],
         "frontstage": "Council benefits homepage with 'Start a new application' button",
         "backstage": "Portal authentication service, eligibility pre-check"

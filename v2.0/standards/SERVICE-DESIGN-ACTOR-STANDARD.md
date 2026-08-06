@@ -165,6 +165,13 @@ All other fields are optional but contribute to quality scoring.
 **Channel `serviceModel`:** `self_service` \| `managed` \| `both`
 **Channel `preference`:** `preferred` \| `acceptable` \| `avoided`
 
+**Channel `channel`:** a channel *type* in lower `snake_case` — `website`, `app`, `email`, `chat`,
+`social_media`, `messaging_app`, `push_notification`, `phone`, `sms`, `video_call`, `in_person`,
+`post`, `print`. The field is a free string, so a product name will validate and then quietly
+fragment any channel analysis: put the specific instance in `name` instead —
+`{ "channel": "app", "name": "Salesforce CRM" }`, never `{ "channel": "salesforce" }`.
+See [CHANNEL_TAXONOMY.md](../../documentation/CHANNEL_TAXONOMY.md).
+
 ### emergence[n]
 
 | Field | Type | Description |

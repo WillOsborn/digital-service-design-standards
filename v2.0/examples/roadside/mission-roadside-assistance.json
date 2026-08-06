@@ -186,7 +186,7 @@
         "track-case-online",
         "partner-confirms-by-phone",
         "engineer-arrives",
-        "dropoff-location-disputed",
+        "dropoff-location-decided",
         "transport-to-partner-garage",
         "complete-garage-paperwork",
         "arrange-onward-travel"
@@ -1900,8 +1900,8 @@
       }
     },
     {
-      "nodeId": "dropoff-location-disputed",
-      "name": "Drop-off location disputed",
+      "nodeId": "dropoff-location-decided",
+      "name": "Drop-off destination decided",
       "nodeType": "decision",
       "laneContent": {
         "description": "The cover entitles the customer to be taken, with the vehicle, wherever they need to go. The engineer states they must return to the recovery firm's own garage. The customer complies. The entitlement was real; the person delivering the service did not know it.",
@@ -2769,11 +2769,11 @@
     },
     {
       "from": "engineer-arrives",
-      "to": "dropoff-location-disputed",
+      "to": "dropoff-location-decided",
       "edgeType": "default"
     },
     {
-      "from": "dropoff-location-disputed",
+      "from": "dropoff-location-decided",
       "to": "transport-to-partner-garage",
       "edgeType": "conditional",
       "condition": {
@@ -2830,9 +2830,203 @@
       "from": "handoff-to-messaging-channel",
       "to": "receive-updates-via-messaging",
       "edgeType": "default"
+    },
+    {
+      "from": "install-provider-app",
+      "to": "case-created",
+      "edgeType": "conditional",
+      "condition": {
+        "description": "App captures the location successfully — the designed self-service route"
+      },
+      "label": "Location captured in app"
+    },
+    {
+      "from": "call-overseas-number",
+      "to": "safety-check",
+      "edgeType": "conditional",
+      "condition": {
+        "description": "Agent handles the case on the call without deflecting to a digital channel"
+      },
+      "label": "Handled on the call"
+    },
+    {
+      "from": "identity-verification",
+      "to": "share-location-third-party",
+      "edgeType": "conditional",
+      "condition": {
+        "description": "Location captured at the first attempt, without the retry loop"
+      },
+      "label": "Location captured first time"
+    },
+    {
+      "from": "establish-safety",
+      "to": "recall-bundled-cover",
+      "edgeType": "conditional",
+      "condition": {
+        "description": "Customer goes straight to the bundled cover, without another provider refusing first"
+      },
+      "label": "Straight to the benefit"
+    },
+    {
+      "from": "hire-car-offered",
+      "to": "confirm-repairer-and-hire-car",
+      "edgeType": "conditional",
+      "condition": {
+        "description": "Service sources the repairing garage itself, as designed, without the customer finding one"
+      },
+      "label": "Service sources repairer"
+    },
+    {
+      "from": "await-recovery",
+      "to": "request-case-update",
+      "edgeType": "timeout",
+      "condition": {
+        "description": "Estimated arrival window is exceeded. The service undertook to make contact if the estimate changed; this is the only stated commitment and the sole basis for this path."
+      },
+      "label": "Estimate exceeded"
     }
   ],
-  "paths": [],
+  "paths": [
+    {
+      "pathId": "path-observed",
+      "name": "Observed run — two failed location methods and a deflected call",
+      "description": "The route actually taken. The customer chose the phone, was deflected to the app mid-call, and the app could not capture a location. Location was established at the third attempt, from a second person's device. No frequency given: this is one observed case, not a measured proportion.",
+      "pathType": "observed",
+      "nodeSequence": [
+        "hold-premium-account",
+        "benefits-surface-visible",
+        "discover-cover-incidentally",
+        "vehicle-breaks-down",
+        "establish-safety",
+        "owner-insurer-refuses",
+        "recall-bundled-cover",
+        "open-benefits-app",
+        "view-cover-summary",
+        "choose-contact-route",
+        "call-overseas-number",
+        "agent-deflects-to-app",
+        "install-provider-app",
+        "app-location-entry-fails",
+        "call-back-reenter-ivr",
+        "safety-check",
+        "identity-verification",
+        "sms-location-link-fails",
+        "research-supported-location-formats",
+        "share-location-third-party",
+        "case-created",
+        "await-recovery",
+        "handoff-to-recovery-partner",
+        "partner-sms-tracking-link",
+        "track-case-online",
+        "partner-confirms-by-phone",
+        "engineer-arrives",
+        "dropoff-location-decided",
+        "transport-to-partner-garage",
+        "complete-garage-paperwork",
+        "arrange-onward-travel",
+        "request-case-update",
+        "hire-car-offered",
+        "family-finds-repairer",
+        "confirm-repairer-and-hire-car",
+        "handoff-to-hire-supplier",
+        "handoff-to-messaging-channel",
+        "receive-updates-via-messaging"
+      ],
+      "averageDuration": "~30 hours to repairing garage"
+    },
+    {
+      "pathId": "path-designed-selfservice",
+      "name": "Designed self-service — app route succeeds",
+      "description": "The route the service is built for. The customer takes the app option, it captures a location first time, and the case is raised without speaking to anyone. Eleven nodes shorter than the observed run: no deflection, no location loop, no repeated identity check.",
+      "pathType": "designed",
+      "nodeSequence": [
+        "hold-premium-account",
+        "benefits-surface-visible",
+        "discover-cover-incidentally",
+        "vehicle-breaks-down",
+        "establish-safety",
+        "recall-bundled-cover",
+        "open-benefits-app",
+        "view-cover-summary",
+        "choose-contact-route",
+        "install-provider-app",
+        "case-created",
+        "await-recovery",
+        "handoff-to-recovery-partner",
+        "partner-sms-tracking-link",
+        "track-case-online",
+        "partner-confirms-by-phone",
+        "engineer-arrives",
+        "dropoff-location-decided",
+        "transport-to-partner-garage",
+        "complete-garage-paperwork",
+        "arrange-onward-travel",
+        "request-case-update",
+        "hire-car-offered",
+        "confirm-repairer-and-hire-car",
+        "handoff-to-hire-supplier",
+        "handoff-to-messaging-channel",
+        "receive-updates-via-messaging"
+      ],
+      "averageDuration": "~26 hours to repairing garage"
+    },
+    {
+      "pathId": "path-designed-assisted",
+      "name": "Designed assisted — phone route without deflection",
+      "description": "The phone route as it should run. The agent handles the case on the call rather than deflecting, and location is captured first time. The direct control for the observed run: same channel choice at the branch, opposite outcome, because nobody was moved off a working call.",
+      "pathType": "designed",
+      "nodeSequence": [
+        "hold-premium-account",
+        "benefits-surface-visible",
+        "discover-cover-incidentally",
+        "vehicle-breaks-down",
+        "establish-safety",
+        "recall-bundled-cover",
+        "open-benefits-app",
+        "view-cover-summary",
+        "choose-contact-route",
+        "call-overseas-number",
+        "safety-check",
+        "identity-verification",
+        "share-location-third-party",
+        "case-created",
+        "await-recovery",
+        "handoff-to-recovery-partner",
+        "partner-sms-tracking-link",
+        "track-case-online",
+        "partner-confirms-by-phone",
+        "engineer-arrives",
+        "dropoff-location-decided",
+        "transport-to-partner-garage",
+        "complete-garage-paperwork",
+        "arrange-onward-travel",
+        "request-case-update",
+        "hire-car-offered",
+        "confirm-repairer-and-hire-car",
+        "handoff-to-hire-supplier",
+        "handoff-to-messaging-channel",
+        "receive-updates-via-messaging"
+      ],
+      "averageDuration": "~27 hours to repairing garage"
+    },
+    {
+      "pathId": "path-designed-timeout",
+      "name": "Designed escalation — arrival estimate is exceeded",
+      "description": "What the service says happens if the quoted window is missed: it makes contact. NEVER OBSERVED - the estimate held and nobody chased. Its only evidence is the agent's undertaking to be in touch if anything changed, hence exactly one timeout edge and no further invention.",
+      "pathType": "designed",
+      "nodeSequence": [
+        "case-created",
+        "await-recovery",
+        "request-case-update",
+        "hire-car-offered",
+        "confirm-repairer-and-hire-car",
+        "handoff-to-hire-supplier",
+        "handoff-to-messaging-channel",
+        "receive-updates-via-messaging"
+      ],
+      "averageDuration": "Unknown - never observed"
+    }
+  ],
   "provenance": {
     "source": "user_research",
     "confidence": 0.9,

@@ -135,6 +135,16 @@ Filed properly in Task 10; parked here so none is lost.
    anyone acting on another's behalf cannot be modelled. Unpredicted; likely a v2.1 item.
 8. **`branch` and `decision` are structurally identical** — §3.2. Only the type string differs;
    nothing marks a branch's options as concurrently offered or service-initiated. Low priority.
+10. **⚠️ Validator checks no graph references at all** — §7.4. Edge endpoints, path
+    `nodeSequence`, path traversability and phase `nodeRefs` are all unchecked. Three broken
+    paths validated cleanly here. Same class as BACK-030 and far more likely to bite.
+11. **⚠️ Paths cannot express channel-only variation** — §7.2. A route differing only by
+    channel is unrepresentable, in the schema built to map channel switching. Cost us a
+    planned path.
+12. **Quality scorer penalises honesty** — §7.1. Full marks require a `frequency` on every
+    path; on a single observed case that means inventing a statistic. Allow "unknown", or
+    exempt `observed` paths.
+13. **Node names must be outcome-neutral** — §7.3. Standards guidance, not a code change.
 9. **⚠️ `handoff` nodes have no payload field** — §5.4. No way to declare what transfers and
    what does not. This service's central failure is an entitlement that did not travel with a
    job, and it is expressible only as prose. Would make "find every handoff where entitlements
@@ -584,6 +594,110 @@ guesses about a service already understood in depth, not blind ones.
 
 ---
 
-## Task 7 — Paths
+## Task 7 — Paths (complete)
 
-*(pending — checkpoint with Will first)*
+**4 paths, not the 5 the plan specified** — see §7.2. 38 nodes / 45 edges / 4 paths.
+**All six `edgeType` values now used.** Quality **90 → 95**, deliberately short of 100 — see §7.1.
+
+### 7.1 The quality scorer rewards inventing a statistic
+
+Scoring for paths is: 5 points for having any, **plus 5 more only if every path carries a
+numeric `frequency`** — defined in the schema as *"what proportion of actors take this path"*.
+
+This mission is drawn from **one observed case**. There is no proportion. Putting a number on
+`path-observed` would be fabricating a statistic, and it would directly contradict the
+artifact's own `provenance.confidence: 0.9` and its `researchSources` entry describing a single
+interview.
+
+**Chose 95 over a fabricated 100.** Recorded here so the missing 5 points are not later read as
+an oversight and "fixed" by someone adding invented numbers.
+
+The general problem: a completeness score cannot distinguish *"this field is missing because
+the work is incomplete"* from *"this field is absent because the honest value is unknown"*. It
+rewards the first kind of fill-in and penalises intellectual honesty. Any artifact drawn from
+real research rather than invention will hit this.
+
+**Candidate backlog item:** let the scorer accept an explicit "not applicable / unknown"
+marker, or exclude `observed` paths from the frequency requirement.
+
+### 7.2 ⚠️ Paths cannot express channel-only variation
+
+**The planned fifth path was dropped because it is inexpressible.**
+
+`path-concierge` was to model entry via the concierge number printed on the bank card, instead
+of via the benefits app. But `paths` are **node sequences**, and that route traverses exactly
+the same nodes — it differs only in *which channel is used* at `benefits-surface-visible`.
+
+So in a mission built specifically to test channel switching, the path construct **cannot
+express an alternative that differs only by channel.** Paths capture structural variation
+(which steps) and are blind to channel variation (how each step happens).
+
+This is arguably a bigger finding than several of the seven predictions. Every "could they have
+done this another way?" question about channels — the whole point of the second pass with Will
+— is unrepresentable unless the alternative also changes the sequence of steps.
+
+The workaround would be to invent a separate node per channel variant, which would bloat the
+graph and misrepresent the service: it is one step, reachable several ways.
+
+**Candidate backlog item — high value.** Either paths need per-node channel selection, or
+channel alternatives need their own construct.
+
+### 7.3 Naming a node after its observed outcome breaks designed paths
+
+`dropoff-location-disputed` had to be renamed to `dropoff-location-decided`.
+
+The original name encoded what happened in **this** case. It read as a contradiction on
+`path-designed-selfservice` and `path-designed-assisted`, where the same node represents the
+drop-off being agreed without dispute. Four references updated.
+
+**General lesson, worth putting in the Mission standard:** in a mission carrying both designed
+and observed paths, **node names must describe the decision, not its outcome.** The outcome
+belongs to the path and to the barriers, not to the node identity. Easy to get wrong, and it
+only becomes visible when the second path is written — by which point the ID is referenced from
+edges, phases and possibly an Experience.
+
+### 7.4 ⚠️ The validator checks neither edge endpoints nor path node references
+
+The mission validated cleanly while **three of four paths were not traversable** and would have
+shipped that way. My own integrity script caught it:
+
+```
+path-designed-selfservice   NOT TRAVERSABLE: establish-safety->recall-bundled-cover, ...
+path-designed-assisted      NOT TRAVERSABLE: establish-safety->recall-bundled-cover, ...
+path-designed-timeout       NOT TRAVERSABLE: hire-car-offered->confirm-repairer-and-hire-car, ...
+```
+
+Nothing in `validate-v2.0.js` verifies that:
+
+- an edge's `from`/`to` resolve to real nodes
+- a path's `nodeSequence` entries resolve to real nodes
+- a path's consecutive nodes are actually connected by an edge
+- a phase's `nodeRefs` resolve to real nodes
+
+A mission with a typo'd node ID in an edge passes validation silently. This is the **same class
+of gap as BACK-030** (`actors[].actorRef` unchecked) and considerably more likely to bite,
+because node IDs are typed dozens of times per mission.
+
+**Candidate backlog item — high value.** Fixed three real breaks here; without the ad-hoc
+script all three would have shipped.
+
+### 7.5 `timeout` used, bounded exactly as the spec required
+
+One `timeout` edge: `await-recovery` → `request-case-update`, on `path-designed-timeout` only.
+Its `condition.description` states the evidence in the data itself — the agent's undertaking to
+be in touch if the estimate changed — and the path description carries **NEVER OBSERVED** in
+capitals. No further behaviour was invented.
+
+All six `edgeType` values are now exercised.
+
+### 7.6 Small mechanical caps
+
+- `paths[].description`: 300 chars
+- `paths[].averageDuration`: **50 chars** — very tight; "~30 hours to repairing garage" is 29
+- All four path descriptions had to be cut, and the cuts cost real explanation
+
+---
+
+## Task 8 — Experience
+
+*(in progress)*

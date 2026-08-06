@@ -135,6 +135,10 @@ Filed properly in Task 10; parked here so none is lost.
    anyone acting on another's behalf cannot be modelled. Unpredicted; likely a v2.1 item.
 8. **`branch` and `decision` are structurally identical** — §3.2. Only the type string differs;
    nothing marks a branch's options as concurrently offered or service-initiated. Low priority.
+9. **⚠️ `handoff` nodes have no payload field** — §5.4. No way to declare what transfers and
+   what does not. This service's central failure is an entitlement that did not travel with a
+   job, and it is expressible only as prose. Would make "find every handoff where entitlements
+   stop travelling" a queryable question across a portfolio. **Best structural idea so far.**
 
 ---
 
@@ -386,6 +390,115 @@ channels is itself the finding.
 
 ---
 
-## Task 5 — Phase 5
+## Task 5 — Phase 5, dispatch and recovery (complete)
+
+11 nodes, 11 edges. **31 nodes / 32 edges / 5 phases.** First use of `wait` and `handoff`.
+Quality **80 → 90** — the two `sla` blocks are worth 10 points. Only `end` (Task 6) and
+`timeout` (Task 7) remain.
+
+### 5.1 Prediction 4 confirmed — a channel that expires
+
+The recovery partner's tracking site is genuinely useful between dispatch and collection, then
+**silently stops working**. The customer returning to it later finds nothing — not an
+explanation, just absence.
+
+A channel attaches to a node, which says "available here". There is no way to say "and dead
+afterwards", and no way to express that a channel covers **one leg of a multi-party case**.
+The same applies to the provider's own app tracking, which the source notes record as equally
+dead once the vehicle is collected.
+
+**Prediction 4: confirmed.**
+
+### 5.2 Prediction 2 — `third_party` is now doing four incompatible jobs
+
+Within one mission, `ownership: third_party` now covers:
+
+| Actual relationship | Example in this map |
+|---|---|
+| A competitor with no relationship at all | The vehicle owner's own motor insurer |
+| Public infrastructure nobody controls | Search engine; third-party location service |
+| **The partner's partner** — two steps out | Local recovery firm |
+| The partner's supplier, contracted for us | Hire supplier (Task 6) |
+
+From the bank's vantage point every one of these is `third_party`, and they could hardly be
+more different commercially, contractually or in terms of who is accountable when it goes
+wrong. The vocabulary has one value where the service has four relationships.
+
+Worth noting the vantage-point choice was deliberate — Will picked the bank specifically to
+stress this. It worked: **the field does not merely lose nuance, it actively conflates a
+competitor with a subcontractor.**
+
+**Prediction 2: confirmed.**
+
+### 5.3 Prediction 1 — a third ambient instance, of a different kind
+
+`await-recovery` carries the assistance line as a channel, because it is reachable at any
+moment during the wait. But it is not a *step* in the wait — it is a standing capability
+available throughout it.
+
+This is a different flavour from the first two instances. The benefits app home screen and the
+card concierge number are ambient **across the whole service**; this one is ambient **for the
+duration of a single node**. Both are unmodellable, but they are not the same shape, and
+BACK-020 will need to handle both.
+
+### 5.4 `handoff` has no payload — which is exactly this service's root cause
+
+`handoff-to-recovery-partner` uses the `handoff` nodeType, which works fine. But **the node
+type has no field for what is actually handed over.**
+
+That is not a cosmetic gap here. The entire divergence three nodes later — the engineer
+insisting on their own garage when the cover entitles the customer to be taken wherever they
+need — traces to the handoff passing **a job but not an entitlement**. The dispatch payload
+carries location, vehicle and contact details, and does not carry the cover terms.
+
+I could only record that in prose, split across a `barrier` and the `data-required` lane
+(where I listed the entitlements with a note that they are NOT passed). A `handoff` node
+that could declare *what transfers and what does not* would make this queryable, and would let
+an analyser find every handoff in a portfolio where entitlements stop travelling.
+
+**Candidate backlog item — high value.** This is the most useful structural idea the exercise
+has produced so far.
+
+### 5.5 The divergence is invisible to everyone but the customer
+
+Authored on `dropoff-location-disputed`, and worth stating plainly: the customer received less
+than they were entitled to, and **neither the provider nor the bank will ever know**. No system
+holds both the entitlement and the partner's instruction, so there is no route by which the
+divergence could travel back.
+
+The KPI authored there — *"divergences between cover terms and partner delivery that reach the
+provider: currently zero, because there is no route for them to travel"* — is the honest
+version. A metric reading zero because nothing can be reported is indistinguishable from a
+metric reading zero because nothing went wrong.
+
+### 5.6 Entitlements that go unused because nothing surfaces them
+
+Onward travel and emergency accommodation were both covered and both unused. The customer read
+a cover summary once, at the start, and no entitlement is ever surfaced again at the stage it
+becomes relevant.
+
+Not a schema gap — a service-design finding, and one a Mission is well suited to showing,
+because the entitlement and the moment it applies are visibly at different ends of the graph.
+
+### 5.7 Prediction scoreboard
+
+| # | Prediction | Status after Task 5 |
+|---|---|---|
+| 1 | Ambient / always-available channels | **evidence gathering** — 3 instances, 2 distinct shapes |
+| 2 | `ownership` degrees of remove | **CONFIRMED** — one value, four relationships |
+| 3 | Channel exists but is not signposted | **CONFIRMED** |
+| 4 | Channel expires mid-case | **CONFIRMED** |
+| 5 | Third-party channels outside the service | **CONFIRMED** |
+| 6 | Precondition from a different journey | **CONFIRMED** |
+| 7 | `interaction` fixed per channel | *pending — Task 6* |
+| — | Channel cannot be attributed to a person | **UNPREDICTED — CONFIRMED** |
+| — | `handoff` has no payload | **UNPREDICTED — CONFIRMED** |
+
+Five of seven already confirmed, so the falsification threshold is met with prediction 7 and
+prediction 1 still to land.
+
+---
+
+## Task 6 — Phase 6
 
 *(in progress)*

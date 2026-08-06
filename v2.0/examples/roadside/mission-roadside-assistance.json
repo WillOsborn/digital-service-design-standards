@@ -173,6 +173,24 @@
         "research-supported-location-formats",
         "share-location-third-party"
       ]
+    },
+    {
+      "phaseId": "phase-dispatch-recovery",
+      "name": "Dispatch & Recovery",
+      "goal": "Get recovery to the vehicle and everyone safely away from the roadside",
+      "nodeRefs": [
+        "case-created",
+        "await-recovery",
+        "handoff-to-recovery-partner",
+        "partner-sms-tracking-link",
+        "track-case-online",
+        "partner-confirms-by-phone",
+        "engineer-arrives",
+        "dropoff-location-disputed",
+        "transport-to-partner-garage",
+        "complete-garage-paperwork",
+        "arrange-onward-travel"
+      ]
     }
   ],
   "nodes": [
@@ -1436,6 +1454,701 @@
         "description": "Closes a loop of three attempts across three channels. The method that worked was proposed by the customer, ran on someone else's phone, and belonged to a company with no relationship to anyone in the delivery chain.",
         "importance": "critical"
       }
+    },
+    {
+      "nodeId": "case-created",
+      "name": "Case raised and recovery sourced",
+      "nodeType": "touchpoint",
+      "durationMs": 120000,
+      "laneContent": {
+        "description": "With a location established, the agent raises the case and begins finding a local recovery partner. The customer is told to expect recovery within 60 to 90 minutes, and that the service will make contact if anything changes.",
+        "channels": [
+          {
+            "channel": "phone",
+            "category": "telecom",
+            "serviceModel": "managed",
+            "interaction": "human",
+            "ownership": "partner",
+            "name": "Bank-specific overseas assistance line",
+            "usageContext": "Agent confirms the case is raised, gives a 60-90 minute estimate, and undertakes to make contact if it changes"
+          }
+        ],
+        "designOpportunities": [
+          "Send the case reference to the customer at this point, on a channel that survives a flat battery",
+          "Set the expectation for how updates will arrive, before the wait begins"
+        ],
+        "frontstage": "Verbal confirmation that help is coming, with a time window and a promise of contact if it slips.",
+        "backstage": "Case record created and dispatched to a partner-sourcing process that identifies a recovery firm covering that location. The bank has no visibility of any of this.",
+        "support-systems": [
+          "Provider case management system",
+          "Partner recovery network directory",
+          "Dispatch routing"
+        ],
+        "data-required": [
+          "Resolved location",
+          "Vehicle details and fault description",
+          "Customer contact number",
+          "Entitlement confirmation"
+        ],
+        "roles-involved": [
+          "Contact centre agent",
+          "Dispatch operations",
+          "Recovery network management"
+        ],
+        "kpis": [
+          {
+            "metric": "Time from location established to recovery assigned",
+            "target": "Under 15 minutes"
+          },
+          {
+            "metric": "Estimates given that are subsequently met",
+            "target": "Above 90%"
+          }
+        ]
+      },
+      "sla": {
+        "targetDuration": "Under 15 minutes to assign a recovery partner",
+        "targetDurationMs": 900000,
+        "escalation": "If no partner is sourced within 30 minutes, escalate to network management and notify the customer"
+      },
+      "significance": {
+        "description": "The first point at which the service holds everything it needs. Everything before this was the customer trying to be findable.",
+        "importance": "high"
+      }
+    },
+    {
+      "nodeId": "await-recovery",
+      "name": "Wait for recovery to arrive",
+      "nodeType": "wait",
+      "durationMs": 4500000,
+      "laneContent": {
+        "description": "The customer waits at the roadside. The service gave a 60-90 minute estimate and undertook to make contact if anything changed. In this case the estimate held and no chase was needed — the wait was the service working as designed.",
+        "channels": [
+          {
+            "channel": "phone",
+            "category": "telecom",
+            "serviceModel": "managed",
+            "interaction": "human",
+            "ownership": "partner",
+            "name": "Assistance line, available throughout",
+            "usageContext": "SCHEMA LIMITATION: reachable at any moment during the wait, not a step within it. A standing capability the graph must model as a point. See prediction 1."
+          }
+        ],
+        "barriers": [
+          {
+            "type": "communications",
+            "description": "No proactive contact during the wait. Silence is indistinguishable from a case that has stalled, and the customer has no reference to check against.",
+            "severity": 3
+          },
+          {
+            "type": "accessibility",
+            "description": "An hour or more outdoors at the roadside, on a depleting shared battery, with children in the group and no facilities.",
+            "severity": 4
+          }
+        ],
+        "accessibilityProfile": {
+          "visual": 3,
+          "auditory": 3,
+          "motor": 2,
+          "cognitive": {
+            "overallScore": 3,
+            "decisionComplexity": "none",
+            "informationDensity": "minimal",
+            "timePressure": "moderate",
+            "priorKnowledgeRequired": "None — but also no way to check progress, so the customer holds uncertainty rather than information",
+            "supportAvailable": "The assistance line remains reachable, though nothing prompts the customer that calling is an option"
+          },
+          "emotional": 2
+        },
+        "designOpportunities": [
+          "Send progress updates unprompted, so silence is never ambiguous",
+          "Give a case reference and a tracking route at the moment the case is raised",
+          "Tell the customer what to do if the window passes, before it passes"
+        ],
+        "frontstage": "Nothing. The customer waits with a verbal estimate and no reference.",
+        "backstage": "Recovery partner accepts the job and begins travelling. Progress is visible in the provider's systems and to the partner, but not to the customer.",
+        "support-systems": [
+          "Provider case management system",
+          "Partner dispatch systems"
+        ],
+        "data-required": [
+          "Recovery partner acceptance and estimated arrival"
+        ],
+        "roles-involved": [
+          "Dispatch operations",
+          "Recovery partner"
+        ],
+        "kpis": [
+          {
+            "metric": "Arrivals within the quoted window",
+            "target": "Above 90%"
+          },
+          {
+            "metric": "Customer-initiated chase calls during the wait",
+            "target": "Below 10% of cases"
+          }
+        ]
+      },
+      "sla": {
+        "targetDuration": "60-90 minutes",
+        "targetDurationMs": 5400000,
+        "escalation": "Service undertakes to contact the customer if the estimate changes. This is the only stated commitment, and the sole basis for the designed timeout path."
+      },
+      "significance": {
+        "description": "The estimate held and the promise was kept. Recorded as a success — and as the only evidence that a designed escalation exists at all.",
+        "importance": "high"
+      }
+    },
+    {
+      "nodeId": "handoff-to-recovery-partner",
+      "name": "Handoff to a local recovery partner",
+      "nodeType": "handoff",
+      "laneContent": {
+        "description": "The case passes to a local recovery firm in the country where the breakdown happened. Responsibility for contacting the customer, arriving, and moving the vehicle transfers with it — but the cover terms do not travel as reliably as the job does.",
+        "channels": [
+          {
+            "channel": "phone",
+            "category": "telecom",
+            "serviceModel": "managed",
+            "interaction": "human",
+            "ownership": "third_party",
+            "name": "Local recovery firm",
+            "usageContext": "SCHEMA LIMITATION: the provider's partner, two steps from the bank whose vantage point this is. Same value as an unrelated competitor. See prediction 2."
+          }
+        ],
+        "barriers": [
+          {
+            "type": "governance",
+            "description": "The job transfers but the entitlement does not. The recovery firm acts on a dispatch instruction, not on the cover terms, and later contradicts them without knowing it has.",
+            "severity": 5
+          },
+          {
+            "type": "communications",
+            "description": "The customer is not told a handoff has occurred, who now holds the case, or what that party is obliged to do. The next contact simply arrives from an unfamiliar organisation.",
+            "severity": 3
+          }
+        ],
+        "designOpportunities": [
+          "Pass the relevant cover terms with the job, not just the location and vehicle",
+          "Tell the customer a handoff has happened and what the receiving party will do",
+          "Make the entitlement checkable by the partner at the roadside"
+        ],
+        "frontstage": "None at the moment of handoff — the customer learns of it when the partner makes contact.",
+        "backstage": "Job dispatched to a contracted recovery firm with location, vehicle and contact details. Cover terms are held in the provider's policy systems and are not part of the dispatch payload.",
+        "support-systems": [
+          "Provider case management system",
+          "Partner recovery network directory",
+          "Partner dispatch integration"
+        ],
+        "data-required": [
+          "Location, vehicle and contact details",
+          "Cover entitlements and drop-off rights — which are NOT passed"
+        ],
+        "roles-involved": [
+          "Dispatch operations",
+          "Recovery network management",
+          "Local recovery firm"
+        ],
+        "kpis": [
+          {
+            "metric": "Handoffs where cover terms are transmitted with the job",
+            "target": "100% — currently not measured"
+          },
+          {
+            "metric": "Customer complaints about partner-delivered service",
+            "target": "Below 2% of partner-delivered cases"
+          }
+        ]
+      },
+      "significance": {
+        "description": "The root cause of the divergence three nodes later. What is handed over is a job, not an entitlement — so the partner delivers its standard process rather than the customer's cover.",
+        "importance": "critical"
+      }
+    },
+    {
+      "nodeId": "partner-sms-tracking-link",
+      "name": "Partner sends a tracking link by SMS",
+      "nodeType": "signal",
+      "laneContent": {
+        "description": "An SMS arrives from the local recovery firm containing a link to their own case tracking website. This is the customer's first contact from an organisation they have never heard of, and the first tracking of any kind offered in the case.",
+        "channels": [
+          {
+            "channel": "sms",
+            "category": "telecom",
+            "serviceModel": "self_service",
+            "interaction": "automated",
+            "ownership": "third_party",
+            "name": "Recovery partner SMS notification",
+            "usageContext": "Unprompted message from the local recovery firm carrying a link to their tracking site"
+          }
+        ],
+        "barriers": [
+          {
+            "type": "communications",
+            "description": "An unexpected message from an unfamiliar company, in another country, containing a link. Legitimate, but with every characteristic customers are trained to distrust.",
+            "severity": 3
+          }
+        ],
+        "designOpportunities": [
+          "Warn the customer at handoff that a partner will make contact, and name them",
+          "Route partner notifications through the provider's own identity, so they are recognisable"
+        ],
+        "frontstage": "An SMS from an unknown sender with a tracking link.",
+        "backstage": "Partner's own dispatch system generates the notification. Independent of the provider's case management, with no shared identity or branding.",
+        "support-systems": [
+          "Partner dispatch and notification systems",
+          "SMS gateway"
+        ],
+        "data-required": [
+          "Customer mobile number, passed at handoff"
+        ],
+        "roles-involved": [
+          "Local recovery firm",
+          "Recovery network management"
+        ],
+        "kpis": [
+          {
+            "metric": "Customers who recognise partner contact as legitimate",
+            "target": "Above 90%"
+          }
+        ]
+      },
+      "significance": {
+        "description": "The tracking the service never offered arrives from a subcontractor instead — unbranded, unannounced, and about to expire.",
+        "importance": "medium"
+      }
+    },
+    {
+      "nodeId": "track-case-online",
+      "name": "Track recovery on the partner's website",
+      "nodeType": "touchpoint",
+      "durationMs": 300000,
+      "laneContent": {
+        "description": "The tracking site shows the case has been accepted, then that a vehicle is en route with an expected arrival time. It is genuinely useful for the length of the wait — and stops working the moment the vehicle is collected, with nothing to say so.",
+        "channels": [
+          {
+            "channel": "website",
+            "category": "digital",
+            "serviceModel": "self_service",
+            "interaction": "automated",
+            "ownership": "third_party",
+            "name": "Recovery partner case tracking site",
+            "usageContext": "SCHEMA LIMITATION: useful only between dispatch and collection, then silently dead. A channel attaches to a node; nothing expresses that it expires. See prediction 4."
+          }
+        ],
+        "barriers": [
+          {
+            "type": "technology",
+            "description": "The tracking covers one leg of a multi-leg case. Once the vehicle is collected the site has nothing to show, and the customer returning to it later finds no explanation — only absence.",
+            "severity": 3
+          },
+          {
+            "type": "governance",
+            "description": "Case visibility is fragmented across organisations. The partner tracks its own leg, the provider holds the case, and no single view exists for the person the case is about.",
+            "severity": 4
+          }
+        ],
+        "designOpportunities": [
+          "Provide one tracking view spanning every leg and every party",
+          "State a channel's validity window, so its silence is never ambiguous",
+          "Hand the customer forward to the next tracking route as each leg completes"
+        ],
+        "frontstage": "A tracking page showing case accepted, then en route with an ETA.",
+        "backstage": "Partner's dispatch system publishes status for its own leg only. No integration back to the provider's case, and no concept of the case continuing after collection.",
+        "support-systems": [
+          "Partner tracking platform",
+          "Partner dispatch systems"
+        ],
+        "data-required": [
+          "Job status and vehicle position from the partner's own systems"
+        ],
+        "roles-involved": [
+          "Local recovery firm"
+        ],
+        "kpis": [
+          {
+            "metric": "Customers who use tracking rather than calling during the wait",
+            "target": "Above 70%"
+          },
+          {
+            "metric": "Case duration covered by any tracking route",
+            "target": "100% — currently roughly the first quarter"
+          }
+        ]
+      },
+      "significance": {
+        "description": "The clearest instance of a channel with a lifespan. It works, then it does not, and nothing in the service or the schema marks the transition.",
+        "importance": "high"
+      }
+    },
+    {
+      "nodeId": "partner-confirms-by-phone",
+      "name": "Recovery partner calls to confirm",
+      "nodeType": "touchpoint",
+      "durationMs": 120000,
+      "laneContent": {
+        "description": "The recovery firm telephones directly to confirm they are on their way. Coming after the SMS and the tracking page, this is the third channel the partner has used, and the first human contact from them.",
+        "channels": [
+          {
+            "channel": "phone",
+            "category": "telecom",
+            "serviceModel": "managed",
+            "interaction": "human",
+            "ownership": "third_party",
+            "name": "Local recovery firm, inbound call",
+            "usageContext": "Partner-initiated call confirming they are en route, possibly in a different language from the customer's"
+          }
+        ],
+        "barriers": [
+          {
+            "type": "cultural",
+            "description": "A call from a local firm in the country of breakdown, where language may not be shared. No interpretation is offered and the provider is not on the line.",
+            "severity": 3
+          }
+        ],
+        "designOpportunities": [
+          "Offer interpretation on partner-to-customer contact in cross-border cases",
+          "Consolidate partner contact rather than using three channels for one message"
+        ],
+        "frontstage": "A phone call confirming arrival.",
+        "backstage": "Partner operates its own contact process independently of the provider's. No record of this call reaches the provider's case.",
+        "support-systems": [
+          "Partner telephony"
+        ],
+        "data-required": [
+          "Customer contact number"
+        ],
+        "roles-involved": [
+          "Local recovery firm"
+        ],
+        "kpis": [
+          {
+            "metric": "Cross-border cases where language is a barrier to partner contact",
+            "target": "Tracked, not targeted — currently unmeasured"
+          }
+        ]
+      },
+      "significance": {
+        "description": "Reassuring, and redundant. Three partner channels deliver one message, while the provider itself has gone quiet.",
+        "importance": "medium"
+      }
+    },
+    {
+      "nodeId": "engineer-arrives",
+      "name": "Recovery engineer arrives",
+      "nodeType": "touchpoint",
+      "durationMs": 600000,
+      "laneContent": {
+        "description": "The engineer arrives within the quoted window, assesses the vehicle, and loads it. No roadside repair is attempted. The service's core promise — someone comes, on time — is met.",
+        "channels": [
+          {
+            "channel": "in_person",
+            "category": "physical",
+            "serviceModel": "managed",
+            "interaction": "human",
+            "ownership": "third_party",
+            "name": "Recovery engineer at the roadside",
+            "usageContext": "Assesses the vehicle and loads it for transport. The only face-to-face contact in the whole case."
+          }
+        ],
+        "designOpportunities": [
+          "Give the engineer the customer's entitlements, so the conversation at the roadside is accurate",
+          "Confirm the case is progressing through the provider's own channel once recovery is on scene"
+        ],
+        "frontstage": "Recovery vehicle, engineer, assessment and loading.",
+        "backstage": "Partner's own job completion process. The provider learns the vehicle has been collected only through partner status updates.",
+        "support-systems": [
+          "Recovery vehicle and equipment",
+          "Partner job management"
+        ],
+        "data-required": [
+          "Vehicle details and condition",
+          "Destination — which is where the disagreement begins"
+        ],
+        "roles-involved": [
+          "Recovery engineer",
+          "Local recovery firm"
+        ],
+        "kpis": [
+          {
+            "metric": "Arrival within the quoted window",
+            "target": "Above 90%"
+          },
+          {
+            "metric": "Roadside fix rate where a fix is feasible",
+            "target": "Above 30%"
+          }
+        ]
+      },
+      "significance": {
+        "description": "The promise kept. Everything that follows is about what happens next, and that is where the cover and the delivery part company.",
+        "importance": "high"
+      }
+    },
+    {
+      "nodeId": "dropoff-location-disputed",
+      "name": "Drop-off location disputed",
+      "nodeType": "decision",
+      "laneContent": {
+        "description": "The cover entitles the customer to be taken, with the vehicle, wherever they need to go. The engineer states they must return to the recovery firm's own garage. The customer complies. The entitlement was real; the person delivering the service did not know it.",
+        "channels": [
+          {
+            "channel": "in_person",
+            "category": "physical",
+            "serviceModel": "managed",
+            "interaction": "human",
+            "ownership": "third_party",
+            "name": "Roadside conversation with the engineer",
+            "usageContext": "Destination decided verbally at the roadside, with no access to the cover terms by either party"
+          }
+        ],
+        "barriers": [
+          {
+            "type": "knowledge",
+            "description": "ROOT CAUSE: the recovery crew does not know the cover terms, because the handoff passed a job and not an entitlement. This is a knowledge failure at the partner, not a policy gap — the cover genuinely allows what was refused.",
+            "severity": 5
+          },
+          {
+            "type": "governance",
+            "description": "No mechanism lets either party check the entitlement at the roadside. The customer cannot prove it and the engineer cannot verify it, so the partner's default process wins by default.",
+            "severity": 5
+          },
+          {
+            "type": "policy",
+            "description": "The customer has no practical route to challenge. Disputing means delaying recovery while standing at the roadside with family, so compliance is the only reasonable choice.",
+            "severity": 4
+          }
+        ],
+        "designOpportunities": [
+          "Pass entitlements with the dispatch so the engineer arrives knowing what is covered",
+          "Give the customer their entitlements in writing at the point the case is raised",
+          "Let the engineer verify drop-off rights from the vehicle, in seconds",
+          "Track partner-delivered outcomes against cover terms, so divergences surface at all"
+        ],
+        "frontstage": "A verbal exchange at the roadside about where the vehicle will go.",
+        "backstage": "Nothing. No system holds both the entitlement and the partner instruction, so the divergence is invisible to the provider and to the bank whose benefit this is.",
+        "support-systems": [
+          "None — this decision happens outside every system involved"
+        ],
+        "data-required": [
+          "Cover drop-off entitlement — held by the provider, unavailable to the engineer",
+          "Customer's required destination"
+        ],
+        "roles-involved": [
+          "Recovery engineer",
+          "Local recovery firm"
+        ],
+        "kpis": [
+          {
+            "metric": "Cases where delivered drop-off matches cover entitlement",
+            "target": "100% — currently unmeasured"
+          },
+          {
+            "metric": "Divergences between cover terms and partner delivery that reach the provider",
+            "target": "Currently zero, because there is no route for them to travel"
+          }
+        ]
+      },
+      "significance": {
+        "description": "The designed service and the delivered service part company here, and neither the provider nor the bank ever finds out. The customer received less than they were entitled to and had no way to know or contest it in the moment.",
+        "importance": "critical"
+      }
+    },
+    {
+      "nodeId": "transport-to-partner-garage",
+      "name": "Vehicle transported to the partner's garage",
+      "nodeType": "touchpoint",
+      "durationMs": 1800000,
+      "laneContent": {
+        "description": "The vehicle and occupants are taken to the recovery firm's own garage, roughly thirty minutes away — a destination chosen by the partner rather than the customer.",
+        "channels": [
+          {
+            "channel": "in_person",
+            "category": "physical",
+            "serviceModel": "managed",
+            "interaction": "human",
+            "ownership": "third_party",
+            "name": "Recovery vehicle transport",
+            "usageContext": "Roughly 30 minutes to the recovery firm's own garage, which is operated by the same company"
+          }
+        ],
+        "barriers": [
+          {
+            "type": "process",
+            "description": "The destination serves the partner's operating model — recovery and garage are the same company — rather than the customer's onward plans, and the customer is moved further from where they were going.",
+            "severity": 3
+          }
+        ],
+        "frontstage": "A journey in the recovery vehicle to the partner's premises.",
+        "backstage": "Partner completes its recovery job at its own site, where storage and any assessment happen under the same ownership.",
+        "support-systems": [
+          "Recovery vehicle",
+          "Partner garage and storage"
+        ],
+        "data-required": [
+          "Destination address",
+          "Vehicle handover record"
+        ],
+        "roles-involved": [
+          "Recovery engineer",
+          "Partner garage staff"
+        ],
+        "kpis": [
+          {
+            "metric": "Additional distance from the customer's intended destination",
+            "target": "Minimised — currently not considered"
+          }
+        ]
+      },
+      "significance": {
+        "description": "The consequence of the disputed decision. Recovery firm and destination garage are the same business, which is efficient for the partner and further from where the customer was going.",
+        "importance": "medium"
+      }
+    },
+    {
+      "nodeId": "complete-garage-paperwork",
+      "name": "Complete garage paperwork",
+      "nodeType": "touchpoint",
+      "durationMs": 1200000,
+      "laneContent": {
+        "description": "At the garage the customer retrieves belongings from the vehicle and completes paperwork about the car, including having driving licences copied. Paper forms, in another country, after several hours at the roadside.",
+        "channels": [
+          {
+            "channel": "print",
+            "category": "physical",
+            "serviceModel": "managed",
+            "interaction": "human",
+            "ownership": "third_party",
+            "name": "Garage intake paperwork",
+            "usageContext": "Paper forms about the vehicle plus licence copies, completed at the partner's premises"
+          },
+          {
+            "channel": "in_person",
+            "category": "physical",
+            "serviceModel": "managed",
+            "interaction": "human",
+            "ownership": "third_party",
+            "name": "Garage staff",
+            "usageContext": "Handling vehicle intake and explaining the forms, potentially across a language barrier"
+          }
+        ],
+        "barriers": [
+          {
+            "type": "process",
+            "description": "Details already given to the provider twice by phone are collected a third time, on paper, by a third party. Nothing collected earlier reaches this point.",
+            "severity": 4
+          },
+          {
+            "type": "cultural",
+            "description": "Forms and identity documents handled in another language, at the end of a long day, with no interpretation and no provider representative present.",
+            "severity": 4
+          },
+          {
+            "type": "governance",
+            "description": "Identity documents are copied by a subcontractor two steps removed from the bank whose benefit this is, under data handling arrangements the customer has no visibility of.",
+            "severity": 4
+          }
+        ],
+        "designOpportunities": [
+          "Pass known customer and vehicle details to the partner so nothing is collected a third time",
+          "Make the intake digital and pre-populated from the case",
+          "Tell the customer who holds their identity documents and under what terms"
+        ],
+        "frontstage": "Paper forms, licence copying, belongings retrieved from the vehicle.",
+        "backstage": "Partner garage intake process, entirely separate from the provider's case. Data collected here does not flow back.",
+        "support-systems": [
+          "Partner garage intake process",
+          "Physical document handling"
+        ],
+        "data-required": [
+          "Vehicle details, again",
+          "Driver identity documents",
+          "Customer contact details, again"
+        ],
+        "roles-involved": [
+          "Partner garage staff"
+        ],
+        "kpis": [
+          {
+            "metric": "Data items collected that the provider already holds",
+            "target": "0"
+          },
+          {
+            "metric": "Time spent on intake at the garage",
+            "target": "Under 10 minutes"
+          }
+        ]
+      },
+      "significance": {
+        "description": "The third collection of the same information, by the third organisation, on paper. A clear view of what a handoff costs when only the job is passed on.",
+        "importance": "medium"
+      }
+    },
+    {
+      "nodeId": "arrange-onward-travel",
+      "name": "Get onward from the garage",
+      "nodeType": "touchpoint",
+      "durationMs": 2700000,
+      "laneContent": {
+        "description": "The group needs to get from the partner's garage to where they are staying. The cover includes onward travel and emergency accommodation, and a taxi was available immediately — but a family member collects them instead, and none of the entitlements is used.",
+        "channels": [
+          {
+            "channel": "phone",
+            "category": "telecom",
+            "serviceModel": "managed",
+            "interaction": "human",
+            "ownership": "partner",
+            "name": "Assistance line for onward travel and accommodation",
+            "usageContext": "Cover includes onward travel and emergency accommodation, either arranged or reimbursed. Not used — the customer did not know to ask."
+          }
+        ],
+        "barriers": [
+          {
+            "type": "communications",
+            "description": "Entitlements that would have helped go unused because nobody mentions them at the point they apply. The customer learns onward travel and accommodation are covered only later, in conversation.",
+            "severity": 4
+          },
+          {
+            "type": "knowledge",
+            "description": "The cover summary read at the start lists inclusions, but nothing surfaces the right entitlement at the moment it becomes relevant.",
+            "severity": 3
+          }
+        ],
+        "designOpportunities": [
+          "Offer onward travel proactively when recovery drops a customer somewhere they did not choose",
+          "Surface entitlements by case stage rather than as a list read once at the beginning",
+          "Prompt the engineer to raise onward travel at drop-off"
+        ],
+        "frontstage": "Nothing offered. The customer arranges their own lift.",
+        "backstage": "Onward travel and accommodation entitlements sit in the provider's policy systems, with no trigger tied to case progress.",
+        "support-systems": [
+          "Provider case management system",
+          "Onward travel and accommodation suppliers"
+        ],
+        "data-required": [
+          "Number of occupants",
+          "Destination",
+          "Entitlement to onward travel and accommodation"
+        ],
+        "roles-involved": [
+          "Contact centre agent",
+          "Partner garage staff"
+        ],
+        "kpis": [
+          {
+            "metric": "Cases where onward travel is offered when the customer is left away from their destination",
+            "target": "100%"
+          },
+          {
+            "metric": "Entitlement take-up versus eligibility",
+            "target": "Tracked — currently unmeasured"
+          }
+        ]
+      },
+      "significance": {
+        "description": "Real entitlements went unused because nothing surfaced them at the moment they applied. The cover was better than the experience of it.",
+        "importance": "high"
+      }
     }
   ],
   "edges": [
@@ -1576,6 +2289,66 @@
     {
       "from": "research-supported-location-formats",
       "to": "share-location-third-party",
+      "edgeType": "default"
+    },
+    {
+      "from": "share-location-third-party",
+      "to": "case-created",
+      "edgeType": "default",
+      "label": "Location established"
+    },
+    {
+      "from": "case-created",
+      "to": "await-recovery",
+      "edgeType": "default"
+    },
+    {
+      "from": "await-recovery",
+      "to": "handoff-to-recovery-partner",
+      "edgeType": "default"
+    },
+    {
+      "from": "handoff-to-recovery-partner",
+      "to": "partner-sms-tracking-link",
+      "edgeType": "default"
+    },
+    {
+      "from": "partner-sms-tracking-link",
+      "to": "track-case-online",
+      "edgeType": "default"
+    },
+    {
+      "from": "track-case-online",
+      "to": "partner-confirms-by-phone",
+      "edgeType": "default"
+    },
+    {
+      "from": "partner-confirms-by-phone",
+      "to": "engineer-arrives",
+      "edgeType": "default"
+    },
+    {
+      "from": "engineer-arrives",
+      "to": "dropoff-location-disputed",
+      "edgeType": "default"
+    },
+    {
+      "from": "dropoff-location-disputed",
+      "to": "transport-to-partner-garage",
+      "edgeType": "conditional",
+      "condition": {
+        "description": "Partner directs the vehicle to its own garage; customer complies rather than delay recovery"
+      },
+      "label": "To partner's garage"
+    },
+    {
+      "from": "transport-to-partner-garage",
+      "to": "complete-garage-paperwork",
+      "edgeType": "default"
+    },
+    {
+      "from": "complete-garage-paperwork",
+      "to": "arrange-onward-travel",
       "edgeType": "default"
     }
   ],

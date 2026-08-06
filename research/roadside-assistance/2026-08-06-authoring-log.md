@@ -145,6 +145,13 @@ Filed properly in Task 10; parked here so none is lost.
     path; on a single observed case that means inventing a statistic. Allow "unknown", or
     exempt `observed` paths.
 13. **Node names must be outcome-neutral** — §7.3. Standards guidance, not a code change.
+15. **⚠️ Renderer ignores `interaction` and `ownership`** — §9.1. The two fields BACK-021
+    existed to exercise are invisible in the only artefact stakeholders see. Direct follow-on.
+16. **⚠️ Cross-column edge labels are struck through by other edges** — §9.2. Renderer defect,
+    visible only at this branch density.
+17. **Node names truncate beyond ~28 chars** — §9.3. Add authoring guidance to the Mission
+    standard; fixed 23 names here.
+18. **Add `.playwright-mcp/` and root `*.png` to `.gitignore`** — §9.4.
 14. **⚠️⚠️ Quality score is reported for invalid artifacts** — §8.1. An Experience with 49
     validation errors scored 100/100, printed directly above the FAIL. Suppress or label the
     score when validation fails. **Highest-value item in this list.**
@@ -780,6 +787,84 @@ log is complaint.
 
 ---
 
-## Task 9 — Render and verify visually
+## Task 9 — Render and verify visually (complete)
+
+Both modes rendered and **looked at in a browser**, not merely generated. 38 nodes, 45 edges,
+6 phase columns. The Explore detail panel was opened and inspected.
+
+**The renderer holds up well at this scale.** It is the largest and most branch-heavy mission
+in the repo and nothing collapsed: phase columns are correctly ordered, all ten node types are
+visually distinct (green circle start, red ring end, dashed box wait, purple hexagon handoff,
+orange diamond decision, orange circle signal), the `error` edge is red, channel glyphs appear,
+and the legend decodes everything.
+
+The Explore panel renders every lane authored — description, channels, barriers with severity
+dots and type badges, frontstage, backstage, support systems, data required.
+
+### 9.1 ⚠️ The renderer ignores `interaction` and `ownership`
+
+`render-mission.js:661`:
+
+```js
+var meta = [item.channel, item.category, item.serviceModel].filter(Boolean).join(' · ');
+```
+
+Three of the seven channel fields are displayed. **`interaction` and `ownership` are not shown
+anywhere** — neither in the panel, nor in the glyphs, nor in the legend.
+
+Those are precisely the two fields BACK-021 existed to exercise. The data now uses all three
+values of each; the visualisation shows none of it. Entirely reasonable as history — the
+renderer was built when both fields were unused across all four missions — but it means the
+finding is invisible in the only artefact a stakeholder actually looks at.
+
+**Candidate backlog item — direct follow-on from BACK-021.** Adding `ownership` in particular
+would make the four-organisations-deep delivery chain visible at a glance, which is this
+service's defining characteristic.
+
+### 9.2 ⚠️ Cross-column edge labels are struck through by other edges
+
+The clearest visual defect. Labels sitting in the gutters between phase columns have unrelated
+edges routed straight through them:
+
+- "Try another method" renders as `Try:another:method`
+- "Location captured in app" renders as `Location:captured:in:app`
+- "Location captured first time" renders as `Location:captured:first:time`
+- "Estimate exceeded", "Call" and "Refused" are all crossed
+
+The label is placed at its own edge's midpoint with no awareness of other edges occupying the
+same gutter. **Renderer fault, not data.** It only appears at this density: this is the first
+mission with designed alternative paths, which create the long cross-column jumps that share
+gutters.
+
+Per the plan, the mission was **not** distorted to flatter the renderer. Logged instead.
+
+### 9.3 Fixed: 23 of 38 node names were truncating
+
+Before the fix, 23 names rendered with an ellipsis — "Notice the roadside cover while claiming
+something else" became "Notice the roadside cover…", "Confirm the repairer and specify the hire
+vehicle" became "Confirm the repairer and…". In Overview mode, which exists for stakeholders,
+that is close to useless.
+
+Shortened all 23 to 28 characters or fewer. **Only `name` changed — `nodeId` untouched — so no
+edge, phase, path or Experience reference broke.** Re-validated and re-rendered: every label
+now fits, no ellipsis anywhere.
+
+**Authoring guidance worth adding to the Mission standard:** node names render in a fixed-width
+box and truncate beyond ~28 characters. Write the short label; put the detail in `description`,
+which the Explore panel shows in full.
+
+### 9.4 Playwright wrote screenshots into the repository root
+
+`roadside-overview.png` and a `.playwright-mcp/` directory appeared as untracked files in the
+working tree. Neither is gitignored, so a careless `git add -A` would have committed binary
+screenshots into the repo — which is exactly why the project's git discipline forbids that
+command. Moved to the scratchpad and deleted.
+
+**Small candidate backlog item:** add `.playwright-mcp/` and `*.png` at the repo root to
+`.gitignore`.
+
+---
+
+## Task 10 — Findings, backlog, full gate
 
 *(in progress)*

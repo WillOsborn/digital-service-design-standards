@@ -210,7 +210,7 @@
   "nodes": [
     {
       "nodeId": "hold-premium-account",
-      "name": "Hold a premium account with bundled benefits",
+      "name": "Hold a premium account",
       "nodeType": "start",
       "laneContent": {
         "description": "The customer holds a paid premium current account. Roadside assistance is one of several bundled benefits, alongside things like cinema tickets and travel cover. The cover follows the person rather than a vehicle — it applies to any car they travel in, at home or abroad.",
@@ -270,7 +270,7 @@
     },
     {
       "nodeId": "benefits-surface-visible",
-      "name": "Benefits are continuously visible",
+      "name": "Benefits always visible",
       "nodeType": "touchpoint",
       "laneContent": {
         "description": "The benefits app home screen lists everything included, so any visit for one benefit exposes the others. This is not a step the customer takes — it is a surface that is permanently present, accruing awareness passively whenever they visit for something else entirely.",
@@ -340,7 +340,7 @@
     },
     {
       "nodeId": "discover-cover-incidentally",
-      "name": "Notice the roadside cover while claiming something else",
+      "name": "Notice the roadside cover",
       "nodeType": "signal",
       "laneContent": {
         "description": "The customer visits the benefits app to claim an unrelated benefit and browses the rest of the list while there, noticing roadside assistance. This happens weeks before the breakdown, during an unrelated journey — awareness is a side effect of another visit rather than a step towards using the cover.",
@@ -487,7 +487,7 @@
     },
     {
       "nodeId": "owner-insurer-refuses",
-      "name": "Vehicle owner's own insurer refuses",
+      "name": "Own insurer refuses",
       "nodeType": "touchpoint",
       "laneContent": {
         "description": "The vehicle owner contacts his own motor insurer first, as the obvious route. They refuse: he had not separately notified them of overseas travel, despite holding cover purchased for the specific trip dates. This is a different organisation entirely, outside the bank's service, but it is what routes the customer to the bundled benefit.",
@@ -537,7 +537,7 @@
     },
     {
       "nodeId": "recall-bundled-cover",
-      "name": "Remember the bundled cover might apply",
+      "name": "Remember the bundled cover",
       "nodeType": "decision",
       "laneContent": {
         "description": "The cover holder recalls that his bank account includes roadside assistance and that it follows him rather than a vehicle, so it should apply to his brother's car abroad. He suggests trying it. This recall depends entirely on the incidental browsing weeks earlier.",
@@ -804,7 +804,7 @@
     },
     {
       "nodeId": "call-overseas-number",
-      "name": "Call the overseas assistance number",
+      "name": "Call the overseas number",
       "nodeType": "touchpoint",
       "durationMs": 180000,
       "laneContent": {
@@ -865,7 +865,7 @@
     },
     {
       "nodeId": "agent-deflects-to-app",
-      "name": "Agent suggests using the app instead",
+      "name": "Agent suggests the app",
       "nodeType": "touchpoint",
       "durationMs": 60000,
       "laneContent": {
@@ -929,7 +929,7 @@
     },
     {
       "nodeId": "install-provider-app",
-      "name": "Install the assistance provider app",
+      "name": "Install the provider app",
       "nodeType": "touchpoint",
       "durationMs": 180000,
       "laneContent": {
@@ -990,7 +990,7 @@
     },
     {
       "nodeId": "app-location-entry-fails",
-      "name": "App cannot capture the location",
+      "name": "App cannot capture location",
       "nodeType": "touchpoint",
       "durationMs": 240000,
       "laneContent": {
@@ -1075,7 +1075,7 @@
     },
     {
       "nodeId": "call-back-reenter-ivr",
-      "name": "Call back and re-enter the menu",
+      "name": "Call back, re-enter the menu",
       "nodeType": "loop_start",
       "durationMs": 240000,
       "laneContent": {
@@ -1139,7 +1139,7 @@
     },
     {
       "nodeId": "safety-check",
-      "name": "Agent checks everyone is safe",
+      "name": "Safety check first",
       "nodeType": "touchpoint",
       "durationMs": 30000,
       "laneContent": {
@@ -1332,7 +1332,7 @@
     },
     {
       "nodeId": "research-supported-location-formats",
-      "name": "Customer researches what the service accepts",
+      "name": "Research accepted formats",
       "nodeType": "touchpoint",
       "durationMs": 120000,
       "laneContent": {
@@ -1396,7 +1396,7 @@
     },
     {
       "nodeId": "share-location-third-party",
-      "name": "Location relayed from a second device",
+      "name": "Location via another device",
       "nodeType": "loop_end",
       "durationMs": 120000,
       "laneContent": {
@@ -1471,7 +1471,7 @@
     },
     {
       "nodeId": "case-created",
-      "name": "Case raised and recovery sourced",
+      "name": "Case raised and dispatched",
       "nodeType": "touchpoint",
       "durationMs": 120000,
       "laneContent": {
@@ -1615,7 +1615,7 @@
     },
     {
       "nodeId": "handoff-to-recovery-partner",
-      "name": "Handoff to a local recovery partner",
+      "name": "Handoff to recovery partner",
       "nodeType": "handoff",
       "laneContent": {
         "description": "The case passes to a local recovery firm in the country where the breakdown happened. Responsibility for contacting the customer, arriving, and moving the vehicle transfers with it — but the cover terms do not travel as reliably as the job does.",
@@ -1681,7 +1681,7 @@
     },
     {
       "nodeId": "partner-sms-tracking-link",
-      "name": "Partner sends a tracking link by SMS",
+      "name": "Partner sends tracking link",
       "nodeType": "signal",
       "laneContent": {
         "description": "An SMS arrives from the local recovery firm containing a link to their own case tracking website. This is the customer's first contact from an organisation they have never heard of, and the first tracking of any kind offered in the case.",
@@ -1734,7 +1734,7 @@
     },
     {
       "nodeId": "track-case-online",
-      "name": "Track recovery on the partner's website",
+      "name": "Track recovery online",
       "nodeType": "touchpoint",
       "durationMs": 300000,
       "laneContent": {
@@ -1797,7 +1797,7 @@
     },
     {
       "nodeId": "partner-confirms-by-phone",
-      "name": "Recovery partner calls to confirm",
+      "name": "Partner calls to confirm",
       "nodeType": "touchpoint",
       "durationMs": 120000,
       "laneContent": {
@@ -1970,7 +1970,7 @@
     },
     {
       "nodeId": "transport-to-partner-garage",
-      "name": "Vehicle transported to the partner's garage",
+      "name": "Transport to their garage",
       "nodeType": "touchpoint",
       "durationMs": 1800000,
       "laneContent": {
@@ -2297,7 +2297,7 @@
     },
     {
       "nodeId": "family-finds-repairer",
-      "name": "Family finds a repairer themselves",
+      "name": "Family finds a repairer",
       "nodeType": "touchpoint",
       "laneContent": {
         "description": "While the provider is still searching, the family walk into a garage in the village. It is about to close for a holiday, but they are pointed to a related garage nearby that can do the work. The customer solves the service's open task in an afternoon, entirely off-channel — no service channel is involved at any point, and the provider does not learn the task is done.",
@@ -2347,7 +2347,7 @@
     },
     {
       "nodeId": "confirm-repairer-and-hire-car",
-      "name": "Confirm the repairer and specify the hire vehicle",
+      "name": "Confirm repairer and hire car",
       "nodeType": "touchpoint",
       "durationMs": 900000,
       "laneContent": {
@@ -2403,7 +2403,7 @@
     },
     {
       "nodeId": "handoff-to-hire-supplier",
-      "name": "Handoff to the hire vehicle supplier",
+      "name": "Handoff to hire supplier",
       "nodeType": "handoff",
       "laneContent": {
         "description": "The agent submits the hire request to a supplier — a different company again from the recovery firm and the garage. A third organisation now holds part of the case, and the customer has no direct route to any of them.",
@@ -2464,7 +2464,7 @@
     },
     {
       "nodeId": "handoff-to-messaging-channel",
-      "name": "Handoff to a messaging channel",
+      "name": "Handoff to messaging",
       "nodeType": "handoff",
       "laneContent": {
         "description": "The agent sends an SMS with a link that opens a messaging conversation with the provider, so the customer can ask questions and get updates without calling. It works — and it is offered only after two calls and a full day of the customer having no other route.",

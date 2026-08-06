@@ -1,9 +1,34 @@
 # Channel spelling constraint — design
 
 **Date:** 2026-08-06
-**Backlog item:** BACK-027
-**Status:** approved, awaiting implementation plan
+**Backlog item:** BACK-027 (accepted, P3)
+**Status:** designed, **deliberately deferred — do not implement yet**
 **Schema version:** v2.0, in place (no new version directory)
+
+> **Sequencing: land this after BACK-020, not before.**
+>
+> BACK-020 (ambient always-available help channels) is an unresolved channel schema gap, and
+> BACK-021 (the channel-switching Mission) exists to reveal what it actually needs. Building
+> channel vocabulary machinery before that answer arrives risks rebuilding it — the same
+> reasoning already applied to the Actor/Experience renderers in `docs/current-state.md`.
+>
+> The constraint would not *block* BACK-021 — the pattern is shape-only, so any snake_case
+> value still validates — but it adds friction precisely during exploratory authoring: coin a
+> new type, get a warning, then edit two schemas and the taxonomy to silence it.
+>
+> Note also that the drift this guards against is **already substantially closed**. BACK-024
+> fixed all five sources that regenerated it, including the `mission-builder` skill prompt.
+> This is a second lock on a door that shuts — worth having, not worth blocking on.
+
+### Open on resumption
+
+**§2's choice of a schema annotation over a shared module should be re-examined.** It was
+recommended on the principle "single source of truth = the schema itself", but it produces
+*two* copies of the 13-value list. That is the same drift shape BACK-024 spent a session
+undoing, and the principle argued for schema-as-truth, not schema-duplicated-twice. The
+shared-module alternative (`tools/lib/channel-vocabulary.js`, imported by both validator and
+converter) carries one copy and would additionally de-duplicate the `CHANNEL_NAME_MAP` and
+`TELECOM_CHANNELS` sets the converter hardcodes today. Weigh both again before implementing.
 
 ---
 

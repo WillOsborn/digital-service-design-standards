@@ -50,15 +50,16 @@ Each was decided explicitly in session.
 
 ### Naming and privacy
 
-The source case is a consented first-hand account. The other four example sets use invented people
+The source case is a real, first-hand account given with consent. The other four example sets use invented people
 (Sarah Martinez, David Chen, Maria Rodriguez, Jake Holloway), and this set will follow that
 convention: **Actors are pseudonymised**, the bank and the assistance provider are described
 generically in artifact content, and no real account or policy detail appears in the JSON.
 
 **Resolved:** the source notes were moved to `research/private/`, which is gitignored, and
-removed from tracking. They contain personal circumstances — the bank, family members, a live
-insurance dispute, travel abroad — and `PROJECT_CONTEXT.md` records the intent to make this
-repository public after review.
+removed from tracking. On 2026-08-11 they were also **pseudonymised in place** — real names,
+the bank, the assistance provider, the country, and named third-party products replaced with
+the same pseudonyms and generic descriptions used in the published artifacts. Two residual country references in the Experience were genericised at the same time.
+`PROJECT_CONTEXT.md` records the intent to make this repository public after review.
 
 **Still outstanding:** the notes were committed before the move (`2aca628`, `4bf5300`), so
 **they remain in git history**. Removing them from the working tree does not remove them from

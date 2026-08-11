@@ -4,6 +4,21 @@
 >
 > **Execute this plan inline, not via sub-agents** — but not for permission reasons. Sub-agents *do* have Write, Edit and Bash here (verified 2026-08-06; an earlier claim that they were denied was wrong). The reason is structural: Tasks 2–6 all edit **the same JSON file**, so parallel agents would collide. Splitting into per-phase fragments and merging costs more than the six sequential edits it saves.
 
+> **STATUS: COMPLETE.** All ten tasks executed 2026-08-06/07 on `feature/roadside-mission`;
+> every checkbox ticked. Findings in the spec §11; process retrospective in
+> `docs/superpowers/retrospectives/2026-08-11-back-021-retrospective.md`.
+>
+> **Deviations from this plan, all deliberate and recorded:**
+> - **4 paths, not 5.** `path-concierge` was dropped as *inexpressible* — it traverses
+>   identical nodes and differs only by channel, and paths are node sequences. Filed as BACK-037.
+> - **`dropoff-location-disputed` was renamed `dropoff-location-decided`.** The node inventory
+>   below still shows the original name. Naming a node after its observed outcome makes it read
+>   as a contradiction on a designed path.
+> - **45 edges, not ~42** — four extra edges were needed to make the designed paths traversable.
+> - **23 node names were shortened** after visual review; they truncate beyond ~28 characters.
+> - **Mission left at 95/100**, not 100, rather than fabricate a path `frequency` for a single
+>   observed case. Filed as BACK-040.
+
 **Goal:** Author a v2.0 example set for roadside breakdown assistance that exercises the ~half of the Mission schema no existing example touches, and record where the schema fails.
 
 **Architecture:** Four JSON artifacts in `v2.0/examples/roadside/` — two Actors, one Mission (~38 nodes, 6 phases, 5 paths), one Experience. Built incrementally: every task leaves a set that validates. The "tests" are the validator, `--check-refs`, the quality scorer, and a visual render.
@@ -123,7 +138,7 @@ All ten `nodeType` values are used. No existing mission achieves this.
 
 **Content source:** source notes §8 (actors and relationships), §2 (how the cover came to exist).
 
-- [ ] **Step 1: Create the directory and write `actor-adam-rees.json`**
+- [x] **Step 1: Create the directory and write `actor-adam-rees.json`**
 
 Required top-level keys: `$context`, `$type`, `id`, `version`, `name`, `actorType`, `traits`, `contexts`, `meta`. Use `v2.0/examples/energy/actor-jake-holloway.json` as the structural reference.
 
@@ -149,7 +164,7 @@ Its single context `ctx-roadside-cover-holder` must include a `channels` array. 
 
 Note `category`, `serviceModel` and `channel` are **required** on Actor channel entries (unlike Mission ones, which require only `channel` and `serviceModel`).
 
-- [ ] **Step 2: Write `actor-daniel-rees.json`**
+- [x] **Step 2: Write `actor-daniel-rees.json`**
 
 Same structure, context ID `ctx-roadside-vehicle-owner`. Key facts:
 - **Owns the vehicle**; holds decision authority over anything done to it
@@ -157,7 +172,7 @@ Same structure, context ID `ctx-roadside-vehicle-owner`. Key facts:
 - **Was never contacted by the assistance service at any point** — every decision reached him second-hand
 - Supplied the location from **his own phone** when his brother's failed (§3.17)
 
-- [ ] **Step 3: Validate both**
+- [x] **Step 3: Validate both**
 
 ```bash
 node tools/validators/validate-v2.0.js v2.0/examples/roadside/ --check-refs
@@ -165,7 +180,7 @@ node tools/validators/validate-v2.0.js v2.0/examples/roadside/ --check-refs
 
 Expected: `2 passed, 0 failed`, both detected as `Actor`, quality reported. If quality is below 80, fill the thinner `traits` sub-objects rather than proceeding.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add v2.0/examples/roadside/actor-adam-rees.json v2.0/examples/roadside/actor-daniel-rees.json
@@ -189,7 +204,7 @@ example set carries that split."
 
 **Content source:** source notes §2 (cover context), §3.1–3.4 (breakdown and first recourse).
 
-- [ ] **Step 1: Write the envelope, lanes, and phases 1–2**
+- [x] **Step 1: Write the envelope, lanes, and phases 1–2**
 
 Required top-level keys: `$context`, `$type`, `id`, `version`, `title`, `goal`, `actors`, `nodes`, `edges`, `meta`. Also include `summary`, `scope`, `lanes`, `paths`, `phases`, `provenance`.
 
@@ -236,7 +251,7 @@ Add the 7 nodes for phases 1–2 from the inventory, the phase entries listing t
 
 The `error` edge is correct: the owner's own insurer refused, and that refusal is what routed them to the bundled cover (§3.3).
 
-- [ ] **Step 2: Record the ambient distortion in the node itself**
+- [x] **Step 2: Record the ambient distortion in the node itself**
 
 `benefits-surface-visible` is the honest-modelling experiment. It is **not an event** — it is a surface that is always present. The schema has no way to say that, so model it as a `touchpoint` and put the loss on the record in its own description:
 
@@ -262,7 +277,7 @@ The `error` edge is correct: the owner's own insurer refused, and that refusal i
 }
 ```
 
-- [ ] **Step 3: Validate**
+- [x] **Step 3: Validate**
 
 ```bash
 node tools/validators/validate-v2.0.js v2.0/examples/roadside/ --check-refs
@@ -270,7 +285,7 @@ node tools/validators/validate-v2.0.js v2.0/examples/roadside/ --check-refs
 
 Expected: `3 passed, 0 failed`, the new file detected as `Mission`.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add v2.0/examples/roadside/mission-roadside-assistance.json
@@ -294,7 +309,7 @@ always-available surface."
 
 **Content source:** source notes §3.5–3.10, §5 (first contact alternatives).
 
-- [ ] **Step 1: Add the 7 phase-3 nodes and the phase entry**
+- [x] **Step 1: Add the 7 phase-3 nodes and the phase entry**
 
 `choose-contact-route` is a **`branch`** — the service genuinely offered two channels at once (§3.6), which is different from a `decision` where the customer weighs options internally. Its `laneContent.channels` must carry **three** entries: the provider app, the domestic phone number, and the overseas phone number. All three were presented; only one was taken.
 
@@ -334,7 +349,7 @@ Worked example for the `branch` node's channels:
 
 Note `category: "telecom"` for both phone entries, and `ownership: "partner"` — from the **bank's** vantage point the provider is a partner, not `own`.
 
-- [ ] **Step 2: Add the phase-3 edges**
+- [x] **Step 2: Add the phase-3 edges**
 
 | from | to | `edgeType` | note |
 |---|---|---|---|
@@ -347,7 +362,7 @@ Note `category: "telecom"` for both phone entries, and `ownership: "partner"` �
 | `agent-deflects-to-app` | `install-provider-app` | **`escalation`** | the service moved the customer to another channel mid-contact |
 | `install-provider-app` | `app-location-entry-fails` | `default` | |
 
-- [ ] **Step 3: Record the unsignposted channel**
+- [x] **Step 3: Record the unsignposted channel**
 
 The provider's **website** was a usable route that was never surfaced to the customer (§5). There is no schema field for "exists but is not signposted". Add it as a channel on `view-cover-summary` with the gap stated in `usageContext`:
 
@@ -363,7 +378,7 @@ The provider's **website** was a usable route that was never surfaced to the cus
 }
 ```
 
-- [ ] **Step 4: Validate**
+- [x] **Step 4: Validate**
 
 ```bash
 node tools/validators/validate-v2.0.js v2.0/examples/roadside/mission-roadside-assistance.json
@@ -371,7 +386,7 @@ node tools/validators/validate-v2.0.js v2.0/examples/roadside/mission-roadside-a
 
 Expected: `PASS`, `Type: Mission`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add v2.0/examples/roadside/mission-roadside-assistance.json
@@ -394,7 +409,7 @@ deflected to the app mid-call; the app then failed."
 
 **Content source:** source notes §3.11–3.17. **This is the strongest evidence in the map** — three attempts at one task, two failing through different channels, resolved by a third party on another person's device.
 
-- [ ] **Step 1: Add the 6 phase-4 nodes and the phase entry**
+- [x] **Step 1: Add the 6 phase-4 nodes and the phase entry**
 
 `research-supported-location-formats` is the node covering the customer running a **search-engine query to find out what location formats the service accepts** (§3.16). Its channel is infrastructure nobody in the chain owns:
 
@@ -410,7 +425,7 @@ deflected to the app mid-call; the app then failed."
 }
 ```
 
-- [ ] **Step 2: Add the phase-4 edges, including two `error` edges and the loop**
+- [x] **Step 2: Add the phase-4 edges, including two `error` edges and the loop**
 
 | from | to | `edgeType` | note |
 |---|---|---|---|
@@ -431,11 +446,11 @@ Note the retries in the observed case happened **within a single call**, not acr
 
 **The edge to `case-created` cannot be added until Task 5 creates that node.** Add it at the start of Task 5, not here. If the validator is run with it present and the node absent, it will fail.
 
-- [ ] **Step 3: Record the re-authentication cost**
+- [x] **Step 3: Record the re-authentication cost**
 
 `call-back-reenter-ivr` must state in its description that returning to phone meant **re-entering the menu system and re-confirming identity from scratch** — the failed deflection left no trace, and nothing carried over (§3.11–3.13). Set `nodeType` to `loop_start` and say in the description that this is the second attempt at a task already attempted through another channel.
 
-- [ ] **Step 4: Validate**
+- [x] **Step 4: Validate**
 
 ```bash
 node tools/validators/validate-v2.0.js v2.0/examples/roadside/mission-roadside-assistance.json
@@ -443,7 +458,7 @@ node tools/validators/validate-v2.0.js v2.0/examples/roadside/mission-roadside-a
 
 Expected: `PASS`. If it fails on a dangling edge, confirm you did not add the `case-created` edge early.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add v2.0/examples/roadside/mission-roadside-assistance.json
@@ -467,7 +482,7 @@ different person's device."
 
 **Content source:** source notes §3.18–3.26, §7 (promise vs delivery).
 
-- [ ] **Step 1: Add the 11 phase-5 nodes, the phase entry, and the deferred edge from Task 4**
+- [x] **Step 1: Add the 11 phase-5 nodes, the phase entry, and the deferred edge from Task 4**
 
 Add `share-location-third-party` → `case-created` (`default`) now that the target exists.
 
@@ -490,7 +505,7 @@ Add `share-location-third-party` → `case-created` (`default`) now that the tar
 }
 ```
 
-- [ ] **Step 2: Add the phase-5 edges**
+- [x] **Step 2: Add the phase-5 edges**
 
 | from | to | `edgeType` |
 |---|---|---|
@@ -505,7 +520,7 @@ Add `share-location-third-party` → `case-created` (`default`) now that the tar
 | `transport-to-partner-garage` | `complete-garage-paperwork` | `default` |
 | `complete-garage-paperwork` | `arrange-onward-travel` | `default` |
 
-- [ ] **Step 3: Record the expiring channel**
+- [x] **Step 3: Record the expiring channel**
 
 `track-case-online` carries the partner's tracking website, which **stopped being useful once the vehicle was collected** (§6). Nothing in the schema expresses a channel with a validity window:
 
@@ -521,11 +536,11 @@ Add `share-location-third-party` → `case-created` (`default`) now that the tar
 }
 ```
 
-- [ ] **Step 4: Record the promise-vs-delivery divergence**
+- [x] **Step 4: Record the promise-vs-delivery divergence**
 
 `dropoff-location-disputed` is a `decision` node whose description must state plainly: **the cover entitles the customer to be taken wherever they need, and the recovery crew said otherwise and was not challenged** (§7). Attribute the root cause correctly — this is a **knowledge barrier at the partner**, not a policy gap. Add a `barriers` entry with `type: "knowledge"` and an appropriate `severity`.
 
-- [ ] **Step 5: Validate**
+- [x] **Step 5: Validate**
 
 ```bash
 node tools/validators/validate-v2.0.js v2.0/examples/roadside/mission-roadside-assistance.json
@@ -533,7 +548,7 @@ node tools/validators/validate-v2.0.js v2.0/examples/roadside/mission-roadside-a
 
 Expected: `PASS`.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add v2.0/examples/roadside/mission-roadside-assistance.json
@@ -557,11 +572,11 @@ service diverged."
 
 **Content source:** source notes §3.27–3.36, and the "Where AI would have come in more" subsection of §5.
 
-- [ ] **Step 1: Add the 7 phase-6 nodes and the phase entry**
+- [x] **Step 1: Add the 7 phase-6 nodes and the phase entry**
 
 `family-finds-repairer` is the node where the **customer's family did the service's job, off-channel** — they walked into a village garage while the service was actively working the same task (§3.29). It has **no channel entry at all**, because no service channel was involved. State that explicitly in the description rather than leaving `channels` merely absent.
 
-- [ ] **Step 2: Author the `ai_assisted` channel — the one place we must write something false**
+- [x] **Step 2: Author the `ai_assisted` channel — the one place we must write something false**
 
 `handoff-to-messaging-channel` carries the messaging channel. Per the spec, author it as `ai_assisted` because that is the service's design, and record the loss:
 
@@ -577,7 +592,7 @@ service diverged."
 }
 ```
 
-- [ ] **Step 3: Add the phase-6 edges**
+- [x] **Step 3: Add the phase-6 edges**
 
 | from | to | `edgeType` |
 |---|---|---|
@@ -589,7 +604,7 @@ service diverged."
 | `handoff-to-hire-supplier` | `handoff-to-messaging-channel` | `default` |
 | `handoff-to-messaging-channel` | `receive-updates-via-messaging` | `default` |
 
-- [ ] **Step 4: Validate**
+- [x] **Step 4: Validate**
 
 ```bash
 node tools/validators/validate-v2.0.js v2.0/examples/roadside/mission-roadside-assistance.json
@@ -597,7 +612,7 @@ node tools/validators/validate-v2.0.js v2.0/examples/roadside/mission-roadside-a
 
 Expected: `PASS`. All 38 nodes present.
 
-- [ ] **Step 5: Verify all ten nodeTypes are now used**
+- [x] **Step 5: Verify all ten nodeTypes are now used**
 
 ```bash
 node -e "
@@ -612,7 +627,7 @@ process.exit(NT.every(t=>used.has(t))?0:1);
 
 Expected: every type `OK`, exit 0. If any is MISSING, fix before committing.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add v2.0/examples/roadside/mission-roadside-assistance.json
@@ -637,7 +652,7 @@ off-channel."
 
 **Content source:** spec §6; source notes §5 for the alternatives, §10 for what is unobserved.
 
-- [ ] **Step 1: Author the five paths**
+- [x] **Step 1: Author the five paths**
 
 | `pathId` | `pathType` | Content |
 |---|---|---|
@@ -649,7 +664,7 @@ off-channel."
 
 Every `nodeSequence` entry must be a node ID that exists. `path-observed` must have `frequency` omitted or set honestly — it is a single observed case, not a measured proportion.
 
-- [ ] **Step 2: Bound the `timeout` path to the evidence**
+- [x] **Step 2: Bound the `timeout` path to the evidence**
 
 The estimate **held** in the real case. The only evidence a designed escalation exists at all is that the service undertook to make contact if anything changed (§3.19). That justifies exactly **one** `timeout` edge, on `path-designed-timeout` only.
 
@@ -661,7 +676,7 @@ Add this edge to the `edges` array:
 
 **`timeout` must never appear on `path-observed`.** If authoring this path requires inventing any service behaviour beyond that stated undertaking, delete the path and record in Task 10 that `timeout` remains unexercised. That is an acceptable outcome.
 
-- [ ] **Step 3: Validate**
+- [x] **Step 3: Validate**
 
 ```bash
 node tools/validators/validate-v2.0.js v2.0/examples/roadside/ --check-refs
@@ -669,7 +684,7 @@ node tools/validators/validate-v2.0.js v2.0/examples/roadside/ --check-refs
 
 Expected: `3 passed, 0 failed`.
 
-- [ ] **Step 4: Verify edgeType coverage**
+- [x] **Step 4: Verify edgeType coverage**
 
 ```bash
 node -e "
@@ -689,7 +704,7 @@ console.log('dangling edges:',bad.length); bad.forEach(e=>console.log('  ',e.fro
 
 Expected: all six edgeTypes `OK`, zero dangling edges, every path `ok`. **The validator does not check edge or path node references** — this step is the only thing that will catch a typo in a node ID.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add v2.0/examples/roadside/mission-roadside-assistance.json
@@ -714,7 +729,7 @@ appears on the observed path, because the estimate held."
 
 **Content source:** the whole of source notes §3. Use `v2.0/examples/energy/exp-jake-energy-switch.json` as the structural reference.
 
-- [ ] **Step 1: Write the Experience**
+- [x] **Step 1: Write the Experience**
 
 Required: `$context`, `$type`, `id`, `version`, `title`, `references`, `path`, `nodes`, `meta`.
 
@@ -734,7 +749,7 @@ Per-node content carries the **persona-specific** material — thoughts, emotion
 
 `outcome.netSentiment` should be mildly positive, not negative: the service worked, the estimate held, and the messaging channel has been genuinely useful — the friction was real but the outcome was not a failure.
 
-- [ ] **Step 2: Validate with cross-references**
+- [x] **Step 2: Validate with cross-references**
 
 ```bash
 node tools/validators/validate-v2.0.js v2.0/examples/roadside/ --check-refs
@@ -742,7 +757,7 @@ node tools/validators/validate-v2.0.js v2.0/examples/roadside/ --check-refs
 
 Expected: `4 passed, 0 failed`. Cross-ref errors here mean `actorRef`, `contextRef`, `missionRef`, or a `nodeSequence` ID does not resolve — **this is the one artifact type where the validator does check references.**
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add v2.0/examples/roadside/exp-adam-roadside-recovery.json
@@ -758,7 +773,7 @@ failures and the re-authentication cost of the mid-call deflection."
 
 **Files:** none created. Output goes to the scratchpad, not the repo.
 
-- [ ] **Step 1: Render the Mission**
+- [x] **Step 1: Render the Mission**
 
 ```bash
 node tools/renderers/render-mission.js v2.0/examples/roadside/mission-roadside-assistance.json -o /tmp/roadside-mission.html --standalone --mode explore
@@ -769,7 +784,7 @@ The flag is `-o`, not `--out`. Full usage:
 
 Render `--mode overview` as well and check both — they are different layout paths, and a mission this large can break one while the other holds.
 
-- [ ] **Step 2: Open it in a browser and look at it**
+- [x] **Step 2: Open it in a browser and look at it**
 
 **Markup tests pass on visibly broken layouts.** Do not skip this and do not substitute a DOM assertion for looking.
 
@@ -781,11 +796,11 @@ Check specifically:
 - The six phases are visually separated and in order
 - Nothing is clipped at the canvas edges
 
-- [ ] **Step 3: Fix what looks wrong**
+- [x] **Step 3: Fix what looks wrong**
 
 If the layout breaks, the fault may be the renderer rather than the data — this is the largest and most branch-heavy mission yet, so it is a genuine stress test. **Diagnose before editing anything.** If the renderer is at fault, record it as a finding and a backlog item; do not distort the mission to flatter the renderer.
 
-- [ ] **Step 4: Commit any data fixes**
+- [x] **Step 4: Commit any data fixes**
 
 ```bash
 git add v2.0/examples/roadside/mission-roadside-assistance.json
@@ -801,7 +816,7 @@ Skip if nothing changed.
 **Files:**
 - Modify: `docs/superpowers/specs/2026-08-06-roadside-mission-design.md`
 
-- [ ] **Step 1: Test each of the seven predictions against what actually happened**
+- [x] **Step 1: Test each of the seven predictions against what actually happened**
 
 Append a `## 11. Findings` section to the spec. For **each** of the seven predictions in §7, record **confirmed** or **refuted**, with the specific node or field that demonstrates it.
 
@@ -814,17 +829,17 @@ The seven, restated:
 6. No way to express a precondition established by a different journey
 7. `interaction` is fixed per channel and cannot vary between designed and observed paths
 
-- [ ] **Step 2: Apply the falsification rule**
+- [x] **Step 2: Apply the falsification rule**
 
 **If fewer than five of the seven are confirmed, the findings section must state plainly that the reading of the schema was wrong**, and say which predictions failed and why. Do not quietly drop refuted predictions — a refuted prediction is a result.
 
 Also record any gap found that was **not** predicted. Prime candidate: whether `ownership` from the bank's vantage point collapsed into near-universal `third_party`, and whether that made the field useless or merely awkward.
 
-- [ ] **Step 3: Record what remained unexercised**
+- [x] **Step 3: Record what remained unexercised**
 
 State explicitly whether `timeout` ended up used, and on which path. If Task 7 step 2 dropped it, say so.
 
-- [ ] **Step 4: File backlog items for each confirmed gap**
+- [x] **Step 4: File backlog items for each confirmed gap**
 
 ```bash
 node tools-internal/backlog.js add "<gap title>" --category schema --source observation --description "<what the schema cannot express, with the node that demonstrates it>" --rationale "Found while authoring the roadside mission (BACK-021)."
@@ -833,7 +848,7 @@ node tools-internal/backlog.js sync
 
 Gaps 1 and 4 both belong to **BACK-020** — add them to that item's description rather than creating duplicates.
 
-- [ ] **Step 5: Run the full verification gate**
+- [x] **Step 5: Run the full verification gate**
 
 Check exit codes directly — piping to `tail` or `grep` reports the **pipe's** status, not node's.
 
@@ -850,18 +865,18 @@ Expected: all four suites exit 0 (94, 16, 83, 87 passed), and **16/16 examples p
 
 **`run-all-tests.js` exits 1 and that is expected** — a pre-existing v1.x path failure unrelated to this work (BACK-017). Do not try to fix it here.
 
-- [ ] **Step 6: Confirm the other four example sets did not move**
+- [x] **Step 6: Confirm the other four example sets did not move**
 
 Quality scores for retail, healthcare, sales and energy must be **unchanged at 85–100**. This work adds files and touches nothing existing, so any movement means something unrelated broke — investigate before committing.
 
-- [ ] **Step 7: Close out the backlog item**
+- [x] **Step 7: Close out the backlog item**
 
 ```bash
 node tools-internal/backlog.js update BACK-021 completed --outcome "Roadside assistance example set authored: 2 Actors, Mission (38 nodes, all 10 nodeTypes, 5 paths), Experience. <N> of 7 predicted schema gaps confirmed; findings in docs/superpowers/specs/2026-08-06-roadside-mission-design.md"
 node tools-internal/backlog.js sync
 ```
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add docs/superpowers/specs/2026-08-06-roadside-mission-design.md
@@ -875,12 +890,12 @@ Gaps feed BACK-020; BACK-027 stays deferred behind it."
 
 ## Definition of done
 
-- [ ] Four artifacts exist in `v2.0/examples/roadside/` and all validate with `--check-refs`
-- [ ] `node tools/validators/validate-v2.0.js v2.0/examples/ --check-refs` reports **16/16**
-- [ ] All ten `nodeType` values used; `edgeType` coverage recorded (five or six of six)
-- [ ] `interaction` uses all three values; `ownership` used throughout
-- [ ] Zero dangling edge or path node references (Task 7 step 4)
-- [ ] The Mission has been **rendered and looked at in a browser**
-- [ ] All seven predictions marked confirmed or refuted, with the falsification rule applied
-- [ ] Backlog items filed for confirmed gaps; BACK-021 closed
-- [ ] Four test suites exit 0; other four example sets unchanged at 85–100
+- [x] Four artifacts exist in `v2.0/examples/roadside/` and all validate with `--check-refs`
+- [x] `node tools/validators/validate-v2.0.js v2.0/examples/ --check-refs` reports **16/16**
+- [x] All ten `nodeType` values used; `edgeType` coverage recorded (five or six of six)
+- [x] `interaction` uses all three values; `ownership` used throughout
+- [x] Zero dangling edge or path node references (Task 7 step 4)
+- [x] The Mission has been **rendered and looked at in a browser**
+- [x] All seven predictions marked confirmed or refuted, with the falsification rule applied
+- [x] Backlog items filed for confirmed gaps; BACK-021 closed
+- [x] Four test suites exit 0; other four example sets unchanged at 85–100

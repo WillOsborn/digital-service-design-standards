@@ -4,197 +4,222 @@
 > Keep it a **snapshot**, not a history — record material completions, delete what's superseded.
 > If this file contradicts itself, the next session starts confused. Fix contradictions on sight.
 
-**Last updated:** 2026-08-06 (third session that day)
+**Last updated:** 2026-08-11
 **Active schema version:** v2.0 (Actor / Mission / Experience)
-**Branch:** `main` — **pushed and in sync with `origin/main`** at session end. All 2026-08-06 work is backed up on the remote, except the gitignored `.claude/` skill edits noted below, which no push can carry.
-**Concurrency check:** local `main` and `origin/main` were **in sync** at session end. At session start run `git status -sb` — if the branch shows `behind`, `diverged`, or local commits you did not make, suspect a concurrent session and read `git reflog` before acting. (This check deliberately names neither a SHA nor a commit count: both go stale the moment the next commit lands, including this file's own.)
 
-**Branches:** `main` only, local and remote. `feature/mission-visualiser` was merged and deleted on 2026-08-06; its history lives on in `main`.
+**Branch:** `feature/roadside-mission` — **13 commits ahead of `main`, no upstream set.**
+**`main` is itself 8 commits ahead of `origin/main`.** **Nothing is pushed.** 21 unpushed
+commits in total. Will was asked at session end and had not yet decided; see *Decisions outstanding for Will*.
+
+**Concurrency check:** at session end the working tree was clean, one worktree, no other
+session evident. At session start run `git status -sb`. Expect `feature/roadside-mission` with
+**no** `origin/` tracking line, and `main` ahead of `origin/main`. If either branch shows
+`behind`, `diverged`, or commits you did not make, suspect a concurrent session and read
+`git reflog` before acting.
+
+**Branches:** `main`, `feature/roadside-mission` (local only — not on the remote).
 
 ---
 
 ## Status
 
-**v2.0 is complete and green across every workstream except WS8.** Schemas, all four example sets, validators, quality scoring, converter, all 17 `.claude/skills/`, the standards docs, and the WS7 Claude Manager org skills. Verification: 12/12 examples validate at 85–100 quality, 94 validator tests, 16 layout tests, 83 renderer tests, 87 converter tests, all exit 0. One pre-existing failure in `run-all-tests.js` affects **v1.x only** — see *Verification baseline* below.
+**BACK-021 is complete.** The roadside assistance example set is authored, validated, rendered,
+visually verified, and its findings written up. It is the fifth example domain and the first
+drawn from a real, first-hand case rather than generated.
 
-**Mission visualiser — complete, merged, and now reviewed by Will.** The deterministic Node CLI renders a v2.0 Mission as a self-contained two-mode HTML visualisation. Tasks 1–4 landed the layout module, renderer CLI, Explore mode, and Playwright-driven fixes. **Task 6 is done** — `.claude/skills/mission-renderer/SKILL.md` is a thin wrapper around the CLI. **Task 5 is now done too** (2026-08-06): the retail mission was published as an artifact in Explore mode, Will reviewed it, and one round of iteration landed.
+| Artifact | Quality |
+|---|---|
+| `v2.0/examples/roadside/actor-adam-rees.json` | 100/100 |
+| `v2.0/examples/roadside/actor-daniel-rees.json` | 100/100 |
+| `v2.0/examples/roadside/mission-roadside-assistance.json` | 95/100 (38 nodes, 45 edges, 6 phases, 4 paths) |
+| `v2.0/examples/roadside/exp-adam-roadside-recovery.json` | 100/100 |
 
-Only **Task 6 Step 4** remains permanently open — committing the skill is impossible because `.claude/` is gitignored. Annotated in the plan rather than ticked.
+**The objective was met.** Vocabulary that no example exercised now carries real data:
 
-**Channel glyphs shipped** (`f90edaa`) from Will's review. Every Mission node now shows a small monochrome glyph per distinct channel category: **shape = category** (digital / telecom / physical), **fill = serviceModel** (outline self-service, solid managed, 40% both). Monochrome deliberately — node fill already encodes `nodeType` and the overlay encodes barrier heat, so a third colour language would collide with both. Right-aligned to the node edge, **not centred**: Playwright showed centred glyphs sitting directly on the incoming edges, because edges arrive at the node's centre line in this columnar layout. Legend decodes shapes and fill rule using the same drawing code as the map; `aria-label` carries the same fact in words. Built test-first; renderer tests **45 → 83**.
+| Dimension | Before | After |
+|---|---|---|
+| `nodeType` | 6 of 10 | **10 of 10** — a repo first |
+| `edgeType` | 3 of 6 | **6 of 6** |
+| `interaction` | **0 uses** | all three values |
+| `ownership` | **0 uses** | all three values |
 
-**WS8 Figma Plugin — deliberately deferred, design captured.** Brainstormed to the middle of Section 2 of 4, then Will chose to sequence renderers and create/edit tooling ahead of export plugins. The full design is in `docs/superpowers/specs/2026-08-06-figma-pptx-export-design.md` (BACK-018) with six open questions listed. **Do not restart that work from scratch** — read the spec first. Also read **BACK-029** before resuming: the plugin bundles its own stale v1.1 schema copies with hardcoded channel enums.
+**All seven predicted schema gaps confirmed** against a stated threshold of five, **plus four
+unpredicted gaps and seven tooling defects.** The unpredicted ones are the more valuable output
+— they were only findable by authoring.
 
-**Channel vocabulary cleaned and locked down (BACK-022, BACK-023, BACK-024).** Three related
-fixes landed this session, all verified against the full gate with quality scores unchanged:
+**The Mission is deliberately 95/100, not 100.** The last five points require a numeric
+`frequency` on every path, meaning a proportion-of-actors figure for a single observed case.
+Supplying one would fabricate a statistic and contradict the artifact's own provenance. Do not
+"fix" this by adding invented numbers — it is filed as BACK-040.
 
-- **`phone-call` and video calls are now `telecom`.** Voice/video was split across `physical`
-  and `digital`. The rule now recorded in `CHANNEL_TAXONOMY.md`: categories follow **cost to
-  serve**, not who builds the technology — a video call runs on digital-team software but
-  occupies a contact-centre person, and the `digital`/`telecom` line is **synchronous human
-  attention**, not transport. Email and chat queue and batch; a call does not.
-- **30 of 85 channel entries held something that wasn't a channel type** — product and meeting
-  names (`salesforce`, `board-meeting`, `g-cloud`) plus spelling variants (`web`, `in-person`).
-  Normalised: **25 distinct values → 9, all canonical.** The instance moved to `name`, which 29
-  of the 30 already carried, so no rendered heading changed.
-- **All five sources that regenerate the drift are closed.** The converter could never emit
-  `telecom` and passed names through verbatim (+8 regression tests, 79 → 87); `CHANNEL_TAXONOMY.md`
-  was a **v1.1 document** describing `type` while v2.0 uses `channel` (retargeted to 2.0.0);
-  neither v2.0 standard gave any channel guidance at all; and the `actor-builder` /
-  `mission-builder` skills prompted with the wrong vocabulary (**local-only — `.claude/` is
-  gitignored**).
+**BACK-027 (channel spelling constraint) remains deliberately deferred** behind BACK-020.
+Designed and specced, not implemented. See `docs/superpowers/specs/2026-08-06-channel-pattern-constraint-design.md`.
+
+**A retrospective was written**, covering process rather than schema:
+`docs/superpowers/retrospectives/2026-08-11-back-021-retrospective.md`.
 
 ---
 
 ## Immediate next action
 
-**BACK-021 — build a channel-switching Mission example.** Will ended the previous session to
-start fresh for maximum context, then spent this one on the channel vocabulary cleanup that
-BACK-021 depends on. Someone starts online, hits a problem, moves to chat, then phone —
-switching channels throughout.
+**Decide the scope of BACK-020 before building anything.**
 
-**Why this matters more than it sounds.** Measured across all four mission examples
-(85 channel entries incl. actors, 73 nodes, 77 edges), the vocabulary needed for channel
-switching is largely the vocabulary nothing exercises:
+BACK-020 is titled "no way to express ambient/always-available help channels" — that names
+**one symptom**. BACK-021 produced **eight distinct channel-modelling gaps** sharing one root
+cause:
 
-| Vocabulary | Usage across all 4 examples |
-|---|---|
-| `interaction` (human / automated / ai_assisted) | **0** |
-| `ownership` (own / third_party / partner) | **0** |
-| `category: telecom` | **9 entries** — no longer zero (fixed this session) |
-| nodeTypes `handoff`, `branch`, `loop_start`, `loop_end` | **unused** (4 of 10) |
-| edgeTypes `error`, `timeout`, `escalation` | **unused** (3 of 6) |
+1. Ambient across the whole service (benefits app home screen; concierge number on a bank card)
+2. Ambient for one node's duration (assistance line during a wait)
+3. Channels that expire mid-case (partner tracking site; provider app tracking)
+4. `ownership` cannot express degrees of remove — one value, four relationships
+5. Channels that exist but are not signposted
+6. Channels wholly outside the service that it nonetheless depends on
+7. Channels used by a different person than the case holder
+8. `interaction` fixed per channel, so it cannot differ between designed and observed paths
 
-So this is not "another example for variety" — it is the test case that shows whether half
-the Mission schema actually works. Expect it to surface what **BACK-020** (ambient
-always-available help channels) really needs, which is why 021 should come before 020
-rather than designing that schema change speculatively.
+Fixing only ambient availability means returning to this within a session. And because
+**BACK-027 sits behind BACK-020**, this decision now governs a much larger piece of work than
+when the deferral was agreed.
 
-**Sequence agreed with Will:** BACK-021 → BACK-020 → then Actor/Experience renderers. The
-renderers come last deliberately: if BACK-020 changes the schema, anything already rendering
-channels has to be rebuilt.
+Relevant backlog: **BACK-020** (rewritten this session with the evidence), **BACK-035**
+(channel-actor attribution), **BACK-036** (handoff payload), **BACK-037** (paths cannot express
+channel-only variation), **BACK-043** (relationship/discoverability/provenance of use),
+**BACK-044** (`interaction` fixed per channel).
 
-**Note there is no create/edit tooling** — authoring this Mission by hand *is* the honest
-test of that gap. Read §5 of `2026-05-04-v2.0-handoff.md` for enum gotchas before writing
-the JSON, and validate with `--check-refs` as you go.
+**Smaller, cheaper options if something lighter is wanted:**
 
-**Two things from this session feed straight in:** `mission-builder` now prompts with the
-correct channel vocabulary, so authoring should surface real schema gaps rather than
-vocabulary drift; and the channel-vs-name rule is now documented, so write
-`{ "channel": "chat", "name": "..." }`, never a product name in `channel`.
+- **A v2.0 authoring quick-reference** — every enum, length cap, and non-obvious shape in one
+  file next to the schemas. Authoring this set cost ~8 validation round-trips and ~60 errors,
+  essentially all of them "the rule exists but nowhere an author would look". Cheap and
+  compounding. Not yet filed as a backlog item; proposed in retrospective §8.3.
+- **BACK-031** — quality score is printed for artifacts that fail validation. An Experience
+  with 49 errors showed `Quality: 100/100` directly above its `FAIL`.
+- **BACK-032** — the validator checks no graph references at all.
+- **BACK-042** — gitignore `.playwright-mcp/` and root `*.png`. Two lines.
 
-Smaller option if something lighter is wanted: **BACK-017** (`run-all-tests.js` — needs a
-decision on which version the runner should target).
+---
+
+## Decisions outstanding for Will
+
+1. **Push or not.** 21 unpushed commits across two branches. Nothing has left the machine.
+2. **Whether to merge `feature/roadside-mission` into `main`** or keep it separate for review.
+3. **⚠️ The source notes are in `main`'s git history.** `research/private/roadside-assistance/`
+   is gitignored *now*, but the notes were committed first (`2aca628`, `4bf5300`) and later
+   untracked. They contain real personal detail — bank, family members, a live insurance
+   dispute, travel abroad — and `PROJECT_CONTEXT.md` records an intent to publish this
+   repository.
+   **Because `main` is unpushed, this is still fixable without rewriting published history.**
+   Once pushed, it is not. Removing them requires a history rewrite, which this project's
+   forward-only git discipline otherwise forbids — so it needs an explicit decision.
 
 ---
 
 ## In flight / uncommitted
 
-None in git. Working tree clean, everything committed.
+**Nothing uncommitted.** Working tree clean, all work committed.
 
-**But two gitignored changes exist only on this machine** — `.claude/skills/actor-builder/SKILL.md`
-(prompted for `web`, the origin of all 8 `web` entries) and `.claude/skills/mission-builder/SKILL.md`
-(asked "what channels does this step use?" with no vocabulary at all, which is how `salesforce`
-and `board-meeting` were written verbatim). Both now carry the channel type list and the
-channel-vs-name rule. **No commit contains them; a fresh clone will not have them.**
+**Unpushed:** 21 commits (8 on `main`, 13 on `feature/roadside-mission`).
 
-Everything else is committed **and pushed** — see the header.
+**Gitignored changes that exist only on this machine and are in no commit:**
+- `.claude/commands/start-session.md` — the false sub-agent permissions guardrail was corrected.
+- `.claude/commands/end-session.md` — its verification baseline numbers were stale (94 / 45 /
+  12 of 12) and were corrected to the real figures.
+- `research/private/roadside-assistance/2026-08-06-source-notes.md` — the interview record,
+  deliberately untracked.
+- `backlog.json` / `BACKLOG.md` — 14 new items this session.
 
 ---
 
 ## Open worktrees
 
-None. Single working tree on `main`.
+None. Single working tree.
 
 ---
 
 ## Active plans
 
-- `docs/superpowers/plans/2026-07-23-mission-visualiser.md` — **complete and merged.** 28 of 29 steps ticked. Task 5 was completed 2026-08-06 (against the retail mission rather than the energy one the plan named — annotated in place). The single remaining step is Task 6 Step 4, which is impossible: `.claude/` is gitignored.
-  Spec: `docs/superpowers/specs/2026-07-23-mission-visualiser-design.md`
-- `docs/superpowers/specs/2026-08-06-figma-pptx-export-design.md` — **deferred design, no plan yet.** Figma + PowerPoint export for Actor/Experience. Sections 1–2 approved, 3–4 drafted only, six open questions. Read before resuming BACK-018.
-- `docs/superpowers/plans/2026-05-04-v2.0-implementation.md` — the v2.0 build. WS1–WS7, WS9, WS10 done. **WS8 (Figma Plugin) remains, now deliberately deferred** — see the spec above.
-- `docs/superpowers/plans/2026-05-04-v2.0-handoff.md` — a prior session handoff, superseded by this file for *state*. Still the reference for **schema enum gotchas (§5)** and known issues — read §5 before authoring example JSON.
+- `docs/superpowers/plans/2026-08-06-roadside-mission.md` — **complete.** All ten tasks done.
+- `docs/superpowers/specs/2026-08-06-roadside-mission-design.md` — the design, with **§11
+  Findings** added: prediction verdicts, unpredicted gaps, tooling defects, verification.
+- `docs/superpowers/retrospectives/2026-08-11-back-021-retrospective.md` — **read this before
+  planning the next piece of work.** Process lessons, the four-root-cause reframe of the
+  backlog, and the argument for rescoping BACK-020.
+- `docs/superpowers/specs/2026-08-06-channel-pattern-constraint-design.md` — **BACK-027,
+  designed and deliberately deferred.** Do not implement before BACK-020. Carries an open
+  question about schema-annotation vs shared-module.
+- `docs/superpowers/specs/2026-08-06-figma-pptx-export-design.md` — **deferred design, no plan.**
+  WS8. Read before resuming BACK-018; also read BACK-029.
+- `docs/superpowers/plans/2026-05-04-v2.0-implementation.md` — the v2.0 build. WS1–WS7, WS9,
+  WS10 done. WS8 deferred.
+- `docs/superpowers/plans/2026-05-04-v2.0-handoff.md` — superseded by this file for *state*.
+  Still the reference for **schema enum gotchas (§5)** — read before authoring example JSON.
 
 ---
 
 ## Known constraints
 
-- **`.claude/` is gitignored.** All 17 skills, `PROJECT_CONTEXT.md`, `VERSIONING_WORKFLOW.md`, and the `/start-session`, `/end-session`, `/backlog` commands are **local-only** — absent from a fresh clone or a second machine, and unprotected by git. Work landing there is invisible to every commit. Say so when it happens.
-- **`BACKLOG.md` and `backlog.json` are also gitignored** — same caveat. The CLI is `node tools-internal/backlog.js` (not `tools/backlog.js`).
-- **`backlog.json` is the source of truth; `BACKLOG.md` is generated.** `add` and `park` write only to the JSON — you must run `node tools-internal/backlog.js sync` or the Markdown silently keeps showing stale contents. `sync` regenerates the file's header from a template in `backlog.js`, so hand-edits to the top of `BACKLOG.md` are discarded — fix that template instead.
-- **Sub-agents work — Write, Edit and Bash all verified 2026-08-06.** An earlier note in this
-  file claimed they were denied; **that was wrong.** `.claude/settings.local.json` has an
-  **empty `deny` list**, and a probe sub-agent successfully wrote a file, edited it, ran an
-  allowlisted `node` command *and* ran `git status`, which is not allowlisted at all. The
-  original note appears to have described a permission-prompt artefact — `Write` is absent
-  from the allow list, so in a stricter mode it would need approval a sub-agent cannot give —
-  rather than any configured restriction. **Caveat:** verified in one session's permission
-  mode. It is not proof that sub-agents work under every mode. Re-probe rather than assume if
-  it matters.
+- **`.claude/` is gitignored.** All skills, `PROJECT_CONTEXT.md`, `VERSIONING_WORKFLOW.md` and
+  the slash commands are local-only — absent from a fresh clone and unprotected by git.
+- **`BACKLOG.md` and `backlog.json` are gitignored.** CLI is `node tools-internal/backlog.js`.
+- **`backlog.json` is the source of truth; `BACKLOG.md` is generated.** `add` and `park` write
+  only to the JSON — run `sync` or the Markdown silently keeps showing stale contents.
+- **The backlog CLI cannot edit an existing item's description.** Updating BACK-020 required
+  hand-editing `backlog.json`. Back it up first — it is gitignored, so there is no safety net.
+- **Sub-agents work here.** Write, Edit and Bash all verified 2026-08-06 (the `deny` list in
+  `.claude/settings.local.json` is empty). A long-standing note claiming they were denied was
+  **wrong** and had stood for months. Caveat: verified in one permission mode only; re-probe
+  rather than assume.
 - **ajv is compiled once at module load** in the validator. Do not instantiate Ajv per call.
-- Schema enum values are easy to get wrong — see §5 of the v2.0 handoff doc before authoring example JSON.
-- **The channel object does not restrict `additionalProperties`.** A v1.1-shaped key such as
-  `type` or `usage_context` validates cleanly and is then **silently ignored** — the data is
-  lost with no error. Use v2.0 names (`channel`, `usageContext`).
+- **`additionalProperties: true` on `laneContent` and several Actor objects means invented keys
+  validate cleanly and are silently discarded** — with a PASS and a quality score to reassure
+  you. This caught an author three times in one session while actively watching for it. Read
+  the schema shape before writing; do not trust a PASS. Filed as BACK-033.
+- **Lane IDs disagree with `laneContent` property names** — declared `design-opps` vs typed
+  `designOpportunities`, declared `accessibility` vs typed `accessibilityProfile`. Following the
+  schema's own documented rule yields an **unvalidated** key. The roadside set uses the typed
+  names deliberately. Filed as BACK-034.
 - **`channel` takes a *type*, `name` takes the instance.** `{ "channel": "app", "name":
-  "Salesforce CRM" }`, never `{ "channel": "salesforce" }`. The field is a free string so the
-  wrong value validates silently and fragments every channel-mix analysis. Two entries on one
-  node may share a type and differ only by `name` — correct, not a duplicate. Full rules in
-  `documentation/CHANNEL_TAXONOMY.md` (now v2.0-targeted).
+  "Salesforce CRM" }`, never `{ "channel": "salesforce" }`. Full rules in
+  `documentation/CHANNEL_TAXONOMY.md`.
+- **Node names truncate beyond ~28 characters** in the renderer's Overview mode. Write the short
+  label; put detail in `description`.
+- **Node names must be outcome-neutral** where a mission carries both designed and observed
+  paths — `dropoff-location-disputed` had to be renamed once a designed path traversed it.
 
 ---
 
 ## Verification baseline
 
-The `/end-session` gate, re-measured 2026-08-06 (third session):
+Re-measured 2026-08-11. **Check exit codes directly** (`out=$(node <test> 2>&1); code=$?`) —
+piping to `tail`/`grep` reports the pipe's status, not node's.
 
 ```bash
-node tools/validators/test-v2.0-validator.js          # exit 0 — 94 passed, 0 failed
-node tools/renderers/test-mission-layout.js           # exit 0 — 16 passed, 0 failed
-node tools/renderers/test-render-mission.js           # exit 0 — 83 passed, 0 failed
-node tools/converters/test-converter.js               # exit 0 — 87 passed, 0 failed
+node tools/validators/test-v2.0-validator.js    # exit 0 — 98 passed
+node tools/renderers/test-mission-layout.js     # exit 0 — 16 passed
+node tools/renderers/test-render-mission.js     # exit 0 — 83 passed
+node tools/converters/test-converter.js         # exit 0 — 87 passed
 node tools/validators/validate-v2.0.js v2.0/examples/ --check-refs
-                                                      # exit 0 — 12/12, 85-100 quality
-node tools/validators/run-all-tests.js                # exit 1 — KNOWN FAILURE, see below
+                                                # exit 0 — 16/16, quality 85-100
+node tools/validators/run-all-tests.js          # exit 1 — KNOWN FAILURE, see below
 ```
 
-**`test-converter.js` belongs in the gate** — it was previously omitted. It rose 79 → 87 with
-the channel translation fix: 8 tests covering telecom inference, name normalisation, the
-physical fallback, and custom-channel passthrough. `test-render-mission.js` rose 45 → 83
-earlier with the channel glyph work.
+**`test-v2.0-validator.js` is data-dependent — do not treat its count as a fixed baseline.**
+It walks `v2.0/examples/` with `readdirSync` and generates **one assertion per example file**
+(`test-v2.0-validator.js:371-384`), so the total grows whenever an example is added. It read 94
+before the roadside set and 98 after; the four new artifacts are the entire difference. **The
+rule is the baseline, not the number.**
 
-**Check exit codes directly** (`out=$(node <test> 2>&1); code=$?`) — piping to `tail`/`grep`
-reports the pipe's exit status, not `node`'s.
+Quality scores are a regression signal. The other four example sets must stay at 85–100 and
+byte-identical after any data-only change.
 
-**Quality scores are a regression signal.** They sat at 85–100 before and after this session's
-30-entry data change, byte-identical. The scorer only tests channel *presence*, not values, so
-any movement after a data-only edit means something else broke.
+**⚠️ A quality score does not mean the artifact is valid.** Scoring and schema validation run
+independently — an Experience with 49 validation errors printed `Quality: 100/100` directly
+above its `FAIL`. Read the errors, not the score. Filed as BACK-031.
 
-### ⚠️ Known failure: `run-all-tests.js` exits 1 (pre-existing, v1.x only)
+### Known failure: `run-all-tests.js` exits 1 (pre-existing, v1.x only)
 
-Its **v2.0 half passes cleanly** (12 examples, 0 failed). Its **v1.x half cannot find
-any schema** and reports 6 errors:
-
-```
-❌ base/persona-base.json - MISSING
-❌ persona/business-persona.json - MISSING
-❌ persona/consumer-persona.json - MISSING
-❌ persona/employee-persona.json - MISSING
-❌ journey/journey-schema.json - MISSING
-❌ patterns/pattern-schema.json - MISSING
-```
-
-**Cause:** the runner defaults `baseDir` to `v1.0.2/` (lines 33 and 71) and expects a
-`base/` + `persona/` + `journey/` + `patterns/` subdirectory layout that **matches no
-version in this repo**. v1.0.2 keeps its four schemas flat in `v1.0.2/schemas/`; v1.1
-uses `v1.1/schemas/` with different filenames (`core-persona.schema.json`,
-`pairing.schema.json`, `role-card.schema.json`, `journey-schema.json`). The layout the
-runner wants appears to be a v1.0.0/v1.0.1-era expectation never updated — note its own
-header comment claims "v1.1 schemas and v2.0 schemas" while the default points at
-v1.0.2. Separately, `patterns/` is gitignored, so `pattern-schema.json` would be missing
-on any fresh clone regardless.
-
-**Not caused by any recent work.** Fixing it needs a decision on what the runner should
-target (v1.1? v1.0.2? both?), so it is logged rather than patched. Until then, **treat
-the four suites above as the real gate** and `run-all-tests.js` exit 1 as expected.
+Its **v2.0 half passes cleanly.** Its v1.x half cannot find any schema and reports 6 errors,
+because the runner defaults `baseDir` to `v1.0.2/` (lines 33, 71) and expects a
+`base/` + `persona/` + `journey/` + `patterns/` layout matching **no version in this repo**.
+Not caused by any recent work. Fixing it needs a decision on what the runner should target, so
+it is logged as **BACK-017** rather than patched. Treat the four suites above as the real gate.

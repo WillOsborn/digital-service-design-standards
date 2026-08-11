@@ -7,9 +7,12 @@
 **Last updated:** 2026-08-11
 **Active schema version:** v2.0 (Actor / Mission / Experience)
 
-**Branch:** `feature/roadside-mission` — **13 commits ahead of `main`, no upstream set.**
-**`main` is itself 8 commits ahead of `origin/main`.** **Nothing is pushed.** 21 unpushed
-commits in total. Will was asked at session end and had not yet decided; see *Decisions outstanding for Will*.
+**Branch:** `feature/roadside-mission` — ahead of `main`, **no upstream set.**
+**`main` is itself ahead of `origin/main`.** **Nothing has been pushed — neither branch.**
+Will was asked at session end and had not yet decided; see *Decisions outstanding for Will*.
+Get the live counts with `git rev-list --count origin/main..main` and
+`git rev-list --count main..HEAD` rather than trusting a figure written here, which goes stale
+on the next commit — including this file's own.
 
 **Concurrency check:** at session end the working tree was clean, one worktree, no other
 session evident. At session start run `git status -sb`. Expect `feature/roadside-mission` with
@@ -101,7 +104,9 @@ channel-only variation), **BACK-043** (relationship/discoverability/provenance o
 
 ## Decisions outstanding for Will
 
-1. **Push or not.** 21 unpushed commits across two branches. Nothing has left the machine.
+1. **Push or not.** Nothing has left the machine — both branches are unpushed, and
+   `feature/roadside-mission` has no upstream, so its first push needs
+   `git push -u origin feature/roadside-mission`.
 2. **Whether to merge `feature/roadside-mission` into `main`** or keep it separate for review.
 3. **⚠️ The source notes are in `main`'s git history.** `research/private/roadside-assistance/`
    is gitignored *now*, but the notes were committed first (`2aca628`, `4bf5300`) and later
@@ -118,7 +123,8 @@ channel-only variation), **BACK-043** (relationship/discoverability/provenance o
 
 **Nothing uncommitted.** Working tree clean, all work committed.
 
-**Unpushed:** 21 commits (8 on `main`, 13 on `feature/roadside-mission`).
+**Unpushed:** every commit on both branches. Neither `main` nor
+`feature/roadside-mission` has reached `origin`.
 
 **Gitignored changes that exist only on this machine and are in no commit:**
 - `.claude/commands/start-session.md` — the false sub-agent permissions guardrail was corrected.

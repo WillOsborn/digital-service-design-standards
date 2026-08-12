@@ -108,14 +108,8 @@ channel-only variation), **BACK-043** (relationship/discoverability/provenance o
    `feature/roadside-mission` has no upstream, so its first push needs
    `git push -u origin feature/roadside-mission`.
 2. **Whether to merge `feature/roadside-mission` into `main`** or keep it separate for review.
-3. **⚠️ The source notes are in `main`'s git history.** `research/private/roadside-assistance/`
-   is gitignored *now*, but the notes were committed first (`2aca628`, `4bf5300`) and later
-   untracked. They contain real personal detail — bank, family members, a live insurance
-   dispute, travel abroad — and `PROJECT_CONTEXT.md` records an intent to publish this
-   repository.
-   **Because `main` is unpushed, this is still fixable without rewriting published history.**
-   Once pushed, it is not. Removing them requires a history rewrite, which this project's
-   forward-only git discipline otherwise forbids — so it needs an explicit decision.
+3. **✅ RESOLVED 2026-08-12 — personal data purged from git history.** See *Privacy posture*
+   below. No action outstanding; recorded so the next session does not re-raise it.
 
 ---
 
@@ -159,6 +153,48 @@ None. Single working tree.
   WS10 done. WS8 deferred.
 - `docs/superpowers/plans/2026-05-04-v2.0-handoff.md` — superseded by this file for *state*.
   Still the reference for **schema enum gotchas (§5)** — read before authoring example JSON.
+
+---
+
+## Privacy posture — assume this repository is NOT private
+
+**Treat `origin` as potentially public at any time.** Will cannot guarantee the GitHub
+repository stays private, so **anything committed must be safe to publish**. This is a standing
+constraint, not a pre-release checklist item.
+
+**What this means in practice:**
+
+- **Never commit personal or client-identifying detail** — real names, employers, banks,
+  service providers, locations, dates, family circumstances, live disputes. Not in artifacts,
+  not in docs, not in commit messages.
+- **Research notes from real people go in `research/private/`**, which is gitignored. Write
+  them pseudonymised from the outset; do not rely on cleaning them up later.
+- **Example artifacts use fictional composites.** Record that in each artifact's `governance`
+  block: `anonymisationMethod: "fictional_composite"`, `containsPii: false`.
+- **Editing a file does not unpublish it.** Anything committed stays in history until history
+  is rewritten, which is expensive and normally forbidden here. The cheap moment is *before*
+  the commit.
+- Real names remain legitimately in `LICENSE` (copyright holder) and as `**Owner:**` in project
+  metadata. That is ownership, not personal circumstance, and is intentional.
+
+**History rewrite of 2026-08-12.** The roadside source notes were committed before being moved
+to `research/private/`, so they sat in history containing a real name, bank, family members, a
+live insurance dispute and a country. With the repo's privacy no longer guaranteed, history was
+rewritten via `git filter-branch` to purge the file and redact residual identifiers from two
+other files.
+
+- **The 46 commits already on `origin/main` were not altered** — `origin/main` remains an
+  ancestor of `main`, so **no force-push to shared history is required.** Only local, unpushed
+  commits were rewritten.
+- The commit that added the notes was pruned as empty. **Note two surviving commit messages now
+  describe the notes file** (`chore: move roadside source notes out of version control`, and
+  the `ai_assisted` commit) — the messages are historical artefacts; the file exists in no
+  commit. Verified with `git log --all -- <path>` returning nothing.
+- Full pre-rewrite backup (`--all` bundle, verified restorable, plus a `.git` copy) was taken to
+  the session scratchpad. **That backup still contains the unredacted data** — it is outside the
+  repo and will vanish with the scratchpad, but do not copy it anywhere durable.
+- Verification after the rewrite: no commit references the notes path; zero history-wide matches
+  for the removed identifiers; working tree unchanged; full gate green at 16/16.
 
 ---
 

@@ -59,14 +59,18 @@ generically in artifact content, and no real account or policy detail appears in
 removed from tracking. On 2026-08-11 they were also **pseudonymised in place** — real names,
 the bank, the assistance provider, the country, and named third-party products replaced with
 the same pseudonyms and generic descriptions used in the published artifacts. Two residual country references in the Experience were genericised at the same time.
-`PROJECT_CONTEXT.md` records the intent to make this repository public after review.
+The repository must be treated as potentially public at any time.
 
-**Still outstanding:** the notes were committed before the move (`2aca628`, `4bf5300`), so
-**they remain in git history**. Removing them from the working tree does not remove them from
-the repository. Scrubbing history requires a rewrite, which this project's git discipline
-forbids by default — so it needs an explicit decision from Will before publication, not a
-routine cleanup. Until then the repository is private and exposure is limited to those who
-already have access.
+**Resolved 2026-08-12.** The notes had been committed before the move, so they sat in git
+history. Because the repository's privacy cannot be guaranteed, history was rewritten to purge
+the file entirely and redact residual identifiers from this spec and the Experience. Only
+local, unpushed commits were affected — the commits already on `origin/main` kept their SHAs,
+so no force-push to shared history was needed. See `docs/current-state.md`, *Privacy posture*.
+
+**Standing rule this established: assume the repository is not private.** Anything committed
+must be safe to publish. Research notes from real people belong in `research/private/`
+(gitignored) and should be written pseudonymised from the outset — editing a file later does
+not unpublish it.
 
 ---
 

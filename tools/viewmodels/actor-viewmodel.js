@@ -45,7 +45,17 @@ const nonEmpty = v => Array.isArray(v) ? v.length > 0 : v !== undefined && v !==
 const item = (primary, extra) => Object.assign({ primary: String(primary) }, extra || {});
 const severityBadge = n => (typeof n === 'number' ? `severity ${n}/5` : undefined);
 const joinList = arr => (Array.isArray(arr) ? arr.map(humaniseValue).join(', ') : undefined);
-function humaniseValue(v) { return typeof v === 'string' ? v.replace(/_/g, ' ') : String(v); }
+function humaniseValue(v) {
+  if (typeof v === 'string') return v.replace(/_/g, ' ');
+  if (Array.isArray(v)) return v.map(humaniseValue).join(', ');
+  if (v && typeof v === 'object') {
+    return Object.entries(v)
+      .filter(([, x]) => x !== null && x !== undefined && typeof x !== 'object')
+      .map(([k, x]) => `${humanise(k)}: ${typeof x === 'string' ? x.replace(/_/g, ' ') : String(x)}`)
+      .join('; ');
+  }
+  return String(v);
+}
 
 // One normaliser per trait group (spec §4.1). Each returns Item[] (possibly empty).
 const TRAIT_NORMALISERS = {
@@ -167,7 +177,7 @@ function buildSummarySlots(vm, actor, opts, warnings) {
 function keyValueItems(obj) {
   if (!obj || typeof obj !== 'object') return [];
   return Object.entries(obj).filter(([, v]) => v !== undefined && v !== null && v !== '')
-    .map(([k, v]) => item(Array.isArray(v) ? v.map(humaniseValue).join(', ') : (typeof v === 'object' ? JSON.stringify(v) : String(v)), { badge: humanise(k) }));
+    .map(([k, v]) => item((Array.isArray(v) || (v && typeof v === 'object')) ? humaniseValue(v) : String(v), { badge: humanise(k) }));
 }
 
 function buildAvatar(actor) {

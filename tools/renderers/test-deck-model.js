@@ -278,6 +278,24 @@ section('Appendix — slides');
   const expected = d.slides.map((s, i) => (s.kind === 'cover' ? null : String(i + 1))).filter(Boolean);
   assert(pages.join(',') === expected.join(','), 'footer page numbers equal the slide index on every non-cover slide, in order', pages.join(','));
 }
+{
+  // Fix round 1, finding 1: keep-with-next in flow.paginate must stop a heading or band from
+  // being stranded as the last block of a column with its content deferred to the next.
+  const flowCtx = { C: theme.colour.light, S: theme.typography.scale, metrics, warn: () => {} };
+  const colFrame = { x: 0, y: 0, w: (SLIDE.w - 2 * LAYOUT.margin - LAYOUT.appendix.colGap) / 2, h: LAYOUT.appendix.frameH };
+  for (const actor of [adam, daniel, fixture]) {
+    const vm = vmsOf([actor])[0];
+    const { pages } = flow.paginate(dm.appendixBlocks(vm, flowCtx), colFrame, metrics);
+    for (const p of pages) {
+      if (p.blocks.length <= 1) continue;
+      const last = p.blocks[p.blocks.length - 1];
+      const orphaned = last.kind === 'heading' || (last.kind === 'band' && !last.continued);
+      assert(!orphaned, `${actor.id}: no column's last block is an orphaned heading or non-continued band`, `${last.kind}:${last.text || ''}`);
+    }
+  }
+  const d = buildDeck(vmsOf([adam, daniel, fixture]), opts({ sections: { cover: false, index: false, summary: false, appendix: true } }));
+  assert(d.slides.every(s => s.elements.every(e => Math.abs(e.y - LAYOUT.footerY) < 1e-9 || e.y + e.h <= LAYOUT.footerY + 1e-9)), 'every non-footer element stays clear of the footer band on every appendix slide');
+}
 
 module.exports = { assert, section, load, adam, daniel, sarah, fixture, theme, metrics, vmsOf, opts, textOf, inBounds, finish: () => { console.log(`\n${passed} passed, ${failed} failed`); process.exit(failed ? 1 : 0); } };
 if (require.main === module) module.exports.finish();

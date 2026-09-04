@@ -293,7 +293,7 @@ function buildAppendixSlides(vm, ctx) {
   const colW = (SLIDE.w - 2 * m - L.colGap) / 2;
   const blocks = appendixBlocks(vm, ctx);
   const { pages, warnings } = flow.paginate(blocks, { x: 0, y: 0, w: colW, h: L.frameH }, ctx.metrics);
-  for (const w of warnings) ctx.warn({ code: `APPENDIX_${w.reason.toUpperCase()}`, actorId: vm.identity.id, sectionId: w.sectionId, page: w.page });
+  for (const w of warnings) ctx.warn({ code: `APPENDIX_${w.reason.toUpperCase()}`, actorId: vm.identity.id, sectionId: w.sectionId, page: w.page, oversized: !!w.oversized });
 
   const slides = [];
   for (let i = 0; i < pages.length; i += 2) {

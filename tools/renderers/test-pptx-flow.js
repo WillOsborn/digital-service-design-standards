@@ -12,6 +12,7 @@ function section(t) { console.log(`\n${'='.repeat(60)}\n  ${t}\n${'='.repeat(60)
 const M = { avgCharWidthEm: 0.5, lineHeightEm: 1.2 };   // round numbers so expectations are hand-checkable
 const body = { size: 12, colour: '#000000' };
 const band = { size: 14, bold: true, colour: '#ffffff', fill: '#2563eb' };
+const headStyle = { size: 13, bold: true, colour: '#000' };
 const words = n => Array.from({ length: n }, (_, i) => 'word' + (i % 7)).join(' ');
 
 section('estimateLines');
@@ -106,6 +107,66 @@ section('paginate — continuation band');
   assert(pages.length === 2, 'two pages');
   const first = pages[1].blocks[0];
   assert(first.kind === 'band' && first.text === 'Traits (cont.)' && first.continued === true, 'page 2 opens with "Traits (cont.)"');
+}
+
+section('paginate — keep-with-next: a heading is never stranded from the first item of its list');
+{
+  // A filler occupies most of the column (making the page non-fresh), leaving just enough room
+  // for the heading alone but not for the heading plus the list's first item.
+  const filler = { kind: 'paragraph', sectionId: 'filler', text: words(20), style: body };
+  const heading = { kind: 'heading', sectionId: 'h1', text: 'Frustrations', style: headStyle };
+  const list = { kind: 'list', sectionId: 'h1', items: [{ primary: 'Frustration one is bad' }, { primary: 'Frustration two is worse' }], style: body };
+  const list1 = { ...list, items: list.items.slice(0, 1) };
+  const fillerH = estimateBlockHeight(filler, 3, M);
+  const headingH = estimateBlockHeight(heading, 3, M);
+  const list1H = estimateBlockHeight(list1, 3, M);
+  const listFullH = estimateBlockHeight(list, 3, M);
+  const frame = { x: 0, y: 0, w: 3, h: 1.3 };
+  const remaining = frame.h - fillerH;
+  assert(remaining >= headingH && remaining < headingH + list1H, 'precondition: the heading alone fits the remaining room, heading + first item does not', `remaining=${remaining} headingH=${headingH} headingH+list1H=${headingH + list1H}`);
+  assert(headingH + listFullH <= frame.h, 'precondition: heading + whole list fits a fresh page', `chain=${headingH + listFullH} frame.h=${frame.h}`);
+  const { pages } = paginate([filler, heading, list], frame, M);
+  assert(pages.length === 2, 'two pages', String(pages.length));
+  assert(pages[0].blocks[pages[0].blocks.length - 1].kind !== 'heading', "page 1's last block is not the heading");
+  assert(pages[1].blocks[0].kind === 'heading' && pages[1].blocks[0].text === 'Frustrations', 'page 2 opens with the heading');
+  assert(pages[1].blocks[1] && pages[1].blocks[1].kind === 'list' && pages[1].blocks[1].items.length === 2, 'the whole list follows the heading on page 2');
+}
+
+section('paginate — keep-with-next: a band + heading + list move together');
+{
+  const filler = { kind: 'paragraph', sectionId: 'filler', text: words(20), style: body };
+  const bandBlock = { kind: 'band', sectionId: 's2', text: 'Section Two', style: band };
+  const heading = { kind: 'heading', sectionId: 's2', text: 'Frustrations', style: headStyle };
+  const list = { kind: 'list', sectionId: 's2', items: [{ primary: 'Frustration one is bad' }, { primary: 'Frustration two is worse' }], style: body };
+  const list1 = { ...list, items: list.items.slice(0, 1) };
+  const fillerH = estimateBlockHeight(filler, 3, M);
+  const bandH = estimateBlockHeight(bandBlock, 3, M);
+  const headingH = estimateBlockHeight(heading, 3, M);
+  const list1H = estimateBlockHeight(list1, 3, M);
+  const listFullH = estimateBlockHeight(list, 3, M);
+  const chainFirstUnit = bandH + headingH + list1H;
+  const chainFull = bandH + headingH + listFullH;
+  const frame = { x: 0, y: 0, w: 3, h: 1.5 };
+  const remaining = frame.h - fillerH;
+  assert(remaining >= bandH && remaining < chainFirstUnit, 'precondition: the band alone fits the remaining room, band + heading + first item does not', `remaining=${remaining} bandH=${bandH} chainFirstUnit=${chainFirstUnit}`);
+  assert(chainFull <= frame.h, 'precondition: band + heading + whole list fits a fresh page', `chainFull=${chainFull} frame.h=${frame.h}`);
+  const { pages } = paginate([filler, bandBlock, heading, list], frame, M);
+  assert(pages.length === 2, 'two pages', String(pages.length));
+  assert(pages[0].blocks.every(b => b.kind !== 'band' && b.kind !== 'heading'), 'page 1 carries none of the band/heading/list chain');
+  assert(pages[1].blocks.map(b => b.kind).join(',') === 'band,heading,list', 'page 2 opens with the band, then the heading, then the whole list, in order');
+  assert(pages[1].blocks[0].text === 'Section Two' && !pages[1].blocks[0].continued, 'page 2 opens with the band itself, not a continuation');
+}
+
+section('paginate — keep-with-next: a trailing heading with no following content still places on the current page');
+{
+  const filler = { kind: 'paragraph', sectionId: 'filler', text: words(20), style: body };
+  const heading = { kind: 'heading', sectionId: 'h2', text: 'Trailing heading', style: headStyle };
+  const fillerH = estimateBlockHeight(filler, 3, M);
+  const headingH = estimateBlockHeight(heading, 3, M);
+  const frame = { x: 0, y: 0, w: 3, h: fillerH + headingH + 0.1 };
+  const { pages } = paginate([filler, heading], frame, M);
+  assert(pages.length === 1, 'one page — the trailing heading is not deferred just because nothing follows it', String(pages.length));
+  assert(pages[0].blocks.length === 2 && pages[0].blocks[1].kind === 'heading', 'the heading places right after the filler on the current page');
 }
 
 section('paginate — a band that spills moves whole, never emitted as a phantom continuation first');

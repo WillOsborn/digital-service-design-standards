@@ -7,7 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const { validateData } = require('../validators/validate-v2.0');
 const vmod = require('./actor-viewmodel');
-const { buildActorViewModel, TRAIT_GROUPS, TRAIT_LABELS, DEFAULT_ACTOR_SECTIONS, humanise, initialsOf, colourKeyOf } = vmod;
+const { buildActorViewModel, TRAIT_GROUPS, TRAIT_LABELS, DEFAULT_ACTOR_SECTIONS, humanise, initialsOf, colourKeyOf, keyValueItems } = vmod;
 
 let passed = 0;
 let failed = 0;
@@ -207,6 +207,18 @@ section('Warnings shape');
 for (const a of ALL_ACTORS) {
   const vm = buildActorViewModel(a);
   assert(Array.isArray(vm.warnings) && vm.warnings.every(w => typeof w.code === 'string' && typeof w.message === 'string'), `${a.id}: warnings are {code, message}`);
+}
+
+section('keyValueItems — humanised nested objects and arrays (fix round 1, finding 2)');
+{
+  const items = keyValueItems({ researchSources: [{ type: 'interviews', participants: 12 }] });
+  assert(items[0].badge === 'Research sources', 'array-of-objects value: badge is the humanised key');
+  assert(items[0].primary === 'Type: interviews; Participants: 12', 'array-of-objects value: primary humanises each object as "Key: value; Key: value", never [object Object]');
+}
+{
+  const on = buildActorViewModel(sarah, { sections: { provenance: true } });
+  assert(Array.isArray(on.provenance) && on.provenance.length > 0, 'sarah with provenance selected yields items');
+  assert(!on.provenance.some(i => i.primary.includes('[object Object]')), 'no provenance item stringifies a nested object as [object Object]');
 }
 
 module.exports = { assert, section, ROOT, load, sarah, adam, daniel, fixture, ALL_ACTORS, isItem, finish: () => { console.log(`\n${passed} passed, ${failed} failed`); process.exit(failed ? 1 : 0); } };

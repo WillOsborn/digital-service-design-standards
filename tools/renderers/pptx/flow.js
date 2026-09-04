@@ -149,10 +149,54 @@ function paginate(blocks, frame, metrics) {
   while (queue.length) {
     const b = queue.shift();
     const h = estimateBlockHeight(b, frame.w, metrics);
+    const pageIsFresh = page.blocks.length === 0 || (page.blocks.length === 1 && page.blocks[0].continued);
+
+    // Keep-with-next: a band or heading must never be stranded at the bottom of a column with
+    // nothing under it. Look ahead through the queue over any run of consecutive band/heading
+    // blocks to the first list or paragraph, and require room for that whole chain plus the
+    // content block's next placement unit before committing b to a page that already has other
+    // content on it. A trailing band/heading with no following content block is unaffected
+    // (nothing to keep it with), and a fresh page always takes the chain's head regardless — the
+    // existing oversized-block handling covers what happens next.
+    //
+    // The unit used for that content block matters: a list/paragraph that is NOT taller than a
+    // fresh page (h <= freshRoom) is placed atomically elsewhere in this function — it either
+    // fits the room it's given or spills WHOLE to the next page (spec §6), it is never split just
+    // because the leftover is small. So for that (by far the common) case, checking only the
+    // block's first item/sentence understates what "keeping it with the heading" requires — the
+    // heading must be measured against the content's FULL height, or the heading can still end up
+    // placed while the whole (unsplit) list spills away from it. Only when the content itself is
+    // taller than a fresh page (h > freshRoom) will it actually split at an item/sentence
+    // boundary regardless of where it starts — there, the first unit is enough, since a fragment
+    // of it is guaranteed to land right after the heading either way.
+    if (b.kind === 'band' || b.kind === 'heading') {
+      let chainH = h;
+      let j = 0;
+      while (j < queue.length && (queue[j].kind === 'band' || queue[j].kind === 'heading')) {
+        chainH += estimateBlockHeight(queue[j], frame.w, metrics);
+        j += 1;
+      }
+      const content = queue[j];
+      if (content && (content.kind === 'list' || content.kind === 'paragraph')) {
+        const contentH = estimateBlockHeight(content, frame.w, metrics);
+        const willSplit = contentH > freshRoom(content.sectionId) + EPS;
+        const unit = willSplit
+          ? (content.kind === 'list'
+              ? { ...content, items: content.items.slice(0, 1) }
+              : { ...content, text: (splitSentences(content.text)[0] || content.text) })
+          : content;
+        chainH += willSplit ? estimateBlockHeight(unit, frame.w, metrics) : contentH;
+        if (cursor + chainH > bottom + EPS && !pageIsFresh) {
+          newPage(b.sectionId, 'spill');
+          queue.unshift(b);
+          continue;
+        }
+      }
+    }
+
     if (cursor + h <= bottom + EPS) { place(b); continue; }
 
     const avail = bottom - cursor;
-    const pageIsFresh = page.blocks.length === 0 || (page.blocks.length === 1 && page.blocks[0].continued);
     const room = freshRoom(b.sectionId);
 
     if (h > room + EPS) {

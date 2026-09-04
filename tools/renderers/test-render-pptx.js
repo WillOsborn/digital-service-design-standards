@@ -68,8 +68,99 @@ async function writerTests() {
   assert((await slideNotes(b2))[0].includes('note text'), 'notes present');
 }
 
+async function cliTests() {
+  const cli = path.join(__dirname, 'render-pptx.js');
+  const runCli = (args) => {
+    try { return { code: 0, out: execFileSync(process.execPath, [cli, ...args], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }), err: '' }; }
+    catch (e) { return { code: e.status, out: String(e.stdout || ''), err: String(e.stderr || '') }; }
+  };
+  const { parseArgs, expandInputs } = require('./render-pptx');
+
+  section('CLI — parseArgs');
+  {
+    const a = parseArgs(['a.json', 'dir/', '-o', 'x.pptx', '--title', 'T', '--theme', 'b.json', '--images', 'img/', '--sections', 'cover,summary', '--trait-groups', 'needs,frustrations', '--context', 'ctx-1', '--generated-at', '2026-01-01T00:00:00Z', '--warnings-json', 'w.json', '--quiet']);
+    assert(a.inputs.join(',') === 'a.json,dir/' && a.out === 'x.pptx' && a.title === 'T' && a.theme === 'b.json' && a.images === 'img/', 'positional inputs and simple flags');
+    assert(a.sections.cover === true && a.sections.summary === true && a.sections.index === false && a.sections.appendix === false, '--sections parsed to booleans');
+    assert(a.traitGroups.join(',') === 'needs,frustrations' && a.context === 'ctx-1' && a.generatedAt === '2026-01-01T00:00:00Z' && a.warningsJson === 'w.json' && a.quiet === true, 'remaining flags');
+    const d = parseArgs(['only.json']);
+    assert(d.sections.cover && d.sections.index && d.sections.summary && d.sections.appendix && d.traitGroups === 'all' && d.out === null, 'defaults');
+  }
+
+  section('CLI — expandInputs');
+  {
+    const files = expandInputs([path.join(ROOT, 'v2.0/examples/roadside/')]);
+    assert(files.length === 2 && files[0].endsWith('actor-adam-rees.json') && files[1].endsWith('actor-daniel-rees.json'), 'directory → actor-*.json sorted by name', files.join(','));
+    const mixed = expandInputs([path.join(ROOT, 'v2.0/examples/retail/actor-sarah-martinez.json'), path.join(ROOT, 'v2.0/examples/roadside/')]);
+    assert(mixed.length === 3 && mixed[0].endsWith('sarah-martinez.json'), 'explicit file order preserved before directory expansion');
+  }
+
+  section('CLI — happy path');
+  {
+    const out = path.join(tmp, 'cli-roadside.pptx');
+    const r = runCli([path.join(ROOT, 'v2.0/examples/roadside/'), '-o', out, '--generated-at', '2026-09-04T00:00:00Z']);
+    assert(r.code === 0, 'exit 0', r.err);
+    assert(fs.existsSync(out) && fs.statSync(out).size > 10000, 'writes the deck');
+    assert(/Wrote .*cli-roadside\.pptx \(\d+ slides, 2 actors\)/.test(r.out), 'reports slide and actor counts', r.out);
+    assert(/warning:/.test(r.err), 'warnings go to stderr');
+    const texts = await slideTexts(fs.readFileSync(out));
+    assert(texts[0].includes('2026-09-04'), '--generated-at appears on the cover');
+  }
+  {
+    const r = runCli([path.join(ROOT, 'v2.0/examples/retail/actor-sarah-martinez.json'), '-o', path.join(tmp, 'one.pptx'), '--sections', 'cover,summary']);
+    const texts = await slideTexts(fs.readFileSync(path.join(tmp, 'one.pptx')));
+    assert(r.code === 0 && texts.length === 2, '--sections cover,summary → two slides', String(texts.length));
+  }
+  {
+    const wj = path.join(tmp, 'w.json');
+    const r = runCli([path.join(ROOT, 'v2.0/examples/roadside/'), '-o', path.join(tmp, 'w.pptx'), '--warnings-json', wj, '--quiet']);
+    assert(r.code === 0 && fs.existsSync(wj) && Array.isArray(JSON.parse(fs.readFileSync(wj, 'utf8'))), '--warnings-json writes an array');
+    assert(r.err.trim() === '', '--quiet silences stderr warnings');
+  }
+  {
+    const r = runCli([path.join(ROOT, 'tools/tests/fixtures/actor-multi-context.json'), '-o', path.join(tmp, 'ctx.pptx'), '--context', 'ctx-beta', '--trait-groups', 'needs']);
+    const texts = await slideTexts(fs.readFileSync(path.join(tmp, 'ctx.pptx')));
+    assert(r.code === 0 && texts.some(t => t.includes('Beta Role')) , '--context honoured');
+    assert(!texts.join('\n').includes('Learning style'), '--trait-groups limits appendix trait groups');
+  }
+  {
+    const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'dsds-cwd-'));
+    const r = (() => { try { return { code: 0, out: execFileSync(process.execPath, [cli, path.join(ROOT, 'v2.0/examples/roadside/')], { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }) }; } catch (e) { return { code: e.status, out: String(e.stderr) }; } })();
+    assert(r.code === 0 && fs.existsSync(path.join(cwd, 'roadside.pptx')), 'default -o is <dir name>.pptx in cwd', r.out);
+    fs.rmSync(cwd, { recursive: true, force: true });
+  }
+
+  section('CLI — refusals (exit 2, no file)');
+  {
+    const out = path.join(tmp, 'never.pptx');
+    const r = runCli([path.join(ROOT, 'v2.0/examples/roadside/mission-roadside-assistance.json'), '-o', out]);
+    assert(r.code === 2 && !fs.existsSync(out) && /\$type/.test(r.err) && /Mission/.test(r.err), 'non-Actor $type refused, names the type', r.err);
+    const bad = path.join(tmp, 'bad.json'); fs.writeFileSync(bad, '{ "nope": ');
+    const r2 = runCli([bad, '-o', out]);
+    assert(r2.code === 2 && !fs.existsSync(out) && /bad\.json/.test(r2.err), 'unparseable JSON refused, names the file');
+    const invalid = path.join(tmp, 'invalid.json'); fs.writeFileSync(invalid, JSON.stringify({ ...adam, actorType: 'robot' }));
+    const r3 = runCli([invalid, '-o', out]);
+    assert(r3.code === 2 && !fs.existsSync(out) && /actorType/.test(r3.err), 'schema-invalid Actor refused with the validator error');
+    const r4 = runCli([path.join(ROOT, 'v2.0/examples/roadside/'), '-o', out, '--theme', path.join(tmp, 'missing-theme.json')]);
+    assert(r4.code === 2 && !fs.existsSync(out) && /theme/.test(r4.err), 'unreadable --theme refused');
+    const r5 = runCli([]);
+    assert(r5.code === 2 && /Usage/.test(r5.err), 'no inputs → usage, exit 2');
+    const r6 = runCli([path.join(tmp, 'does-not-exist.json'), '-o', out]);
+    assert(r6.code === 2 && /does-not-exist\.json/.test(r6.err), 'missing input file refused by name');
+  }
+
+  section('CLI — theme override reaches the file');
+  {
+    const th = path.join(tmp, 'brand.json'); fs.writeFileSync(th, JSON.stringify({ typography: { fontFamily: 'Arial' }, colour: { light: { traits: '#112233' } } }));
+    const out = path.join(tmp, 'themed.pptx');
+    const r = runCli([path.join(ROOT, 'v2.0/examples/retail/actor-sarah-martinez.json'), '-o', out, '--theme', th, '--sections', 'summary']);
+    const JSZip = require('jszip'); const zip = await JSZip.loadAsync(fs.readFileSync(out)); const xml = await zip.file('ppt/slides/slide1.xml').async('string');
+    assert(r.code === 0 && xml.includes('typeface="Arial"') && xml.includes('112233'), 'font and colour from the theme are in the slide XML');
+  }
+}
+
 module.exports = { assert, section, ROOT, load, tmp, theme, metrics, adam, daniel, writerTests, execFileSync,
   finish: () => { fs.rmSync(tmp, { recursive: true, force: true }); console.log(`\n${passed} passed, ${failed} failed`); process.exit(failed ? 1 : 0); } };
+module.exports.cliTests = cliTests;
 
 if (require.main === module) {
   (async () => {

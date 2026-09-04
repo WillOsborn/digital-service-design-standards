@@ -3082,22 +3082,34 @@ Fill in below, then commit.
 - Metric changes in tokens: **none.** `tools/design-tokens.json` `typography.metrics`
   (Calibri 0.47/1.2, Arial 0.52/1.15) is untouched.
 - Canary result: **the oracle did NOT fire on the first try, and the page-bounds test cannot ever
-  fire.** LibreOffice's PDF export clips at the page box: the canary (a 14pt text box at
-  y=6.5in..7.3in stuffed with 360 words) rendered only 80 of them, on 4 lines at yMin
-  473.5/490.3/507.1/523.9, the last with yMax=537.92 on a 540pt page. Everything below the page edge
-  was discarded before `pdftotext` saw it, so no word is ever reported outside its page — even though
-  that last line sits 12.3pt below its own box bottom (525.6pt). `findOverflow` therefore gained an
+  fire on DOWNWARD overflow.** LibreOffice's PDF export clips vertically at the page box: the canary
+  (a 14pt text box at y=6.5in..7.3in stuffed with 360 words) rendered only 80 of them, on 4 lines at
+  yMin 473.5/490.3/507.1/523.9, the last with yMax=537.92 on a 540pt page. Everything below the page
+  edge was discarded before `pdftotext` saw it, so no word is ever reported outside its page — even
+  though that last line sits 12.3pt below its own box bottom (525.6pt). Sideways is different: there
+  is no horizontal clip, glyph boxes do run past the right edge, and the horizontal canary fires at
+  inset 0 (xMax 961.81 on a 959.98pt page). So the page box alone catches sideways overflow and is
+  blind to the downward kind — which is the kind an under-counting estimator produces.
+  `findOverflow` therefore gained an
   optional third argument, `insetPt` (default 0, so the specified page-box behaviour and its tests are
   unchanged), which shrinks the allowed area on all four sides and turns the outer band of the slide
   into a no-text zone — the only observable symptom of clipped overflow. `SAFE_INSET_PT = 12` is
   calibrated from measurement, not guesswork: across all six decks real content clears the slide edges
   by ≥20.4pt (tightest: the footer at yMax 519.58; also maxXMax 922.17, minXMin 37.98, minYMin 24.01),
   while clipped overflow lands within 2.1pt of the edge — so any inset in ~4..21pt separates the two
-  and 12pt sits mid-range. With it, the canary reports `page 1: 20 word(s) outside the slide —
+  and 12pt sits mid-range. With it, the canary reports `page 1: 20 word(s) inside the edge band —
   "overflow canary word overflow canary word …"`, exit 1; a second, horizontal canary (an unbreakable
-  word run past the right edge) also fires, exit 1. **Known limit:** the oracle catches overflow that
-  reaches the slide edge — what an under-counting estimator produces — not a block that overshoots its
-  own box by a few points and stops mid-slide. The page-image read (Step 7) covers that.
+  word run past the right edge) also fires, exit 1 — and, being sideways, that one fires at inset 0
+  too. **Known limit:** the oracle catches overflow that reaches the slide edge — what an
+  under-counting estimator produces — not a block that overshoots its own frame and stops short of it.
+  With inset 12 and tolerance 1 the trip line is y > 529pt, while the appendix frame bottom is 500.4pt
+  (6.95in) and the summary column bottom 493.2pt (6.85in), so roughly **0.40in to 0.50in** of overshoot
+  past a content frame lands in the footer band unseen. The page-image read (Step 7) covers that.
+- Fix round 1 (review): the CLI now **fails closed** — parsing zero pages exits 2 instead of printing
+  `0 pages, 0 words … OK` and exiting 0, which would have turned the gate green for every deck at once
+  had poppler's output shape changed; `verify-pptx.sh` likewise exits 2 if `pdftoppm` produced no PNGs,
+  clears stale `page-*.png` first, and passes `--inset` only when `INSET` is set in the environment so
+  `SAFE_INSET_PT` is the single source of truth.
 - Decks verified clean: **all six, exit 0** — `roadside` (14pp), `retail` (6pp), `energy` (7pp),
   `healthcare` (7pp), `sales` (7pp), and `all.pptx` (41pp, the five example sets plus
   `tools/tests/fixtures/actor-multi-context.json`). 19,673 words checked, none in the edge band. No

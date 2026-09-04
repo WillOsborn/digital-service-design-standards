@@ -8,6 +8,7 @@ const path = require('path');
 const { buildActorViewModel } = require('../viewmodels/actor-viewmodel');
 const { loadTheme, resolveMetrics } = require('./pptx/theme');
 const dm = require('./pptx/deck-model');
+const flow = require('./pptx/flow');
 const { SLIDE, LAYOUT, buildDeck, buildCover, buildIndexSlides, fitParagraph } = dm;
 
 let passed = 0, failed = 0;
@@ -104,6 +105,14 @@ section('buildDeck — footer and warnings plumbing');
 }
 
 section('Summary slide');
+// Column geometry shared by the fix-round-1 checks below: mirrors buildSummarySlide's own math
+// so tests can locate a given column's heading/caption/list elements by their x position.
+const sumColW = (SLIDE.w - 2 * LAYOUT.margin - 2 * LAYOUT.gutter) / 3;
+const sumColP = LAYOUT.summary.colPad;
+const sumColX = i => LAYOUT.margin + i * (sumColW + LAYOUT.gutter) + sumColP;
+const captionElAt = (slide, i) => slide.elements.find(e => e.type === 'text' && Math.abs(e.x - sumColX(i)) < 1e-6 && e.italic && !e.bold && e.size === theme.typography.scale.small);
+const headingElAt = (slide, i) => slide.elements.find(e => e.type === 'text' && Math.abs(e.x - sumColX(i)) < 1e-6 && e.bold && e.colour === '#ffffff');
+const listElAt = (slide, i) => slide.elements.find(e => e.type === 'text' && Math.abs(e.x - sumColX(i)) < 1e-6 && (e.paragraphs.some(p => p.bullet) || (e.paragraphs[0] && e.paragraphs[0].text === 'Nothing recorded yet')));
 {
   const vms = vmsOf([adam, daniel]);
   const d = buildDeck(vms, opts({ sections: { cover: false, index: false, summary: true, appendix: false } }));
@@ -126,6 +135,16 @@ section('Summary slide');
   assert(t.includes('→ see appendix'), 'truncated columns point to the appendix');
   assert(d.warnings.some(w => w.code === 'SUMMARY_TRUNCATED' && w.actorId === 'actor-adam-rees'), 'truncation warned');
   assert(s.elements.every(e => e.type !== 'text' || e.size >= theme.typography.scale.caption), 'no text below caption size (never shrinks)');
+  const ctxCaptionEl = captionElAt(s, 1);
+  const ctxHeadingEl = headingElAt(s, 1);
+  assert(ctxCaptionEl && ctxCaptionEl.paragraphs[0].text.startsWith(adam.contexts[0].contextType + ' · '), 'context column caption starts with the context type');
+  assert(ctxHeadingEl && !ctxHeadingEl.paragraphs[0].text.includes(`(${adam.contexts[0].contextType})`), 'context heading no longer carries "(contextType)"');
+  for (let i = 0; i < 3; i++) {
+    const capEl = captionElAt(s, i);
+    const estimate = flow.estimateBlockHeight({ kind: 'paragraph', sectionId: 'c', text: capEl.paragraphs[0].text, style: { size: theme.typography.scale.small, colour: capEl.colour } }, sumColW - 2 * sumColP, metrics);
+    assert(estimate <= capEl.h + 1e-9, `column ${i}: caption fits within its own box height`);
+  }
+  assert(s.notes.includes('Demographics') && s.notes.includes(adam.traits.demographics.background), 'speaker notes include a demographics block with the full background text');
 }
 {
   const d = buildDeck(vmsOf([fixture]), opts({ sections: { cover: false, index: false, summary: true, appendix: false } }));
@@ -142,6 +161,49 @@ section('Summary slide');
   const noCtx = buildActorViewModel({ ...fixture, contexts: [], emergence: [] });
   const d = buildDeck([noCtx], opts({ sections: { cover: false, index: false, summary: true, appendix: false } }));
   assert(d.slides.length === 1 && inBounds(d.slides[0]) && textOf(d.slides[0]).includes('No context recorded'), 'actor with no contexts still gets a summary slide with an explicit empty context');
+}
+{
+  // Fix round 1, finding 1: a context title at the schema's 100-char max must not overflow its
+  // one-line heading band — the band grows (up to colHeadMaxH) and, failing that, the heading
+  // truncates at a word boundary with an ellipsis, staying within two wrapped lines.
+  const longTitle = 'Senior Regional Operations Manager Responsible For Roadside Assistance Claims Across Northern Europe';
+  const longFixture = JSON.parse(JSON.stringify(fixture));
+  longFixture.contexts[0].title = longTitle;
+  const vmLong = buildActorViewModel(longFixture);
+  const d = buildDeck([vmLong], opts({ sections: { cover: false, index: false, summary: true, appendix: false } }));
+  const s = d.slides[0];
+  const headingEl = headingElAt(s, 1);
+  const headingText = headingEl.paragraphs[0].text;
+  assert(headingText.endsWith('…'), 'long context title heading is truncated with an ellipsis');
+  assert(flow.estimateLines(headingText, sumColW - 2 * sumColP, theme.typography.scale.h3, metrics) <= 2, 'truncated heading fits within two wrapped lines');
+  for (let i = 0; i < 3; i++) {
+    const capEl = captionElAt(s, i);
+    const listEl = listElAt(s, i);
+    assert(capEl && listEl && listEl.y >= capEl.y + capEl.h - 1e-9, `column ${i}: list starts at or after the caption's bottom edge`);
+  }
+  assert(inBounds(s), 'summary slide with a max-length context title stays within bounds');
+}
+{
+  // Fix round 1, finding 3: badgeWidth() sizes the type badge and the demographics strip is
+  // placed after it, so a long type label (ORGANISATION) can never overlap the strip.
+  const orgVm = buildActorViewModel({ ...sarah, actorType: 'organisation' });
+  const d = buildDeck([orgVm], opts({ sections: { cover: false, index: false, summary: true, appendix: false } }));
+  const s = d.slides[0];
+  const badge = s.elements.find(e => e.type === 'rect' && Math.abs(e.y - 0.78) < 1e-9 && Math.abs(e.x - LAYOUT.summary.nameX) < 1e-9);
+  const strip = s.elements.find(e => e.type === 'text' && Math.abs(e.y - 0.78) < 1e-9 && e.x > LAYOUT.summary.nameX + 0.01);
+  assert(badge && strip, 'organisation badge and demographics strip both render');
+  assert(strip.x >= badge.x + badge.w - 1e-9, 'demographics strip starts at or after the badge right edge (no overlap)');
+}
+{
+  // Fix round 1, reviewer minor: the quote gets the same never-shrink, fitParagraph-based
+  // truncation as the summary paragraph, and warns like the other summary slots.
+  const longQuote = Array.from({ length: 10 }, (_, i) => `This is sentence number ${i} of a very long quote that keeps going on and on.`).join(' ');
+  const vmQ = buildActorViewModel({ ...sarah, quote: longQuote });
+  const d = buildDeck([vmQ], opts({ sections: { cover: false, index: false, summary: true, appendix: false } }));
+  const s = d.slides[0];
+  const quoteEl = s.elements.find(e => e.type === 'text' && Math.abs(e.x - LAYOUT.summary.quoteX) < 1e-9);
+  assert(quoteEl && quoteEl.paragraphs[0].text.endsWith('…'), 'long quote is truncated with an ellipsis');
+  assert(d.warnings.some(w => w.code === 'SUMMARY_TRUNCATED' && w.slot === 'quote'), 'quote truncation is warned');
 }
 
 module.exports = { assert, section, load, adam, daniel, sarah, fixture, theme, metrics, vmsOf, opts, textOf, inBounds, finish: () => { console.log(`\n${passed} passed, ${failed} failed`); process.exit(failed ? 1 : 0); } };

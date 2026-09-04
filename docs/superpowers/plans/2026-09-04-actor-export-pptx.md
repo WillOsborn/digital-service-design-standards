@@ -1230,8 +1230,8 @@ section('paginate — fits on one page');
 section('paginate — block that does not fit moves whole to the next page');
 {
   const blocks = [
-    { kind: 'paragraph', sectionId: 'p', text: words(300), style: body },   // tall
-    { kind: 'paragraph', sectionId: 'p', text: words(300), style: body }
+    { kind: 'paragraph', sectionId: 'p', text: words(70), style: body },   // tall
+    { kind: 'paragraph', sectionId: 'p', text: words(70), style: body }
   ];
   const frame = { x: 0, y: 0, w: 3, h: 4 };
   const h1 = estimateBlockHeight(blocks[0], 3, M);
@@ -1246,8 +1246,8 @@ section('paginate — continuation band');
 {
   const blocks = [
     { kind: 'band', sectionId: 'traits', text: 'Traits', style: band },
-    { kind: 'paragraph', sectionId: 'traits', text: words(300), style: body },
-    { kind: 'paragraph', sectionId: 'traits', text: words(300), style: body }
+    { kind: 'paragraph', sectionId: 'traits', text: words(70), style: body },
+    { kind: 'paragraph', sectionId: 'traits', text: words(70), style: body }
   ];
   const { pages } = paginate(blocks, { x: 0, y: 0, w: 3, h: 4.2 }, M);
   assert(pages.length === 2, 'two pages');
@@ -1457,7 +1457,7 @@ module.exports = { FLOW, estimateLines, estimateBlockHeight, itemText, paginate,
 - [ ] **Step 4: Run the tests**
 
 Run: `out=$(node tools/renderers/test-pptx-flow.js 2>&1); code=$?; echo "$out" | grep -E "FAIL|passed"; echo "exit=$code"`
-Expected: `0 failed`, exit 0. If the "precondition" assertion in the spill section fails, the test's chosen word count is wrong for the metrics — adjust `words(300)` (not the implementation) until one paragraph is between half and all of the 4in frame.
+Expected: `0 failed`, exit 0. If the "precondition" assertion in the spill section fails, the test's chosen word count is wrong for the metrics — adjust `words(70)` (not the implementation) until one paragraph is between half and all of the 4in frame.
 
 - [ ] **Step 5: Commit**
 
@@ -1762,7 +1762,7 @@ section('Index — count formula and content');
   assert(textOf(idx[0]).includes('serves') || textOf(idx[0]).includes('served by'), 'link is labelled with the relationship type');
   assert(inBounds(idx[0]), 'index slide within bounds');
   // Nine actors: adam first, daniel last → they land on different index slides
-  const nine = [adam, ...Array.from({ length: 7 }, (_, i) => ({ ...fixture, id: `actor-fx-${i}`, name: `Fixture ${i}` })), daniel];
+  const nine = [adam, ...Array.from({ length: 7 }, (_, i) => ({ ...fixture, id: `actor-fx-${i}`, name: `Fixture ${i}`, relationships: [] })), daniel];
   const big = buildDeck(vmsOf(nine), opts({ sections: { cover: true, index: true, summary: false, appendix: false } }));
   const idx9 = big.slides.filter(s => s.kind === 'index');
   assert(idx9.length === 2, 'N=9 → two index slides', String(idx9.length));
@@ -1921,7 +1921,7 @@ function buildIndexSlides(vms, ctx) {
       }
     });
 
-    elements.push(...footerElements(`Actors · ${vms.length}`, ctx));
+    elements.push(...footerElements(`Actors · ${vms.length}`, { ...ctx, page: () => ctx.page() + pi }));
     return { kind: 'index', background: ctx.C.bg, elements };
   });
 }
@@ -2194,7 +2194,8 @@ section('Appendix — slides');
   const all = d.slides.map(textOf).join('\n');
   assert(['Alpha Role', 'Beta Role', 'Gamma Role'].every(t => all.includes(t)), 'all three contexts rendered');
   assert(all.includes('Beta goal') && all.includes('Alpha goal one'), 'each context carries its own emergence');
-  assert((all.match(/What emerges/g) || []).length === 2, 'exactly two emergence bands (gamma has none)');
+  const emBands = d.slides.flatMap(s => s.elements.filter(e => e.type === 'text').flatMap(e => e.paragraphs.map(p => p.text))).filter(t => t.startsWith('What emerges') && !t.includes('(cont.)'));
+  assert(emBands.length === 2, 'exactly two emergence bands, continuation bands excluded (gamma has none)', String(emBands.length));
 }
 {
   const d = buildDeck(vmsOf([adam, daniel]), opts());
@@ -2204,7 +2205,7 @@ section('Appendix — slides');
   assert(d.slides.length === 1 + 1 + 2 + nA + nD, 'slide-count formula: cover + index + N summaries + Σ appendix');
   assert(kinds.indexOf('appendix') > kinds.lastIndexOf('summary'), 'all summaries precede all appendices');
   assert(d.warnings.some(w => String(w.code).startsWith('APPENDIX_')), 'pagination warnings forwarded');
-  const pages = d.slides.flatMap(s => s.elements.filter(e => e.type === 'text' && e.align === 'right').map(e => e.paragraphs[0].text));
+  const pages = d.slides.flatMap(s => s.elements.filter(e => e.type === 'text' && e.align === 'right' && e.y === LAYOUT.footerY).map(e => e.paragraphs[0].text));
   assert(pages.join(',') === d.slides.map((_, i) => String(i + 1)).join(','), 'footer page numbers run 1..N in order', pages.join(','));
 }
 ```
@@ -2304,7 +2305,7 @@ function buildAppendixSlides(vm, ctx) {
         }
       }
     });
-    elements.push(...footerElements(`${vm.identity.id} · v${vm.identity.version}`, ctx));
+    elements.push(...footerElements(`${vm.identity.id} · v${vm.identity.version}`, { ...ctx, page: () => ctx.page() + Math.floor(i / 2) }));
     slides.push({ kind: 'appendix', actorId: vm.identity.id, background: ctx.C.bg, elements });
   }
   return slides;
@@ -3024,7 +3025,9 @@ Expected: every deck `exit=0`. **If any deck overflows:** read its `.err` file f
 
 Open every `page-N.png` under `$SP/calib/all-verify/` with the Read tool (it will be roughly 40–70 pages; read them in batches of 6–8). You are checking what the oracle cannot: text overlapping text, columns visibly unbalanced, a band at the very bottom of a column with nothing under it, an avatar colliding with a name, bullets rendering as squares. Fix real defects in `deck-model.js` (layout numbers) and re-run Step 6. Then **send Will the four representative pages** (cover, an index, adam's summary, one adam appendix page) with SendUserFile and a one-paragraph note of what you changed during calibration.
 
-- [ ] **Step 8: Record calibration and commit**
+- [ ] **Step 8: Add the oracle test to `package.json`, record calibration, commit**
+
+In `tools/renderers/package.json`, insert `node test-overflow-check.js && ` before `node test-render-pptx.js` in the `"test"` script.
 
 Fill in below, then commit.
 

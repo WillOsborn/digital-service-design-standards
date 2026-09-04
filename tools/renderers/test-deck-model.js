@@ -301,6 +301,13 @@ section('Appendix — blocks');
   const blocks = dm.appendixBlocks(vm, { C: theme.colour.light, S: theme.typography.scale, metrics, warn: () => {} });
   assert(blocks.some(b => b.kind === 'band' && b.text.includes('unattributed') && b.text.includes('ctx-missing')), 'unattributed emergence gets its own band naming the ref');
 }
+{
+  // M10: appendix relationship lines name the target actor, not its bare id, when the deck's
+  // ctx carries nameById (built by buildDeck from every actor in the deck).
+  const d = buildDeck(vmsOf([adam, daniel]), opts({ sections: { cover: false, index: false, summary: false, appendix: true } }));
+  const adamText = d.slides.filter(s => s.kind === 'appendix' && s.actorId === 'actor-adam-rees').map(textOf).join('\n');
+  assert(adamText.includes('serves Daniel Rees'), 'appendix relationship line names the target by name via ctx.nameById', adamText.includes('actor-daniel-rees') ? 'still shows raw id' : undefined);
+}
 
 section('Appendix — slides');
 {

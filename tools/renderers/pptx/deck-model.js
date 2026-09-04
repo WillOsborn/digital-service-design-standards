@@ -307,7 +307,7 @@ function appendixBlocks(vm, ctx) {
   const rels = [...vm.relationships.inDeck, ...vm.relationships.external];
   if (rels.length) {
     band('relationships', 'Relationships', ctx.C.dim);
-    list('relationships', rels.map(r => ({ primary: `${r.typeLabel} ${r.target}`, secondary: r.description || undefined, badge: r.strength })));
+    list('relationships', rels.map(r => ({ primary: `${r.typeLabel} ${ctx.nameById && ctx.nameById.get(r.target) || r.target}`, secondary: r.description || undefined, badge: r.strength })));
   }
   if (vm.provenance) { band('provenance', 'Provenance', ctx.C.dim); list('provenance', vm.provenance); }
   if (vm.governance) { band('governance', 'Governance', ctx.C.dim); list('governance', vm.governance); }

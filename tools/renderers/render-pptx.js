@@ -28,15 +28,27 @@ function parseArgs(argv) {
   const takes = { '-o': 'out', '--title': 'title', '--theme': 'theme', '--images': 'images', '--context': 'context', '--generated-at': 'generatedAt', '--warnings-json': 'warningsJson' };
   for (let i = 0; i < argv.length; i++) {
     const t = argv[i];
-    if (t in takes) { a[takes[t]] = argv[++i]; continue; }
+    if (t in takes) {
+      const v = argv[++i];
+      if (v === undefined) { const e = new Error(`${t} requires a value\n${USAGE}`); e.code = 'USAGE'; throw e; }
+      a[takes[t]] = v;
+      continue;
+    }
     if (t === '--sections') {
-      const names = String(argv[++i] || '').split(',').map(s => s.trim()).filter(Boolean);
+      const v = argv[++i];
+      if (v === undefined) { const e = new Error(`${t} requires a value\n${USAGE}`); e.code = 'USAGE'; throw e; }
+      const names = String(v).split(',').map(s => s.trim()).filter(Boolean);
       const on = new Set(names);
       for (const s of SECTIONS) a.sections[s] = on.has(s);
       a.unknownSections = names.filter(n => !SECTIONS.includes(n));
       continue;
     }
-    if (t === '--trait-groups') { a.traitGroups = String(argv[++i] || '').split(',').map(s => s.trim()).filter(Boolean); continue; }
+    if (t === '--trait-groups') {
+      const v = argv[++i];
+      if (v === undefined) { const e = new Error(`${t} requires a value\n${USAGE}`); e.code = 'USAGE'; throw e; }
+      a.traitGroups = String(v).split(',').map(s => s.trim()).filter(Boolean);
+      continue;
+    }
     if (t === '--quiet') { a.quiet = true; continue; }
     if (t.startsWith('-')) { const e = new Error(`unknown option ${t}\n${USAGE}`); e.code = 'USAGE'; throw e; }
     a.inputs.push(t);
@@ -115,6 +127,7 @@ async function run(argv) {
     theme: themeRes.theme, metrics: resolveMetrics(themeRes.theme), title: args.title,
     generatedAt: args.generatedAt || new Date().toISOString(), sources: args.inputs, sections: args.sections, images
   });
+  if (deck.slides.length === 0) return { exitCode: 2, error: 'no slides to render — the requested sections produced nothing (an index needs 2+ actors; use --sections cover,index,summary,appendix)' };
   warnings.push(...deck.warnings);
 
   const outPath = args.out || defaultOut(args.inputs);

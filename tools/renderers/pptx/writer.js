@@ -6,7 +6,7 @@
 const PptxGenJS = require('pptxgenjs');
 const { SLIDE } = require('./deck-model');
 
-const hex = c => String(c).replace('#', '').toUpperCase();
+const hex = c => { if (c === undefined || c === null) throw new Error('writer: element is missing a colour'); return String(c).replace('#', '').toUpperCase(); };
 
 function textRuns(e) {
   const last = e.paragraphs.length - 1;

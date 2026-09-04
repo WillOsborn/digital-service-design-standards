@@ -4,7 +4,7 @@
   "private": true,
   "description": "Deterministic renderers for DSDS v2.0 artifacts (Mission → HTML, Actor deck → PPTX)",
   "scripts": {
-    "test": "node test-mission-layout.js && node test-render-mission.js && node test-design-tokens.js && node test-pptx-flow.js && node test-pptx-theme.js && node test-deck-model.js && node test-overflow-check.js && node test-render-pptx.js"
+    "test": "node ../viewmodels/test-actor-viewmodel.js && node test-mission-layout.js && node test-render-mission.js && node test-design-tokens.js && node test-pptx-flow.js && node test-pptx-theme.js && node test-deck-model.js && node test-overflow-check.js && node test-render-pptx.js"
   },
   "dependencies": {
     "pptxgenjs": "4.0.1"

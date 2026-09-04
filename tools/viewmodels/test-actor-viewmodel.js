@@ -121,6 +121,16 @@ section('Contexts');
   assert(c.details.some(d => d.badge === 'Shopping behaviour'), 'details: camelCase key humanised');
 }
 
+section('Nested-object fallbacks are humanised, not JSON-stringified (M9)');
+{
+  const clone = JSON.parse(JSON.stringify(sarah));
+  clone.contexts[0].details = Object.assign({}, clone.contexts[0].details, { nested: { a: 1, b: 'two' } });
+  const vm = buildActorViewModel(clone);
+  const nestedItem = vm.contexts[0].details.find(d => d.badge === 'Nested');
+  assert(!!nestedItem && nestedItem.primary === 'A: 1; B: two', 'details: nested object value is humanised, not JSON.stringify\'d', nestedItem && nestedItem.primary);
+  assert(vm.contexts[0].details.every(d => !d.primary.includes('{')), 'no details item contains a raw JSON brace');
+}
+
 section('Emergence nests under its context');
 {
   const vm = buildActorViewModel(sarah);

@@ -66,6 +66,15 @@ async function writerTests() {
   const t2 = await slideTexts(b2);
   assert(t2[0].includes('Alpha') && t2[0].includes('Beta') && t2[0].includes('Gamma'), 'all element types write without throwing; text present');
   assert((await slideNotes(b2))[0].includes('note text'), 'notes present');
+
+  section('Writer — hex() guards a missing colour (M8)');
+  {
+    let threw = null;
+    try {
+      await writeDeck([{ kind: 'cover', background: '#ffffff', elements: [{ type: 'rect', x: 1, y: 1, w: 1, h: 1 }] }], theme, { outputType: 'buffer' });
+    } catch (e) { threw = e; }
+    assert(!!threw && /missing a colour/.test(threw.message), 'a rect with no fill colour rejects with a clear error instead of writing "undefined"', threw && threw.message);
+  }
 }
 
 async function cliTests() {
@@ -147,6 +156,17 @@ async function cliTests() {
     assert(r5.code === 2 && /Usage/.test(r5.err), 'no inputs → usage, exit 2');
     const r6 = runCli([path.join(tmp, 'does-not-exist.json'), '-o', out]);
     assert(r6.code === 2 && /does-not-exist\.json/.test(r6.err), 'missing input file refused by name');
+    const sarahPath = path.join(ROOT, 'v2.0/examples/retail/actor-sarah-martinez.json');
+    const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'dsds-cwd2-'));
+    const r7 = runCli([sarahPath, '-o'], { cwd });
+    assert(r7.code === 2 && /-o requires a value/.test(r7.err) && !fs.existsSync(path.join(cwd, 'actor-sarah-martinez.pptx')), '-o as the final argument (no value) refused, no file created (I2)', r7.err);
+    fs.rmSync(cwd, { recursive: true, force: true });
+    const out2 = path.join(tmp, 'never-theme.pptx');
+    const r8 = runCli([sarahPath, '-o', out2, '--theme']);
+    assert(r8.code === 2 && !fs.existsSync(out2) && /--theme requires a value/.test(r8.err), '--theme as the final argument (no value) refused, no file at -o (I2)', r8.err);
+    const out3 = path.join(tmp, 'zero-slides.pptx');
+    const r9 = runCli([sarahPath, '--sections', 'index', '-o', out3]);
+    assert(r9.code === 2 && !fs.existsSync(out3) && /no slides to render/.test(r9.err), '--sections index alone with a single actor: no slides, refused, no file (I3)', r9.err);
   }
 
   section('CLI — --sections typos and empties (fix round 1, Finding 1)');
@@ -200,7 +220,7 @@ module.exports.cliTests = cliTests;
 if (require.main === module) {
   (async () => {
     await writerTests();
-    if (module.exports.cliTests) await module.exports.cliTests();   // Task 12 attaches this
+    await module.exports.cliTests();
     module.exports.finish();
   })().catch(e => { console.error(e); process.exit(1); });
 }

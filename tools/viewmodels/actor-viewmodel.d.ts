@@ -51,7 +51,8 @@ export interface ActorViewModel {
 export const TRAIT_GROUPS: TraitGroup[];
 export const TRAIT_LABELS: Record<TraitGroup, string>;
 export const DEFAULT_ACTOR_SECTIONS: Readonly<ActorSectionSelection>;
-export function buildActorViewModel(actor: unknown, options?: ViewModelOptions): ActorViewModel;
+/** `actor` must be a schema-valid v2.0 Actor — the CLI validates first and refuses invalid input; the normalisers assume the shapes the schema guarantees. */
+export function buildActorViewModel(actor: object, options?: ViewModelOptions): ActorViewModel;
 export function humanise(key: string): string;
 export function initialsOf(name: string): string;
 export function colourKeyOf(id: string): number;

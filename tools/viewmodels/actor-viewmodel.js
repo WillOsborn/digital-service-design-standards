@@ -75,7 +75,7 @@ const TRAIT_NORMALISERS = {
   decisionMaking: d => nonEmpty(d.style) ? [item(d.style, { badge: d.riskTolerance })] : [],
   accessibility: a => [
     ...(a.dimensions || []).map(d => item(d.description || d.dimension, { badge: [d.dimension, d.impact].filter(Boolean).join(' · ') })),
-    ...(a.assistiveTech || []).map(t => item(typeof t === 'string' ? t : (t.name || JSON.stringify(t)), { badge: 'assistive tech' }))
+    ...(a.assistiveTech || []).map(t => item(typeof t === 'string' ? t : (t.name || humaniseValue(t)), { badge: 'assistive tech' }))
   ],
   behaviouralPatterns: arr => arr.map(p => item(p.pattern, { secondary: p.context }))
 };
@@ -96,17 +96,17 @@ function normaliseDetails(details) {
   if (!details || typeof details !== 'object') return [];
   return Object.entries(details)
     .filter(([, v]) => nonEmpty(v))
-    .map(([k, v]) => item(Array.isArray(v) ? v.map(humaniseValue).join(', ') : (typeof v === 'object' ? JSON.stringify(v) : v), { badge: humanise(k) }));
+    .map(([k, v]) => item(Array.isArray(v) ? v.map(humaniseValue).join(', ') : (typeof v === 'object' ? humaniseValue(v) : v), { badge: humanise(k) }));
 }
 
 function normaliseEmergence(e) {
   return {
     goalsAsExperienced: (e.goalsAsExperienced || []).map(g => item(g.goal, { badge: g.source })),
     painPoints: (e.painPoints || []).map(p => item(p.painPoint, { badge: severityBadge(p.severity), secondary: p.emergesFrom })),
-    opportunities: (e.opportunities || []).map(o => item(typeof o === 'string' ? o : (o.opportunity || JSON.stringify(o)))),
+    opportunities: (e.opportunities || []).map(o => item(typeof o === 'string' ? o : (o.opportunity || humaniseValue(o)))),
     emotionalContext: nonEmpty(e.emotionalContext) ? String(e.emotionalContext) : '',
     useCases: (e.useCases || []).map(u => item(u.scenario, { secondary: [u.trigger && `Trigger: ${u.trigger}`, u.outcome].filter(Boolean).join(' → ') || undefined })),
-    successMetrics: (e.successMetrics || []).map(m => item(typeof m === 'string' ? m : (m.metric || JSON.stringify(m))))
+    successMetrics: (e.successMetrics || []).map(m => item(typeof m === 'string' ? m : (m.metric || humaniseValue(m))))
   };
 }
 

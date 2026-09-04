@@ -106,5 +106,64 @@ for (const a of ALL_ACTORS) {
   assert(!err && vm && Object.values(vm.traits).every(g => g.items.every(isItem)), `${a.id} → uniform items`, err && err.message);
 }
 
+section('Contexts');
+{
+  const vm = buildActorViewModel(sarah);
+  assert(vm.contexts.length === 1, 'sarah has one context');
+  const c = vm.contexts[0];
+  assert(c.contextId === 'ctx-working-mom-consumer' && c.title === 'Working Mom Consumer' && c.contextType === 'Consumer', 'context identity fields');
+  assert(c.description.startsWith('Primary household'), 'context description');
+  assert(c.needs.every(isItem) && c.needs[0].primary === 'Find products that save time in daily routines' && c.needs[0].badge === 'primary', 'context needs: badge=priority');
+  assert(c.frustrations[0].badge === 'severity 4/5', 'context frustrations: severity badge');
+  assert(c.channels[0].primary === 'app' && c.channels[0].badge === 'preferred' && c.channels[0].secondary.startsWith('Quick shopping'), 'context channels: primary=channel, badge=preference, secondary=usageContext');
+  assert(c.momentsThatMatter[0].primary.startsWith('First-time purchase') && c.momentsThatMatter[0].badge === 'critical', 'moments: badge=importance');
+  assert(c.details.some(d => d.badge === 'Decision factors' && d.primary.includes('Time savings')), 'details: key humanised as badge, array joined');
+  assert(c.details.some(d => d.badge === 'Shopping behaviour'), 'details: camelCase key humanised');
+}
+
+section('Emergence nests under its context');
+{
+  const vm = buildActorViewModel(sarah);
+  const e = vm.contexts[0].emergence;
+  assert(e && e.goalsAsExperienced[0].primary.startsWith('Make quick, confident') && e.goalsAsExperienced[0].badge === 'collision', 'goals: badge=source (collision made visible)');
+  assert(e.painPoints[0].badge === 'severity 4/5' && e.painPoints[0].secondary.startsWith("Sarah's decision-making"), 'pain points: secondary=emergesFrom');
+  assert(e.opportunities[0].primary.startsWith('Time-aware') && e.opportunities[0].badge === undefined, 'opportunities: plain items');
+  assert(typeof e.emotionalContext === 'string' && e.emotionalContext.startsWith('Generally optimistic'), 'emotionalContext string');
+  assert(e.useCases[0].primary === 'Quick reordering of household essentials' && e.useCases[0].secondary === 'Trigger: Running low on regular items → Fast, one-click repurchase with confidence', 'use cases: secondary = trigger → outcome');
+  assert(e.successMetrics[0].primary.startsWith('Time saved'), 'success metrics: plain items');
+  assert(vm.unattributedEmergence.length === 0 && !vm.warnings.some(w => w.code === 'UNATTRIBUTED_EMERGENCE'), 'no unattributed emergence for sarah');
+}
+{
+  const vm = buildActorViewModel(fixture);
+  assert(vm.contexts.length === 3 && vm.contexts.map(c => c.contextId).join(',') === 'ctx-alpha,ctx-beta,ctx-gamma', 'fixture keeps schema order');
+  assert(vm.contexts[0].emergence && vm.contexts[0].emergence.goalsAsExperienced.length === 2, 'alpha has its emergence');
+  assert(vm.contexts[1].emergence && vm.contexts[1].emergence.goalsAsExperienced.length === 1, 'beta has its emergence');
+  assert(vm.contexts[2].emergence === null, 'gamma (no emergence entry) gets null, not an empty object');
+  const orphan = JSON.parse(JSON.stringify(fixture));
+  orphan.emergence.push({ contextRef: 'ctx-does-not-exist', goalsAsExperienced: [{ goal: 'Orphan goal', source: 'traits', priority: 'primary' }], painPoints: [], opportunities: [], emotionalContext: '', useCases: [], successMetrics: [] });
+  const ovm = buildActorViewModel(orphan);
+  assert(ovm.unattributedEmergence.length === 1 && ovm.unattributedEmergence[0].contextRef === 'ctx-does-not-exist', 'unmatched contextRef lands in unattributedEmergence');
+  assert(ovm.warnings.some(w => w.code === 'UNATTRIBUTED_EMERGENCE' && w.message.includes('ctx-does-not-exist')), 'and produces a warning naming the ref');
+  const noEm = buildActorViewModel(fixture, { sections: { emergence: false } });
+  assert(noEm.contexts.every(c => c.emergence === null), 'sections.emergence=false nulls all emergence');
+  const noCtx = buildActorViewModel(fixture, { sections: { contexts: false } });
+  assert(noCtx.contexts.length === 0, 'sections.contexts=false yields no contexts');
+}
+
+section('Relationships');
+{
+  const vm = buildActorViewModel(adam, { deck: { actorIds: ['actor-adam-rees', 'actor-daniel-rees'] } });
+  assert(vm.relationships.inDeck.length === 1 && vm.relationships.inDeck[0].target === 'actor-daniel-rees', 'adam→daniel is in-deck when daniel is in the deck');
+  assert(vm.relationships.inDeck[0].type === 'serves' && vm.relationships.inDeck[0].typeLabel === 'serves', 'type and typeLabel (no underscores)');
+  const alone = buildActorViewModel(adam);
+  assert(alone.relationships.inDeck.length === 0 && alone.relationships.external.length === 1, 'same edge is external when daniel is absent');
+  const d = buildActorViewModel(daniel, { deck: { actorIds: ['actor-adam-rees', 'actor-daniel-rees'] } });
+  assert(d.relationships.inDeck[0].typeLabel === 'served by', 'served_by → "served by"');
+  const s = buildActorViewModel(sarah);
+  assert(s.relationships.external[0].target === 'mission-online-clothes-shopping' && s.relationships.external[0].typeLabel === 'participates in', 'mission edge is external with humanised label');
+  const off = buildActorViewModel(adam, { sections: { relationships: false }, deck: { actorIds: ['actor-adam-rees', 'actor-daniel-rees'] } });
+  assert(off.relationships.inDeck.length === 0 && off.relationships.external.length === 0, 'sections.relationships=false empties both');
+}
+
 module.exports = { assert, section, ROOT, load, sarah, adam, daniel, fixture, ALL_ACTORS, isItem, finish: () => { console.log(`\n${passed} passed, ${failed} failed`); process.exit(failed ? 1 : 0); } };
 if (require.main === module) module.exports.finish();

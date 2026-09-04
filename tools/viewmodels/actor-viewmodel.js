@@ -1,6 +1,7 @@
 // Actor view model — v2.0 Actor JSON → target-agnostic, uniformly shaped object.
 // Pure: no I/O. Consumed by tools/renderers/pptx/deck-model.js and the Figma plugin.
 // Spec: docs/superpowers/specs/2026-09-04-actor-export-design.md §4
+// Input contract: a schema-valid Actor (the CLI validates first and refuses invalid input); the normalisers assume the shapes the schema guarantees and do not guard against malformed data.
 
 'use strict';
 
@@ -81,6 +82,61 @@ function normaliseTraits(traits, groups) {
   return out;
 }
 
+function normaliseDetails(details) {
+  if (!details || typeof details !== 'object') return [];
+  return Object.entries(details)
+    .filter(([, v]) => nonEmpty(v))
+    .map(([k, v]) => item(Array.isArray(v) ? v.map(humaniseValue).join(', ') : (typeof v === 'object' ? JSON.stringify(v) : v), { badge: humanise(k) }));
+}
+
+function normaliseEmergence(e) {
+  return {
+    goalsAsExperienced: (e.goalsAsExperienced || []).map(g => item(g.goal, { badge: g.source })),
+    painPoints: (e.painPoints || []).map(p => item(p.painPoint, { badge: severityBadge(p.severity), secondary: p.emergesFrom })),
+    opportunities: (e.opportunities || []).map(o => item(typeof o === 'string' ? o : (o.opportunity || JSON.stringify(o)))),
+    emotionalContext: nonEmpty(e.emotionalContext) ? String(e.emotionalContext) : '',
+    useCases: (e.useCases || []).map(u => item(u.scenario, { secondary: [u.trigger && `Trigger: ${u.trigger}`, u.outcome].filter(Boolean).join(' → ') || undefined })),
+    successMetrics: (e.successMetrics || []).map(m => item(typeof m === 'string' ? m : (m.metric || JSON.stringify(m))))
+  };
+}
+
+function normaliseContexts(actor, opts, warnings) {
+  if (!opts.sections.contexts) return { contexts: [], unattributed: [] };
+  const byRef = new Map();
+  const unattributed = [];
+  if (opts.sections.emergence) {
+    for (const e of actor.emergence || []) {
+      const known = (actor.contexts || []).some(c => c.contextId === e.contextRef);
+      if (known) byRef.set(e.contextRef, normaliseEmergence(e));
+      else {
+        unattributed.push(Object.assign({ contextRef: e.contextRef }, normaliseEmergence(e)));
+        warnings.push({ code: 'UNATTRIBUTED_EMERGENCE', message: `emergence entry references unknown context "${e.contextRef}"` });
+      }
+    }
+  }
+  const contexts = (actor.contexts || []).map(c => ({
+    contextId: c.contextId, title: c.title || c.contextId, contextType: c.contextType || '', description: c.description || '',
+    needs: (c.needs || []).map(n => item(n.need, { badge: n.priority })),
+    frustrations: (c.frustrations || []).map(f => item(f.frustration, { badge: severityBadge(f.severity) })),
+    channels: (c.channels || []).map(ch => item([ch.channel, ch.name].filter(Boolean).join(' · '), { badge: ch.preference, secondary: ch.usageContext })),
+    momentsThatMatter: (c.momentsThatMatter || []).map(m => item(m.moment, { badge: m.importance })),
+    details: normaliseDetails(c.details),
+    emergence: byRef.get(c.contextId) || null
+  }));
+  return { contexts, unattributed };
+}
+
+function normaliseRelationships(actor, opts) {
+  const out = { inDeck: [], external: [] };
+  if (!opts.sections.relationships) return out;
+  const ids = new Set(opts.deck.actorIds || []);
+  for (const r of actor.relationships || []) {
+    const rel = { target: r.target, type: r.type, typeLabel: String(r.type || '').replace(/_/g, ' '), description: r.description || '', strength: r.strength };
+    (ids.has(r.target) && r.target !== actor.id ? out.inDeck : out.external).push(rel);
+  }
+  return out;
+}
+
 function buildAvatar(actor) {
   const label = AVATAR_LABELS[actor.actorType];
   return label
@@ -99,17 +155,18 @@ function resolveOptions(options) {
 function buildActorViewModel(actor, options) {
   const opts = resolveOptions(options);
   const warnings = [];
+  const { contexts, unattributed } = normaliseContexts(actor, opts, warnings);
   const vm = {
     identity: { id: actor.id, name: actor.name, actorType: actor.actorType, summary: actor.summary || '', quote: actor.quote || '', version: actor.version },
     avatar: buildAvatar(actor),
     traits: opts.sections.traits ? normaliseTraits(actor.traits, opts.traitGroups) : {},
-    contexts: [],
-    unattributedEmergence: [],
-    relationships: { inDeck: [], external: [] },
+    contexts,
+    unattributedEmergence: unattributed,
+    relationships: normaliseRelationships(actor, opts),
     summarySlots: null,
     warnings
   };
   return vm;
 }
 
-module.exports = { buildActorViewModel, TRAIT_GROUPS, TRAIT_LABELS, DEFAULT_ACTOR_SECTIONS, humanise, initialsOf, colourKeyOf, humaniseValue, item, nonEmpty, severityBadge, joinList, resolveOptions };
+module.exports = { buildActorViewModel, TRAIT_GROUPS, TRAIT_LABELS, DEFAULT_ACTOR_SECTIONS, humanise, initialsOf, colourKeyOf, humaniseValue, item, nonEmpty, severityBadge, joinList, resolveOptions, normaliseEmergence, normaliseContexts, normaliseRelationships, normaliseDetails };

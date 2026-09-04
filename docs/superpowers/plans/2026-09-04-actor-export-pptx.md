@@ -455,7 +455,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
     {
       "contextId": "ctx-alpha", "title": "Alpha Role", "contextType": "Employee",
       "description": "First context. Exists to be listed first.",
-      "needs": [ { "need": "Alpha need one", "priority": "primary", "timeframe": "immediate" }, { "need": "Alpha need two", "priority": "secondary", "timeframe": "ongoing" } ],
+      "needs": [ { "need": "Alpha need one", "priority": "primary", "timeframe": "immediate" }, { "need": "Alpha need two", "priority": "secondary", "timeframe": "short_term" } ],
       "frustrations": [ { "frustration": "Alpha frustration", "severity": 3, "frequency": "weekly" } ],
       "channels": [ { "channel": "app", "category": "digital", "serviceModel": "self_service", "preference": "preferred", "usageContext": "Daily use" } ],
       "momentsThatMatter": [ { "moment": "Alpha moment", "emotionalIntensity": -1, "importance": "critical" } ]
@@ -464,7 +464,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
       "contextId": "ctx-beta", "title": "Beta Role", "contextType": "Consumer",
       "description": "Second context.",
       "needs": [ { "need": "Beta need", "priority": "primary", "timeframe": "immediate" } ],
-      "frustrations": [ { "frustration": "Beta frustration one", "severity": 4, "frequency": "daily" }, { "frustration": "Beta frustration two", "severity": 1, "frequency": "rarely" } ],
+      "frustrations": [ { "frustration": "Beta frustration one", "severity": 4, "frequency": "daily" }, { "frustration": "Beta frustration two", "severity": 1, "frequency": "rare" } ],
       "channels": [ { "channel": "phone", "category": "telecom", "serviceModel": "managed", "preference": "acceptable", "usageContext": "When it matters" } ],
       "momentsThatMatter": []
     },

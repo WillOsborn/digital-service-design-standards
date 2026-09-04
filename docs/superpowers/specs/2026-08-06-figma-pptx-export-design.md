@@ -2,6 +2,10 @@
 
 **Date:** 2026-08-06
 **Status:** **DEFERRED — captured mid-design, not approved for implementation.**
+**Superseded 2026-09-04** by `docs/superpowers/specs/2026-09-04-actor-export-design.md`, which
+re-decided the open questions below for the Actor + PowerPoint phase and scopes the Figma phase.
+This document remains the record of the 2026-08-06 session. **Do not implement from it.**
+
 **Reason for deferral:** Will's call, 2026-08-06 — finish the Actor/Experience renderers and
 the create/edit/modify tooling for Actor, Mission and Experience *before* building export
 plugins. See "Why this was deferred" below; the deferral does not invalidate the design.

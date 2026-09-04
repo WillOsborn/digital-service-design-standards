@@ -70,9 +70,10 @@ async function writerTests() {
 
 async function cliTests() {
   const cli = path.join(__dirname, 'render-pptx.js');
-  const runCli = (args) => {
-    try { return { code: 0, out: execFileSync(process.execPath, [cli, ...args], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }), err: '' }; }
-    catch (e) { return { code: e.status, out: String(e.stdout || ''), err: String(e.stderr || '') }; }
+  const { spawnSync } = require('child_process');
+  const runCli = (args, extra) => {
+    const r = spawnSync(process.execPath, [cli, ...args], Object.assign({ encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }, extra || {}));
+    return { code: r.status, out: String(r.stdout || ''), err: String(r.stderr || '') };
   };
   const { parseArgs, expandInputs } = require('./render-pptx');
 
@@ -124,8 +125,8 @@ async function cliTests() {
   }
   {
     const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'dsds-cwd-'));
-    const r = (() => { try { return { code: 0, out: execFileSync(process.execPath, [cli, path.join(ROOT, 'v2.0/examples/roadside/')], { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }) }; } catch (e) { return { code: e.status, out: String(e.stderr) }; } })();
-    assert(r.code === 0 && fs.existsSync(path.join(cwd, 'roadside.pptx')), 'default -o is <dir name>.pptx in cwd', r.out);
+    const r = runCli([path.join(ROOT, 'v2.0/examples/roadside/')], { cwd });
+    assert(r.code === 0 && fs.existsSync(path.join(cwd, 'roadside.pptx')), 'default -o is <dir name>.pptx in cwd', r.err);
     fs.rmSync(cwd, { recursive: true, force: true });
   }
 

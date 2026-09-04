@@ -165,5 +165,49 @@ section('Relationships');
   assert(off.relationships.inDeck.length === 0 && off.relationships.external.length === 0, 'sections.relationships=false empties both');
 }
 
+section('Summary slots');
+{
+  const vm = buildActorViewModel(adam);
+  const s = vm.summarySlots;
+  assert(s && s.who && s.context && s.emerges, 'three slots present');
+  assert(s.who.items.length === 3 && s.who.full.length > 3 && s.who.truncated === true, 'who: capped at 3, full retained, truncated flagged');
+  assert(s.who.full[0].badge === 'age', 'who: demographics come first');
+  assert(s.who.full.some(i => i.badge && i.badge.startsWith('severity')), 'who: includes frustrations');
+  assert(s.context.contextId === adam.contexts[0].contextId && s.context.moreContexts === 0, 'context: first context, no more');
+  assert(s.emerges.items.every(isItem) && s.emerges.full[0].badge !== undefined, 'emerges: goals (badged by source) then pain points');
+  const cap5 = buildActorViewModel(adam, { caps: { summaryItems: 5 } });
+  assert(cap5.summarySlots.who.items.length === 5, 'caps.summaryItems honoured');
+}
+{
+  const vm = buildActorViewModel(fixture);
+  assert(vm.summarySlots.context.contextId === 'ctx-alpha' && vm.summarySlots.context.moreContexts === 2, 'multi-context: first by default, moreContexts=2');
+  assert(vm.summarySlots.context.items[0].primary === 'Alpha need one', 'context slot items come from the chosen context');
+  const beta = buildActorViewModel(fixture, { context: 'ctx-beta' });
+  assert(beta.summarySlots.context.contextId === 'ctx-beta' && beta.summarySlots.context.title === 'Beta Role', 'options.context selects a context');
+  assert(beta.summarySlots.emerges.full[0].primary === 'Beta goal', 'emerges follows the chosen context');
+  const gamma = buildActorViewModel(fixture, { context: 'ctx-gamma' });
+  assert(gamma.summarySlots.emerges.items.length === 0 && gamma.summarySlots.emerges.truncated === false, 'context without emergence → empty emerges slot, not an error');
+  const missing = buildActorViewModel(fixture, { context: 'ctx-nope' });
+  assert(missing.summarySlots.context.contextId === 'ctx-alpha', 'unknown options.context falls back to first');
+  assert(missing.warnings.some(w => w.code === 'CONTEXT_NOT_FOUND' && w.message.includes('ctx-nope')), 'and warns');
+  const noCtx = buildActorViewModel({ ...fixture, contexts: [], emergence: [] });
+  assert(noCtx.summarySlots.context === null && noCtx.summarySlots.emerges.items.length === 0, 'no contexts → context slot null');
+}
+
+section('Provenance and governance');
+{
+  const off = buildActorViewModel(sarah);
+  assert(off.provenance === undefined && off.governance === undefined, 'off by default');
+  const on = buildActorViewModel(sarah, { sections: { provenance: true, governance: true } });
+  assert(Array.isArray(on.governance) && on.governance.some(i => i.badge === 'Contains pii' && i.primary === 'true'), 'governance rendered as key/value items');
+  assert(Array.isArray(on.provenance) && on.provenance.some(i => i.badge === 'Source'), 'provenance rendered as key/value items');
+}
+
+section('Warnings shape');
+for (const a of ALL_ACTORS) {
+  const vm = buildActorViewModel(a);
+  assert(Array.isArray(vm.warnings) && vm.warnings.every(w => typeof w.code === 'string' && typeof w.message === 'string'), `${a.id}: warnings are {code, message}`);
+}
+
 module.exports = { assert, section, ROOT, load, sarah, adam, daniel, fixture, ALL_ACTORS, isItem, finish: () => { console.log(`\n${passed} passed, ${failed} failed`); process.exit(failed ? 1 : 0); } };
 if (require.main === module) module.exports.finish();

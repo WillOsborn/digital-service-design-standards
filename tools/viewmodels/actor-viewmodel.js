@@ -137,6 +137,38 @@ function normaliseRelationships(actor, opts) {
   return out;
 }
 
+function slot(full, cap) {
+  const items = full.slice(0, cap);
+  return { items, full, truncated: full.length > items.length };
+}
+
+function buildSummarySlots(vm, actor, opts, warnings) {
+  const cap = opts.caps.summaryItems;
+  const t = normaliseTraits(actor.traits, TRAIT_GROUPS);   // summary ignores traitGroups selection: it is a fixed read of the whole actor
+  const who = [...(t.demographics ? t.demographics.items : []), ...(t.needs ? t.needs.items : []), ...(t.frustrations ? t.frustrations.items : [])];
+
+  const all = vm.contexts;
+  let chosen = null;
+  if (all.length > 0) {
+    chosen = opts.context ? all.find(c => c.contextId === opts.context) : all[0];
+    if (opts.context && !chosen) {
+      warnings.push({ code: 'CONTEXT_NOT_FOUND', message: `context "${opts.context}" not found; using "${all[0].contextId}"` });
+      chosen = all[0];
+    }
+  }
+  const contextSlot = chosen ? Object.assign(slot([...chosen.needs, ...chosen.frustrations], cap),
+    { contextId: chosen.contextId, title: chosen.title, contextType: chosen.contextType, moreContexts: all.length - 1 }) : null;
+  const em = chosen && chosen.emergence;
+  const emerges = em ? [...em.goalsAsExperienced, ...em.painPoints] : [];
+  return { who: slot(who, cap), context: contextSlot, emerges: slot(emerges, cap) };
+}
+
+function keyValueItems(obj) {
+  if (!obj || typeof obj !== 'object') return [];
+  return Object.entries(obj).filter(([, v]) => v !== undefined && v !== null && v !== '')
+    .map(([k, v]) => item(Array.isArray(v) ? v.map(humaniseValue).join(', ') : (typeof v === 'object' ? JSON.stringify(v) : String(v)), { badge: humanise(k) }));
+}
+
 function buildAvatar(actor) {
   const label = AVATAR_LABELS[actor.actorType];
   return label
@@ -166,7 +198,10 @@ function buildActorViewModel(actor, options) {
     summarySlots: null,
     warnings
   };
+  vm.summarySlots = buildSummarySlots(vm, actor, opts, warnings);
+  if (opts.sections.provenance && actor.provenance) vm.provenance = keyValueItems(actor.provenance);
+  if (opts.sections.governance && actor.governance) vm.governance = keyValueItems(actor.governance);
   return vm;
 }
 
-module.exports = { buildActorViewModel, TRAIT_GROUPS, TRAIT_LABELS, DEFAULT_ACTOR_SECTIONS, humanise, initialsOf, colourKeyOf, humaniseValue, item, nonEmpty, severityBadge, joinList, resolveOptions, normaliseEmergence, normaliseContexts, normaliseRelationships, normaliseDetails };
+module.exports = { buildActorViewModel, TRAIT_GROUPS, TRAIT_LABELS, DEFAULT_ACTOR_SECTIONS, humanise, initialsOf, colourKeyOf, humaniseValue, item, nonEmpty, severityBadge, joinList, resolveOptions, normaliseEmergence, normaliseContexts, normaliseRelationships, normaliseDetails, buildSummarySlots, keyValueItems, slot };

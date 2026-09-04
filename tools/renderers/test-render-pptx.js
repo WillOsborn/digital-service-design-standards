@@ -149,6 +149,40 @@ async function cliTests() {
     assert(r6.code === 2 && /does-not-exist\.json/.test(r6.err), 'missing input file refused by name');
   }
 
+  section('CLI — --sections typos and empties (fix round 1, Finding 1)');
+  {
+    const out = path.join(tmp, 'sections-typo.pptx');
+    const r = runCli([path.join(ROOT, 'v2.0/examples/retail/actor-sarah-martinez.json'), '-o', out, '--sections', 'cover,sumary']);
+    assert(r.code === 0 && fs.existsSync(out), '--sections cover,sumary → exit 0, file written', r.err);
+    const texts = await slideTexts(fs.readFileSync(out));
+    assert(texts.length === 1, '--sections cover,sumary → exactly one slide (cover only)', String(texts.length));
+    assert(/SECTION_UNKNOWN.*sumary/.test(r.err), '--sections typo warns SECTION_UNKNOWN naming "sumary"', r.err);
+  }
+  {
+    const out = path.join(tmp, 'sections-empty.pptx');
+    const r = runCli([path.join(ROOT, 'v2.0/examples/retail/actor-sarah-martinez.json'), '-o', out, '--sections', '']);
+    assert(r.code === 2 && !fs.existsSync(out) && /no sections enabled/.test(r.err), "--sections '' refused, no file", r.err);
+  }
+  {
+    const out = path.join(tmp, 'sections-nope.pptx');
+    const r = runCli([path.join(ROOT, 'v2.0/examples/retail/actor-sarah-martinez.json'), '-o', out, '--sections', 'nope']);
+    assert(r.code === 2 && !fs.existsSync(out), '--sections nope (all unknown → none enabled) refused, no file', r.err);
+  }
+
+  section('CLI — non-object JSON refused (fix round 1, Finding 2)');
+  {
+    const out = path.join(tmp, 'never-null.pptx');
+    const nullFile = path.join(tmp, 'null.json'); fs.writeFileSync(nullFile, 'null');
+    const r = runCli([nullFile, '-o', out]);
+    assert(r.code === 2 && !fs.existsSync(out) && /not a JSON object/.test(r.err) && /null\.json/.test(r.err), 'literal null JSON refused, names the file', r.err);
+  }
+  {
+    const out = path.join(tmp, 'never-arr.pptx');
+    const arrFile = path.join(tmp, 'arr.json'); fs.writeFileSync(arrFile, '[]');
+    const r = runCli([arrFile, '-o', out]);
+    assert(r.code === 2 && !fs.existsSync(out), 'array JSON still refused', r.err);
+  }
+
   section('CLI — theme override reaches the file');
   {
     const th = path.join(tmp, 'brand.json'); fs.writeFileSync(th, JSON.stringify({ typography: { fontFamily: 'Arial' }, colour: { light: { traits: '#112233' } } }));

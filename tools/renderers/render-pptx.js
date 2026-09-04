@@ -23,13 +23,19 @@ const SECTIONS = ['cover', 'index', 'summary', 'appendix'];
 
 function parseArgs(argv) {
   const a = { inputs: [], out: null, title: undefined, theme: undefined, images: undefined,
-    sections: { cover: true, index: true, summary: true, appendix: true }, traitGroups: 'all', context: undefined,
+    sections: { cover: true, index: true, summary: true, appendix: true }, unknownSections: [], traitGroups: 'all', context: undefined,
     generatedAt: undefined, warningsJson: undefined, quiet: false };
   const takes = { '-o': 'out', '--title': 'title', '--theme': 'theme', '--images': 'images', '--context': 'context', '--generated-at': 'generatedAt', '--warnings-json': 'warningsJson' };
   for (let i = 0; i < argv.length; i++) {
     const t = argv[i];
     if (t in takes) { a[takes[t]] = argv[++i]; continue; }
-    if (t === '--sections') { const on = new Set(String(argv[++i] || '').split(',').map(s => s.trim()).filter(Boolean)); for (const s of SECTIONS) a.sections[s] = on.has(s); continue; }
+    if (t === '--sections') {
+      const names = String(argv[++i] || '').split(',').map(s => s.trim()).filter(Boolean);
+      const on = new Set(names);
+      for (const s of SECTIONS) a.sections[s] = on.has(s);
+      a.unknownSections = names.filter(n => !SECTIONS.includes(n));
+      continue;
+    }
     if (t === '--trait-groups') { a.traitGroups = String(argv[++i] || '').split(',').map(s => s.trim()).filter(Boolean); continue; }
     if (t === '--quiet') { a.quiet = true; continue; }
     if (t.startsWith('-')) { const e = new Error(`unknown option ${t}\n${USAGE}`); e.code = 'USAGE'; throw e; }
@@ -55,6 +61,7 @@ function loadActors(files) {
     let data;
     try { data = JSON.parse(fs.readFileSync(f, 'utf8')); }
     catch (e) { errors.push(`${f}: ${e.message}`); continue; }
+    if (!data || typeof data !== 'object' || Array.isArray(data)) { errors.push(`${f}: not a JSON object (got ${data === null ? 'null' : Array.isArray(data) ? 'array' : typeof data})`); continue; }
     if (data.$type !== 'Actor') { errors.push(`${f}: $type is "${data.$type}", expected "Actor"`); continue; }
     const v = validateData(data, f);
     if (!v.valid) { errors.push(`${f}: schema validation failed\n  ${v.errors.join('\n  ')}`); continue; }
@@ -72,6 +79,13 @@ async function run(argv) {
   let args;
   try { args = parseArgs(argv); } catch (e) { return { exitCode: 2, error: e.message }; }
   if (args.inputs.length === 0) return { exitCode: 2, error: USAGE };
+
+  const warnings = [];
+  for (const name of args.unknownSections) warnings.push({ code: 'SECTION_UNKNOWN', message: `--sections: "${name}" is not a section (cover, index, summary, appendix)` });
+  if (!Object.values(args.sections).some(Boolean)) {
+    return { exitCode: 2, error: 'no sections enabled — nothing to render (use --sections cover,index,summary,appendix)' };
+  }
+
   let files;
   try { files = expandInputs(args.inputs); } catch (e) { return { exitCode: 2, error: e.message }; }
   if (files.length === 0) return { exitCode: 2, error: `no actor-*.json files found in: ${args.inputs.join(', ')}` };
@@ -81,7 +95,7 @@ async function run(argv) {
 
   let themeRes;
   try { themeRes = loadTheme(args.theme); } catch (e) { return { exitCode: 2, error: e.message }; }
-  const warnings = themeRes.warnings.map(w => ({ ...w, scope: 'theme' }));
+  warnings.push(...themeRes.warnings.map(w => ({ ...w, scope: 'theme' })));
 
   const images = {};
   if (args.images) {

@@ -1,0 +1,83 @@
+{
+  "$context": "https://schemas.digitalservice.design/v2.0",
+  "$type": "Actor",
+  "id": "actor-test-multi-context",
+  "version": "2.0.0",
+  "name": "Priya Test-Fixture",
+  "summary": "Synthetic Actor with three contexts, used only by renderer and view-model tests to exercise multi-context layout. Not a credible persona and not an example.",
+  "actorType": "human",
+  "quote": "Three hats, one head.",
+  "traits": {
+    "demographics": { "age": 41, "location": "Fictional Town", "education": "Vocational qualification", "background": "Composite background for testing." },
+    "needs": [
+      { "need": "Need one for testing", "type": "autonomy" },
+      { "need": "Need two for testing", "type": "security" },
+      { "need": "Need three for testing", "type": "efficiency" },
+      { "need": "Need four for testing", "type": "belonging" }
+    ],
+    "frustrations": [
+      { "frustration": "Frustration one for testing", "severity": 5 },
+      { "frustration": "Frustration two for testing", "severity": 2 }
+    ],
+    "motivations": [ { "motivation": "Motivation one", "type": "intrinsic" } ],
+    "technology": { "comfort": "intermediate", "description": "Uses a phone and a laptop.", "preferredDevices": [ "smartphone", "laptop" ] },
+    "communication": { "preferred": [ "app" ], "acceptable": [ "email" ], "avoided": [ "phone" ], "style": "Short and direct." },
+    "learningStyle": "Learns by doing",
+    "influences": [ { "source": "Colleagues", "description": "Asks the person next to them." } ],
+    "decisionMaking": { "style": "Quick, then revises", "riskTolerance": "moderate" },
+    "accessibility": { "dimensions": [ { "dimension": "situational", "description": "Often one-handed while carrying things.", "impact": "moderate" } ] },
+    "behaviouralPatterns": [ { "pattern": "Abandons after first failure", "context": "Any digital channel" } ]
+  },
+  "contexts": [
+    {
+      "contextId": "ctx-alpha", "title": "Alpha Role", "contextType": "Employee",
+      "description": "First context. Exists to be listed first.",
+      "needs": [ { "need": "Alpha need one", "priority": "primary", "timeframe": "immediate" }, { "need": "Alpha need two", "priority": "secondary", "timeframe": "short_term" } ],
+      "frustrations": [ { "frustration": "Alpha frustration", "severity": 3, "frequency": "weekly" } ],
+      "channels": [ { "channel": "app", "category": "digital", "serviceModel": "self_service", "preference": "preferred", "usageContext": "Daily use" } ],
+      "momentsThatMatter": [ { "moment": "Alpha moment", "emotionalIntensity": -1, "importance": "critical" } ]
+    },
+    {
+      "contextId": "ctx-beta", "title": "Beta Role", "contextType": "Consumer",
+      "description": "Second context.",
+      "needs": [ { "need": "Beta need", "priority": "primary", "timeframe": "immediate" } ],
+      "frustrations": [ { "frustration": "Beta frustration one", "severity": 4, "frequency": "daily" }, { "frustration": "Beta frustration two", "severity": 1, "frequency": "rare" } ],
+      "channels": [ { "channel": "phone", "category": "telecom", "serviceModel": "managed", "preference": "acceptable", "usageContext": "When it matters" } ],
+      "momentsThatMatter": []
+    },
+    {
+      "contextId": "ctx-gamma", "title": "Gamma Role", "contextType": "Citizen",
+      "description": "Third context. Has no emergence entry on purpose.",
+      "needs": [ { "need": "Gamma need", "priority": "primary", "timeframe": "long_term" } ],
+      "frustrations": [ { "frustration": "Gamma frustration", "severity": 2, "frequency": "monthly" } ],
+      "channels": [],
+      "momentsThatMatter": []
+    }
+  ],
+  "emergence": [
+    {
+      "contextRef": "ctx-alpha",
+      "goalsAsExperienced": [ { "goal": "Alpha goal one", "source": "collision", "priority": "primary" }, { "goal": "Alpha goal two", "source": "traits", "priority": "secondary" } ],
+      "painPoints": [ { "painPoint": "Alpha pain", "severity": 4, "emergesFrom": "Trait X meets context Y" } ],
+      "opportunities": [ "Alpha opportunity" ],
+      "emotionalContext": "Calm but busy.",
+      "useCases": [ { "scenario": "Alpha scenario", "trigger": "Something happens", "outcome": "Something resolves" } ],
+      "successMetrics": [ "Alpha metric" ]
+    },
+    {
+      "contextRef": "ctx-beta",
+      "goalsAsExperienced": [ { "goal": "Beta goal", "source": "context", "priority": "primary" } ],
+      "painPoints": [ { "painPoint": "Beta pain", "severity": 2, "emergesFrom": "Trait meets context" } ],
+      "opportunities": [],
+      "emotionalContext": "Anxious.",
+      "useCases": [],
+      "successMetrics": []
+    }
+  ],
+  "relationships": [
+    { "target": "actor-adam-rees", "type": "collaborates_with", "description": "In-deck edge for tests when rendered with the roadside set." },
+    { "target": "mission-does-not-exist", "type": "participates_in", "description": "External edge for tests." }
+  ],
+  "governance": { "dataClassification": "public", "containsPii": false, "anonymisationMethod": "fictional_composite" },
+  "meta": { "created": "2026-09-04", "updated": "2026-09-04", "createdBy": "DSDS test suite", "organisation": "Digital Service Design Working", "tags": [ "test-fixture", "multi-context" ] }
+}

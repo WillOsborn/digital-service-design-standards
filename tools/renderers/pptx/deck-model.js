@@ -9,7 +9,7 @@ const SLIDE = Object.freeze({ w: 13.333, h: 7.5 });
 const LAYOUT = Object.freeze({
   margin: 0.5, gutter: 0.25, footerY: 7.05, footerH: 0.3,
   cover: { titleY: 2.4, titleH: 1.0, subY: 3.5, subH: 0.5, srcY: 4.3, srcH: 1.6 },
-  index: { perSlide: 8, cols: 4, rows: 2, titleY: 0.45, titleH: 0.6, gridY: 1.3, gridH: 5.55, avatarD: 0.6, cardPad: 0.15 },
+  index: { perSlide: 8, cols: 4, rows: 2, titleY: 0.45, titleH: 0.6, gridY: 1.3, gridH: 5.55, avatarD: 0.6, cardPad: 0.15, linkGap: 0.05 },
   summary: { headerH: 1.55, avatarD: 0.95, nameX: 1.65, nameW: 6.2, quoteX: 8.0, quoteW: 4.85,
              sumY: 1.75, sumH: 0.85, colY: 2.8, colH: 4.05, colHeadH: 0.42, colHeadMaxH: 0.72, captionH: 0.26, colPad: 0.12 },
   appendix: { headerH: 0.85, avatarD: 0.5, frameY: 1.1, frameH: 5.85, colGap: 0.25 }
@@ -33,8 +33,21 @@ function fitParagraph(text, w, h, style, metrics) {
   const s = flow.splitSentences(text);
   let n = 0;
   for (let i = 1; i < s.length; i++) { if (fits(s.slice(0, i).join('').trimEnd())) n = i; else break; }
-  return { text: n > 0 ? s.slice(0, n).join('').trimEnd() : (s[0] || '').trimEnd(), truncated: true };
+  if (n > 0) return { text: s.slice(0, n).join('').trimEnd(), truncated: true };
+  // Not even the first sentence fits. Returning it whole (as this did before Task 13) hands the
+  // caller text guaranteed to overflow its box — the 500-character single-sentence quote the schema
+  // permits is exactly that case, and it overflowed the header by ~80%. Cut at the last word
+  // boundary that fits instead, measuring the '…' too so the mark itself stays inside the box.
+  // Minimum one word, never an empty string (spec §5: shrink the text, never the font).
+  const first = (s[0] || '').trimEnd();
+  const words = first.split(/\s+/).filter(Boolean);
+  let k = 0;
+  for (let i = 1; i <= words.length; i++) { if (fits(words.slice(0, i).join(' ') + '…')) k = i; else break; }
+  return { text: words.slice(0, Math.max(1, k)).join(' ') + '…', truncated: true };
 }
+
+// A fitParagraph result cut mid-sentence already carries its own '…'; never add a second one.
+function ellipsised(text, sep) { return text.endsWith('…') ? text : text + sep + '…'; }
 
 // Truncates `text` at a word boundary, appending '…', until it fits within two wrapped lines at
 // `sizePt` in `w` inches wide — used to keep a column heading inside its fixed-height band.
@@ -121,11 +134,14 @@ function buildIndexSlides(vms, ctx) {
       const sumStyle = { size: ctx.S.small, colour: ctx.C.text };
       const sumBox = { x: b.x + p, y: b.y + p + L.avatarD + 0.12, w: b.w - 2 * p, h: Math.max(0, b.h - 2 * p - L.avatarD - 0.12 - relH) };
       const fitted = fitParagraph(vm.identity.summary, sumBox.w, sumBox.h, sumStyle, ctx.metrics);
-      elements.push(el.text(sumBox.x, sumBox.y, sumBox.w, sumBox.h, fitted.text + (fitted.truncated ? ' …' : ''), sumStyle));
+      elements.push(el.text(sumBox.x, sumBox.y, sumBox.w, sumBox.h, fitted.truncated ? ellipsised(fitted.text, ' ') : fitted.text, sumStyle));
       if (offSlide.length) elements.push(el.text(sumBox.x, sumBox.y + sumBox.h, sumBox.w, relH, offSlide.map(t => ({ text: t })), { size: ctx.S.caption, colour: ctx.C.dim }));
     });
 
     // In-deck relationships between cards on this slide: one line per unordered pair, labelled.
+    // Lines are collected separately from labels and emitted first, so a later pair's connector can
+    // never be drawn across an earlier pair's label pill (it struck the text through).
+    const linkLines = [], linkLabels = [];
     group.forEach((vm, k) => {
       for (const r of vm.relationships.inDeck) {
         if (!onSlide.has(r.target)) continue;
@@ -136,15 +152,25 @@ function buildIndexSlides(vms, ctx) {
         const sameRow = Math.abs(a.y - b.y) < 1e-9;
         const left = a.x <= b.x ? a : b, right = a.x <= b.x ? b : a;
         const upper = a.y <= b.y ? a : b, lower = a.y <= b.y ? b : a;
+        // Task 13 visual gate: the gutter between two side-by-side cards is `gutter` wide (0.25in) —
+        // far narrower than a label pill (0.9in minimum), so a connector drawn across the cards'
+        // mid-height put its label over ~0.18in of EACH card's summary text and hid it. Run a
+        // same-row connector just outside the cards instead — below them on the top row, above them
+        // on the bottom row — where the band between the rows is empty and the only thing the pill
+        // can touch is card padding. Cross-row connectors already end in that band, so they keep
+        // their existing midpoint.
+        const topRow = Math.abs(left.y - L.gridY) < 1e-9;
+        const linkY = topRow ? left.y + left.h + L.linkGap : left.y - L.linkGap;
         const [x1, y1, x2, y2] = sameRow
-          ? [left.x + left.w, left.y + left.h / 2, right.x, right.y + right.h / 2]
+          ? [left.x + left.w, linkY, right.x, linkY]
           : [upper.x + upper.w / 2, upper.y + upper.h, lower.x + lower.w / 2, lower.y];
-        elements.push(el.line(x1, y1, x2, y2, ctx.C.edge, 1.5));
+        linkLines.push(el.line(x1, y1, x2, y2, ctx.C.edge, 1.5));
         const mx = (x1 + x2) / 2, my = (y1 + y2) / 2, lw = Math.max(0.9, 0.1 * r.typeLabel.length + 0.3);
-        elements.push(el.rect(mx - lw / 2, my - 0.14, lw, 0.28, ctx.C.panel, { colour: ctx.C.edge, width: 0.5 }, 0.14));
-        elements.push(el.text(mx - lw / 2, my - 0.14, lw, 0.28, r.typeLabel, { size: ctx.S.caption, colour: ctx.C.dim, align: 'center', valign: 'middle' }));
+        linkLabels.push(el.rect(mx - lw / 2, my - 0.14, lw, 0.28, ctx.C.panel, { colour: ctx.C.edge, width: 0.5 }, 0.14));
+        linkLabels.push(el.text(mx - lw / 2, my - 0.14, lw, 0.28, r.typeLabel, { size: ctx.S.caption, colour: ctx.C.dim, align: 'center', valign: 'middle' }));
       }
     });
+    elements.push(...linkLines, ...linkLabels);
 
     elements.push(...footerElements(`Actors · ${vms.length}`, { ...ctx, page: () => ctx.page() + pi }));
     return { kind: 'index', background: ctx.C.bg, elements };
@@ -172,7 +198,7 @@ function buildSummarySlide(vm, ctx) {
     const quoteFitStyle = { size: ctx.S.body + 1, colour: ctx.C.dim };
     const qFitted = fitParagraph(id.quote, L.quoteW, 1.0, quoteFitStyle, ctx.metrics);
     if (qFitted.truncated) ctx.warn({ code: 'SUMMARY_TRUNCATED', actorId: id.id, slot: 'quote', shown: qFitted.text.length, of: id.quote.length });
-    const quoteText = qFitted.truncated ? `“${qFitted.text}…` : `“${qFitted.text}”`;
+    const quoteText = qFitted.truncated ? `“${ellipsised(qFitted.text, '')}` : `“${qFitted.text}”`;
     elements.push(el.text(L.quoteX, 0.3, L.quoteW, 1.0, quoteText, { size: ctx.S.body + 1, italic: true, colour: ctx.C.dim, valign: 'middle' }));
   }
   // Summary paragraph
@@ -180,7 +206,7 @@ function buildSummarySlide(vm, ctx) {
   const sumStyle = { size: ctx.S.body + 1, colour: ctx.C.text };
   const fitted = fitParagraph(summaryText, SLIDE.w - 2 * m, L.sumH, sumStyle, ctx.metrics);
   if (fitted.truncated) ctx.warn({ code: 'SUMMARY_TRUNCATED', actorId: id.id, slot: 'summary', shown: fitted.text.length, of: summaryText.length });
-  elements.push(el.text(m, L.sumY, SLIDE.w - 2 * m, L.sumH, fitted.text + (fitted.truncated ? ' …' : ''), sumStyle));
+  elements.push(el.text(m, L.sumY, SLIDE.w - 2 * m, L.sumH, fitted.truncated ? ellipsised(fitted.text, ' ') : fitted.text, sumStyle));
 
   // Three columns: enduring traits → in context → what emerges (spec §5, spike outcome 2026-09-04)
   const colW = (SLIDE.w - 2 * m - 2 * g) / 3;

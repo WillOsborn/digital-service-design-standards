@@ -3076,11 +3076,39 @@ In `tools/renderers/package.json`, insert `node test-overflow-check.js && ` befo
 
 Fill in below, then commit.
 
-**Calibration notes** *(filled in during execution)*:
-- Final `FLOW.safety` / `FLOW.wrapSlack`: _(values)_
-- Metric changes in tokens: _(none / values)_
-- Canary result: _(oracle fired on the first try / needed adjustment — what)_
-- Decks verified clean: _(list)_
+**Calibration notes** *(filled in during execution, 2026-09-04)*:
+- Final `FLOW.safety` / `FLOW.wrapSlack`: **1.10 / 1.15 — unchanged.** No deck ever overflowed, so
+  neither constant was raised. `tools/renderers/pptx/flow.js` is untouched by Task 13.
+- Metric changes in tokens: **none.** `tools/design-tokens.json` `typography.metrics`
+  (Calibri 0.47/1.2, Arial 0.52/1.15) is untouched.
+- Canary result: **the oracle did NOT fire on the first try, and the page-bounds test cannot ever
+  fire.** LibreOffice's PDF export clips at the page box: the canary (a 14pt text box at
+  y=6.5in..7.3in stuffed with 360 words) rendered only 80 of them, on 4 lines at yMin
+  473.5/490.3/507.1/523.9, the last with yMax=537.92 on a 540pt page. Everything below the page edge
+  was discarded before `pdftotext` saw it, so no word is ever reported outside its page — even though
+  that last line sits 12.3pt below its own box bottom (525.6pt). `findOverflow` therefore gained an
+  optional third argument, `insetPt` (default 0, so the specified page-box behaviour and its tests are
+  unchanged), which shrinks the allowed area on all four sides and turns the outer band of the slide
+  into a no-text zone — the only observable symptom of clipped overflow. `SAFE_INSET_PT = 12` is
+  calibrated from measurement, not guesswork: across all six decks real content clears the slide edges
+  by ≥20.4pt (tightest: the footer at yMax 519.58; also maxXMax 922.17, minXMin 37.98, minYMin 24.01),
+  while clipped overflow lands within 2.1pt of the edge — so any inset in ~4..21pt separates the two
+  and 12pt sits mid-range. With it, the canary reports `page 1: 20 word(s) outside the slide —
+  "overflow canary word overflow canary word …"`, exit 1; a second, horizontal canary (an unbreakable
+  word run past the right edge) also fires, exit 1. **Known limit:** the oracle catches overflow that
+  reaches the slide edge — what an under-counting estimator produces — not a block that overshoots its
+  own box by a few points and stops mid-slide. The page-image read (Step 7) covers that.
+- Decks verified clean: **all six, exit 0** — `roadside` (14pp), `retail` (6pp), `energy` (7pp),
+  `healthcare` (7pp), `sales` (7pp), and `all.pptx` (41pp, the five example sets plus
+  `tools/tests/fixtures/actor-multi-context.json`). 19,673 words checked, none in the edge band. No
+  renderer warning carries `oversized: true`.
+- Layout defects found by the Step 7 page read and fixed in `deck-model.js` (no font size was changed):
+  the index relationship-label pill (0.9in minimum) was centred on a connector drawn across two cards'
+  mid-height, but the gutter between cards is only 0.25in — the opaque pill covered ~0.18in of *each*
+  card's summary text on every same-row related pair. Same-row connectors now run just outside the
+  cards (below on the top row, above on the bottom row) via `LAYOUT.index.linkGap = 0.05`; and all
+  connector lines are emitted before all label pills, so a later pair's line can no longer be drawn
+  through an earlier pair's label. Both are covered by new assertions in `test-deck-model.js`.
 
 ```bash
 git add tools/renderers/pptx/overflow-check.js tools/renderers/pptx/verify-pptx.sh tools/renderers/test-overflow-check.js docs/superpowers/plans/2026-09-04-actor-export-pptx.md

@@ -67,6 +67,49 @@ section('Index — count formula and content');
   assert(idx[0].elements.some(e => e.type === 'line'), 'in-deck relationship drawn as a line');
   assert(textOf(idx[0]).includes('serves') || textOf(idx[0]).includes('served by'), 'link is labelled with the relationship type');
   assert(inBounds(idx[0]), 'index slide within bounds');
+  // Task 13 visual gate: the relationship label pill is ~0.9in wide but the gutter between two
+  // side-by-side cards is only 0.25in, so a label centred on a mid-height connector sat on top of
+  // both cards' summary text and hid it. No text box on an index slide may overlap another.
+  const overlaps = slide => {
+    const t = slide.elements.filter(e => e.type === 'text');
+    const hit = [];
+    for (let i = 0; i < t.length; i++) for (let j = i + 1; j < t.length; j++) {
+      const A = t[i], B = t[j];
+      const ox = Math.min(A.x + A.w, B.x + B.w) - Math.max(A.x, B.x);
+      const oy = Math.min(A.y + A.h, B.y + B.h) - Math.max(A.y, B.y);
+      if (ox > 1e-9 && oy > 1e-9) hit.push(`${A.paragraphs[0].text.slice(0, 18)} ✕ ${B.paragraphs[0].text.slice(0, 18)}`);
+    }
+    return hit;
+  };
+  assert(overlaps(idx[0]).length === 0, 'no index text box covers another (relationship label clears the cards)', overlaps(idx[0]).join('; '));
+  const linkLabel = idx[0].elements.find(e => e.type === 'text' && e.paragraphs[0].text === 'serves');
+  const cardSummaries = idx[0].elements.filter(e => e.type === 'text' && /^A 3\d-year-old/.test(e.paragraphs[0].text));
+  assert(linkLabel && cardSummaries.length === 2 && cardSummaries.every(c => linkLabel.y >= c.y + c.h - 1e-9), 'the relationship label sits below the card summaries, not across them');
+  // …and a later pair's connector must not be drawn across an earlier pair's label: every line is
+  // emitted before every label pill, so the pills always sit on top.
+  const crossing = [
+    { ...adam, id: 'actor-x0', name: 'X0', relationships: [{ target: 'actor-x1', type: 'serves', description: '' }, { target: 'actor-x5', type: 'collaborates_with', description: '' }] },
+    ...Array.from({ length: 5 }, (_, i) => ({ ...fixture, id: `actor-x${i + 1}`, name: `X${i + 1}`, relationships: [] }))
+  ];
+  const idxC = buildDeck(vmsOf(crossing), opts({ sections: { cover: false, index: true, summary: false, appendix: false } })).slides.filter(s2 => s2.kind === 'index');
+  const els = idxC[0].elements;
+  const lastLine = els.map((e, i) => (e.type === 'line' ? i : -1)).reduce((m, i) => Math.max(m, i), -1);
+  const pillIdx = els.map((e, i) => (e.type === 'rect' && Math.abs(e.h - 0.28) < 1e-9 && Math.abs(e.radius - 0.14) < 1e-9 && e.y > LAYOUT.index.gridY ? i : -1)).filter(i => i >= 0);
+  const labelPills = pillIdx.filter(i => els[i + 1] && els[i + 1].type === 'text' && /serves|collaborates/.test(els[i + 1].paragraphs[0].text));
+  assert(lastLine >= 0 && labelPills.length === 2, 'two connectors drawn, one same-row and one cross-row', `lines end at ${lastLine}, ${labelPills.length} label pills`);
+  assert(labelPills.every(i => i > lastLine), 'every connector line is emitted before every label pill (no line struck through a label)');
+  // What must hold on any index: a connector label never covers CARD content. (Two labels can still
+  // land on each other when a same-row and a cross-row connector share the 0.25in band between the
+  // rows — synthetic worst case only, absent from every example deck; recorded in the Task 13 report.)
+  const isLabel = e => e.type === 'text' && /^(serves|collaborates with)$/.test(e.paragraphs[0].text);
+  const labels = els.filter(isLabel), cardText = els.filter(e => e.type === 'text' && !isLabel(e));
+  const covered = [];
+  for (const La of labels) for (const c of cardText) {
+    const ox = Math.min(La.x + La.w, c.x + c.w) - Math.max(La.x, c.x);
+    const oy = Math.min(La.y + La.h, c.y + c.h) - Math.max(La.y, c.y);
+    if (ox > 1e-9 && oy > 1e-9) covered.push(`${La.paragraphs[0].text} ✕ ${c.paragraphs[0].text.slice(0, 20)}`);
+  }
+  assert(covered.length === 0, 'no connector label covers card text on a multi-relationship index', covered.join('; '));
   // Nine actors: adam first, daniel last → they land on different index slides
   const nine = [adam, ...Array.from({ length: 7 }, (_, i) => ({ ...fixture, id: `actor-fx-${i}`, name: `Fixture ${i}`, relationships: [] })), daniel];
   const big = buildDeck(vmsOf(nine), opts({ sections: { cover: true, index: true, summary: false, appendix: false } }));
@@ -204,6 +247,23 @@ const listElAt = (slide, i) => slide.elements.find(e => e.type === 'text' && Mat
   const quoteEl = s.elements.find(e => e.type === 'text' && Math.abs(e.x - LAYOUT.summary.quoteX) < 1e-9);
   assert(quoteEl && quoteEl.paragraphs[0].text.endsWith('…'), 'long quote is truncated with an ellipsis');
   assert(d.warnings.some(w => w.code === 'SUMMARY_TRUNCATED' && w.slot === 'quote'), 'quote truncation is warned');
+}
+{
+  // Task 13, from Task 9's review: a single-sentence quote has no sentence boundary to cut at, so
+  // fitParagraph used to hand back the whole thing — 480 characters (the schema allows 500) in a
+  // 1.0in box, an ~80% overflow that no amount of pagination could rescue. It now falls back to a
+  // word boundary.
+  const q480 = 'a single unbroken sentence about being stranded on the hard shoulder at three in the morning with no help coming and '.repeat(5).slice(0, 480);
+  const vmQ = buildActorViewModel({ ...sarah, quote: q480 });
+  const d = buildDeck([vmQ], opts({ sections: { cover: false, index: false, summary: true, appendix: false } }));
+  const quoteEl = d.slides[0].elements.find(e => e.type === 'text' && Math.abs(e.x - LAYOUT.summary.quoteX) < 1e-9);
+  const text = quoteEl.paragraphs[0].text;
+  assert(flow.splitSentences(q480).length === 1, 'the 480-char quote really is one sentence (no boundary to cut at)');
+  assert(text.length < q480.length, 'single-sentence quote is cut down, not returned whole', `${text.length} of ${q480.length}`);
+  assert(text.endsWith('…'), 'the cut is marked with a single ellipsis', JSON.stringify(text.slice(-4)));
+  assert(!/…\s*…/.test(text), 'no doubled ellipsis');
+  const qh = flow.estimateBlockHeight({ kind: 'paragraph', sectionId: 'q', text, style: { size: theme.typography.scale.body + 1, colour: '#000' } }, LAYOUT.summary.quoteW, metrics);
+  assert(qh <= 1.0 + 1e-9, 'the cut quote fits its 1.0in box', qh.toFixed(3));
 }
 
 section('Appendix — blocks');

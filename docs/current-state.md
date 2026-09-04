@@ -4,8 +4,13 @@
 > Keep it a **snapshot**, not a history — record material completions, delete what's superseded.
 > If this file contradicts itself, the next session starts confused. Fix contradictions on sight.
 
-**Last updated:** 2026-08-11
+**Last updated:** 2026-09-04
 **Active schema version:** v2.0 (Actor / Mission / Experience)
+
+**Session 2026-09-04:** administrative close of the long-running mission-visualiser
+conversation — no repo changes. The stale sub-agent execution ledger under
+`.superpowers/sdd/` (gitignored, this machine only) was marked closed so no future
+session tries to resume the already-merged visualiser plan.
 
 **Branch:** `feature/roadside-mission` — **pushed and tracking `origin/feature/roadside-mission`.**
 `main` is also **pushed and in sync with `origin/main`.** Both branches were pushed 2026-08-12

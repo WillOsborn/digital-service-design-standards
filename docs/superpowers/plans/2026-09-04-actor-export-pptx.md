@@ -23,7 +23,7 @@
 - **Privacy:** the test fixture is a fictional composite with `governance.containsPii: false`. No real names, employers, locations. Nothing from `research/private/`.
 - **Git:** stage explicit paths only (`git add <path>`), never `-A` or `.`; no `reset`/`rebase`/`amend`/force-push; commit messages end with `Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>`; **do not push**. Branch: `feature/actor-export`.
 - **`.claude/` is gitignored** — Task 14's skill wrapper lands there and will not be in any commit; say so in the report.
-- Run every command from the **repo root** (`/Users/willosborn/Documents/Digital Service Design Working/schemas`).
+- Run every command from the **repo root** (`<repo root>`).
 
 ## Deviations from / additions to the spec
 
@@ -94,7 +94,7 @@ All `x, y, w, h` in inches.
 - [ ] **Step 1: Capture the baseline HTML for all five example Missions (before touching anything)**
 
 ```bash
-SP=/private/tmp/claude-501/-Users-willosborn-Documents-Digital-Service-Design-Working-schemas/0ed55959-bf6b-4ab6-99e8-a99849e4e5d1/scratchpad
+SP=<scratchpad>
 mkdir -p "$SP/baseline" "$SP/after"
 for m in v2.0/examples/*/mission-*.json; do
   n=$(basename "$m" .json)
@@ -266,7 +266,7 @@ Then replace lines 313–333 (everything from `.mv-app { --c-bg:#f8fafc;` throug
 - [ ] **Step 6: Prove byte-identical output**
 
 ```bash
-SP=/private/tmp/claude-501/-Users-willosborn-Documents-Digital-Service-Design-Working-schemas/0ed55959-bf6b-4ab6-99e8-a99849e4e5d1/scratchpad
+SP=<scratchpad>
 for m in v2.0/examples/*/mission-*.json; do
   n=$(basename "$m" .json)
   node tools/renderers/render-mission.js "$m" -o "$SP/after/$n.html" >/dev/null
@@ -312,7 +312,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 - [ ] **Step 1: Set up the scratchpad project**
 
 ```bash
-SP=/private/tmp/claude-501/-Users-willosborn-Documents-Digital-Service-Design-Working-schemas/0ed55959-bf6b-4ab6-99e8-a99849e4e5d1/scratchpad
+SP=<scratchpad>
 mkdir -p "$SP/spike-summary" && cd "$SP/spike-summary" && npm init -y >/dev/null && npm install pptxgenjs@4.0.1 --no-audit --no-fund 2>&1 | tail -1
 ```
 
@@ -324,7 +324,7 @@ mkdir -p "$SP/spike-summary" && cd "$SP/spike-summary" && npm init -y >/dev/null
 'use strict';
 const PptxGenJS = require('pptxgenjs');
 const fs = require('fs');
-const ROOT = '/Users/willosborn/Documents/Digital Service Design Working/schemas';
+const ROOT = '<repo root>';
 const T = require(ROOT + '/tools/design-tokens.json');
 const C = T.colour.light;
 const FONT = T.typography.fontFamily;
@@ -2606,7 +2606,7 @@ Expected: `0 failed`, exit 0. Known PptxGenJS wrinkles if something fails: (a) n
 - [ ] **Step 5: Look at it**
 
 ```bash
-SP=/private/tmp/claude-501/-Users-willosborn-Documents-Digital-Service-Design-Working-schemas/0ed55959-bf6b-4ab6-99e8-a99849e4e5d1/scratchpad
+SP=<scratchpad>
 mkdir -p "$SP/look" && node -e "
 const fs=require('fs');const {buildActorViewModel}=require('./tools/viewmodels/actor-viewmodel');
 const {loadTheme,resolveMetrics}=require('./tools/renderers/pptx/theme');const {buildDeck}=require('./tools/renderers/pptx/deck-model');const {writeDeck}=require('./tools/renderers/pptx/writer');
@@ -3046,7 +3046,7 @@ node "$HERE/overflow-check.js" "$OUT/bbox.html"
 The oracle is only worth trusting if it fires. Build a deck with a text box that must overflow, and confirm the script exits 1:
 
 ```bash
-SP=/private/tmp/claude-501/-Users-willosborn-Documents-Digital-Service-Design-Working-schemas/0ed55959-bf6b-4ab6-99e8-a99849e4e5d1/scratchpad
+SP=<scratchpad>
 mkdir -p "$SP/canary" && node -e "
 const {writeDeck}=require('./tools/renderers/pptx/writer');const {loadTheme}=require('./tools/renderers/pptx/theme');
 const slide={kind:'cover',background:'#ffffff',elements:[{type:'text',x:0.5,y:6.5,w:12,h:0.8,paragraphs:[{text:('overflow canary word ').repeat(120)}],size:14,colour:'#000000'}]};
@@ -3058,7 +3058,7 @@ Expected: `overflow-check: page 1: N word(s) outside the slide — "overflow can
 - [ ] **Step 6: Calibration pass over every example set**
 
 ```bash
-SP=/private/tmp/claude-501/-Users-willosborn-Documents-Digital-Service-Design-Working-schemas/0ed55959-bf6b-4ab6-99e8-a99849e4e5d1/scratchpad
+SP=<scratchpad>
 mkdir -p "$SP/calib"; rc=0
 for d in v2.0/examples/*/; do n=$(basename "$d"); node tools/renderers/render-pptx.js "$d" -o "$SP/calib/$n.pptx" --generated-at 2026-09-04T00:00:00Z --quiet || rc=1; done
 node tools/renderers/render-pptx.js v2.0/examples/roadside/ v2.0/examples/retail/ v2.0/examples/energy/ v2.0/examples/healthcare/ v2.0/examples/sales/ tools/tests/fixtures/actor-multi-context.json -o "$SP/calib/all.pptx" --generated-at 2026-09-04T00:00:00Z --quiet || rc=1
@@ -3230,7 +3230,7 @@ for t in tools/renderers/test-mission-layout.js tools/renderers/test-render-miss
   out=$(node "$t" 2>&1); code=$?; echo "$(basename $t): $(echo "$out" | tail -1) exit=$code"
 done
 out=$(node tools/validators/validate-v2.0.js v2.0/examples/ --check-refs 2>&1); echo "examples: $(echo "$out" | grep 'Batch result')"
-SP=/private/tmp/claude-501/-Users-willosborn-Documents-Digital-Service-Design-Working-schemas/0ed55959-bf6b-4ab6-99e8-a99849e4e5d1/scratchpad
+SP=<scratchpad>
 node tools/renderers/render-pptx.js v2.0/examples/roadside/ -o "$SP/final.pptx" --generated-at 2026-09-04T00:00:00Z && tools/renderers/pptx/verify-pptx.sh "$SP/final.pptx"; echo "gate exit=$?"
 git status --short
 ```

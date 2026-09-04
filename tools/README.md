@@ -44,7 +44,7 @@ node tools/renderers/render-pptx.js a.json b.json --title "Q3 actors" --theme br
     --sections cover,index,summary --trait-groups needs,frustrations --context ctx-alpha
 ```
 
-`render-pptx.js` validates every input first and **refuses invalid or non-Actor files (exit 2, nothing written)**. Warnings — truncated summary columns, appendix page splits, unknown theme keys, missing portraits — go to stderr (`--warnings-json file` to capture them; `--quiet` to silence). `--theme brand.json` deep-merges over `tools/design-tokens.json`; unknown keys are warned, not ignored. Portraits are looked up by actor id (`<id>.png|jpg`) in `--images`; otherwise a monogram avatar is drawn. Fonts are not embedded — the default is Calibri.
+`render-pptx.js` validates every input first and **refuses invalid or non-Actor files (exit 2, nothing written)**. Warnings — truncated summary columns, appendix page splits, unknown theme keys, missing portraits — go to stderr (`--warnings-json file` to capture them; `--quiet` to silence). `--theme brand.json` deep-merges over `tools/design-tokens.json`; unknown keys are warned, not ignored. Portraits are looked up by actor id (`<id>.png|jpg|jpeg`) in `--images`; otherwise a monogram avatar is drawn. Fonts are not embedded — the default is Calibri.
 
 **Visual verification** (needs LibreOffice and poppler; `brew install --cask libreoffice && brew install poppler`):
 

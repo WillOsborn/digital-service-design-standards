@@ -153,7 +153,7 @@ its type and spacing stay in its own CSS.
 options = {
   sections:    { traits, contexts, emergence, relationships, provenance, governance },  // booleans
   traitGroups: string[] | 'all',
-  caps:        { summaryItems: 3 },
+  caps:        { summaryItems: 5 },
   context:     contextId | undefined,      // which context the summary shows
   deck:        { actorIds: string[] }      // for in-deck relationship resolution
 }
@@ -224,7 +224,7 @@ dropped in phase 1.
   An `emergence` entry whose `contextRef` matches no `contextId` goes to
   `unattributedEmergence` with a warning — it is never dropped silently.
 - **Summary slots** are selection policy shared by both targets, so they live here, not in a
-  writer. Each list is capped at `caps.summaryItems` (default 3); `truncated` is set and
+  writer. Each list is capped at `caps.summaryItems` (default 5); `truncated` is set and
   `full` retains everything for speaker notes. `context` is the first context in schema order
   unless `options.context` names one; `moreContexts` counts the rest.
 - **Relationships** split on whether `target` is in `deck.actorIds`. The 15 relationship
@@ -247,7 +247,7 @@ actor `id` · `version` · page.
 |---|---|---|---|
 | **Cover** | 1 | `--title` (default `Actors · N`), source paths, generated date | never overflows |
 | **Index** | 0 if N = 1; else ⌈N / 8⌉ | one card per actor: avatar, name, `actorType` badge, one-line `summary`. **In-deck relationships drawn as labelled links** between cards on the same slide; listed as text under the card when the target sits on another index slide | fixed grid, 8 per slide |
-| **Summary** | 1 per actor | header band: avatar, name, type badge, `quote` · `summary` paragraph · three columns **Who they are / In this context / What emerges** from `summarySlots` · "→ see appendix" marker on any truncated column · "+N more contexts → appendix" when applicable · **full lists in speaker notes** | **never paginates, never shrinks.** Fits as many capped items as the column holds — 3, then 2, then 1, minimum 1 — and records a warning |
+| **Summary** | 1 per actor | header band: avatar, name, type badge, `quote` · `summary` paragraph · three columns **Who they are / In this context / What emerges** from `summarySlots` · "→ see appendix" marker on any truncated column · "+N more contexts → appendix" when applicable · **full lists in speaker notes** | **never paginates, never shrinks.** Fits as many capped items as the column holds — 5, then 2, then 1, minimum 1 — and records a warning |
 | **Appendix** | ≈ 5–10 per actor | same visual language at reference density: coloured section bands (traits / contexts / emergence), two-column text, slim header with avatar + name. Order: traits (one band per group) → each context, with its emergence nested → relationships → provenance / governance if selected | **paginates** via `flow.js` (§6); continuation slides repeat the band heading with "(cont.)"; never splits mid-item |
 
 **An Actor is 841–1,337 renderable words** (measured across all six examples, excluding

@@ -42,9 +42,44 @@ function estimateBlockHeight(block, widthIn, metrics) {
   return h * FLOW.safety;
 }
 
+// Partition `text` into contiguous, whitespace-preserving segments whose join() reconstructs the
+// original string exactly, always — slice indices of the original string, never regex extraction,
+// so no character is ever dropped or altered. A boundary falls:
+//   (a) immediately after a run of [.!?]+ that is followed by a space/tab, placed after that run
+//       of spaces/tabs (so "v2.0" — a '.' NOT followed by whitespace — is never a boundary), or
+//   (b) immediately after a '\n' (each newline is its own cut point, matching estimateLines'
+//       treatment of '\n' as a paragraph break).
 function splitSentences(text) {
-  const parts = String(text).match(/[^.!?]+[.!?]+["')\]]*\s*|[^.!?]+$/g) || [String(text)];
-  return parts.map(s => s.trim()).filter(Boolean);
+  const s = String(text);
+  const segments = [];
+  let start = 0;
+  let i = 0;
+  while (i < s.length) {
+    const ch = s[i];
+    if (ch === '\n') {
+      segments.push(s.slice(start, i + 1));
+      start = i + 1;
+      i += 1;
+      continue;
+    }
+    if (ch === '.' || ch === '!' || ch === '?') {
+      let j = i + 1;
+      while (j < s.length && (s[j] === '.' || s[j] === '!' || s[j] === '?')) j += 1;
+      let k = j;
+      while (k < s.length && (s[k] === ' ' || s[k] === '\t')) k += 1;
+      if (k > j) {                 // punctuation run followed by at least one space/tab: cut here
+        segments.push(s.slice(start, k));
+        start = k;
+        i = k;
+        continue;
+      }
+      i = j;                       // punctuation not followed by space/tab (e.g. "v2.0"): keep scanning
+      continue;
+    }
+    i += 1;
+  }
+  if (start < s.length) segments.push(s.slice(start));
+  return segments;
 }
 
 // Split an oversized block into a head that fits in `availIn` and a tail. Returns null if even
@@ -59,14 +94,19 @@ function splitBlock(block, availIn, widthIn, metrics) {
     return { head: { ...block, items: block.items.slice(0, n) }, tail: { ...block, items: block.items.slice(n) } };
   }
   if (block.kind === 'paragraph') {
-    const sentences = splitSentences(block.text);
-    if (sentences.length < 2) return null;
+    const segments = splitSentences(block.text);
+    if (segments.length < 2) return null;
     let n = 0;
-    for (let i = 1; i <= sentences.length; i++) {
-      if (estimateBlockHeight({ ...block, text: sentences.slice(0, i).join(' ') }, widthIn, metrics) <= availIn) n = i; else break;
+    for (let i = 1; i <= segments.length; i++) {
+      const headText = segments.slice(0, i).join('').trimEnd();
+      if (estimateBlockHeight({ ...block, text: headText }, widthIn, metrics) <= availIn) n = i; else break;
     }
-    if (n === 0 || n === sentences.length) return null;
-    return { head: { ...block, text: sentences.slice(0, n).join(' ') }, tail: { ...block, text: sentences.slice(n).join(' ') } };
+    if (n === 0 || n === segments.length) return null;
+    // Trim only at the cut: head loses its trailing separator, tail loses none of its own text.
+    return {
+      head: { ...block, text: segments.slice(0, n).join('').trimEnd() },
+      tail: { ...block, text: segments.slice(n).join('').trimStart() }
+    };
   }
   return null;   // bands and headings never split
 }
@@ -74,7 +114,7 @@ function splitBlock(block, availIn, widthIn, metrics) {
 function paginate(blocks, frame, metrics) {
   const pages = [];
   const warnings = [];
-  const bandBySection = new Map();
+  const bandBySection = new Map();   // registers a section's band only once it is actually placed
   let page = { blocks: [] };
   let cursor = frame.y;
   const bottom = frame.y + frame.h;
@@ -84,6 +124,10 @@ function paginate(blocks, frame, metrics) {
     const h = estimateBlockHeight(b, frame.w, metrics);
     page.blocks.push({ ...b, y: cursor, h });
     cursor += h;
+    // Only a band that is actually being placed registers as "this section's band" — a band that
+    // spills whole to the next page must not be looked up (and re-emitted as a continuation of a
+    // section that hasn't started yet) before it lands anywhere.
+    if (b.kind === 'band' && !b.continued) bandBySection.set(b.sectionId, b);
   };
   const newPage = (sectionId, reason) => {
     pages.push(page);
@@ -93,30 +137,56 @@ function paginate(blocks, frame, metrics) {
     const band = bandBySection.get(sectionId);
     if (band) place({ ...band, text: `${band.text} (cont.)`, continued: true });
   };
+  // The most room a page can ever offer this section: the full frame, minus the band this section
+  // must re-emit if it is already known to span pages. A block taller than this can never fit
+  // whole on any page — fresh or continued — so it has to split instead of just spilling forever.
+  const freshRoom = (sectionId) => {
+    const band = bandBySection.get(sectionId);
+    return frame.h - (band ? estimateBlockHeight(band, frame.w, metrics) : 0);
+  };
 
   const queue = blocks.slice();
   while (queue.length) {
     const b = queue.shift();
-    if (b.kind === 'band') bandBySection.set(b.sectionId, b);
     const h = estimateBlockHeight(b, frame.w, metrics);
     if (cursor + h <= bottom + EPS) { place(b); continue; }
 
     const avail = bottom - cursor;
     const pageIsFresh = page.blocks.length === 0 || (page.blocks.length === 1 && page.blocks[0].continued);
-    const parts = splitBlock(b, avail, frame.w, metrics);
-    if (parts) {                       // partial fit: place head, push tail to the front of the queue
-      place(parts.head);
-      newPage(b.sectionId, 'split');
-      queue.unshift(parts.tail);
+    const room = freshRoom(b.sectionId);
+
+    if (h > room + EPS) {
+      // Too tall for any page this section will ever get (spec §6: "a single block taller than a
+      // slide splits"). Attempt to split; a block that merely doesn't fit the current leftover —
+      // but would fit a fresh page whole — is handled below instead, and is never split.
+      const parts = splitBlock(b, avail, frame.w, metrics);
+      if (parts) {
+        place(parts.head);
+        newPage(b.sectionId, 'split');
+        queue.unshift(parts.tail);
+        continue;
+      }
+      if (!pageIsFresh) {
+        newPage(b.sectionId, 'spill');
+        queue.unshift(b);
+        continue;
+      }
+      // Fresh page, still oversized, and cannot split (single huge sentence / item): place it
+      // anyway so nothing is lost, and warn. verify-pptx.sh flags it if it really overflows.
+      warnings.push({ reason: 'spill', sectionId: b.sectionId, page: pages.length + 1, oversized: true });
+      place(b);
       continue;
     }
-    if (!pageIsFresh) {                // whole block to next page
+
+    // Fits a fresh page whole (spec §6: "a block that does not fit starts a new page") — never
+    // split it just because the *current* leftover happens to be too small.
+    if (!pageIsFresh) {
       newPage(b.sectionId, 'spill');
       queue.unshift(b);
       continue;
     }
-    // Fresh page and still does not fit and cannot split (single huge sentence / item): place it anyway
-    // so nothing is lost, and warn. verify-pptx.sh will flag it if it really overflows.
+    // Defensive: a fresh page that still can't take a block estimated to fit one (a floating-point
+    // edge case at the boundary). Place it anyway rather than loop forever.
     warnings.push({ reason: 'spill', sectionId: b.sectionId, page: pages.length + 1, oversized: true });
     place(b);
   }
@@ -126,6 +196,7 @@ function paginate(blocks, frame, metrics) {
 
 function fitItems(items, widthIn, maxHeightIn, style, metrics, cap) {
   if (!items || items.length === 0) return { items: [], truncated: false };
+  if (cap < 1) return { items: [], truncated: items.length > 0 };
   const limit = Math.min(cap, items.length);
   let n = 0;
   for (let i = 1; i <= limit; i++) {

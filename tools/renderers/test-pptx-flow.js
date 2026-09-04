@@ -3,7 +3,7 @@
 
 'use strict';
 
-const { FLOW, estimateLines, estimateBlockHeight, itemText, paginate, fitItems } = require('./pptx/flow');
+const { FLOW, estimateLines, estimateBlockHeight, itemText, paginate, fitItems, splitSentences } = require('./pptx/flow');
 
 let passed = 0, failed = 0;
 function assert(c, label, detail) { if (c) { console.log(`  PASS: ${label}`); passed++; } else { console.error(`  FAIL: ${label}${detail ? ' — ' + detail : ''}`); failed++; } }
@@ -33,7 +33,7 @@ section('estimateBlockHeight');
   const one = { kind: 'list', sectionId: 's', items: [{ primary: 'a' }], style: body };
   assert(estimateBlockHeight(list, 3, M) > estimateBlockHeight(one, 3, M), 'more items → taller');
   const wide = { kind: 'list', sectionId: 's', items: [{ primary: 'x'.repeat(60) }], style: body };
-  assert(estimateBlockHeight(wide, 3, M) > estimateBlockHeight(wide, 3 + FLOW.bulletIndentIn, M) || true, 'list width is reduced by bullet indent (sanity)');
+  assert(estimateBlockHeight(wide, 3, M) > estimateBlockHeight(wide, 3 + FLOW.bulletIndentIn, M), 'list width is reduced by bullet indent (sanity)');
   const b = { kind: 'band', sectionId: 's', text: 'Traits', style: band };
   assert(Math.abs(estimateBlockHeight(b, 3, M) - ((14 * 1.2 + 2 * FLOW.bandPadPt) / 72) * FLOW.safety) < 1e-9, 'band height is one line plus padding');
   const h = { kind: 'heading', sectionId: 's', text: 'Needs', style: { size: 13, bold: true, colour: '#000' } };
@@ -45,6 +45,27 @@ assert(itemText({ primary: 'A' }) === 'A', 'primary only');
 assert(itemText({ primary: 'A', secondary: 'B' }) === 'A — B', 'with secondary');
 assert(itemText({ primary: 'A', badge: 'C' }) === 'A [C]', 'with badge');
 assert(itemText({ primary: 'A', secondary: 'B', badge: 'C' }) === 'A — B [C]', 'all three');
+
+section('splitSentences — exact, index-based partitioning');
+{
+  assert(JSON.stringify(splitSentences('v2.0 is here. Next.')) === JSON.stringify(['v2.0 is here. ', 'Next.']), 'a "." not followed by whitespace ("v2.0") is not a boundary; the real sentence break keeps its trailing space');
+  assert(splitSentences('...and then it ended. Next one here.').join('') === '...and then it ended. Next one here.', 'a leading run of punctuation is never dropped');
+  {
+    const segs = splitSentences('a\nb\nc');
+    assert(segs.length === 3 && segs.join('') === 'a\nb\nc', 'each newline is its own cut point, and text reassembles exactly');
+  }
+  const fixtures = [
+    'v2.0 is here. Next.',
+    '...and then it ended. Next one here.',
+    'a\nb\nc',
+    'See Dr. Smith. He is here.',
+    'No terminators at all here',
+    '',
+    'Trailing newline.\n',
+    'Multiple.   Spaces.\tTabs. Here.'
+  ];
+  assert(fixtures.every(f => splitSentences(f).join('') === f), 'segments.join("") reconstructs the original string exactly for every fixture');
+}
 
 section('paginate — fits on one page');
 {
@@ -87,6 +108,46 @@ section('paginate — continuation band');
   assert(first.kind === 'band' && first.text === 'Traits (cont.)' && first.continued === true, 'page 2 opens with "Traits (cont.)"');
 }
 
+section('paginate — a band that spills moves whole, never emitted as a phantom continuation first');
+{
+  // Section A fills page 1 exactly enough that section B's band has no room left on page 1, but
+  // easily fits a fresh page 2. Before the fix, the not-yet-placed Beta band was registered in
+  // bandBySection ahead of the fit check, so newPage() re-emitted it as "Beta (cont.)" *before*
+  // the real band was placed — a section "continuing" before it had ever started.
+  const blocks = [
+    { kind: 'band', sectionId: 'A', text: 'Alpha', style: band },
+    { kind: 'list', sectionId: 'A', items: [{ primary: 'x' }], style: body },
+    { kind: 'band', sectionId: 'B', text: 'Beta', style: band },
+    { kind: 'list', sectionId: 'B', items: [{ primary: 'y' }], style: body }
+  ];
+  const frame = { x: 0, y: 0, w: 3, h: 0.9 };
+  const { pages } = paginate(blocks, frame, M);
+  assert(pages.length === 2, 'two pages', String(pages.length));
+  const p2First = pages[1].blocks[0];
+  assert(p2First.kind === 'band' && p2First.text === 'Beta' && !p2First.continued, 'page 2 opens with Beta itself, not a continuation');
+  const betaBands = pages.flatMap(p => p.blocks).filter(b => b.kind === 'band' && b.text.startsWith('Beta'));
+  assert(betaBands.length === 1, 'the Beta band appears exactly once across all pages', String(betaBands.length));
+}
+
+section('paginate — a list that fits a fresh page but not the leftover room moves whole (never splits)');
+{
+  // Reproduces the reported case: a short list is taller than what's left after a paragraph, but
+  // shorter than a whole fresh page. Spec §6 says a block that merely doesn't fit starts a new
+  // page — splitting is reserved for a block taller than a slide.
+  const para = { kind: 'paragraph', sectionId: 'p', text: words(20), style: body };
+  const list = { kind: 'list', sectionId: 'p', items: [{ primary: 'a' }, { primary: 'b' }, { primary: 'c' }, { primary: 'd' }], style: body };
+  const frame = { x: 0, y: 0, w: 3, h: 1.62 };
+  const hPara = estimateBlockHeight(para, 3, M);
+  const hList = estimateBlockHeight(list, 3, M);
+  assert(hPara + hList > frame.h && hList <= frame.h, 'precondition: list fits a fresh page but not alongside the paragraph', `hPara=${hPara} hList=${hList}`);
+  const { pages, warnings } = paginate([para, list], frame, M);
+  assert(pages.length === 2, 'two pages', String(pages.length));
+  assert(pages[1].blocks.length === 1 && pages[1].blocks[0].kind === 'list' && pages[1].blocks[0].items.length === 4, 'the list lands intact at the top of page 2');
+  assert(pages[1].blocks[0].y === 0, 'list starts at the top of page 2');
+  assert(!warnings.some(w => w.reason === 'split'), 'no split warning — the list moved whole');
+  assert(warnings.some(w => w.reason === 'spill'), 'spill warning present');
+}
+
 section('paginate — oversized list splits at item boundaries, never mid-item');
 {
   const items = Array.from({ length: 40 }, (_, i) => ({ primary: `Item ${i} ` + words(10) }));
@@ -100,14 +161,56 @@ section('paginate — oversized list splits at item boundaries, never mid-item')
   assert(warnings.some(w => w.reason === 'split' && w.sectionId === 'L'), 'split warning');
 }
 
+section('paginate — a list shorter than the frame but taller than a continuation page splits rather than overflowing');
+{
+  // A list too tall for frame.h - bandHeight (what any continuation page of this section can ever
+  // offer) but not too tall for an empty frame. We chose "split" for this case (matching the
+  // literal freshRoom rule: split iff h > freshRoom), rather than placing it oversized — see the
+  // fix report for the reasoning.
+  const items = Array.from({ length: 3 }, (_, i) => ({ primary: 'item ' + i }));
+  const list = { kind: 'list', sectionId: 'S', items, style: body };
+  const bandBlock = { kind: 'band', sectionId: 'S', text: 'Section', style: band };
+  const frame = { x: 0, y: 0, w: 3, h: 1.0 };
+  const bandH = estimateBlockHeight(bandBlock, 3, M);
+  const listH = estimateBlockHeight(list, 3, M);
+  assert(listH <= frame.h && listH > frame.h - bandH, 'precondition: list fits an empty frame but not a continuation page', `bandH=${bandH} listH=${listH}`);
+  const { pages, warnings } = paginate([bandBlock, list], frame, M);
+  assert(warnings.some(w => w.reason === 'split' && w.sectionId === 'S'), 'the list splits rather than silently overflowing a continuation page');
+  const placed = pages.flatMap(p => p.blocks.filter(b => b.kind === 'list')).flatMap(b => b.items.map(i => i.primary));
+  assert(placed.length === 3 && placed.every((t, i) => t === items[i].primary), 'all list items placed once, in order');
+  assert(pages.every(p => p.blocks.reduce((y, b) => Math.max(y, b.y + b.h), 0) <= frame.h + 1e-9), 'no page exceeds the frame');
+}
+
 section('paginate — oversized paragraph splits at sentence boundaries');
 {
   const text = Array.from({ length: 30 }, (_, i) => `Sentence number ${i} has some words in it.`).join(' ');
   const { pages } = paginate([{ kind: 'paragraph', sectionId: 'P', text, style: body }], { x: 0, y: 0, w: 3, h: 1.5 }, M);
   assert(pages.length > 1, 'splits');
   const parts = pages.map(p => p.blocks[0].text);
-  assert(parts.every(t => /\.$/.test(t.trim())), 'every part ends at a sentence boundary', parts.map(t => t.slice(-12)).join(' | '));
-  assert(parts.join(' ').replace(/\s+/g, ' ') === text, 'parts reassemble to the original');
+  assert(parts.every(t => /[.!?]$/.test(t)), 'every part ends at a sentence boundary', parts.map(t => t.slice(-12)).join(' | '));
+  assert(parts.join(' ').replace(/\s+/g, '') === text.replace(/\s+/g, ''), 'parts reassemble to the original, ignoring only the whitespace introduced at cuts');
+
+  // A decimal inside a sentence ("2.0") must never be mistaken for a sentence boundary.
+  const text2 = Array.from({ length: 20 }, () => 'Version 2.0 ships today.').join(' ');
+  const { pages: pages2 } = paginate([{ kind: 'paragraph', sectionId: 'D', text: text2, style: body }], { x: 0, y: 0, w: 3, h: 1.5 }, M);
+  const parts2 = pages2.map(p => p.blocks[0].text);
+  assert(parts2.length > 1, 'decimal-bearing paragraph also splits', String(parts2.length));
+  assert(!parts2.some(t => /2\.$/.test(t.trim())), 'no part ends mid-decimal ("2.")', parts2.map(t => t.slice(-6)).join(' | '));
+  assert(parts2.join(' ').replace(/\s+/g, '') === text2.replace(/\s+/g, ''), 'decimal paragraph reassembles exactly, ignoring only cut whitespace');
+}
+
+section('paginate — paragraph splitting preserves newlines that are not at the cut');
+{
+  const lines = Array.from({ length: 20 }, (_, i) => `Line ${i} of the paragraph`);
+  const text = lines.join('\n');
+  const originalNewlines = (text.match(/\n/g) || []).length;
+  const { pages } = paginate([{ kind: 'paragraph', sectionId: 'N', text, style: body }], { x: 0, y: 0, w: 3, h: 1.5 }, M);
+  assert(pages.length > 1, 'splits across pages', String(pages.length));
+  const parts = pages.map(p => p.blocks[0].text);
+  const cuts = parts.length - 1;
+  const survivingNewlines = parts.reduce((n, t) => n + (t.match(/\n/g) || []).length, 0);
+  assert(survivingNewlines >= originalNewlines - cuts, 'newlines not at a cut point survive the split', `orig=${originalNewlines} cuts=${cuts} surviving=${survivingNewlines}`);
+  assert(parts.join('').replace(/\s+/g, '') === text.replace(/\s+/g, ''), 'no content lost across the split');
 }
 
 section('paginate — never changes font size');
@@ -129,6 +232,8 @@ section('fitItems');
   assert(none.items.length === 0 && none.truncated === false, 'no items → empty, not truncated');
   const two = fitItems(items.slice(0, 2), 3, 10, body, M, 3);
   assert(two.items.length === 2 && two.truncated === false, 'fewer than cap → not truncated');
+  const zeroCap = fitItems(items, 3, 10, body, M, 0);
+  assert(zeroCap.items.length === 0 && zeroCap.truncated === true, 'cap < 1 → empty, truncated (never forces one item)');
 }
 
 console.log(`\n${passed} passed, ${failed} failed`);

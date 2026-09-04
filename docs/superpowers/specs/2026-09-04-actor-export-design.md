@@ -440,3 +440,14 @@ Spiked 2026-09-04 in the session scratchpad; nothing kept.
 - `relationship` = `{ target, type, description, strength }`, 15 typed values.
 - No root `package.json`; dependencies are colocated (`tools/validators/`, the plugin);
   `package-lock.json` is gitignored.
+
+---
+
+## 13. Amendments
+
+**2026-09-04, after the summary-slide spike (plan Task 2), decided by Will:**
+
+- **Summary column headings name their source and carry a caption** (§5): *Enduring traits* — "needs · frustrations — true of them in any situation"; *In context: <context title> (<contextType>)* — "needs · frustrations specific to this role"; *When traits meet context* — "goals as experienced · pain points — and what each emerges from". Item badges (`[collision]`, `[severity 4/5]`) are drawn so each bullet shows what formed it.
+- **Demographics leave the bullets** (§4.2): `summarySlots.demographics` is a separate, uncapped list rendered as a header strip (age · location · education); `summarySlots.who` is trait needs + frustrations only.
+- **Per-column cap defaults to 5**, not 3 (§4.2, §5): at 3 the columns were roughly half empty; fit-as-many-as-fit still guarantees no overflow.
+- **Opportunities stay appendix-only** for now; revisit after use.

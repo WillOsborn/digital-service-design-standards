@@ -400,8 +400,8 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 
 **Spike outcome** *(filled in during execution — Task 9 reads this)*:
 
-- Approved as-is / changes requested: _(record here)_
-- Layout changes to carry into Task 9 (`LAYOUT.summary`): _(record here, as concrete numbers or "none")_
+- Changes requested (Will, 2026-09-04): column headings did not describe their bullets; the context was unnamed; "What emerges" was ambiguous.
+- Carried into Task 9: headings **Enduring traits / In context: <title> (<type>) / When traits meet context**, each with a one-line caption naming its source; demographics as a header strip (age · location · education) instead of bullets; per-column cap **5** (was 3; columns were ~45% empty); item badges drawn (`[collision]`, `[severity 4/5]`); opportunities stay in the appendix. Layout numbers unchanged apart from a 0.26in caption row.
 
 ---
 
@@ -1971,15 +1971,47 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 
 ### Task 9: `deck-model.js` — the summary slide (never paginates, never shrinks)
 
-**Read the *Spike outcome* block in Task 2 first.** If Will asked for layout changes, apply them to `LAYOUT.summary` below before writing tests; the tests assert behaviour (slots, caps, notes, bounds), not pixel positions, so they survive layout changes.
+**Spike outcome applied (Will, 2026-09-04):** column headings name their source and carry a one-line caption; demographics move out of the bullets into a header strip; the per-column cap is 5; opportunities stay in the appendix. This task therefore also makes a small, contained amendment to the view model's `summarySlots` (Step 0) before building the slide.
 
 **Files:**
+- Modify: `tools/viewmodels/actor-viewmodel.js` (`buildSummarySlots`, default cap), `tools/viewmodels/actor-viewmodel.d.ts`, `tools/viewmodels/test-actor-viewmodel.js` (Step 0)
 - Modify: `tools/renderers/pptx/deck-model.js` (add `LAYOUT.summary`, `buildSummarySlide`, wire into `buildDeck`)
 - Modify: `tools/renderers/test-deck-model.js` (append before `module.exports`)
 
 **Interfaces:**
-- Consumes: `vm.summarySlots` (Task 5), `flow.fitItems` (Task 6), helpers from Task 8.
-- Produces: `buildSummarySlide(vm, ctx) → Slide` with `kind: 'summary'`, `actorId`, `notes` (full lists), and warnings via `ctx.warn({ code: 'SUMMARY_TRUNCATED', actorId, slot, shown, of })`.
+- Consumes: `vm.summarySlots` (amended below), `flow.fitItems` (Task 6), helpers from Task 8.
+- Produces: `vm.summarySlots = { demographics: Item[], who: Slot, context: ContextSlot | null, emerges: Slot }` with `who` = trait needs + frustrations only and default `caps.summaryItems = 5`; `buildSummarySlide(vm, ctx) → Slide` with `kind: 'summary'`, `actorId`, `notes`, and warnings via `ctx.warn({ code: 'SUMMARY_TRUNCATED', actorId, slot, shown, of })`.
+
+- [ ] **Step 0: Amend the view model's summary slots**
+
+In `tools/viewmodels/actor-viewmodel.js`:
+- `resolveOptions`: change `{ summaryItems: 3 }` to `{ summaryItems: 5 }`.
+- `buildSummarySlots`: replace the `who` line and the return so demographics are separate:
+
+```js
+  const demographics = t.demographics ? t.demographics.items : [];
+  const who = [...(t.needs ? t.needs.items : []), ...(t.frustrations ? t.frustrations.items : [])];
+  // ... (context / emerges unchanged)
+  return { demographics, who: slot(who, cap), context: contextSlot, emerges: slot(emerges, cap) };
+```
+
+In `tools/viewmodels/actor-viewmodel.d.ts`, change the `summarySlots` line to:
+```ts
+  summarySlots: { demographics: Item[]; who: Slot; context: ContextSlot | null; emerges: Slot };
+```
+
+In `tools/viewmodels/test-actor-viewmodel.js`, in the `Summary slots` section, replace these three assertions:
+```js
+  assert(s.who.items.length === 5 && s.who.full.length > 5 && s.who.truncated === true, 'who: capped at 5 by default, full retained, truncated flagged');
+  assert(s.demographics.some(i => i.badge === 'age') && !s.who.full.some(i => i.badge === 'age'), 'demographics are a separate slot, not in who');
+  assert(s.who.full[0].badge !== undefined && s.who.full.some(i => i.badge && i.badge.startsWith('severity')), 'who: needs (badged by type) then frustrations');
+```
+(they replace `'who: capped at 3…'`, `'who: demographics come first'`, and `'who: includes frustrations'`), and replace the `cap5` pair with:
+```js
+  const cap2 = buildActorViewModel(adam, { caps: { summaryItems: 2 } });
+  assert(cap2.summarySlots.who.items.length === 2, 'caps.summaryItems honoured');
+```
+Run `node tools/viewmodels/test-actor-viewmodel.js` — expect `0 failed` (118 assertions still; three reworded, one replaced).
 
 - [ ] **Step 1: Append failing tests**
 
@@ -1995,14 +2027,17 @@ section('Summary slide');
   assert(s.actorId === 'actor-adam-rees', 'summary carries actorId');
   const t = textOf(s);
   assert(t.includes('Adam Rees') && t.includes(adam.quote) && t.includes(adam.summary), 'header: name, quote, summary paragraph');
-  assert(t.includes('WHO THEY ARE') && t.includes('IN THIS CONTEXT') && t.includes('WHAT EMERGES'), 'three column headings');
-  assert(t.includes(adam.contexts[0].title), 'context column names the context');
+  assert(t.includes(String(adam.traits.demographics.age)) && t.includes(adam.traits.demographics.location), 'header strip carries age and location');
+  assert(t.includes('Enduring traits') && t.includes(`In context: ${adam.contexts[0].title}`) && t.includes('When traits meet context'), 'three column headings name their source');
+  assert(t.includes('true of them in any situation') && t.includes('specific to this role') && t.includes('what each emerges from'), 'each column carries its caption');
+  assert(t.includes(adam.contexts[0].contextType), 'context type shown with the context heading');
   assert(s.elements.some(e => e.type === 'ellipse'), 'avatar present');
   assert(inBounds(s), 'summary slide within bounds');
-  assert(typeof s.notes === 'string' && s.notes.includes('Who they are') && s.notes.split('\n').length > 6, 'speaker notes carry the full lists');
+  assert(typeof s.notes === 'string' && s.notes.includes('Enduring traits') && s.notes.split('\n').length > 6, 'speaker notes carry the full lists');
   const listEls = s.elements.filter(e => e.type === 'text' && e.paragraphs.some(p => p.bullet));
   assert(listEls.length === 3, 'three bulleted lists');
-  assert(listEls.every(e => e.paragraphs.filter(p => p.bullet).length <= 3 && e.paragraphs.filter(p => p.bullet).length >= 1), 'each list shows 1–3 items');
+  assert(listEls.every(e => e.paragraphs.filter(p => p.bullet).length <= 5 && e.paragraphs.filter(p => p.bullet).length >= 1), 'each list shows 1–5 items');
+  assert(listEls.some(e => e.paragraphs.some(p => /\[(traits|context|collision)\]/.test(p.text))), 'emergent goals show their source badge');
   assert(t.includes('→ see appendix'), 'truncated columns point to the appendix');
   assert(d.warnings.some(w => w.code === 'SUMMARY_TRUNCATED' && w.actorId === 'actor-adam-rees'), 'truncation warned');
   assert(s.elements.every(e => e.type !== 'text' || e.size >= theme.typography.scale.caption), 'no text below caption size (never shrinks)');
@@ -2011,17 +2046,17 @@ section('Summary slide');
   const d = buildDeck(vmsOf([fixture]), opts({ sections: { cover: false, index: false, summary: true, appendix: false } }));
   const t = textOf(d.slides[0]);
   assert(t.includes('+2 more contexts → appendix'), 'multi-context marker');
-  assert(t.includes('Alpha Role'), 'first context shown by default');
+  assert(t.includes('In context: Alpha Role'), 'first context shown by default');
 }
 {
   const d = buildDeck(vmsOf([fixture], { context: 'ctx-gamma' }), opts({ sections: { cover: false, index: false, summary: true, appendix: false } }));
   const t = textOf(d.slides[0]);
-  assert(t.includes('Gamma Role') && t.includes('Nothing recorded yet'), 'context without emergence shows an explicit empty state, not a blank box');
+  assert(t.includes('In context: Gamma Role') && t.includes('Nothing recorded yet'), 'context without emergence shows an explicit empty state, not a blank box');
 }
 {
   const noCtx = buildActorViewModel({ ...fixture, contexts: [], emergence: [] });
   const d = buildDeck([noCtx], opts({ sections: { cover: false, index: false, summary: true, appendix: false } }));
-  assert(d.slides.length === 1 && inBounds(d.slides[0]), 'actor with no contexts still gets a summary slide');
+  assert(d.slides.length === 1 && inBounds(d.slides[0]) && textOf(d.slides[0]).includes('No context recorded'), 'actor with no contexts still gets a summary slide with an explicit empty context');
 }
 ```
 
@@ -2032,11 +2067,11 @@ Expected: ≥ 12 FAIL, exit 1 (no summary slides are produced yet).
 
 - [ ] **Step 3: Implement**
 
-In `tools/renderers/pptx/deck-model.js`, replace `summary: {},` in `LAYOUT` with (adjust per the Spike outcome):
+In `tools/renderers/pptx/deck-model.js`, replace `summary: {},` in `LAYOUT` with:
 
 ```js
   summary: { headerH: 1.55, avatarD: 0.95, nameX: 1.65, nameW: 6.2, quoteX: 8.0, quoteW: 4.85,
-             sumY: 1.75, sumH: 0.85, colY: 2.8, colH: 4.05, colHeadH: 0.42, colPad: 0.12 },
+             sumY: 1.75, sumH: 0.85, colY: 2.8, colH: 4.05, colHeadH: 0.42, captionH: 0.26, colPad: 0.12 },
 ```
 
 Add before `buildDeck`:
@@ -2050,11 +2085,13 @@ function buildSummarySlide(vm, ctx) {
   const L = LAYOUT.summary, m = LAYOUT.margin, g = LAYOUT.gutter;
   const id = vm.identity, slots = vm.summarySlots;
   const elements = [];
-  // Header band
+  // Header band: avatar, name, type badge, demographics strip, quote
   elements.push(el.rect(0, 0, SLIDE.w, L.headerH, ctx.C.panel, { colour: ctx.C.border, width: 0.75 }));
   elements.push(...avatarElements(vm, ctx, m, 0.3, L.avatarD));
-  elements.push(el.text(L.nameX, 0.25, L.nameW, 0.55, id.name, { size: ctx.S.h1, bold: true, colour: ctx.C.text, valign: 'middle' }));
-  elements.push(...badgeElements(id.actorType.replace('_', ' '), L.nameX, 0.85, ctx));
+  elements.push(el.text(L.nameX, 0.22, L.nameW, 0.5, id.name, { size: ctx.S.h1, bold: true, colour: ctx.C.text, valign: 'middle' }));
+  elements.push(...badgeElements(id.actorType.replace('_', ' '), L.nameX, 0.78, ctx));
+  const strip = slots.demographics.filter(i => ['age', 'location', 'education'].includes(i.badge)).map(i => i.primary).join('  ·  ');
+  if (strip) elements.push(el.text(L.nameX + 1.3, 0.78, L.nameW - 1.3, 0.28, strip, { size: ctx.S.small, colour: ctx.C.dim, valign: 'middle' }));
   if (id.quote) elements.push(el.text(L.quoteX, 0.3, L.quoteW, 1.0, `“${id.quote}”`, { size: ctx.S.body + 1, italic: true, colour: ctx.C.dim, valign: 'middle' }));
   // Summary paragraph
   const sumStyle = { size: ctx.S.body + 1, colour: ctx.C.text };
@@ -2062,34 +2099,38 @@ function buildSummarySlide(vm, ctx) {
   if (fitted.truncated) ctx.warn({ code: 'SUMMARY_TRUNCATED', actorId: id.id, slot: 'summary', shown: fitted.text.length, of: id.summary.length });
   elements.push(el.text(m, L.sumY, SLIDE.w - 2 * m, L.sumH, fitted.text + (fitted.truncated ? ' …' : ''), sumStyle));
 
-  // Three columns
+  // Three columns: enduring traits → in context → what emerges (spec §5, spike outcome 2026-09-04)
   const colW = (SLIDE.w - 2 * m - 2 * g) / 3;
   const bodyStyle = { size: ctx.S.body + 1, colour: ctx.C.text };
+  const c = slots.context;
   const cols = [
-    { key: 'who', title: 'Who they are', colour: ctx.C.traits, tint: ctx.C.traitsTint, slot: slots.who, sub: '' },
-    { key: 'context', title: 'In this context', colour: ctx.C.contexts, tint: ctx.C.contextsTint, slot: slots.context,
-      sub: slots.context ? `${slots.context.title}${slots.context.contextType ? ' · ' + slots.context.contextType : ''}` : 'No context recorded' },
-    { key: 'emerges', title: 'What emerges', colour: ctx.C.emergence, tint: ctx.C.emergenceTint, slot: slots.emerges, sub: '' }
+    { key: 'who', title: 'Enduring traits', caption: 'needs · frustrations — true of them in any situation',
+      colour: ctx.C.traits, tint: ctx.C.traitsTint, slot: slots.who },
+    { key: 'context', title: c ? `In context: ${c.title}${c.contextType ? ' (' + c.contextType + ')' : ''}` : 'In context: No context recorded',
+      caption: 'needs · frustrations specific to this role', colour: ctx.C.contexts, tint: ctx.C.contextsTint, slot: c },
+    { key: 'emerges', title: 'When traits meet context', caption: 'goals as experienced · pain points — and what each emerges from',
+      colour: ctx.C.emergence, tint: ctx.C.emergenceTint, slot: slots.emerges }
   ];
   const notes = [];
-  cols.forEach((c, i) => {
+  cols.forEach((col, i) => {
     const x = m + i * (colW + g), y = L.colY, p = L.colPad;
-    elements.push(el.rect(x, y, colW, L.colH, c.tint, { colour: c.colour, width: 1 }, 0.08));
-    elements.push(el.rect(x, y, colW, L.colHeadH, c.colour));
-    elements.push(el.text(x + p, y, colW - 2 * p, L.colHeadH, c.title.toUpperCase(), { size: ctx.S.body, bold: true, colour: '#ffffff', valign: 'middle' }));
-    let cy = y + L.colHeadH + 0.08;
-    if (c.sub) { elements.push(el.text(x + p, cy, colW - 2 * p, 0.3, c.sub, { size: ctx.S.small, bold: true, colour: c.colour })); cy += 0.32; }
+    elements.push(el.rect(x, y, colW, L.colH, col.tint, { colour: col.colour, width: 1 }, 0.08));
+    elements.push(el.rect(x, y, colW, L.colHeadH, col.colour));
+    elements.push(el.text(x + p, y, colW - 2 * p, L.colHeadH, col.title, { size: ctx.S.h3, bold: true, colour: '#ffffff', valign: 'middle' }));
+    let cy = y + L.colHeadH + 0.06;
+    elements.push(el.text(x + p, cy, colW - 2 * p, L.captionH, col.caption, { size: ctx.S.small, italic: true, colour: col.colour }));
+    cy += L.captionH + 0.06;
     const markerH = 0.28;
     const listH = y + L.colH - cy - markerH - p;
-    const full = c.slot ? c.slot.full : [];
-    const fit = flow.fitItems(full, colW - 2 * p, listH, bodyStyle, ctx.metrics, c.slot ? c.slot.items.length : 0);
+    const full = col.slot ? col.slot.full : [];
+    const fit = flow.fitItems(full, colW - 2 * p, listH, bodyStyle, ctx.metrics, col.slot ? col.slot.items.length : 0);
     if (fit.items.length) elements.push(el.text(x + p, cy, colW - 2 * p, listH, listParagraphs(fit.items), bodyStyle));
     else elements.push(el.text(x + p, cy, colW - 2 * p, 0.4, 'Nothing recorded yet', { size: ctx.S.body, italic: true, colour: ctx.C.dim }));
     const markers = [];
-    if (fit.truncated) { markers.push('→ see appendix'); ctx.warn({ code: 'SUMMARY_TRUNCATED', actorId: id.id, slot: c.key, shown: fit.items.length, of: full.length }); }
-    if (c.key === 'context' && c.slot && c.slot.moreContexts > 0) markers.push(`+${c.slot.moreContexts} more context${c.slot.moreContexts > 1 ? 's' : ''} → appendix`);
-    if (markers.length) elements.push(el.text(x + p, y + L.colH - markerH - p / 2, colW - 2 * p, markerH, markers.join('   '), { size: ctx.S.caption, bold: true, colour: c.colour, align: 'right' }));
-    notes.push(`${c.title}${c.sub ? ' — ' + c.sub : ''}`);
+    if (fit.truncated) { markers.push('→ see appendix'); ctx.warn({ code: 'SUMMARY_TRUNCATED', actorId: id.id, slot: col.key, shown: fit.items.length, of: full.length }); }
+    if (col.key === 'context' && c && c.moreContexts > 0) markers.push(`+${c.moreContexts} more context${c.moreContexts > 1 ? 's' : ''} → appendix`);
+    if (markers.length) elements.push(el.text(x + p, y + L.colH - markerH - p / 2, colW - 2 * p, markerH, markers.join('   '), { size: ctx.S.caption, bold: true, colour: col.colour, align: 'right' }));
+    notes.push(`${col.title} — ${col.caption}`);
     full.forEach(it => notes.push(`• ${flow.itemText(it)}`));
     notes.push('');
   });
@@ -2109,13 +2150,17 @@ Add `buildSummarySlide, listParagraphs` to `module.exports`.
 - [ ] **Step 4: Run the tests**
 
 Run: `out=$(node tools/renderers/test-deck-model.js 2>&1); code=$?; echo "$out" | grep -E "FAIL|passed"; echo "exit=$code"`
-Expected: `0 failed`, exit 0.
+Expected: `0 failed`, exit 0. Also `node tools/viewmodels/test-actor-viewmodel.js` → `0 failed`.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add tools/renderers/pptx/deck-model.js tools/renderers/test-deck-model.js
-git commit -m "feat(pptx): summary slide — fixed slots, fit 3→2→1, appendix markers, speaker notes
+git add tools/viewmodels/actor-viewmodel.js tools/viewmodels/actor-viewmodel.d.ts tools/viewmodels/test-actor-viewmodel.js tools/renderers/pptx/deck-model.js tools/renderers/test-deck-model.js
+git commit -m "feat(pptx): summary slide — source-named columns with captions, demographics strip, cap 5, speaker notes
+
+Applies the 2026-09-04 spike feedback: headings name what formed each
+column, demographics move to the header, opportunities stay in the
+appendix.
 
 Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 ```
@@ -2391,7 +2436,7 @@ async function writerTests() {
   assert(texts[0].includes('Actors · 2'), 'cover text survives');
   assert(texts[1].includes('Adam Rees') && texts[1].includes('Daniel Rees'), 'index text survives');
   const sIdx = deck.slides.findIndex(s => s.kind === 'summary');
-  assert(texts[sIdx].includes('WHO THEY ARE') && texts[sIdx].includes(adam.quote.slice(0, 20)), 'summary text survives');
+  assert(texts[sIdx].includes('Enduring traits') && texts[sIdx].includes(adam.quote.slice(0, 20)), 'summary text survives');
   const notes = await slideNotes(buf);
   assert(notes[sIdx] && notes[sIdx].includes('Who they are'), 'speaker notes written on the summary slide');
   const allText = texts.join('\n');

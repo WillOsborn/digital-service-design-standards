@@ -275,7 +275,8 @@ section('Appendix — slides');
   assert(kinds.indexOf('appendix') > kinds.lastIndexOf('summary'), 'all summaries precede all appendices');
   assert(d.warnings.some(w => String(w.code).startsWith('APPENDIX_')), 'pagination warnings forwarded');
   const pages = d.slides.flatMap(s => s.elements.filter(e => e.type === 'text' && e.align === 'right' && e.y === LAYOUT.footerY).map(e => e.paragraphs[0].text));
-  assert(pages.join(',') === d.slides.map((_, i) => String(i + 1)).join(','), 'footer page numbers run 1..N in order', pages.join(','));
+  const expected = d.slides.map((s, i) => (s.kind === 'cover' ? null : String(i + 1))).filter(Boolean);
+  assert(pages.join(',') === expected.join(','), 'footer page numbers equal the slide index on every non-cover slide, in order', pages.join(','));
 }
 
 module.exports = { assert, section, load, adam, daniel, sarah, fixture, theme, metrics, vmsOf, opts, textOf, inBounds, finish: () => { console.log(`\n${passed} passed, ${failed} failed`); process.exit(failed ? 1 : 0); } };

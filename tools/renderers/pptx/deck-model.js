@@ -12,7 +12,7 @@ const LAYOUT = Object.freeze({
   index: { perSlide: 8, cols: 4, rows: 2, titleY: 0.45, titleH: 0.6, gridY: 1.3, gridH: 5.55, avatarD: 0.6, cardPad: 0.15 },
   summary: { headerH: 1.55, avatarD: 0.95, nameX: 1.65, nameW: 6.2, quoteX: 8.0, quoteW: 4.85,
              sumY: 1.75, sumH: 0.85, colY: 2.8, colH: 4.05, colHeadH: 0.42, colHeadMaxH: 0.72, captionH: 0.26, colPad: 0.12 },
-  appendix: {}   // filled in Task 10
+  appendix: { headerH: 0.85, avatarD: 0.5, frameY: 1.1, frameH: 5.85, colGap: 0.25 }
 });
 const AVATAR_COLOURS = ['touchpoint', 'start', 'decision', 'handoff', 'signal', 'end'];
 
@@ -238,6 +238,91 @@ function buildSummarySlide(vm, ctx) {
   return { kind: 'summary', actorId: id.id, background: ctx.C.bg, elements, notes: notes.join('\n') };
 }
 
+function appendixBlocks(vm, ctx) {
+  const blocks = [];
+  const band = (sectionId, text, fill) => blocks.push({ kind: 'band', sectionId, text, style: { size: ctx.S.h3, bold: true, colour: '#ffffff', fill } });
+  const heading = (sectionId, text) => blocks.push({ kind: 'heading', sectionId, text, style: { size: ctx.S.body + 1, bold: true, colour: ctx.C.text } });
+  const para = (sectionId, text) => text && blocks.push({ kind: 'paragraph', sectionId, text, style: { size: ctx.S.body, colour: ctx.C.text } });
+  const list = (sectionId, items) => items && items.length && blocks.push({ kind: 'list', sectionId, items, style: { size: ctx.S.body, colour: ctx.C.text } });
+  const listSection = (sectionId, title, items) => { if (items && items.length) { heading(sectionId, title); list(sectionId, items); } };
+
+  const groups = Object.entries(vm.traits);
+  if (groups.length) {
+    band('traits', 'Traits', ctx.C.traits);
+    for (const [, g] of groups) listSection('traits', g.label, g.items);
+  }
+  vm.contexts.forEach((c, i) => {
+    const sid = `context-${i}`;
+    band(sid, `${c.title}${c.contextType ? ' · ' + c.contextType : ''}`, ctx.C.contexts);
+    para(sid, c.description);
+    listSection(sid, 'Needs', c.needs);
+    listSection(sid, 'Frustrations', c.frustrations);
+    listSection(sid, 'Channels', c.channels);
+    listSection(sid, 'Moments that matter', c.momentsThatMatter);
+    listSection(sid, 'Details', c.details);
+    if (c.emergence) {
+      const eid = `emergence-${i}`;
+      band(eid, `What emerges — ${c.title}`, ctx.C.emergence);
+      listSection(eid, 'Goals as experienced', c.emergence.goalsAsExperienced);
+      listSection(eid, 'Pain points', c.emergence.painPoints);
+      listSection(eid, 'Opportunities', c.emergence.opportunities);
+      if (c.emergence.emotionalContext) { heading(eid, 'Emotional context'); para(eid, c.emergence.emotionalContext); }
+      listSection(eid, 'Use cases', c.emergence.useCases);
+      listSection(eid, 'Success metrics', c.emergence.successMetrics);
+    }
+  });
+  vm.unattributedEmergence.forEach((e, i) => {
+    const sid = `unattributed-${i}`;
+    band(sid, `What emerges — unattributed (contextRef "${e.contextRef}")`, ctx.C.emergence);
+    listSection(sid, 'Goals as experienced', e.goalsAsExperienced);
+    listSection(sid, 'Pain points', e.painPoints);
+    listSection(sid, 'Opportunities', e.opportunities);
+  });
+  const rels = [...vm.relationships.inDeck, ...vm.relationships.external];
+  if (rels.length) {
+    band('relationships', 'Relationships', ctx.C.dim);
+    list('relationships', rels.map(r => ({ primary: `${r.typeLabel} ${r.target}`, secondary: r.description || undefined, badge: r.strength })));
+  }
+  if (vm.provenance) { band('provenance', 'Provenance', ctx.C.dim); list('provenance', vm.provenance); }
+  if (vm.governance) { band('governance', 'Governance', ctx.C.dim); list('governance', vm.governance); }
+  return blocks;
+}
+
+function buildAppendixSlides(vm, ctx) {
+  const L = LAYOUT.appendix, m = LAYOUT.margin;
+  const colW = (SLIDE.w - 2 * m - L.colGap) / 2;
+  const blocks = appendixBlocks(vm, ctx);
+  const { pages, warnings } = flow.paginate(blocks, { x: 0, y: 0, w: colW, h: L.frameH }, ctx.metrics);
+  for (const w of warnings) ctx.warn({ code: `APPENDIX_${w.reason.toUpperCase()}`, actorId: vm.identity.id, sectionId: w.sectionId, page: w.page });
+
+  const slides = [];
+  for (let i = 0; i < pages.length; i += 2) {
+    const elements = [];
+    elements.push(el.rect(0, 0, SLIDE.w, L.headerH, ctx.C.panel, { colour: ctx.C.border, width: 0.75 }));
+    elements.push(...avatarElements(vm, ctx, m, (L.headerH - L.avatarD) / 2, L.avatarD));
+    elements.push(el.text(m + L.avatarD + 0.15, 0.15, 7, 0.55, vm.identity.name, { size: ctx.S.h2, bold: true, colour: ctx.C.text, valign: 'middle' }));
+    elements.push(el.text(SLIDE.w - m - 4, 0.15, 4, 0.55, `Appendix · ${Math.floor(i / 2) + 1} of ${Math.ceil(pages.length / 2)}`, { size: ctx.S.small, colour: ctx.C.dim, align: 'right', valign: 'middle' }));
+    [pages[i], pages[i + 1]].forEach((page, col) => {
+      if (!page) return;
+      const x = m + col * (colW + L.colGap);
+      for (const b of page.blocks) {
+        const y = L.frameY + b.y;
+        if (b.kind === 'band') {
+          elements.push(el.rect(x, y, colW, b.h, b.style.fill, undefined, 0.04));
+          elements.push(el.text(x + 0.1, y, colW - 0.2, b.h, b.text, { size: b.style.size, bold: true, colour: b.style.colour, valign: 'middle' }));
+        } else if (b.kind === 'heading' || b.kind === 'paragraph') {
+          elements.push(el.text(x, y, colW, b.h, b.text, { size: b.style.size, bold: !!b.style.bold, colour: b.style.colour }));
+        } else {
+          elements.push(el.text(x, y, colW, b.h, listParagraphs(b.items), { size: b.style.size, colour: b.style.colour }));
+        }
+      }
+    });
+    elements.push(...footerElements(`${vm.identity.id} · v${vm.identity.version}`, { ...ctx, page: () => ctx.page() + Math.floor(i / 2) }));
+    slides.push({ kind: 'appendix', actorId: vm.identity.id, background: ctx.C.bg, elements });
+  }
+  return slides;
+}
+
 function buildDeck(vms, opts) {
   const warnings = [];
   let pageNo = 0;
@@ -257,9 +342,9 @@ function buildDeck(vms, opts) {
     for (const s of buildIndexSlides(vms, { ...ctx, page: () => pageNo + 1 })) push(s);
   }
   if (sections.summary) for (const vm of vms) push(buildSummarySlide(vm, { ...ctx, page: () => pageNo + 1 }));
-  // Task 10 adds: if (sections.appendix) for (const vm of vms) for (const s of buildAppendixSlides(vm, ctx)) push(s);
+  if (sections.appendix) for (const vm of vms) for (const s of buildAppendixSlides(vm, { ...ctx, page: () => pageNo + 1 })) push(s);
   for (const vm of vms) for (const w of vm.warnings) warnings.push({ actorId: vm.identity.id, ...w });
   return { slides, warnings };
 }
 
-module.exports = { SLIDE, LAYOUT, AVATAR_COLOURS, el, fitParagraph, avatarElements, footerElements, badgeElements, badgeWidth, buildCover, buildIndexSlides, buildSummarySlide, listParagraphs, buildDeck };
+module.exports = { SLIDE, LAYOUT, AVATAR_COLOURS, el, fitParagraph, avatarElements, footerElements, badgeElements, badgeWidth, buildCover, buildIndexSlides, buildSummarySlide, listParagraphs, appendixBlocks, buildAppendixSlides, buildDeck };

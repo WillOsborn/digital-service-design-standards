@@ -206,5 +206,77 @@ const listElAt = (slide, i) => slide.elements.find(e => e.type === 'text' && Mat
   assert(d.warnings.some(w => w.code === 'SUMMARY_TRUNCATED' && w.slot === 'quote'), 'quote truncation is warned');
 }
 
+section('Appendix — blocks');
+{
+  const vm = vmsOf([adam])[0];
+  const ctx = { C: theme.colour.light, S: theme.typography.scale, metrics, warn: () => {} };
+  const blocks = dm.appendixBlocks(vm, ctx);
+  assert(blocks.length > 20, 'a real actor yields many blocks', String(blocks.length));
+  assert(blocks.every(b => ['band', 'heading', 'paragraph', 'list'].includes(b.kind) && typeof b.sectionId === 'string' && b.style && b.style.size > 0), 'every block is well-formed');
+  const bands = blocks.filter(b => b.kind === 'band').map(b => b.text);
+  assert(bands[0] === 'Traits', 'first band is Traits');
+  assert(bands.some(t => t.startsWith(adam.contexts[0].title)), 'a band per context, titled by the context');
+  assert(bands.some(t => t.startsWith('What emerges')), 'emergence band nested after its context');
+  assert(bands.indexOf(bands.find(t => t.startsWith('What emerges'))) > bands.indexOf(bands.find(t => t.startsWith(adam.contexts[0].title))), 'emergence follows its context');
+  assert(bands.includes('Relationships'), 'relationships band present by default');
+  assert(!bands.includes('Provenance') && !bands.includes('Governance'), 'provenance/governance absent by default');
+  const headings = blocks.filter(b => b.kind === 'heading').map(b => b.text);
+  assert(['Demographics', 'Needs', 'Frustrations', 'Technology'].every(h => headings.includes(h)), 'trait groups appear as headings under the Traits band');
+  assert(headings.includes('Goals as experienced') && headings.includes('Pain points'), 'emergence sub-headings');
+  const traitsBand = blocks.find(b => b.kind === 'band' && b.text === 'Traits');
+  assert(traitsBand.style.fill === theme.colour.light.traits, 'traits band uses the traits layer colour');
+  assert(blocks.find(b => b.kind === 'band' && b.text.startsWith('What emerges')).style.fill === theme.colour.light.emergence, 'emergence band uses the emergence colour');
+}
+{
+  const vm = vmsOf([sarah], { sections: { provenance: true, governance: true } })[0];
+  const blocks = dm.appendixBlocks(vm, { C: theme.colour.light, S: theme.typography.scale, metrics, warn: () => {} });
+  const bands = blocks.filter(b => b.kind === 'band').map(b => b.text);
+  assert(bands.includes('Provenance') && bands.includes('Governance'), 'provenance/governance bands when selected');
+  assert(blocks.some(b => b.kind === 'heading' && b.text === 'Details'), 'context details rendered (Deviation 3)');
+}
+{
+  const orphan = JSON.parse(JSON.stringify(fixture));
+  orphan.emergence.push({ contextRef: 'ctx-missing', goalsAsExperienced: [{ goal: 'Orphan goal', source: 'traits', priority: 'primary' }], painPoints: [], opportunities: [], emotionalContext: '', useCases: [], successMetrics: [] });
+  const vm = buildActorViewModel(orphan);
+  const blocks = dm.appendixBlocks(vm, { C: theme.colour.light, S: theme.typography.scale, metrics, warn: () => {} });
+  assert(blocks.some(b => b.kind === 'band' && b.text.includes('unattributed') && b.text.includes('ctx-missing')), 'unattributed emergence gets its own band naming the ref');
+}
+
+section('Appendix — slides');
+{
+  const d = buildDeck(vmsOf([adam]), opts({ sections: { cover: false, index: false, summary: false, appendix: true } }));
+  const app = d.slides;
+  assert(app.length >= 3 && app.length <= 12 && app.every(s => s.kind === 'appendix' && s.actorId === 'actor-adam-rees'), 'heaviest actor paginates to 3–12 appendix slides', String(app.length));
+  assert(app.every(inBounds), 'every appendix slide within bounds');
+  const all = app.map(textOf).join('\n');
+  for (const n of adam.traits.needs) assert(all.includes(n.need), `need present: ${n.need.slice(0, 30)}…`);
+  for (const f of adam.traits.frustrations) assert(all.includes(f.frustration), `frustration present: ${f.frustration.slice(0, 30)}…`);
+  for (const g of adam.emergence[0].goalsAsExperienced) assert(all.includes(g.goal), `goal present: ${g.goal.slice(0, 30)}…`);
+  assert(all.includes(adam.contexts[0].description), 'context description present');
+  assert(app.slice(1).some(s => textOf(s).includes('(cont.)')), 'continuation bands appear');
+  assert(app.every(s => textOf(s).includes('Adam Rees')), 'slim header names the actor on every appendix slide');
+  assert(app.every(s => s.elements.every(e => e.type !== 'text' || e.size >= theme.typography.scale.caption)), 'no text below caption size');
+  assert(app.every(s => textOf(s).includes(`${adam.id} · v${adam.version}`)), 'footer on every slide');
+}
+{
+  const d = buildDeck(vmsOf([fixture]), opts({ sections: { cover: false, index: false, summary: false, appendix: true } }));
+  const all = d.slides.map(textOf).join('\n');
+  assert(['Alpha Role', 'Beta Role', 'Gamma Role'].every(t => all.includes(t)), 'all three contexts rendered');
+  assert(all.includes('Beta goal') && all.includes('Alpha goal one'), 'each context carries its own emergence');
+  const emBands = d.slides.flatMap(s => s.elements.filter(e => e.type === 'text').flatMap(e => e.paragraphs.map(p => p.text))).filter(t => t.startsWith('What emerges') && !t.includes('(cont.)'));
+  assert(emBands.length === 2, 'exactly two emergence bands, continuation bands excluded (gamma has none)', String(emBands.length));
+}
+{
+  const d = buildDeck(vmsOf([adam, daniel]), opts());
+  const kinds = d.slides.map(s => s.kind);
+  const nA = d.slides.filter(s => s.kind === 'appendix' && s.actorId === 'actor-adam-rees').length;
+  const nD = d.slides.filter(s => s.kind === 'appendix' && s.actorId === 'actor-daniel-rees').length;
+  assert(d.slides.length === 1 + 1 + 2 + nA + nD, 'slide-count formula: cover + index + N summaries + Σ appendix');
+  assert(kinds.indexOf('appendix') > kinds.lastIndexOf('summary'), 'all summaries precede all appendices');
+  assert(d.warnings.some(w => String(w.code).startsWith('APPENDIX_')), 'pagination warnings forwarded');
+  const pages = d.slides.flatMap(s => s.elements.filter(e => e.type === 'text' && e.align === 'right' && e.y === LAYOUT.footerY).map(e => e.paragraphs[0].text));
+  assert(pages.join(',') === d.slides.map((_, i) => String(i + 1)).join(','), 'footer page numbers run 1..N in order', pages.join(','));
+}
+
 module.exports = { assert, section, load, adam, daniel, sarah, fixture, theme, metrics, vmsOf, opts, textOf, inBounds, finish: () => { console.log(`\n${passed} passed, ${failed} failed`); process.exit(failed ? 1 : 0); } };
 if (require.main === module) module.exports.finish();

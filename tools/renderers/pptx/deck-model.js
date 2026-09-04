@@ -10,7 +10,8 @@ const LAYOUT = Object.freeze({
   margin: 0.5, gutter: 0.25, footerY: 7.05, footerH: 0.3,
   cover: { titleY: 2.4, titleH: 1.0, subY: 3.5, subH: 0.5, srcY: 4.3, srcH: 1.6 },
   index: { perSlide: 8, cols: 4, rows: 2, titleY: 0.45, titleH: 0.6, gridY: 1.3, gridH: 5.55, avatarD: 0.6, cardPad: 0.15 },
-  summary: {},   // filled in Task 9
+  summary: { headerH: 1.55, avatarD: 0.95, nameX: 1.65, nameW: 6.2, quoteX: 8.0, quoteW: 4.85,
+             sumY: 1.75, sumH: 0.85, colY: 2.8, colH: 4.05, colHeadH: 0.42, captionH: 0.26, colPad: 0.12 },
   appendix: {}   // filled in Task 10
 });
 const AVATAR_COLOURS = ['touchpoint', 'start', 'decision', 'handoff', 'signal', 'end'];
@@ -134,6 +135,67 @@ function buildIndexSlides(vms, ctx) {
   });
 }
 
+function listParagraphs(items) {
+  return items.map(it => ({ text: flow.itemText(it), bullet: true }));
+}
+
+function buildSummarySlide(vm, ctx) {
+  const L = LAYOUT.summary, m = LAYOUT.margin, g = LAYOUT.gutter;
+  const id = vm.identity, slots = vm.summarySlots;
+  const elements = [];
+  // Header band: avatar, name, type badge, demographics strip, quote
+  elements.push(el.rect(0, 0, SLIDE.w, L.headerH, ctx.C.panel, { colour: ctx.C.border, width: 0.75 }));
+  elements.push(...avatarElements(vm, ctx, m, 0.3, L.avatarD));
+  elements.push(el.text(L.nameX, 0.22, L.nameW, 0.5, id.name, { size: ctx.S.h1, bold: true, colour: ctx.C.text, valign: 'middle' }));
+  elements.push(...badgeElements(id.actorType.replace('_', ' '), L.nameX, 0.78, ctx));
+  const strip = slots.demographics.filter(i => ['age', 'location', 'education'].includes(i.badge)).map(i => i.primary).join('  ·  ');
+  if (strip) elements.push(el.text(L.nameX + 1.3, 0.78, L.nameW - 1.3, 0.28, strip, { size: ctx.S.small, colour: ctx.C.dim, valign: 'middle' }));
+  if (id.quote) elements.push(el.text(L.quoteX, 0.3, L.quoteW, 1.0, `“${id.quote}”`, { size: ctx.S.body + 1, italic: true, colour: ctx.C.dim, valign: 'middle' }));
+  // Summary paragraph
+  const sumStyle = { size: ctx.S.body + 1, colour: ctx.C.text };
+  const fitted = fitParagraph(id.summary || '', SLIDE.w - 2 * m, L.sumH, sumStyle, ctx.metrics);
+  if (fitted.truncated) ctx.warn({ code: 'SUMMARY_TRUNCATED', actorId: id.id, slot: 'summary', shown: fitted.text.length, of: id.summary.length });
+  elements.push(el.text(m, L.sumY, SLIDE.w - 2 * m, L.sumH, fitted.text + (fitted.truncated ? ' …' : ''), sumStyle));
+
+  // Three columns: enduring traits → in context → what emerges (spec §5, spike outcome 2026-09-04)
+  const colW = (SLIDE.w - 2 * m - 2 * g) / 3;
+  const bodyStyle = { size: ctx.S.body + 1, colour: ctx.C.text };
+  const c = slots.context;
+  const cols = [
+    { key: 'who', title: 'Enduring traits', caption: 'needs · frustrations — true of them in any situation',
+      colour: ctx.C.traits, tint: ctx.C.traitsTint, slot: slots.who },
+    { key: 'context', title: c ? `In context: ${c.title}${c.contextType ? ' (' + c.contextType + ')' : ''}` : 'In context: No context recorded',
+      caption: 'needs · frustrations specific to this role', colour: ctx.C.contexts, tint: ctx.C.contextsTint, slot: c },
+    { key: 'emerges', title: 'When traits meet context', caption: 'goals as experienced · pain points — and what each emerges from',
+      colour: ctx.C.emergence, tint: ctx.C.emergenceTint, slot: slots.emerges }
+  ];
+  const notes = [];
+  cols.forEach((col, i) => {
+    const x = m + i * (colW + g), y = L.colY, p = L.colPad;
+    elements.push(el.rect(x, y, colW, L.colH, col.tint, { colour: col.colour, width: 1 }, 0.08));
+    elements.push(el.rect(x, y, colW, L.colHeadH, col.colour));
+    elements.push(el.text(x + p, y, colW - 2 * p, L.colHeadH, col.title, { size: ctx.S.h3, bold: true, colour: '#ffffff', valign: 'middle' }));
+    let cy = y + L.colHeadH + 0.06;
+    elements.push(el.text(x + p, cy, colW - 2 * p, L.captionH, col.caption, { size: ctx.S.small, italic: true, colour: col.colour }));
+    cy += L.captionH + 0.06;
+    const markerH = 0.28;
+    const listH = y + L.colH - cy - markerH - p;
+    const full = col.slot ? col.slot.full : [];
+    const fit = flow.fitItems(full, colW - 2 * p, listH, bodyStyle, ctx.metrics, col.slot ? col.slot.items.length : 0);
+    if (fit.items.length) elements.push(el.text(x + p, cy, colW - 2 * p, listH, listParagraphs(fit.items), bodyStyle));
+    else elements.push(el.text(x + p, cy, colW - 2 * p, 0.4, 'Nothing recorded yet', { size: ctx.S.body, italic: true, colour: ctx.C.dim }));
+    const markers = [];
+    if (fit.truncated) { markers.push('→ see appendix'); ctx.warn({ code: 'SUMMARY_TRUNCATED', actorId: id.id, slot: col.key, shown: fit.items.length, of: full.length }); }
+    if (col.key === 'context' && c && c.moreContexts > 0) markers.push(`+${c.moreContexts} more context${c.moreContexts > 1 ? 's' : ''} → appendix`);
+    if (markers.length) elements.push(el.text(x + p, y + L.colH - markerH - p / 2, colW - 2 * p, markerH, markers.join('   '), { size: ctx.S.caption, bold: true, colour: col.colour, align: 'right' }));
+    notes.push(`${col.title} — ${col.caption}`);
+    full.forEach(it => notes.push(`• ${flow.itemText(it)}`));
+    notes.push('');
+  });
+  elements.push(...footerElements(`${id.id} · v${id.version}`, ctx));
+  return { kind: 'summary', actorId: id.id, background: ctx.C.bg, elements, notes: notes.join('\n') };
+}
+
 function buildDeck(vms, opts) {
   const warnings = [];
   let pageNo = 0;
@@ -152,10 +214,10 @@ function buildDeck(vms, opts) {
     // page() is read while building, so bump before each build so footers show the right number
     for (const s of buildIndexSlides(vms, { ...ctx, page: () => pageNo + 1 })) push(s);
   }
-  // Task 9 adds:  if (sections.summary) for (const vm of vms) push(buildSummarySlide(vm, { ...ctx, page: () => pageNo + 1 }));
+  if (sections.summary) for (const vm of vms) push(buildSummarySlide(vm, { ...ctx, page: () => pageNo + 1 }));
   // Task 10 adds: if (sections.appendix) for (const vm of vms) for (const s of buildAppendixSlides(vm, ctx)) push(s);
   for (const vm of vms) for (const w of vm.warnings) warnings.push({ actorId: vm.identity.id, ...w });
   return { slides, warnings };
 }
 
-module.exports = { SLIDE, LAYOUT, AVATAR_COLOURS, el, fitParagraph, avatarElements, footerElements, badgeElements, buildCover, buildIndexSlides, buildDeck };
+module.exports = { SLIDE, LAYOUT, AVATAR_COLOURS, el, fitParagraph, avatarElements, footerElements, badgeElements, buildCover, buildIndexSlides, buildSummarySlide, listParagraphs, buildDeck };

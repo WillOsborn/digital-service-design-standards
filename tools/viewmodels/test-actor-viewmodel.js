@@ -170,13 +170,13 @@ section('Summary slots');
   const vm = buildActorViewModel(adam);
   const s = vm.summarySlots;
   assert(s && s.who && s.context && s.emerges, 'three slots present');
-  assert(s.who.items.length === 3 && s.who.full.length > 3 && s.who.truncated === true, 'who: capped at 3, full retained, truncated flagged');
-  assert(s.who.full[0].badge === 'age', 'who: demographics come first');
-  assert(s.who.full.some(i => i.badge && i.badge.startsWith('severity')), 'who: includes frustrations');
+  assert(s.who.items.length === 5 && s.who.full.length > 5 && s.who.truncated === true, 'who: capped at 5 by default, full retained, truncated flagged');
+  assert(s.demographics.some(i => i.badge === 'age') && !s.who.full.some(i => i.badge === 'age'), 'demographics are a separate slot, not in who');
+  assert(s.who.full[0].badge !== undefined && s.who.full.some(i => i.badge && i.badge.startsWith('severity')), 'who: needs (badged by type) then frustrations');
   assert(s.context.contextId === adam.contexts[0].contextId && s.context.moreContexts === 0, 'context: first context, no more');
   assert(s.emerges.items.every(isItem) && s.emerges.full[0].badge !== undefined, 'emerges: goals (badged by source) then pain points');
-  const cap5 = buildActorViewModel(adam, { caps: { summaryItems: 5 } });
-  assert(cap5.summarySlots.who.items.length === 5, 'caps.summaryItems honoured');
+  const cap2 = buildActorViewModel(adam, { caps: { summaryItems: 2 } });
+  assert(cap2.summarySlots.who.items.length === 2, 'caps.summaryItems honoured');
 }
 {
   const vm = buildActorViewModel(fixture);

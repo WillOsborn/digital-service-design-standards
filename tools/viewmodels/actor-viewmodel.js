@@ -145,7 +145,8 @@ function slot(full, cap) {
 function buildSummarySlots(vm, actor, opts, warnings) {
   const cap = opts.caps.summaryItems;
   const t = normaliseTraits(actor.traits, TRAIT_GROUPS);   // summary ignores traitGroups selection: it is a fixed read of the whole actor
-  const who = [...(t.demographics ? t.demographics.items : []), ...(t.needs ? t.needs.items : []), ...(t.frustrations ? t.frustrations.items : [])];
+  const demographics = t.demographics ? t.demographics.items : [];
+  const who = [...(t.needs ? t.needs.items : []), ...(t.frustrations ? t.frustrations.items : [])];
 
   const all = vm.contexts;
   let chosen = null;
@@ -160,7 +161,7 @@ function buildSummarySlots(vm, actor, opts, warnings) {
     { contextId: chosen.contextId, title: chosen.title, contextType: chosen.contextType, moreContexts: all.length - 1 }) : null;
   const em = chosen && chosen.emergence;
   const emerges = em ? [...em.goalsAsExperienced, ...em.painPoints] : [];
-  return { who: slot(who, cap), context: contextSlot, emerges: slot(emerges, cap) };
+  return { demographics, who: slot(who, cap), context: contextSlot, emerges: slot(emerges, cap) };
 }
 
 function keyValueItems(obj) {
@@ -181,7 +182,7 @@ function resolveOptions(options) {
   const sections = Object.assign({}, DEFAULT_ACTOR_SECTIONS, o.sections || {});
   const traitGroups = o.traitGroups && o.traitGroups !== 'all'
     ? TRAIT_GROUPS.filter(g => o.traitGroups.includes(g)) : TRAIT_GROUPS.slice();
-  return { sections, traitGroups, caps: Object.assign({ summaryItems: 3 }, o.caps || {}), context: o.context, deck: Object.assign({ actorIds: [] }, o.deck || {}) };
+  return { sections, traitGroups, caps: Object.assign({ summaryItems: 5 }, o.caps || {}), context: o.context, deck: Object.assign({ actorIds: [] }, o.deck || {}) };
 }
 
 function buildActorViewModel(actor, options) {

@@ -42,7 +42,7 @@ export interface ActorViewModel {
   contexts: ContextVM[];
   unattributedEmergence: (Emergence & { contextRef: string })[];
   relationships: { inDeck: Relationship[]; external: Relationship[] };
-  summarySlots: { who: Slot; context: ContextSlot | null; emerges: Slot };
+  summarySlots: { demographics: Item[]; who: Slot; context: ContextSlot | null; emerges: Slot };
   provenance?: Item[];
   governance?: Item[];
   warnings: Warning[];

@@ -103,5 +103,46 @@ section('buildDeck — footer and warnings plumbing');
   assert(d.slides.every(s => typeof s.background === 'string' && /^#[0-9a-f]{6}$/.test(s.background)), 'every slide has a background colour');
 }
 
+section('Summary slide');
+{
+  const vms = vmsOf([adam, daniel]);
+  const d = buildDeck(vms, opts({ sections: { cover: false, index: false, summary: true, appendix: false } }));
+  assert(d.slides.length === 2 && d.slides.every(s => s.kind === 'summary'), 'one summary per actor, nothing else');
+  const s = d.slides[0];
+  assert(s.actorId === 'actor-adam-rees', 'summary carries actorId');
+  const t = textOf(s);
+  assert(t.includes('Adam Rees') && t.includes(adam.quote) && t.includes(adam.summary), 'header: name, quote, summary paragraph');
+  assert(t.includes(String(adam.traits.demographics.age)) && t.includes(adam.traits.demographics.location), 'header strip carries age and location');
+  assert(t.includes('Enduring traits') && t.includes(`In context: ${adam.contexts[0].title}`) && t.includes('When traits meet context'), 'three column headings name their source');
+  assert(t.includes('true of them in any situation') && t.includes('specific to this role') && t.includes('what each emerges from'), 'each column carries its caption');
+  assert(t.includes(adam.contexts[0].contextType), 'context type shown with the context heading');
+  assert(s.elements.some(e => e.type === 'ellipse'), 'avatar present');
+  assert(inBounds(s), 'summary slide within bounds');
+  assert(typeof s.notes === 'string' && s.notes.includes('Enduring traits') && s.notes.split('\n').length > 6, 'speaker notes carry the full lists');
+  const listEls = s.elements.filter(e => e.type === 'text' && e.paragraphs.some(p => p.bullet));
+  assert(listEls.length === 3, 'three bulleted lists');
+  assert(listEls.every(e => e.paragraphs.filter(p => p.bullet).length <= 5 && e.paragraphs.filter(p => p.bullet).length >= 1), 'each list shows 1–5 items');
+  assert(listEls.some(e => e.paragraphs.some(p => /\[(traits|context|collision)\]/.test(p.text))), 'emergent goals show their source badge');
+  assert(t.includes('→ see appendix'), 'truncated columns point to the appendix');
+  assert(d.warnings.some(w => w.code === 'SUMMARY_TRUNCATED' && w.actorId === 'actor-adam-rees'), 'truncation warned');
+  assert(s.elements.every(e => e.type !== 'text' || e.size >= theme.typography.scale.caption), 'no text below caption size (never shrinks)');
+}
+{
+  const d = buildDeck(vmsOf([fixture]), opts({ sections: { cover: false, index: false, summary: true, appendix: false } }));
+  const t = textOf(d.slides[0]);
+  assert(t.includes('+2 more contexts → appendix'), 'multi-context marker');
+  assert(t.includes('In context: Alpha Role'), 'first context shown by default');
+}
+{
+  const d = buildDeck(vmsOf([fixture], { context: 'ctx-gamma' }), opts({ sections: { cover: false, index: false, summary: true, appendix: false } }));
+  const t = textOf(d.slides[0]);
+  assert(t.includes('In context: Gamma Role') && t.includes('Nothing recorded yet'), 'context without emergence shows an explicit empty state, not a blank box');
+}
+{
+  const noCtx = buildActorViewModel({ ...fixture, contexts: [], emergence: [] });
+  const d = buildDeck([noCtx], opts({ sections: { cover: false, index: false, summary: true, appendix: false } }));
+  assert(d.slides.length === 1 && inBounds(d.slides[0]) && textOf(d.slides[0]).includes('No context recorded'), 'actor with no contexts still gets a summary slide with an explicit empty context');
+}
+
 module.exports = { assert, section, load, adam, daniel, sarah, fixture, theme, metrics, vmsOf, opts, textOf, inBounds, finish: () => { console.log(`\n${passed} passed, ${failed} failed`); process.exit(failed ? 1 : 0); } };
 if (require.main === module) module.exports.finish();

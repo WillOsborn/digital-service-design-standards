@@ -7,6 +7,9 @@
 const fs = require('fs');
 const path = require('path');
 const { computeLayout } = require('./mission-layout');
+const TOKENS = require('../design-tokens.json');
+const L = TOKENS.colour.light;
+const D = TOKENS.colour.dark;
 
 // ── helpers ────────────────────────────────────────────────────────────────
 
@@ -310,26 +313,26 @@ function edgeSvg(e, layout, typeOf, idx) {
 // ── document assembly ──────────────────────────────────────────────────────
 
 const CSS = `
-.mv-app { --c-bg:#f8fafc; --c-band:#eef2f7; --c-text:#0f172a; --c-dim:#64748b;
-  --c-edge:#64748b; --c-edge-error:#dc2626; --c-panel:#ffffff; --c-border:#e2e8f0;
-  --c-touchpoint:#2563eb; --c-decision:#d97706; --c-handoff:#7c3aed; --c-wait:#6b7280;
-  --c-signal:#ea580c; --c-start:#16a34a; --c-end:#dc2626;
-  --c-heat-low:#fbbf24; --c-heat-medium:#f97316; --c-heat-high:#ef4444;
+.mv-app { --c-bg:${L.bg}; --c-band:${L.band}; --c-text:${L.text}; --c-dim:${L.dim};
+  --c-edge:${L.edge}; --c-edge-error:${L.edgeError}; --c-panel:${L.panel}; --c-border:${L.border};
+  --c-touchpoint:${L.touchpoint}; --c-decision:${L.decision}; --c-handoff:${L.handoff}; --c-wait:${L.wait};
+  --c-signal:${L.signal}; --c-start:${L.start}; --c-end:${L.end};
+  --c-heat-low:${L.heatLow}; --c-heat-medium:${L.heatMedium}; --c-heat-high:${L.heatHigh};
   font-family: system-ui, -apple-system, sans-serif; color: var(--c-text);
   background: var(--c-bg); display: flex; flex-direction: column; min-height: 100vh; }
 @media (prefers-color-scheme: dark) {
-  .mv-app { --c-bg:#0b1220; --c-band:#111a2b; --c-text:#e2e8f0; --c-dim:#94a3b8;
-    --c-edge:#94a3b8; --c-edge-error:#f87171; --c-panel:#0f172a; --c-border:#1e293b;
-    --c-touchpoint:#3b82f6; --c-decision:#f59e0b; --c-handoff:#8b5cf6; --c-wait:#9ca3af;
-    --c-signal:#f97316; --c-start:#22c55e; --c-end:#ef4444; } }
-:root[data-theme="dark"] .mv-app { --c-bg:#0b1220; --c-band:#111a2b; --c-text:#e2e8f0;
-  --c-dim:#94a3b8; --c-edge:#94a3b8; --c-edge-error:#f87171; --c-panel:#0f172a;
-  --c-border:#1e293b; --c-touchpoint:#3b82f6; --c-decision:#f59e0b; --c-handoff:#8b5cf6;
-  --c-wait:#9ca3af; --c-signal:#f97316; --c-start:#22c55e; --c-end:#ef4444; }
-:root[data-theme="light"] .mv-app { --c-bg:#f8fafc; --c-band:#eef2f7; --c-text:#0f172a;
-  --c-dim:#64748b; --c-edge:#64748b; --c-edge-error:#dc2626; --c-panel:#ffffff;
-  --c-border:#e2e8f0; --c-touchpoint:#2563eb; --c-decision:#d97706; --c-handoff:#7c3aed;
-  --c-wait:#6b7280; --c-signal:#ea580c; --c-start:#16a34a; --c-end:#dc2626; }
+  .mv-app { --c-bg:${D.bg}; --c-band:${D.band}; --c-text:${D.text}; --c-dim:${D.dim};
+    --c-edge:${D.edge}; --c-edge-error:${D.edgeError}; --c-panel:${D.panel}; --c-border:${D.border};
+    --c-touchpoint:${D.touchpoint}; --c-decision:${D.decision}; --c-handoff:${D.handoff}; --c-wait:${D.wait};
+    --c-signal:${D.signal}; --c-start:${D.start}; --c-end:${D.end}; } }
+:root[data-theme="dark"] .mv-app { --c-bg:${D.bg}; --c-band:${D.band}; --c-text:${D.text};
+  --c-dim:${D.dim}; --c-edge:${D.edge}; --c-edge-error:${D.edgeError}; --c-panel:${D.panel};
+  --c-border:${D.border}; --c-touchpoint:${D.touchpoint}; --c-decision:${D.decision}; --c-handoff:${D.handoff};
+  --c-wait:${D.wait}; --c-signal:${D.signal}; --c-start:${D.start}; --c-end:${D.end}; }
+:root[data-theme="light"] .mv-app { --c-bg:${L.bg}; --c-band:${L.band}; --c-text:${L.text};
+  --c-dim:${L.dim}; --c-edge:${L.edge}; --c-edge-error:${L.edgeError}; --c-panel:${L.panel};
+  --c-border:${L.border}; --c-touchpoint:${L.touchpoint}; --c-decision:${L.decision}; --c-handoff:${L.handoff};
+  --c-wait:${L.wait}; --c-signal:${L.signal}; --c-start:${L.start}; --c-end:${L.end}; }
 
 .mv-header { display:flex; justify-content:space-between; align-items:flex-start;
   gap:16px; padding:16px 20px; border-bottom:1px solid var(--c-border); flex-wrap:wrap; }

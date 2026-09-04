@@ -30,7 +30,7 @@ const opts = (o) => Object.assign({ theme, metrics, generatedAt: '2026-09-04T00:
 const textOf = slide => slide.elements.filter(e => e.type === 'text').flatMap(e => e.paragraphs.map(p => p.text)).join('\n');
 const inBounds = slide => slide.elements.every(e => e.type === 'line'
   ? [e.x1, e.x2].every(x => x >= -1e-9 && x <= SLIDE.w + 1e-9) && [e.y1, e.y2].every(y => y >= -1e-9 && y <= SLIDE.h + 1e-9)
-  : e.x >= -1e-9 && e.y >= -1e-9 && e.x + e.w <= SLIDE.w + 1e-9 && e.y + e.h <= SLIDE.h + 1e-9);
+  : e.w >= 0 && e.h >= 0 && e.x >= -1e-9 && e.y >= -1e-9 && e.x + e.w <= SLIDE.w + 1e-9 && e.y + e.h <= SLIDE.h + 1e-9);
 
 section('Constants and helpers');
 assert(SLIDE.w === 13.333 && SLIDE.h === 7.5, '16:9 slide in inches');
@@ -75,6 +75,22 @@ section('Index — count formula and content');
   assert(!idx9[0].elements.some(e => e.type === 'line') && !idx9[1].elements.some(e => e.type === 'line'), 'no line when the related actor is on another index slide');
   assert(textOf(idx9[0]).includes('Daniel Rees') && textOf(idx9[0]).includes('serves'), 'off-slide relationship listed as text under the card');
   assert(idx9.every(inBounds), 'all index slides within bounds');
+  const pageOf = slide => {
+    const e = slide.elements.find(x => x.type === 'text' && x.align === 'right' && Math.abs(x.y - LAYOUT.footerY) < 1e-9);
+    return e ? e.paragraphs.map(p => p.text).join('') : undefined;
+  };
+  assert(pageOf(idx9[0]) === '2' && pageOf(idx9[1]) === '3', 'index slide footers carry the correct running page number (cover is page 1)');
+  // One actor with 8 in-deck relationships whose targets are all on another index slide: the
+  // off-slide list must cap at 3 lines (2 + a "+N more" summary) rather than driving the summary
+  // box height negative. adamWith8Rels lands alone on slide 2; all eight targets are on slide 1.
+  const eightFixtures = Array.from({ length: 8 }, (_, i) => ({ ...fixture, id: `actor-fx-${i}`, name: `Fixture ${i}`, relationships: [] }));
+  const adamWith8Rels = { ...adam, relationships: Array.from({ length: 8 }, (_, i) => ({ target: `actor-fx-${i}`, type: 'collaborates_with', description: '' })) };
+  const manyRels = buildDeck(vmsOf([...eightFixtures, adamWith8Rels]), opts({ sections: { cover: true, index: true, summary: false, appendix: false } }));
+  const idxMany = manyRels.slides.filter(s => s.kind === 'index');
+  assert(idxMany.length === 2, 'N=9 (8 fixtures + 1 many-relationship actor) → two index slides');
+  assert(idxMany.every(inBounds), 'index slides within bounds even with 8 off-slide relationships');
+  assert(textOf(idxMany[1]).includes('+6 more'), 'off-slide relationship list caps at 3 lines with a "+N more" summary');
+  assert(idxMany.every(s => s.elements.every(e => !(e.type === 'text' && e.h < 0))), 'no text element has negative height');
   const off = buildDeck(vmsOf([adam, daniel]), opts({ sections: { cover: true, index: false, summary: false, appendix: false } }));
   assert(off.slides.every(s => s.kind !== 'index'), 'sections.index=false suppresses the index');
 }

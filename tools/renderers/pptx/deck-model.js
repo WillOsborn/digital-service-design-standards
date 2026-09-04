@@ -32,7 +32,7 @@ function fitParagraph(text, w, h, style, metrics) {
   const s = flow.splitSentences(text);
   let n = 0;
   for (let i = 1; i < s.length; i++) { if (fits(s.slice(0, i).join('').trimEnd())) n = i; else break; }
-  return { text: n > 0 ? s.slice(0, n).join('').trimEnd() : s[0], truncated: true };
+  return { text: n > 0 ? s.slice(0, n).join('').trimEnd() : (s[0] || '').trimEnd(), truncated: true };
 }
 
 function avatarElements(vm, ctx, x, y, d) {
@@ -92,11 +92,17 @@ function buildIndexSlides(vms, ctx) {
       elements.push(...avatarElements(vm, ctx, b.x + p, b.y + p, L.avatarD));
       elements.push(el.text(b.x + p + L.avatarD + 0.1, b.y + p, b.w - 2 * p - L.avatarD - 0.1, 0.35, vm.identity.name, { size: ctx.S.h3, bold: true, colour: ctx.C.text, valign: 'middle' }));
       elements.push(...badgeElements(vm.identity.actorType.replace('_', ' '), b.x + p + L.avatarD + 0.1, b.y + p + 0.36, ctx));
-      const offSlide = vm.relationships.inDeck.filter(r => !onSlide.has(r.target))
+      const offSlideFull = vm.relationships.inDeck.filter(r => !onSlide.has(r.target))
         .map(r => `↔ ${ctx.nameById.get(r.target) || r.target} (${r.typeLabel})`);
+      // Cap the off-slide list at 3 lines so relH can never outgrow the card: beyond 3, show the
+      // first 2 plus a "+N more" summary line rather than letting the box grow (and the summary
+      // box shrink) without bound.
+      const offSlide = offSlideFull.length > 3
+        ? [...offSlideFull.slice(0, 2), `+${offSlideFull.length - 2} more (see appendix)`]
+        : offSlideFull;
       const relH = offSlide.length ? 0.22 * offSlide.length : 0;
       const sumStyle = { size: ctx.S.small, colour: ctx.C.text };
-      const sumBox = { x: b.x + p, y: b.y + p + L.avatarD + 0.12, w: b.w - 2 * p, h: b.h - 2 * p - L.avatarD - 0.12 - relH };
+      const sumBox = { x: b.x + p, y: b.y + p + L.avatarD + 0.12, w: b.w - 2 * p, h: Math.max(0, b.h - 2 * p - L.avatarD - 0.12 - relH) };
       const fitted = fitParagraph(vm.identity.summary, sumBox.w, sumBox.h, sumStyle, ctx.metrics);
       elements.push(el.text(sumBox.x, sumBox.y, sumBox.w, sumBox.h, fitted.text + (fitted.truncated ? ' …' : ''), sumStyle));
       if (offSlide.length) elements.push(el.text(sumBox.x, sumBox.y + sumBox.h, sumBox.w, relH, offSlide.map(t => ({ text: t })), { size: ctx.S.caption, colour: ctx.C.dim }));

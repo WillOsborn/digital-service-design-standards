@@ -8,9 +8,8 @@
 **Active schema version:** v2.0 (Actor / Mission / Experience)
 
 **Branch:** `main`, **in sync with `origin/main`** (pushed 2026-09-05 after the actor-export
-merge). `feature/actor-export` was fast-forwarded into `main` and deleted. `feature/roadside-mission`
-is fully merged into `main` but still exists locally and on the remote — safe to delete, not yet
-done (Will's call).
+merge). `feature/actor-export` was fast-forwarded into `main` and deleted. `feature/roadside-mission` was fully merged
+and deleted locally and on the remote (2026-09-05). Only `main` remains.
 
 **Concurrency check:** at session end the working tree was clean, one worktree, `main` in sync
 with `origin`. At session start run `git status -sb`. If `main` shows `behind`, `diverged`, or
@@ -77,9 +76,8 @@ channel-modelling gaps share one root cause and BACK-027 sits behind it. See BAC
 
 ## Decisions outstanding for Will
 
-1. Delete `feature/roadside-mission` (local + remote)? It is fully merged.
-2. The visual-judgement items in BACK-048 / BACK-049 (column fill, index at N=2, connector labels).
-3. Whether the summary slide should carry opportunities (currently appendix-only, by Will's
+1. The visual-judgement items in BACK-048 / BACK-049 (column fill, index at N=2, connector labels).
+2. Whether the summary slide should carry opportunities (currently appendix-only, by Will's
    earlier call — revisit after use).
 
 ---

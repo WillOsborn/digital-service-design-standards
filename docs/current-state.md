@@ -4,133 +4,97 @@
 > Keep it a **snapshot**, not a history — record material completions, delete what's superseded.
 > If this file contradicts itself, the next session starts confused. Fix contradictions on sight.
 
-**Last updated:** 2026-09-04
+**Last updated:** 2026-09-05
 **Active schema version:** v2.0 (Actor / Mission / Experience)
 
-**Session 2026-09-04:** administrative close of the long-running mission-visualiser
-conversation — no repo changes. The stale sub-agent execution ledger under
-`.superpowers/sdd/` (gitignored, this machine only) was marked closed so no future
-session tries to resume the already-merged visualiser plan.
+**Branch:** `main`, **in sync with `origin/main`** (pushed 2026-09-05 after the actor-export
+merge). `feature/actor-export` was fast-forwarded into `main` and deleted. `feature/roadside-mission`
+is fully merged into `main` but still exists locally and on the remote — safe to delete, not yet
+done (Will's call).
 
-**Branch:** `feature/roadside-mission` — **pushed and tracking `origin/feature/roadside-mission`.**
-`main` is also **pushed and in sync with `origin/main`.** Both branches were pushed 2026-08-12
-**after** the history purge, so nothing containing personal data ever reached the remote —
-verified against the remote refs. `feature/roadside-mission` is **not yet merged into `main`**;
-that decision is open.
-
-**Concurrency check:** at session end the working tree was clean, one worktree, and **both
-branches were in sync with `origin`.** At session start run `git status -sb`. If either branch
-shows `behind`, `diverged`, or commits you did not make, suspect a concurrent session and read
-`git reflog` before acting. **Note local history was rewritten on 2026-08-12** (see *Privacy
-posture*), so any clone taken before then has divergent history and must be re-cloned rather
-than merged.
-
-**Branches:** `main` and `feature/roadside-mission`, both on the remote.
+**Concurrency check:** at session end the working tree was clean, one worktree, `main` in sync
+with `origin`. At session start run `git status -sb`. If `main` shows `behind`, `diverged`, or
+commits you did not make, suspect a concurrent session and read `git reflog` before acting.
 
 ---
 
 ## Status
 
-**BACK-021 is complete.** The roadside assistance example set is authored, validated, rendered,
-visually verified, and its findings written up. It is the fifth example domain and the first
-drawn from a real, first-hand case rather than generated.
+**BACK-018 phase 1 — Actor → PowerPoint export — shipped and merged (2026-09-05).**
 
-| Artifact | Quality |
-|---|---|
-| `v2.0/examples/roadside/actor-adam-rees.json` | 100/100 |
-| `v2.0/examples/roadside/actor-daniel-rees.json` | 100/100 |
-| `v2.0/examples/roadside/mission-roadside-assistance.json` | 95/100 (38 nodes, 45 edges, 6 phases, 4 paths) |
-| `v2.0/examples/roadside/exp-adam-roadside-recovery.json` | 100/100 |
+```
+node tools/renderers/render-pptx.js v2.0/examples/roadside/ -o exports/roadside.pptx
+tools/renderers/pptx/verify-pptx.sh exports/roadside.pptx      # visual gate: LibreOffice → PDF → PNG + overflow oracle
+```
 
-**The objective was met.** Vocabulary that no example exercised now carries real data:
+- Cover → index (2+ actors) → one summary per Actor → two-column paginated appendix.
+- Summary headings (Will-approved after a spike): **Enduring traits / In context: <title> / When
+  traits meet context**, each captioned with its source; demographics strip in the header; cap 5;
+  full lists in speaker notes; never paginates, never shrinks.
+- Validates first; refuses invalid input with exit 2 and nothing written. Warnings to stderr.
+- `tools/design-tokens.json` is shared by the mission renderer (byte-identical output) and the
+  exporter; `--theme brand.json` overrides with unknown-key warnings.
+- `tools/viewmodels/actor-viewmodel.js` (+ `.d.ts`) is the target-neutral layer the Figma phase reuses.
+- **Generated decks go in `exports/` (gitignored, added 2026-09-05).** Two are there now:
+  `roadside-actors.pptx` (14 slides) and `all-example-actors.pptx` (37 slides).
 
-| Dimension | Before | After |
-|---|---|---|
-| `nodeType` | 6 of 10 | **10 of 10** — a repo first |
-| `edgeType` | 3 of 6 | **6 of 6** |
-| `interaction` | **0 uses** | all three values |
-| `ownership` | **0 uses** | all three values |
+All six example decks pass the visual gate with **no calibration constant changed and no font
+size lowered**. The overflow oracle was proven on a canary and **fails closed**.
 
-**All seven predicted schema gaps confirmed** against a stated threshold of five, **plus four
-unpredicted gaps and seven tooling defects.** The unpredicted ones are the more valuable output
-— they were only findable by authoring.
+**BACK-021 (roadside example set)** remains complete; `feature/roadside-mission` was merged into
+`main` on 2026-09-04.
 
-**The Mission is deliberately 95/100, not 100.** The last five points require a numeric
-`frequency` on every path, meaning a proportion-of-actors figure for a single observed case.
-Supplying one would fabricate a statistic and contradict the artifact's own provenance. Do not
-"fix" this by adding invented numbers — it is filed as BACK-040.
-
-**BACK-027 (channel spelling constraint) remains deliberately deferred** behind BACK-020.
-Designed and specced, not implemented. See `docs/superpowers/specs/2026-08-06-channel-pattern-constraint-design.md`.
-
-**A retrospective was written**, covering process rather than schema:
-`docs/superpowers/retrospectives/2026-08-11-back-021-retrospective.md`.
+**BACK-027** remains deferred behind BACK-020 (see *Schema work waiting*, below).
 
 ---
 
 ## Immediate next action
 
-**Decide the scope of BACK-020 before building anything.**
+**Will's feedback on the decks, then the Figma phase.** Both are new-session work.
 
-BACK-020 is titled "no way to express ambient/always-available help channels" — that names
-**one symptom**. BACK-021 produced **eight distinct channel-modelling gaps** sharing one root
-cause:
+1. **Feedback iteration.** Open `exports/roadside-actors.pptx` in PowerPoint (LibreOffice output
+   is layout-faithful, not pixel-identical). Known things to weigh: summary columns show 3–4 items
+   with space below — the estimator's safety margin, not the cap, binds (**BACK-048**); the index
+   at N=2 fills a quarter of the slide and its relationship connectors run in the gutter
+   (**BACK-049**); whether opportunities belong on the summary after all. Layout numbers: `LAYOUT`
+   in `tools/renderers/pptx/deck-model.js`; estimator constants: `FLOW` in
+   `tools/renderers/pptx/flow.js`. **Never fix overflow by lowering a font size**; re-run
+   `verify-pptx.sh` after any change.
+2. **Figma phase** — spec §9 of `docs/superpowers/specs/2026-09-04-actor-export-design.md` lists
+   what carries over and the four decisions to take first (HTML card proxy or not; archive vs
+   delete the plugin's orphaned root `ui.html`; a component-mapping feasibility spike; index
+   frame on a canvas). It needs its own brainstorm → spec → plan; do not implement from the
+   superseded 2026-08-06 spec. `tools-internal/figma-plugin/` is gitignored and unprotected.
 
-1. Ambient across the whole service (benefits app home screen; concierge number on a bank card)
-2. Ambient for one node's duration (assistance line during a wait)
-3. Channels that expire mid-case (partner tracking site; provider app tracking)
-4. `ownership` cannot express degrees of remove — one value, four relationships
-5. Channels that exist but are not signposted
-6. Channels wholly outside the service that it nonetheless depends on
-7. Channels used by a different person than the case holder
-8. `interaction` fixed per channel, so it cannot differ between designed and observed paths
+Read `docs/superpowers/retrospectives/2026-09-05-actor-export-retrospective.md` first — it holds
+the rulings of record and the review pattern (nearly every defect was in the plan's own code).
 
-Fixing only ambient availability means returning to this within a session. And because
-**BACK-027 sits behind BACK-020**, this decision now governs a much larger piece of work than
-when the deferral was agreed.
-
-Relevant backlog: **BACK-020** (rewritten this session with the evidence), **BACK-035**
-(channel-actor attribution), **BACK-036** (handoff payload), **BACK-037** (paths cannot express
-channel-only variation), **BACK-043** (relationship/discoverability/provenance of use),
-**BACK-044** (`interaction` fixed per channel).
-
-**Smaller, cheaper options if something lighter is wanted:**
-
-- **A v2.0 authoring quick-reference** — every enum, length cap, and non-obvious shape in one
-  file next to the schemas. Authoring this set cost ~8 validation round-trips and ~60 errors,
-  essentially all of them "the rule exists but nowhere an author would look". Cheap and
-  compounding. Not yet filed as a backlog item; proposed in retrospective §8.3.
-- **BACK-031** — quality score is printed for artifacts that fail validation. An Experience
-  with 49 errors showed `Quality: 100/100` directly above its `FAIL`.
-- **BACK-032** — the validator checks no graph references at all.
-- **BACK-042** — gitignore `.playwright-mcp/` and root `*.png`. Two lines.
+**Schema work waiting (unchanged from 2026-08):** decide the scope of **BACK-020** — eight
+channel-modelling gaps share one root cause and BACK-027 sits behind it. See BACK-020, -035, -036,
+-037, -043, -044 and the BACK-021 retrospective.
 
 ---
 
 ## Decisions outstanding for Will
 
-1. **✅ Done — both branches pushed 2026-08-12**, after the history purge. Remote verified
-   free of personal data.
-2. **Whether to merge `feature/roadside-mission` into `main`** or keep it separate for review.
-3. **✅ RESOLVED 2026-08-12 — personal data purged from git history.** See *Privacy posture*
-   below. No action outstanding; recorded so the next session does not re-raise it.
+1. Delete `feature/roadside-mission` (local + remote)? It is fully merged.
+2. The visual-judgement items in BACK-048 / BACK-049 (column fill, index at N=2, connector labels).
+3. Whether the summary slide should carry opportunities (currently appendix-only, by Will's
+   earlier call — revisit after use).
 
 ---
 
 ## In flight / uncommitted
 
-**Nothing uncommitted.** Working tree clean, all work committed.
-
-**Everything is pushed.** Both `main` and `feature/roadside-mission` are in sync with
-`origin`.
+**Nothing uncommitted.** Working tree clean; `main` pushed.
 
 **Gitignored changes that exist only on this machine and are in no commit:**
-- `.claude/commands/start-session.md` — the false sub-agent permissions guardrail was corrected.
-- `.claude/commands/end-session.md` — its verification baseline numbers were stale (94 / 45 /
-  12 of 12) and were corrected to the real figures.
-- `research/private/roadside-assistance/2026-08-06-source-notes.md` — the interview record,
-  deliberately untracked.
-- `backlog.json` / `BACKLOG.md` — 14 new items this session.
+- `.claude/skills/actor-deck-renderer/SKILL.md` — new skill wrapping the CLI (added 2026-09-05).
+- `.claude/PROJECT_CONTEXT.md` — routing block now lists the renderers, view model, tokens and `exports/`.
+- `.claude/commands/start-session.md` / `end-session.md` — corrected in the 2026-08 sessions (see git-ignored note in earlier handoffs; unchanged this session).
+- `backlog.json` / `BACKLOG.md` — five new items (BACK-045…049), BACK-018 `in_progress`; synced.
+- `exports/` — two generated decks.
+- `research/private/roadside-assistance/2026-08-06-source-notes.md` — the interview record, deliberately untracked.
 
 ---
 
@@ -142,130 +106,98 @@ None. Single working tree.
 
 ## Active plans
 
-- `docs/superpowers/plans/2026-08-06-roadside-mission.md` — **complete.** All ten tasks done.
-- `docs/superpowers/specs/2026-08-06-roadside-mission-design.md` — the design, with **§11
-  Findings** added: prediction verdicts, unpredicted gaps, tooling defects, verification.
-- `docs/superpowers/retrospectives/2026-08-11-back-021-retrospective.md` — **read this before
-  planning the next piece of work.** Process lessons, the four-root-cause reframe of the
-  backlog, and the argument for rescoping BACK-020.
-- `docs/superpowers/specs/2026-08-06-channel-pattern-constraint-design.md` — **BACK-027,
-  designed and deliberately deferred.** Do not implement before BACK-020. Carries an open
-  question about schema-annotation vs shared-module.
-- `docs/superpowers/specs/2026-08-06-figma-pptx-export-design.md` — **deferred design, no plan.**
-  WS8. Read before resuming BACK-018; also read BACK-029.
-- `docs/superpowers/plans/2026-05-04-v2.0-implementation.md` — the v2.0 build. WS1–WS7, WS9,
-  WS10 done. WS8 deferred.
-- `docs/superpowers/plans/2026-05-04-v2.0-handoff.md` — superseded by this file for *state*.
-  Still the reference for **schema enum gotchas (§5)** — read before authoring example JSON.
+- `docs/superpowers/plans/2026-09-04-actor-export-pptx.md` — **complete**, all 14 tasks ticked;
+  Task 2 *Spike outcome* and Task 13 *Calibration notes* record what happened.
+- `docs/superpowers/specs/2026-09-04-actor-export-design.md` — the design, **§13 amendments**
+  (headings, demographics strip, cap 5) and **§9 the Figma phase scope**. Supersedes the 2026-08-06
+  Figma/PPTX spec, which carries a banner and is history only.
+- `docs/superpowers/retrospectives/2026-09-05-actor-export-retrospective.md` — **read before the
+  next piece of export work.**
+- `docs/superpowers/plans/2026-08-06-roadside-mission.md` — complete (BACK-021).
+- `docs/superpowers/retrospectives/2026-08-11-back-021-retrospective.md` — process lessons and the
+  case for rescoping BACK-020.
+- `docs/superpowers/specs/2026-08-06-channel-pattern-constraint-design.md` — BACK-027, designed,
+  deferred behind BACK-020.
+- `docs/superpowers/plans/2026-05-04-v2.0-handoff.md` — superseded for *state*; still the
+  reference for **schema enum gotchas (§5)** when authoring example JSON.
 
 ---
 
 ## Privacy posture — assume this repository is NOT private
 
-**Treat `origin` as potentially public at any time.** Will cannot guarantee the GitHub
-repository stays private, so **anything committed must be safe to publish**. This is a standing
-constraint, not a pre-release checklist item.
+**Treat `origin` as potentially public at any time.** Anything committed must be safe to publish.
 
-**What this means in practice:**
-
-- **Never commit personal or client-identifying detail** — real names, employers, banks,
-  service providers, locations, dates, family circumstances, live disputes. Not in artifacts,
-  not in docs, not in commit messages.
-- **Research notes from real people go in `research/private/`**, which is gitignored. Write
-  them pseudonymised from the outset; do not rely on cleaning them up later.
-- **Example artifacts use fictional composites.** Record that in each artifact's `governance`
-  block: `anonymisationMethod: "fictional_composite"`, `containsPii: false`.
-- **Editing a file does not unpublish it.** Anything committed stays in history until history
-  is rewritten, which is expensive and normally forbidden here. The cheap moment is *before*
-  the commit.
-- Real names remain legitimately in `LICENSE` (copyright holder) and as `**Owner:**` in project
-  metadata. That is ownership, not personal circumstance, and is intentional.
-
-**History rewrite of 2026-08-12.** The roadside source notes were committed before being moved
-to `research/private/`, so they sat in history containing a real name, bank, family members, a
-live insurance dispute and a country. With the repo's privacy no longer guaranteed, history was
-rewritten via `git filter-branch` to purge the file and redact residual identifiers from two
-other files.
-
-- **The 46 commits already on `origin/main` were not altered** — `origin/main` remains an
-  ancestor of `main`, so **no force-push to shared history is required.** Only local, unpushed
-  commits were rewritten.
-- The commit that added the notes was pruned as empty. **Note two surviving commit messages now
-  describe the notes file** (`chore: move roadside source notes out of version control`, and
-  the `ai_assisted` commit) — the messages are historical artefacts; the file exists in no
-  commit. Verified with `git log --all -- <path>` returning nothing.
-- Full pre-rewrite backup (`--all` bundle, verified restorable, plus a `.git` copy) was taken to
-  the session scratchpad. **That backup still contains the unredacted data** — it is outside the
-  repo and will vanish with the scratchpad, but do not copy it anywhere durable.
-- Verification after the rewrite: no commit references the notes path; zero history-wide matches
-  for the removed identifiers; working tree unchanged; full gate green at 16/16.
+- Never commit personal or client-identifying detail — names, employers, banks, providers,
+  locations, dates, family circumstances, live disputes. Not in artifacts, docs, or commit messages.
+- Research notes from real people go in `research/private/` (gitignored), pseudonymised from the outset.
+- Example artifacts are fictional composites; record it in `governance`.
+- **Generated decks go in `exports/` (gitignored)** — a deck built from real client Actors must
+  never be committed. Committed plans use `<repo root>` / `<scratchpad>` rather than home-directory paths.
+- Editing a file does not unpublish it. A history rewrite was needed on 2026-08-12 for exactly
+  this reason; `origin/main`'s pre-rewrite commits were never altered, so no force-push was needed.
+- Real names remain legitimately in `LICENSE` and as `**Owner:**` metadata.
 
 ---
 
 ## Known constraints
 
-- **`.claude/` is gitignored.** All skills, `PROJECT_CONTEXT.md`, `VERSIONING_WORKFLOW.md` and
-  the slash commands are local-only — absent from a fresh clone and unprotected by git.
-- **`BACKLOG.md` and `backlog.json` are gitignored.** CLI is `node tools-internal/backlog.js`.
-- **`backlog.json` is the source of truth; `BACKLOG.md` is generated.** `add` and `park` write
-  only to the JSON — run `sync` or the Markdown silently keeps showing stale contents.
-- **The backlog CLI cannot edit an existing item's description.** Updating BACK-020 required
-  hand-editing `backlog.json`. Back it up first — it is gitignored, so there is no safety net.
-- **Sub-agents work here.** Write, Edit and Bash all verified 2026-08-06 (the `deny` list in
-  `.claude/settings.local.json` is empty). A long-standing note claiming they were denied was
-  **wrong** and had stood for months. Caveat: verified in one permission mode only; re-probe
-  rather than assume.
-- **ajv is compiled once at module load** in the validator. Do not instantiate Ajv per call.
-- **`additionalProperties: true` on `laneContent` and several Actor objects means invented keys
-  validate cleanly and are silently discarded** — with a PASS and a quality score to reassure
-  you. This caught an author three times in one session while actively watching for it. Read
-  the schema shape before writing; do not trust a PASS. Filed as BACK-033.
-- **Lane IDs disagree with `laneContent` property names** — declared `design-opps` vs typed
-  `designOpportunities`, declared `accessibility` vs typed `accessibilityProfile`. Following the
-  schema's own documented rule yields an **unvalidated** key. The roadside set uses the typed
-  names deliberately. Filed as BACK-034.
-- **`channel` takes a *type*, `name` takes the instance.** `{ "channel": "app", "name":
-  "Salesforce CRM" }`, never `{ "channel": "salesforce" }`. Full rules in
-  `documentation/CHANNEL_TAXONOMY.md`.
-- **Node names truncate beyond ~28 characters** in the renderer's Overview mode. Write the short
-  label; put detail in `description`.
-- **Node names must be outcome-neutral** where a mission carries both designed and observed
-  paths — `dropoff-location-disputed` had to be renamed once a designed path traversed it.
+- **`.claude/` is gitignored.** Skills, `PROJECT_CONTEXT.md`, `VERSIONING_WORKFLOW.md` and the
+  slash commands are local-only.
+- **`backlog.json` is the source of truth; `BACKLOG.md` is generated** — run `sync` after any
+  `add`/`park`/`update`. The CLI cannot edit an existing item's description.
+- **The visual gate needs LibreOffice and poppler** (installed on this Mac via Homebrew on
+  2026-09-04). `verify-pptx.sh` exits 3 (skipped) where they are absent; the headless suites do
+  not need them. LibreOffice renders Calibri as Carlito (metric-compatible): layout-faithful, not
+  pixel-identical.
+- **The overflow oracle sees only text that reaches the slide edge** (LibreOffice clips vertically
+  at the page box; hence the measured 12pt inset). A box overshoot of ~0.4–0.5in past a content
+  frame lands in the footer band unseen — the estimator tests cover that case.
+- **`tools/renderers/package.json` pins `pptxgenjs` at exactly `4.0.1`** because
+  `package-lock.json` is gitignored repo-wide. A fresh clone needs `cd tools/renderers && npm install`
+  to run `test-render-pptx.js` and the CLI; the other eight new suites need no dependencies.
+- **Never lower a font size to fix overflow.** Raise `FLOW.wrapSlack`/`FLOW.safety`, adjust
+  `typography.metrics`, or fix a coordinate in `LAYOUT`, then re-run the gate.
+- **Sub-agents work here.** Pass an explicit `model` on every dispatch; tell reviewers the branch
+  (one read the stale session-start snapshot).
+- **`additionalProperties: true` on `laneContent` and several Actor objects** still means invented
+  keys validate cleanly and are discarded (BACK-033). Lane IDs still disagree with `laneContent`
+  property names (BACK-034). `channel` takes a *type*, `name` the instance. Node names truncate
+  beyond ~28 characters in the mission renderer's Overview mode.
+- **ajv is compiled once at module load** in the validator; do not instantiate per call.
 
 ---
 
 ## Verification baseline
 
-Re-measured 2026-08-11. **Check exit codes directly** (`out=$(node <test> 2>&1); code=$?`) —
-piping to `tail`/`grep` reports the pipe's status, not node's.
+Re-measured 2026-09-05 on `main`. **Check exit codes directly** (`out=$(node <test> 2>&1); code=$?`).
 
 ```bash
-node tools/validators/test-v2.0-validator.js    # exit 0 — 98 passed
+node tools/validators/test-v2.0-validator.js    # exit 0 — 98 passed (data-dependent: one assertion per example file)
 node tools/renderers/test-mission-layout.js     # exit 0 — 16 passed
 node tools/renderers/test-render-mission.js     # exit 0 — 83 passed
 node tools/converters/test-converter.js         # exit 0 — 87 passed
 node tools/validators/validate-v2.0.js v2.0/examples/ --check-refs
                                                 # exit 0 — 16/16, quality 85-100
+node tools/renderers/test-design-tokens.js      # exit 0 — 38 passed
+node tools/viewmodels/test-actor-viewmodel.js   # exit 0 — 124 passed
+node tools/renderers/test-pptx-flow.js          # exit 0 — 78 passed
+node tools/renderers/test-pptx-theme.js         # exit 0 — 17 passed
+node tools/renderers/test-deck-model.js         # exit 0 — 142 passed
+node tools/renderers/test-overflow-check.js     # exit 0 — 15 passed
+node tools/renderers/test-render-pptx.js        # exit 0 — 50 passed (needs npm install in tools/renderers)
+(cd tools/renderers && npm test)                # exit 0 — runs the nine renderer/view-model suites
+tools/renderers/pptx/verify-pptx.sh <deck.pptx> # exit 0 — visual gate (LibreOffice + poppler); 3 = skipped
 node tools/validators/run-all-tests.js          # exit 1 — KNOWN FAILURE, see below
 ```
 
-**`test-v2.0-validator.js` is data-dependent — do not treat its count as a fixed baseline.**
-It walks `v2.0/examples/` with `readdirSync` and generates **one assertion per example file**
-(`test-v2.0-validator.js:371-384`), so the total grows whenever an example is added. It read 94
-before the roadside set and 98 after; the four new artifacts are the entire difference. **The
-rule is the baseline, not the number.**
+`test-v2.0-validator.js` generates one assertion per file under `v2.0/examples/`; the synthetic
+fixture lives in `tools/tests/fixtures/` and is deliberately outside that walk. Quality scores for
+the five example sets must stay 85–100 and byte-identical after any data-only change.
 
-Quality scores are a regression signal. The other four example sets must stay at 85–100 and
-byte-identical after any data-only change.
-
-**⚠️ A quality score does not mean the artifact is valid.** Scoring and schema validation run
-independently — an Experience with 49 validation errors printed `Quality: 100/100` directly
-above its `FAIL`. Read the errors, not the score. Filed as BACK-031.
+**⚠️ A quality score does not mean the artifact is valid** (BACK-031). Read the errors.
 
 ### Known failure: `run-all-tests.js` exits 1 (pre-existing, v1.x only)
 
-Its **v2.0 half passes cleanly.** Its v1.x half cannot find any schema and reports 6 errors,
-because the runner defaults `baseDir` to `v1.0.2/` (lines 33, 71) and expects a
-`base/` + `persona/` + `journey/` + `patterns/` layout matching **no version in this repo**.
-Not caused by any recent work. Fixing it needs a decision on what the runner should target, so
-it is logged as **BACK-017** rather than patched. Treat the four suites above as the real gate.
+Its v2.0 half passes; its v1.x half cannot find any schema because the runner defaults `baseDir`
+to `v1.0.2/` and expects a layout matching no version in this repo. Logged as **BACK-017**. Treat
+the suites above as the real gate.

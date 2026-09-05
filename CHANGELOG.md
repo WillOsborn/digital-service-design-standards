@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### Added — Tooling (2026-09-05, no schema change)
+- **Actor → PowerPoint exporter:** `node tools/renderers/render-pptx.js <actor files|dir> -o deck.pptx` builds a cover, an index, one summary slide per Actor and a paginated appendix. Validates first and refuses invalid input. `tools/renderers/pptx/verify-pptx.sh` renders the deck through LibreOffice and checks that nothing overflows.
+- **Design tokens** (`tools/design-tokens.json`) shared by the mission renderer (byte-identical output) and the exporter; `--theme brand.json` overrides them with unknown-key warnings.
+- **Actor view model** (`tools/viewmodels/actor-viewmodel.js` + `.d.ts`) — the target-neutral layer the Figma plugin will reuse.
+
+---
+
 ## [1.0.3] - 2025-12-03
 
 ### Changed - Channel Taxonomy Redesign (BREAKING CHANGE)

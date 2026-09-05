@@ -91,7 +91,7 @@ All `x, y, w, h` in inches.
 **Interfaces:**
 - Produces: `require('tools/design-tokens.json')` → `{ colour: { light, dark }, typography: { fontFamily, scale, metrics }, spacing }`. Every later task reads colours as `tokens.colour.light.<key>` and metrics as `tokens.typography.metrics[fontFamily]`.
 
-- [ ] **Step 1: Capture the baseline HTML for all five example Missions (before touching anything)**
+- [x] **Step 1: Capture the baseline HTML for all five example Missions (before touching anything)**
 
 ```bash
 SP=<scratchpad>
@@ -105,7 +105,7 @@ ls "$SP/baseline" | wc -l
 ```
 Expected: `10`. (Renderer output was confirmed deterministic on 2026-09-04: two runs are byte-identical.)
 
-- [ ] **Step 2: Write the failing tokens test**
+- [x] **Step 2: Write the failing tokens test**
 
 Create `tools/renderers/test-design-tokens.js`:
 
@@ -180,12 +180,12 @@ console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed ? 1 : 0);
 ```
 
-- [ ] **Step 3: Run it to verify it fails**
+- [x] **Step 3: Run it to verify it fails**
 
 Run: `out=$(node tools/renderers/test-design-tokens.js 2>&1); code=$?; echo "$out" | tail -3; echo "exit=$code"`
 Expected: exit 1, first failure is `ENOENT ... design-tokens.json` (the file does not exist yet).
 
-- [ ] **Step 4: Create `tools/design-tokens.json`**
+- [x] **Step 4: Create `tools/design-tokens.json`**
 
 Values in `light` are copied **verbatim** from `render-mission.js:313-317`; `dark` from lines 321–324 (heat values have no dark variant in the renderer, so they repeat the light values). Layer colours reuse the palette: traits = touchpoint blue, contexts = start green, emergence = decision amber.
 
@@ -226,7 +226,7 @@ Values in `light` are copied **verbatim** from `render-mission.js:313-317`; `dar
 }
 ```
 
-- [ ] **Step 5: Interpolate the tokens into `render-mission.js`**
+- [x] **Step 5: Interpolate the tokens into `render-mission.js`**
 
 Add, after the existing `require` lines near the top of `tools/renderers/render-mission.js`:
 
@@ -263,7 +263,7 @@ Then replace lines 313–333 (everything from `.mv-app { --c-bg:#f8fafc;` throug
 
 `const CSS` is already a template literal (backticks), so `${…}` interpolates. Do not touch anything after line 333.
 
-- [ ] **Step 6: Prove byte-identical output**
+- [x] **Step 6: Prove byte-identical output**
 
 ```bash
 SP=<scratchpad>
@@ -276,7 +276,7 @@ diff -rq "$SP/baseline" "$SP/after" && echo "BYTE-IDENTICAL: 10/10"
 ```
 Expected: `BYTE-IDENTICAL: 10/10` and no `differ` lines. If any file differs, `diff` the pair: the cause is a hex value in the tokens that does not match the original literal, or a whitespace change in the block — fix the tokens/block, never the baseline.
 
-- [ ] **Step 7: Run the new test and the regression suites**
+- [x] **Step 7: Run the new test and the regression suites**
 
 ```bash
 out=$(node tools/renderers/test-design-tokens.js 2>&1); echo "$out" | tail -2; echo "exit=$?"
@@ -285,7 +285,7 @@ out=$(node tools/renderers/test-mission-layout.js 2>&1); echo "$out" | tail -1
 ```
 Expected: tokens test `0 failed`, exit 0; `83 passed, 0 failed`; `16 passed, 0 failed`.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add tools/design-tokens.json tools/renderers/render-mission.js tools/renderers/test-design-tokens.js
@@ -309,14 +309,14 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 - Create (scratchpad only): `$SP/spike-summary/spike.js`
 - Modify: this plan — fill in the *Spike outcome* block.
 
-- [ ] **Step 1: Set up the scratchpad project**
+- [x] **Step 1: Set up the scratchpad project**
 
 ```bash
 SP=<scratchpad>
 mkdir -p "$SP/spike-summary" && cd "$SP/spike-summary" && npm init -y >/dev/null && npm install pptxgenjs@4.0.1 --no-audit --no-fund 2>&1 | tail -1
 ```
 
-- [ ] **Step 2: Write the spike — one summary slide from the heaviest real Actor, using the real tokens**
+- [x] **Step 2: Write the spike — one summary slide from the heaviest real Actor, using the real tokens**
 
 `$SP/spike-summary/spike.js` (hardcoded layout; this is what Task 9 parameterises):
 
@@ -376,18 +376,18 @@ s.addText(`${A.id} · v${A.version}`, { x: 0.5, y: 7.05, w: 8, h: 0.3, fontFace:
 pptx.writeFile({ fileName: 'summary-spike.pptx' }).then(f => console.log('wrote', f));
 ```
 
-- [ ] **Step 3: Render it and look at it**
+- [x] **Step 3: Render it and look at it**
 
 ```bash
 cd "$SP/spike-summary" && node spike.js && /Applications/LibreOffice.app/Contents/MacOS/soffice --headless --convert-to pdf summary-spike.pptx >/dev/null 2>&1 && pdftoppm -png -r 110 summary-spike.pdf slide && ls slide*.png
 ```
 Expected: `slide-1.png`. Open it with the Read tool. Check: nothing clipped, the three columns align, the quote does not collide with the name, bullets render as bullets.
 
-- [ ] **Step 4: Put it in front of Will and wait**
+- [x] **Step 4: Put it in front of Will and wait**
 
 Send `slide-1.png` to Will (SendUserFile) with three specific questions: (1) is the three-column *Who / In this context / What emerges* structure the right read of an Actor at a glance; (2) is the header band (monogram, name, badge, quote-right) the right hierarchy; (3) anything that must change before this becomes the template. **Stop here until Will answers.** Do not proceed to Task 3 on the assumption of approval.
 
-- [ ] **Step 5: Record the outcome, then delete the spike**
+- [x] **Step 5: Record the outcome, then delete the spike**
 
 Fill in the block below in this plan file, commit the plan, and `rm -rf "$SP/spike-summary"`.
 
@@ -416,7 +416,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 - Consumes: `tools/validators/validate-v2.0.js` → `validateData(data) → { valid, schemaType, errors, warnings }` (verified export).
 - Produces: `buildActorViewModel(actor, options?) → vm` with `vm.identity`, `vm.avatar`, `vm.traits` (this task) — later tasks add `contexts`, `relationships`, `summarySlots`, `warnings`. Also exports `TRAIT_GROUPS`, `TRAIT_LABELS`, `DEFAULT_ACTOR_SECTIONS`, `humanise`, `initialsOf`, `colourKeyOf`.
 
-- [ ] **Step 1: Create the synthetic three-context fixture**
+- [x] **Step 1: Create the synthetic three-context fixture**
 
 `tools/tests/fixtures/actor-multi-context.json`. Field sets mirror `v2.0/examples/retail/actor-sarah-martinez.json` exactly (which validates), so this validates by construction. Fictional composite, no PII.
 
@@ -506,12 +506,12 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 }
 ```
 
-- [ ] **Step 2: Validate the fixture**
+- [x] **Step 2: Validate the fixture**
 
 Run: `node tools/validators/validate-v2.0.js tools/tests/fixtures/actor-multi-context.json; echo "exit=$?"`
 Expected: `PASS`, exit 0. If it fails, the error names the offending path (e.g. `/traits/needs/0/type: must be equal to one of the allowed values`) — change the fixture's value to one used by `actor-sarah-martinez.json` for that field. Do not change the schema.
 
-- [ ] **Step 3: Write the failing tests for identity, avatar and trait normalisation**
+- [x] **Step 3: Write the failing tests for identity, avatar and trait normalisation**
 
 Create `tools/viewmodels/test-actor-viewmodel.js`:
 
@@ -630,12 +630,12 @@ if (require.main === module) module.exports.finish();
 
 (The `module.exports` at the bottom lets Tasks 4 and 5 append their sections to this same file; the file stays one test suite with one exit code.)
 
-- [ ] **Step 4: Run to verify it fails**
+- [x] **Step 4: Run to verify it fails**
 
 Run: `out=$(node tools/viewmodels/test-actor-viewmodel.js 2>&1); code=$?; echo "$out" | head -3; echo "exit=$code"`
 Expected: `Cannot find module './actor-viewmodel'`, exit 1.
 
-- [ ] **Step 5: Implement the view model — scaffold, helpers, identity, avatar, traits**
+- [x] **Step 5: Implement the view model — scaffold, helpers, identity, avatar, traits**
 
 Create `tools/viewmodels/actor-viewmodel.js`:
 
@@ -757,12 +757,12 @@ function buildActorViewModel(actor, options) {
 module.exports = { buildActorViewModel, TRAIT_GROUPS, TRAIT_LABELS, DEFAULT_ACTOR_SECTIONS, humanise, initialsOf, colourKeyOf, humaniseValue, item, nonEmpty, severityBadge, joinList, resolveOptions };
 ```
 
-- [ ] **Step 6: Run the tests**
+- [x] **Step 6: Run the tests**
 
 Run: `out=$(node tools/viewmodels/test-actor-viewmodel.js 2>&1); code=$?; echo "$out" | grep -E "FAIL|passed"; echo "exit=$code"`
 Expected: `N passed, 0 failed`, exit 0. Note `humaniseValue` turns `social_media` into `social media` — that is why the communication assertion expects `'app, social media'`.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add tools/tests/fixtures/actor-multi-context.json tools/viewmodels/actor-viewmodel.js tools/viewmodels/test-actor-viewmodel.js
@@ -787,7 +787,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 - Consumes: Task 3's `item`, `nonEmpty`, `severityBadge`, `joinList`, `humanise`, `humaniseValue`, `resolveOptions`.
 - Produces: `vm.contexts[]` = `{ contextId, title, contextType, description, needs[], frustrations[], channels[], momentsThatMatter[], details[], emergence: { goalsAsExperienced[], painPoints[], opportunities[], emotionalContext, useCases[], successMetrics[] } | null }`; `vm.unattributedEmergence[]` (same emergence shape plus `contextRef`); `vm.relationships = { inDeck[], external[] }` with items `{ target, type, typeLabel, description, strength }`; warning codes `UNATTRIBUTED_EMERGENCE`.
 
-- [ ] **Step 1: Append failing tests**
+- [x] **Step 1: Append failing tests**
 
 Insert before the `module.exports = { assert, section, …` line in `tools/viewmodels/test-actor-viewmodel.js`:
 
@@ -852,12 +852,12 @@ section('Relationships');
 }
 ```
 
-- [ ] **Step 2: Run to verify the new sections fail**
+- [x] **Step 2: Run to verify the new sections fail**
 
 Run: `out=$(node tools/viewmodels/test-actor-viewmodel.js 2>&1); code=$?; echo "$out" | grep -c FAIL; echo "exit=$code"`
 Expected: ≥ 20 FAIL lines, exit 1 (`vm.contexts` is `[]`, `vm.relationships` empty).
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 In `tools/viewmodels/actor-viewmodel.js`, add after `TRAIT_NORMALISERS`:
 
@@ -936,12 +936,12 @@ Then in `buildActorViewModel`, replace the three placeholder lines:
 
 (Keep `identity` exactly as written in Task 3; only `contexts`, `unattributedEmergence`, `relationships` change.) Add `normaliseEmergence, normaliseContexts, normaliseRelationships, normaliseDetails` to `module.exports`.
 
-- [ ] **Step 4: Run tests**
+- [x] **Step 4: Run tests**
 
 Run: `out=$(node tools/viewmodels/test-actor-viewmodel.js 2>&1); code=$?; echo "$out" | grep -E "FAIL|passed"; echo "exit=$code"`
 Expected: `0 failed`, exit 0.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add tools/viewmodels/actor-viewmodel.js tools/viewmodels/test-actor-viewmodel.js
@@ -962,7 +962,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 **Interfaces:**
 - Produces: `vm.summarySlots = { who: Slot, context: ContextSlot | null, emerges: Slot }` where `Slot = { items: Item[], full: Item[], truncated: boolean }` and `ContextSlot = Slot & { contextId, title, contextType, moreContexts: number }`; `vm.provenance?: Item[]`, `vm.governance?: Item[]`; warning code `CONTEXT_NOT_FOUND`.
 
-- [ ] **Step 1: Append failing tests**
+- [x] **Step 1: Append failing tests**
 
 Insert before the `module.exports` line of `tools/viewmodels/test-actor-viewmodel.js`:
 
@@ -1012,12 +1012,12 @@ for (const a of ALL_ACTORS) {
 }
 ```
 
-- [ ] **Step 2: Run to verify failure**
+- [x] **Step 2: Run to verify failure**
 
 Run: `out=$(node tools/viewmodels/test-actor-viewmodel.js 2>&1); code=$?; echo "$out" | grep -c FAIL; echo "exit=$code"`
 Expected: FAIL count ≥ 15 (`summarySlots` is `null`), exit 1.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 Add to `tools/viewmodels/actor-viewmodel.js` before `buildActorViewModel`:
 
@@ -1065,12 +1065,12 @@ In `buildActorViewModel`, after the `vm` object is created and before `return vm
 
 Export `buildSummarySlots, keyValueItems, slot` too.
 
-- [ ] **Step 4: Run tests**
+- [x] **Step 4: Run tests**
 
 Run: `out=$(node tools/viewmodels/test-actor-viewmodel.js 2>&1); code=$?; echo "$out" | grep -E "FAIL|passed"; echo "exit=$code"`
 Expected: `0 failed`, exit 0.
 
-- [ ] **Step 5: Write the type declarations**
+- [x] **Step 5: Write the type declarations**
 
 Create `tools/viewmodels/actor-viewmodel.d.ts`:
 
@@ -1134,7 +1134,7 @@ export function initialsOf(name: string): string;
 export function colourKeyOf(id: string): number;
 ```
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add tools/viewmodels/actor-viewmodel.js tools/viewmodels/actor-viewmodel.d.ts tools/viewmodels/test-actor-viewmodel.js
@@ -1161,7 +1161,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
   - `paginate(blocks, frame, metrics) → { pages: [{ blocks: PlacedBlock[] }], warnings: [{ reason:'spill'|'split', sectionId, page }] }` where `PlacedBlock = block + { y, h }` and a page that continues a section starts with a synthesized band block `{ ...band, text: band.text + ' (cont.)', continued: true }`.
   - `fitItems(items, widthIn, maxHeightIn, style, metrics, cap) → { items, truncated }` — largest prefix (≤ cap, ≥ 1 if any) whose list height fits.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Create `tools/renderers/test-pptx-flow.js`:
 
@@ -1303,12 +1303,12 @@ console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed ? 1 : 0);
 ```
 
-- [ ] **Step 2: Run to verify it fails**
+- [x] **Step 2: Run to verify it fails**
 
 Run: `out=$(node tools/renderers/test-pptx-flow.js 2>&1); code=$?; echo "$out" | head -2; echo "exit=$code"`
 Expected: `Cannot find module './pptx/flow'`, exit 1.
 
-- [ ] **Step 3: Implement `flow.js`**
+- [x] **Step 3: Implement `flow.js`**
 
 Create `tools/renderers/pptx/flow.js`:
 
@@ -1454,12 +1454,12 @@ function fitItems(items, widthIn, maxHeightIn, style, metrics, cap) {
 module.exports = { FLOW, estimateLines, estimateBlockHeight, itemText, paginate, fitItems, splitSentences, splitBlock, lineHeightIn };
 ```
 
-- [ ] **Step 4: Run the tests**
+- [x] **Step 4: Run the tests**
 
 Run: `out=$(node tools/renderers/test-pptx-flow.js 2>&1); code=$?; echo "$out" | grep -E "FAIL|passed"; echo "exit=$code"`
 Expected: `0 failed`, exit 0. If the "precondition" assertion in the spill section fails, the test's chosen word count is wrong for the metrics — adjust `words(70)` (not the implementation) until one paragraph is between half and all of the 4in frame.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add tools/renderers/pptx/flow.js tools/renderers/test-pptx-flow.js
@@ -1487,7 +1487,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
   - `mergeTheme(base, override) → { merged, unknownKeys: string[] }` — deep merge; keys absent from `base` at the same path are reported (dotted) and **still merged** (so a brand can add a font's metrics under `typography.metrics.<Font>` — that path is exempt from unknown-key reporting).
   - `resolveMetrics(theme) → { avgCharWidthEm, lineHeightEm }` for `theme.typography.fontFamily`, falling back to Calibri's with a warning.
 
-- [ ] **Step 1: Create `tools/renderers/package.json` and install**
+- [x] **Step 1: Create `tools/renderers/package.json` and install**
 
 ```json
 {
@@ -1511,7 +1511,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 Run: `(cd tools/renderers && npm install --no-audit --no-fund 2>&1 | tail -1) && ls tools/renderers/node_modules | grep -E "^(pptxgenjs|jszip)$" && git status --short tools/renderers | head`
 Expected: both packages listed; `git status` shows only `package.json` as new (`node_modules/` and `package-lock.json` are gitignored).
 
-- [ ] **Step 2: Write the failing theme tests**
+- [x] **Step 2: Write the failing theme tests**
 
 Create `tools/renderers/test-pptx-theme.js`:
 
@@ -1589,12 +1589,12 @@ console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed ? 1 : 0);
 ```
 
-- [ ] **Step 3: Run to verify it fails**
+- [x] **Step 3: Run to verify it fails**
 
 Run: `out=$(node tools/renderers/test-pptx-theme.js 2>&1); code=$?; echo "$out" | head -2; echo "exit=$code"`
 Expected: `Cannot find module './pptx/theme'`, exit 1.
 
-- [ ] **Step 4: Implement `theme.js`**
+- [x] **Step 4: Implement `theme.js`**
 
 Create `tools/renderers/pptx/theme.js`:
 
@@ -1656,12 +1656,12 @@ function loadTheme(themePath) {
 module.exports = { loadTheme, mergeTheme, resolveMetrics, DEFAULT_TOKENS, FALLBACK_FONT };
 ```
 
-- [ ] **Step 5: Run the tests**
+- [x] **Step 5: Run the tests**
 
 Run: `out=$(node tools/renderers/test-pptx-theme.js 2>&1); code=$?; echo "$out" | grep -E "FAIL|passed"; echo "exit=$code"`
 Expected: `0 failed`, exit 0.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add tools/renderers/package.json tools/renderers/pptx/theme.js tools/renderers/test-pptx-theme.js
@@ -1688,7 +1688,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
   - `buildDeck(vms, opts) → { slides: Slide[], warnings: Warning[] }` with `opts = { theme, metrics, title?, generatedAt, sources: string[], sections: { cover, index, summary, appendix }, images: Record<actorId, path> }`. This task wires cover + index; Tasks 9 and 10 add summary and appendix to the same function.
   - `ctx` (internal, passed to every builder) = `{ theme, C: theme.colour.light, S: theme.typography.scale, font, metrics, images, nameById, page: () => number }`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Create `tools/renderers/test-deck-model.js`:
 
@@ -1786,12 +1786,12 @@ module.exports = { assert, section, load, adam, daniel, sarah, fixture, theme, m
 if (require.main === module) module.exports.finish();
 ```
 
-- [ ] **Step 2: Run to verify it fails**
+- [x] **Step 2: Run to verify it fails**
 
 Run: `out=$(node tools/renderers/test-deck-model.js 2>&1); code=$?; echo "$out" | head -2; echo "exit=$code"`
 Expected: `Cannot find module './pptx/deck-model'`, exit 1.
 
-- [ ] **Step 3: Implement — constants, helpers, cover, index, `buildDeck`**
+- [x] **Step 3: Implement — constants, helpers, cover, index, `buildDeck`**
 
 Create `tools/renderers/pptx/deck-model.js`:
 
@@ -1953,12 +1953,12 @@ function buildDeck(vms, opts) {
 module.exports = { SLIDE, LAYOUT, AVATAR_COLOURS, el, fitParagraph, avatarElements, footerElements, badgeElements, buildCover, buildIndexSlides, buildDeck };
 ```
 
-- [ ] **Step 4: Run the tests**
+- [x] **Step 4: Run the tests**
 
 Run: `out=$(node tools/renderers/test-deck-model.js 2>&1); code=$?; echo "$out" | grep -E "FAIL|passed"; echo "exit=$code"`
 Expected: `0 failed`, exit 0.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add tools/renderers/pptx/deck-model.js tools/renderers/test-deck-model.js
@@ -1982,7 +1982,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 - Consumes: `vm.summarySlots` (amended below), `flow.fitItems` (Task 6), helpers from Task 8.
 - Produces: `vm.summarySlots = { demographics: Item[], who: Slot, context: ContextSlot | null, emerges: Slot }` with `who` = trait needs + frustrations only and default `caps.summaryItems = 5`; `buildSummarySlide(vm, ctx) → Slide` with `kind: 'summary'`, `actorId`, `notes`, and warnings via `ctx.warn({ code: 'SUMMARY_TRUNCATED', actorId, slot, shown, of })`.
 
-- [ ] **Step 0: Amend the view model's summary slots**
+- [x] **Step 0: Amend the view model's summary slots**
 
 In `tools/viewmodels/actor-viewmodel.js`:
 - `resolveOptions`: change `{ summaryItems: 3 }` to `{ summaryItems: 5 }`.
@@ -2013,7 +2013,7 @@ In `tools/viewmodels/test-actor-viewmodel.js`, in the `Summary slots` section, r
 ```
 Run `node tools/viewmodels/test-actor-viewmodel.js` — expect `0 failed` (118 assertions still; three reworded, one replaced).
 
-- [ ] **Step 1: Append failing tests**
+- [x] **Step 1: Append failing tests**
 
 Insert before `module.exports` in `tools/renderers/test-deck-model.js`:
 
@@ -2060,12 +2060,12 @@ section('Summary slide');
 }
 ```
 
-- [ ] **Step 2: Run to verify failure**
+- [x] **Step 2: Run to verify failure**
 
 Run: `out=$(node tools/renderers/test-deck-model.js 2>&1); code=$?; echo "$out" | grep -c FAIL; echo "exit=$code"`
 Expected: ≥ 12 FAIL, exit 1 (no summary slides are produced yet).
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 In `tools/renderers/pptx/deck-model.js`, replace `summary: {},` in `LAYOUT` with:
 
@@ -2147,12 +2147,12 @@ In `buildDeck`, replace the `// Task 9 adds:` comment line with:
 
 Add `buildSummarySlide, listParagraphs` to `module.exports`.
 
-- [ ] **Step 4: Run the tests**
+- [x] **Step 4: Run the tests**
 
 Run: `out=$(node tools/renderers/test-deck-model.js 2>&1); code=$?; echo "$out" | grep -E "FAIL|passed"; echo "exit=$code"`
 Expected: `0 failed`, exit 0. Also `node tools/viewmodels/test-actor-viewmodel.js` → `0 failed`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add tools/viewmodels/actor-viewmodel.js tools/viewmodels/actor-viewmodel.d.ts tools/viewmodels/test-actor-viewmodel.js tools/renderers/pptx/deck-model.js tools/renderers/test-deck-model.js
@@ -2179,7 +2179,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 
 **Column-frame pagination (Deviation 4):** blocks are paginated into a *column* frame `{ w: (12.333 − 0.25) / 2, h: 5.9 }`; the resulting pages are packed two per slide, left then right. A continuation band therefore appears at the top of the right column too, which is the intended reading order.
 
-- [ ] **Step 1: Append failing tests**
+- [x] **Step 1: Append failing tests**
 
 ```js
 section('Appendix — blocks');
@@ -2255,12 +2255,12 @@ section('Appendix — slides');
 }
 ```
 
-- [ ] **Step 2: Run to verify failure**
+- [x] **Step 2: Run to verify failure**
 
 Run: `out=$(node tools/renderers/test-deck-model.js 2>&1); code=$?; echo "$out" | grep -c FAIL; echo "exit=$code"`
 Expected: ≥ 25 FAIL, exit 1 (`dm.appendixBlocks` is not a function).
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 Replace `appendix: {}` in `LAYOUT` with:
 
@@ -2365,12 +2365,12 @@ In `buildDeck`, replace the `// Task 10 adds:` comment with:
 
 Add `appendixBlocks, buildAppendixSlides` to `module.exports`.
 
-- [ ] **Step 4: Run the tests**
+- [x] **Step 4: Run the tests**
 
 Run: `out=$(node tools/renderers/test-deck-model.js 2>&1); code=$?; echo "$out" | grep -E "FAIL|passed"; echo "exit=$code"`
 Expected: `0 failed`, exit 0. If "footer page numbers run 1..N" fails, the `page: () => pageNo + 1` wrapper is missing on one builder — every builder must read the page number *before* `push` increments it.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add tools/renderers/pptx/deck-model.js tools/renderers/test-deck-model.js
@@ -2393,7 +2393,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 
 **PptxGenJS facts used (4.0.1, verified in the 2026-09-04 spike):** `new PptxGenJS()`, `defineLayout({name,width,height})` + `pptx.layout`, `addSlide()`, `slide.background = { color }`, `addShape(pptx.ShapeType.rect|roundRect|ellipse|line, {...})`, `addText(runs, opts)` where runs are `[{ text, options }]` and `options.breakLine: true` ends a paragraph, `options.bullet: true` bullets it; `addImage({ path, x, y, w, h })`; `addNotes(text)`; `write({ outputType: 'nodebuffer' })`; `writeFile({ fileName })`. Colours are hex **without** `#`. Line shapes draw from the box's top-left to bottom-right; `flipV: true` draws bottom-left to top-right.
 
-- [ ] **Step 1: Write the failing writer tests**
+- [x] **Step 1: Write the failing writer tests**
 
 Create `tools/renderers/test-render-pptx.js`:
 
@@ -2480,12 +2480,12 @@ if (require.main === module) {
 }
 ```
 
-- [ ] **Step 2: Run to verify it fails**
+- [x] **Step 2: Run to verify it fails**
 
 Run: `out=$(node tools/renderers/test-render-pptx.js 2>&1); code=$?; echo "$out" | head -2; echo "exit=$code"`
 Expected: `Cannot find module './pptx/writer'`, exit 1.
 
-- [ ] **Step 3: Implement `writer.js`**
+- [x] **Step 3: Implement `writer.js`**
 
 Create `tools/renderers/pptx/writer.js`:
 
@@ -2598,12 +2598,12 @@ async function slideNotes(buffer) {
 module.exports = { writeDeck, slideTexts, slideNotes, hex, textRuns };
 ```
 
-- [ ] **Step 4: Run the tests**
+- [x] **Step 4: Run the tests**
 
 Run: `out=$(node tools/renderers/test-render-pptx.js 2>&1); code=$?; echo "$out" | grep -E "FAIL|passed|Error"; echo "exit=$code"`
 Expected: `0 failed`, exit 0. Known PptxGenJS wrinkles if something fails: (a) notes are numbered by slide *creation order*, which matches ours; (b) if `write({ outputType })` rejects, the installed version is not 4.0.1 — check `node -e "console.log(require('pptxgenjs/package.json').version)"` from `tools/renderers/`; (c) the "no invented text" check tolerates PptxGenJS splitting a run at an apostrophe or dash only if our expected set *contains* the fragment — that is why it uses `includes`.
 
-- [ ] **Step 5: Look at it**
+- [x] **Step 5: Look at it**
 
 ```bash
 SP=<scratchpad>
@@ -2617,7 +2617,7 @@ cd "$SP/look" && /Applications/LibreOffice.app/Contents/MacOS/soffice --headless
 ```
 Open the first four PNGs with the Read tool (cover, index, first summary, first appendix). This is a look, not the gate — the gate is Task 13. Note anything visibly wrong (overlaps, clipped text, empty columns) as a finding for Task 13; do not tune layout numbers here unless something is plainly broken (an element off-slide, text over text).
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add tools/renderers/pptx/writer.js tools/renderers/test-render-pptx.js
@@ -2638,7 +2638,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 - Consumes: `validateData` (`tools/validators/validate-v2.0.js`), `buildActorViewModel`, `loadTheme`, `resolveMetrics`, `buildDeck`, `writeDeck`.
 - Produces: `parseArgs(argv) → Args`, `expandInputs(paths) → string[]`, `loadActors(files) → { actors, errors }`, `run(argv) → Promise<{ exitCode, warnings, outPath }>`; CLI per §7.
 
-- [ ] **Step 1: Append failing CLI tests**
+- [x] **Step 1: Append failing CLI tests**
 
 Add to `tools/renderers/test-render-pptx.js`, before the `module.exports` line, and then set `module.exports.cliTests = cliTests;` immediately after the `module.exports = {…}` statement:
 
@@ -2734,12 +2734,12 @@ async function cliTests() {
 }
 ```
 
-- [ ] **Step 2: Run to verify failure**
+- [x] **Step 2: Run to verify failure**
 
 Run: `out=$(node tools/renderers/test-render-pptx.js 2>&1); code=$?; echo "$out" | grep -E "Cannot find|FAIL" | head -3; echo "exit=$code"`
 Expected: `Cannot find module './render-pptx'`, exit 1.
 
-- [ ] **Step 3: Implement the CLI**
+- [x] **Step 3: Implement the CLI**
 
 Create `tools/renderers/render-pptx.js`:
 
@@ -2867,12 +2867,12 @@ if (require.main === module) {
 }
 ```
 
-- [ ] **Step 4: Run the full test**
+- [x] **Step 4: Run the full test**
 
 Run: `out=$(node tools/renderers/test-render-pptx.js 2>&1); code=$?; echo "$out" | grep -E "FAIL|passed"; echo "exit=$code"`
 Expected: `0 failed`, exit 0.
 
-- [ ] **Step 5: Run every suite and the health check**
+- [x] **Step 5: Run every suite and the health check**
 
 ```bash
 for t in tools/renderers/test-mission-layout.js tools/renderers/test-render-mission.js tools/renderers/test-design-tokens.js tools/viewmodels/test-actor-viewmodel.js tools/renderers/test-pptx-flow.js tools/renderers/test-pptx-theme.js tools/renderers/test-deck-model.js tools/renderers/test-render-pptx.js; do
@@ -2882,7 +2882,7 @@ out=$(node tools/validators/validate-v2.0.js v2.0/examples/ --check-refs 2>&1); 
 ```
 Expected: every line `… 0 failed exit=0`; examples `16 passed, 0 failed`.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add tools/renderers/render-pptx.js tools/renderers/test-render-pptx.js
@@ -2906,7 +2906,7 @@ This is the **visual gate** (spec §8). It requires LibreOffice and poppler, bot
 **Interfaces:**
 - Produces: `parseBbox(html) → [{ width, height, words: [{ text, xMin, yMin, xMax, yMax }] }]` (one per page, PDF points); `findOverflow(pages, tolerancePt = 1) → [{ page, text, yMax, xMax, height, width }]`; CLI `node overflow-check.js <bbox.html>` exits 1 when anything overflows. `verify-pptx.sh <deck.pptx> [outdir]` → PDF, `page-N.png`, `bbox.html`, and a summary; exits 1 on overflow, 3 if `soffice` is absent.
 
-- [ ] **Step 1: Write the failing oracle tests (pure; no LibreOffice needed)**
+- [x] **Step 1: Write the failing oracle tests (pure; no LibreOffice needed)**
 
 Create `tools/renderers/test-overflow-check.js`:
 
@@ -2947,12 +2947,12 @@ console.log(`\n${passed} passed, ${failed} failed`);
 process.exit(failed ? 1 : 0);
 ```
 
-- [ ] **Step 2: Run to verify failure**
+- [x] **Step 2: Run to verify failure**
 
 Run: `out=$(node tools/renderers/test-overflow-check.js 2>&1); code=$?; echo "$out" | head -2; echo "exit=$code"`
 Expected: `Cannot find module './pptx/overflow-check'`, exit 1.
 
-- [ ] **Step 3: Implement the oracle**
+- [x] **Step 3: Implement the oracle**
 
 Create `tools/renderers/pptx/overflow-check.js`:
 
@@ -3010,7 +3010,7 @@ if (require.main === module) {
 
 Run: `out=$(node tools/renderers/test-overflow-check.js 2>&1); code=$?; echo "$out" | tail -1; echo "exit=$code"` → `0 failed`, exit 0.
 
-- [ ] **Step 4: Write `verify-pptx.sh`**
+- [x] **Step 4: Write `verify-pptx.sh`**
 
 Create `tools/renderers/pptx/verify-pptx.sh` and `chmod +x` it:
 
@@ -3041,7 +3041,7 @@ echo "verify-pptx: $DECK → $PAGES page(s) in $OUT"
 node "$HERE/overflow-check.js" "$OUT/bbox.html"
 ```
 
-- [ ] **Step 5: Prove the oracle catches real overflow (canary)**
+- [x] **Step 5: Prove the oracle catches real overflow (canary)**
 
 The oracle is only worth trusting if it fires. Build a deck with a text box that must overflow, and confirm the script exits 1:
 
@@ -3055,7 +3055,7 @@ tools/renderers/pptx/verify-pptx.sh "$SP/canary/canary.pptx"; echo "exit=$?"
 ```
 Expected: `overflow-check: page 1: N word(s) outside the slide — "overflow canary word …"` and `exit=1`. **If this exits 0, stop: the oracle does not see off-page text on this poppler build** — inspect `bbox.html` for `yMax` values above 540 and adjust `findOverflow` (e.g. LibreOffice may clip at the page box, in which case compare against the *text box*'s bottom instead: the canary's box ends at 7.3in = 525.6pt, so any word with `yMax > 526` is overflow). Record what you find in the plan's Calibration notes below.
 
-- [ ] **Step 6: Calibration pass over every example set**
+- [x] **Step 6: Calibration pass over every example set**
 
 ```bash
 SP=<scratchpad>
@@ -3066,11 +3066,11 @@ for f in "$SP"/calib/*.pptx; do tools/renderers/pptx/verify-pptx.sh "$f" >/dev/n
 ```
 Expected: every deck `exit=0`. **If any deck overflows:** read its `.err` file for the page and words, open that `page-N.png` with the Read tool, and decide which of three causes applies — (a) the estimator under-counts lines for that text (long words, no spaces) → raise `FLOW.wrapSlack` by 0.05 and rerun; (b) the estimator under-counts height generally → raise `FLOW.safety` by 0.05 and rerun; (c) a fixed-size element (header, badge, footer) is placed off-slide → fix the coordinate in `deck-model.js`. Never fix an overflow by lowering a font size. Re-run the headless suites after any change to `flow.js`. Stop raising constants once all decks pass; over-inflation costs slides.
 
-- [ ] **Step 7: Look at all of `all.pptx`**
+- [x] **Step 7: Look at all of `all.pptx`**
 
 Open every `page-N.png` under `$SP/calib/all-verify/` with the Read tool (it will be roughly 40–70 pages; read them in batches of 6–8). You are checking what the oracle cannot: text overlapping text, columns visibly unbalanced, a band at the very bottom of a column with nothing under it, an avatar colliding with a name, bullets rendering as squares. Fix real defects in `deck-model.js` (layout numbers) and re-run Step 6. Then **send Will the four representative pages** (cover, an index, adam's summary, one adam appendix page) with SendUserFile and a one-paragraph note of what you changed during calibration.
 
-- [ ] **Step 8: Add the oracle test to `package.json`, record calibration, commit**
+- [x] **Step 8: Add the oracle test to `package.json`, record calibration, commit**
 
 In `tools/renderers/package.json`, insert `node test-overflow-check.js && ` before `node test-render-pptx.js` in the `"test"` script.
 
@@ -3142,7 +3142,7 @@ Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>"
 - Create (gitignored): `.claude/skills/actor-deck-renderer/SKILL.md`
 - Modify (gitignored): `backlog.json` via the CLI, then `BACKLOG.md` via `sync`
 
-- [ ] **Step 1: Document the CLI in `tools/README.md`**
+- [x] **Step 1: Document the CLI in `tools/README.md`**
 
 Insert after the *Validators* section (before `### Claude Manager`):
 
@@ -3176,7 +3176,7 @@ cd tools/renderers && npm install && npm test
 The design tokens (`tools/design-tokens.json`) are shared by the mission renderer, the PPTX renderer, and the Figma plugin.
 ````
 
-- [ ] **Step 2: Skill wrapper (local-only)**
+- [x] **Step 2: Skill wrapper (local-only)**
 
 Create `.claude/skills/actor-deck-renderer/SKILL.md`:
 
@@ -3205,7 +3205,7 @@ Wraps `tools/renderers/render-pptx.js`. **Rendering is deterministic: the CLI ge
 - Do not put real portraits inside artifacts; `--images` keeps them outside.
 ```
 
-- [ ] **Step 3: Backlog updates**
+- [x] **Step 3: Backlog updates**
 
 ```bash
 node tools-internal/backlog.js update BACK-018 in_progress
@@ -3223,7 +3223,7 @@ node tools-internal/backlog.js stats | head -12
 ```
 Expected: three new inbox items, BACK-018 `in_progress`, `BACKLOG.md` regenerated. These files are gitignored — nothing to commit.
 
-- [ ] **Step 4: Final gate**
+- [x] **Step 4: Final gate**
 
 ```bash
 for t in tools/renderers/test-mission-layout.js tools/renderers/test-render-mission.js tools/renderers/test-design-tokens.js tools/viewmodels/test-actor-viewmodel.js tools/renderers/test-pptx-flow.js tools/renderers/test-pptx-theme.js tools/renderers/test-deck-model.js tools/renderers/test-overflow-check.js tools/renderers/test-render-pptx.js tools/converters/test-converter.js tools/validators/test-v2.0-validator.js; do
@@ -3236,7 +3236,7 @@ git status --short
 ```
 Expected: every suite `0 failed exit=0` (mission 83/16, converter 87, validator 98 — the validator count is data-dependent and grows with fixtures only if they live under `v2.0/examples/`, which this one does not); examples 16/16; `gate exit=0`; `git status` shows only `tools/README.md` modified.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add tools/README.md

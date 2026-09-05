@@ -76,3 +76,8 @@ website/
 
 # Working documents (internal)
 **/Archive/
+
+# === EXPORTED DELIVERABLES ===
+
+# Generated decks and other exports (may contain real client data; never commit)
+exports/
